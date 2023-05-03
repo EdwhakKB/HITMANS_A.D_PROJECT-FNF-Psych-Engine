@@ -219,7 +219,7 @@ class Note extends FlxSprite
 					hitCausesMiss = true;
 				case 'HurtAgressive':
 					ignoreNote = mustPress;
-					reloadNote('HURTAG');
+					reloadHurtNote('HURTAG');
 					noteSplashTexture = 'HURTnoteSplashes';
 					colorSwap.hue = 0;
 					colorSwap.saturation = 0;
@@ -236,7 +236,7 @@ class Note extends FlxSprite
 					ignoreNote = mustPress;
 					copyAlpha=false;
 					alpha=0; //Makes them invisible.
-					reloadNote('HURT');
+					reloadHurtNote('HURT');
 					noteSplashTexture = 'HURTnoteSplashes';
 					colorSwap.hue = 0;
 					colorSwap.saturation = 0;
@@ -615,7 +615,7 @@ class Note extends FlxSprite
 
 		var skin:String = texture;
 		if(texture.length < 1) {
-			skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/NOTE_assets';
+			skin = 'Skins/Hurts/HITMANS/HURTNOTE_assets';
 			if(skin == null || skin.length < 1) {
 				skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/NOTE_assets';
 			}
