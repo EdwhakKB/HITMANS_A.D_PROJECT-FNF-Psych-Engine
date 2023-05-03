@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<TextureAtlas imagePath="HURTICENOTE_assets.png">
+<TextureAtlas imagePath="HURTIHNOTE_assets.png">
 <SubTexture name="purple0000" x="0" y="0" width="164" height="168" frameX="0" frameY="0" frameWidth="158" frameHeight="158" />
 <SubTexture name="blue0000" x="328" y="0" width="168" height="164" frameX="1" frameY="-3" frameWidth="158" frameHeight="158" />
 <SubTexture name="green0000" x="0" y="168" width="168" height="164" frameX="1" frameY="-1" frameWidth="158" frameHeight="158" />
