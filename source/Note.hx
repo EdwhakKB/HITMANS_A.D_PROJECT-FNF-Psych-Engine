@@ -608,6 +608,77 @@ class Note extends FlxSprite
 		}
 	}
 
+	function reloadHurtNote(?prefix:String = '', ?texture:String = '', ?suffix:String = '') {
+		if(prefix == null) prefix = '';
+		if(texture == null) texture = '';
+		if(suffix == null) suffix = '';
+
+		var skin:String = texture;
+		if(texture.length < 1) {
+			skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/HURTNOTE_assets';
+			if(skin == null || skin.length < 1) {
+				skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/HURTNOTE_assets';
+			}
+		}
+
+		var animName:String = null;
+		if(animation.curAnim != null) {
+			animName = animation.curAnim.name;
+		}
+
+		var arraySkin:Array<String> = skin.split('/');
+		arraySkin[arraySkin.length-1] = prefix + arraySkin[arraySkin.length-1] + suffix;
+
+		var lastScaleY:Float = scale.y;
+		var blahblah:String = arraySkin.join('/');
+		if(PlayState.isPixelStage) {
+			if(isSustainNote) {
+				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'));
+				width = width / 4;
+				height = height / 2;
+				originalHeightForCalcs = height;
+				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'), true, Math.floor(width), Math.floor(height));
+			} else {
+				loadGraphic(Paths.image('pixelUI/' + blahblah));
+				width = width / 4;
+				height = height / 5;
+				loadGraphic(Paths.image('pixelUI/' + blahblah), true, Math.floor(width), Math.floor(height));
+			}
+			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+			loadPixelNoteAnims();
+			antialiasing = false;
+
+			if(isSustainNote) {
+				offsetX += lastNoteOffsetXForPixelAutoAdjusting;
+				lastNoteOffsetXForPixelAutoAdjusting = (width - 7) * (PlayState.daPixelZoom / 2);
+				offsetX -= lastNoteOffsetXForPixelAutoAdjusting;
+
+				/*if(animName != null && !animName.endsWith('end'))
+				{
+					lastScaleY /= lastNoteScaleToo;
+					lastNoteScaleToo = (6 / height);
+					lastScaleY *= lastNoteScaleToo;
+				}*/
+			}
+		} else {
+			frames = Paths.getSparrowAtlas(blahblah);
+			loadNoteAnims();
+			antialiasing = ClientPrefs.globalAntialiasing;
+		}
+		if(isSustainNote) {
+			scale.y = lastScaleY;
+		}
+		updateHitbox();
+
+		if(animName != null)
+			animation.play(animName, true);
+
+		if(inEditor) {
+			setGraphicSize(ChartingState.GRID_SIZE, ChartingState.GRID_SIZE);
+			updateHitbox();
+		}
+	}
+
 	function loadNoteAnims() {
 		animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0');
 
