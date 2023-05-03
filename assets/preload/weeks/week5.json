@@ -1,0 +1,35 @@
+{
+	"storyName": "edwhak and lady blood tentation",
+	"difficulties": "heavy, oni",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week4",
+	"startUnlocked": true,
+	"songs": [
+		[
+			"killer instinct",
+			"edwhakbroken",
+			[
+				0,
+				109,
+				0
+			]
+		],
+		[
+			"madame massacre",
+			"lady",
+			[
+				0,
+				109,
+				0
+			]
+		]
+	],
+	"hideStoryMode": false,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"weekName": "Week 5"
+}

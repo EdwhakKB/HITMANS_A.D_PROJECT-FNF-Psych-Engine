@@ -1,0 +1,59 @@
+{
+	"storyName": "robots massacre",
+	"difficulties": "heavy, oni",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week9",
+	"freeplayColor": [
+		146,
+		113,
+		253
+	],
+	"startUnlocked": true,
+	"hideStoryMode": false,
+	"songs": [
+		[
+			"Light Speed",
+			"johan",
+			[
+				0,
+				200,
+				255
+			]
+		],
+		[
+			"Hypernova",
+			"mia",
+			[
+				0,
+				200,
+				255
+			]
+		],
+		[
+			"exterminate",
+			"mary",
+			[
+				0,
+				200,
+				255
+			]
+		],
+		[
+			"c18h27no3",
+			"edwhakbroken",
+			[
+				0,
+				73,
+				0
+			]
+		]
+	],
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"hiddenUntilUnlocked": false,
+	"weekName": "week10"
+}

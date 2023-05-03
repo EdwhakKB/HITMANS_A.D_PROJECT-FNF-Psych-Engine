@@ -1,0 +1,26 @@
+{
+	"storyName": "chip visual challenge",
+	"difficulties": "standard, heavy",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week3",
+	"startUnlocked": true,
+	"songs": [
+		[
+			"censory overcharge",
+			"chip",
+			[
+				175,
+				175,
+				195
+			]
+		]
+	],
+	"hideStoryMode": false,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"weekName": "Week 4"
+}

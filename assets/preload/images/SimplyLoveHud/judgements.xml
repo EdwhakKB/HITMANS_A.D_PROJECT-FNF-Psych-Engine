@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="a.png"><SubTexture name="a Decent late0000" x="153" y="45" width="124" height="43" frameX="-14" frameY="-1" frameWidth="153" frameHeight="45" />
+<SubTexture name="Decent early0000" x="153" y="88" width="121" height="43" frameX="-22" frameY="-1" frameWidth="153" frameHeight="45" />
+<SubTexture name="Excellent late0000" x="0" y="0" width="153" height="45" frameX="0" frameY="0" frameWidth="153" frameHeight="45" />
+<SubTexture name="Excellent early0000" x="0" y="45" width="153" height="45" frameX="0" frameY="0" frameWidth="153" frameHeight="45" />
+<SubTexture name="Fantastic0000" x="81" y="135" width="142" height="38" frameX="-5" frameY="-3" frameWidth="153" frameHeight="45" />
+<SubTexture name="Great late0000" x="0" y="177" width="102" height="38" frameX="-20" frameY="-3" frameWidth="153" frameHeight="45" />
+<SubTexture name="Great early0000" x="102" y="177" width="99" height="38" frameX="-29" frameY="-3" frameWidth="153" frameHeight="45" />
+<SubTexture name="Miss0000" x="0" y="135" width="81" height="42" frameX="-36" frameY="-1" frameWidth="153" frameHeight="45" />
+<SubTexture name="Way off early0000" x="0" y="90" width="133" height="45" frameX="-14" frameY="0" frameWidth="153" frameHeight="45" />
+<SubTexture name="Way off late0000" x="153" y="0" width="133" height="45" frameX="-7" frameY="0" frameWidth="153" frameHeight="45" />
+</TextureAtlas>

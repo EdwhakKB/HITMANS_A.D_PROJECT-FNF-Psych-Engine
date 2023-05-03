@@ -1,0 +1,26 @@
+{
+	"storyName": "edwhak easy challege",
+	"difficulties": "light, standard",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "tutorial",
+	"startUnlocked": true,
+	"hideStoryMode": false,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"songs": [
+		[
+			"Fatal-error",
+			"edwhak",
+			[
+				0,
+				140,
+				0
+			]
+		]
+	],
+	"weekName": "Week 1"
+}

@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="LadyB_alert_Double.png">
+<SubTexture name="LadyB_alert_Double0000" x="0" y="0" width="986" height="634" frameX="-11" frameY="-29" frameWidth="1000" frameHeight="684" />
+<SubTexture name="LadyB_alert_Double0001" x="986" y="0" width="977" height="626" frameX="-14" frameY="-34" frameWidth="1000" frameHeight="684" />
+</TextureAtlas>

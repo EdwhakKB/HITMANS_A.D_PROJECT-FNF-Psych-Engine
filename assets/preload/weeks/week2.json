@@ -1,0 +1,26 @@
+{
+	"storyName": "johan reflex challenge",
+	"difficulties": "standard, heavy",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week1",
+	"startUnlocked": true,
+	"hideStoryMode": false,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"songs": [
+		[
+			"hallucination",
+			"johan",
+			[
+				215,
+				0,
+				0
+			]
+		]
+	],
+	"weekName": "Week 2"
+}

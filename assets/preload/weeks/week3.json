@@ -1,0 +1,26 @@
+{
+	"storyName": "mia control battle",
+	"difficulties": "standard, heavy",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week2",
+	"startUnlocked": true,
+	"songs": [
+		[
+			"duality",
+			"mia",
+			[
+				148,
+				22,
+				83
+			]
+		]
+	],
+	"hideStoryMode": false,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"weekName": "Week 3"
+}

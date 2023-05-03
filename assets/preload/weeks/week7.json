@@ -1,0 +1,35 @@
+{
+	"storyName": "Dr anby and mr medo hardcore battle",
+	"difficulties": "standard, heavy",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week6",
+	"startUnlocked": true,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"songs": [
+		[
+			"irreversible",
+			"heni",
+			[
+				140,
+				120,
+				151
+			]
+		],
+		[
+			"indomable",
+			"medy",
+			[
+				255,
+				0,
+				255
+			]
+		]
+	],
+	"hideStoryMode": false,
+	"weekName": "Week 7"
+}

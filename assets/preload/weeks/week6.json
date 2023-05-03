@@ -1,0 +1,40 @@
+{
+	"storyName": "objetive still alive starting extermination (inmortal and surreal)",
+	"difficulties": "standard, heavy",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week5",
+	"freeplayColor": [
+		146,
+		113,
+		253
+	],
+	"startUnlocked": true,
+	"songs": [
+		[
+			"fatality",
+			"demency",
+			[
+				20,
+				0,
+				0
+			]
+		],
+		[
+			"insanity",
+			"violette",
+			[
+				255,
+				113,
+				253
+			]
+		]
+	],
+	"hideStoryMode": false,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"weekName": "Week 6"
+}

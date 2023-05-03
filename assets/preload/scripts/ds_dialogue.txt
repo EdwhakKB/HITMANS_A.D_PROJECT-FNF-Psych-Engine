@@ -1,0 +1,215 @@
+--------------------------------------------------------------------------------
+-- DS Dialogue System for Psych Lua                            ©DragShot - v1.0
+--------------------------------------------------------------------------------
+-- Usage in any mods is allowed as long as this header is kept intact. Also,
+-- please give me credits somewhere.
+-- In order to make use of it, save this script inside 'mods/scripts/', then
+-- folow the instructions below.
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- The good stuff:
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- - New dialogue globes as easy to customize as replacing an image. You can add
+--   your own as well by creating a new image with the right name. Normal,
+--   shouting and thinking dialogue globes are included by default.
+-- - The dialogue can be skipped anytime by pressing [Esc] or [Backspace].
+-- - Support for animated gestures. The gesture animation is played once per
+--   letter typed.
+-- - Skins able to define their own images, text fonts and their positions on
+--   the screen.
+-- - Support for latin and other extended characters (as UTF-8).
+-- - An optional label for character names.
+-- - Support for custom typing sounds for each character. These are loaded
+--   automatically from 'mods/sounds/dialogue/<your_character>.ogg' if possible.
+-- - Voice-over lines can be declared for each dialogue. When this happens,
+--   the typing sounds are not used for that line, and instead the voice line is
+--   played.
+-- - Dialogues use text files with an easy to write format. A GUI editor may be
+--   included later tho.
+-- - Control commands (if/else), so you can have different dialogues according
+--   to a given codition.
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- Disadvantages
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- - Not compatible with Psych's json dialogues for now.
+-- - Not compatible with Psych's portraits for now. Portraits are instead read
+--   directly from 'mods/images/dialogue', and their animations are expected to
+--   be of a specific size for each skin (480x480px for the default one) and
+--   looking to the right in order to be aligned correctly. You can however use
+--   texture atlas offsets to realign frames of different sizes.
+-- - Psych Engine builds with no support for the `io` package may limit the
+--   functionality of the script, mainly the bits handling custom audio (type
+--   sounds and voiceovers).
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- Instructions
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- To start a dialogue, call the following event from your Psych script, instead
+-- of the usual `startDialogue()` function:
+-- 
+--   triggerEvent('startDialogue', dialogueName, bgMusic);
+-- 
+-- You may also preload a dialogue in order to avoid lag when you call it later:
+--
+--   triggerEvent('loadDialogue', dialogueName);
+-- 
+-- Dialogue files will be loaded from your song's data folder.
+--
+-- You can also listen for events whose name start with 'dialogue.'. These
+-- events will report progress as the player advances through the steps of the
+-- dialogue, or let you know if they skipped it.
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- Writing Dialogues
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- Dialogues for this system are contained in text files, where each line has
+-- one of the following commands:
+-- 
+-- 1. Dialogue: Shows a character saying something on screen. The line looks
+--    like this:
+--
+--      @dialogue pos="R" portrait="bf" nameTag="Boyfriend.xml" text="Beep!" dbox="shout" speed="0.05" voclip="test/bf_beep"
+--
+--      -> 'pos' can be either "L" or "R", depending on where the portrait
+--         should appear on the screen.
+--      -> 'portrait' is the name of the image atlas inside 'mods/images/
+--         dialogue' to use for the portrait. You can include a specific
+--         expression as well with a semicolon. For instance, "bf:happy"
+--         will play the animation 'happy' from the atlas 'mods/images/
+--         dialogue/bf.xml'. The animation 'default' is played by default.
+--      -> 'nameTag' has a name to display below the character's portrait.
+--         It usually is expected to be their name.
+--      -> 'text' is what the character has to say.
+--      -> 'dbox' is the image to use for the dialogue globe. The default
+--         "normal" value points to 'mods/images/ds/dialogue/dbox_normal.png'.
+--      -> 'speed' has the time interval between letters. The closer this value
+--         is to zero, the higher the typing speed will be.
+--      -> 'voclip' has the location of a sound file inside 'mods/sounds/' for
+--         usage as a voice-over clip.
+--
+--    You may omit the properties 'nameTag', 'dbox', 'speed' and 'voclip' if
+--    you don't need them, so the following works:
+--
+--      @dialogue pos="R" portrait="bf" text="Beep!"
+--
+-- 2. Play Sound: Allows you to play a sound between dialogues.
+--
+--      @playSound src="cancelMenu" tag="cancelSfx" vol="1.0"
+--
+--      -> 'src' has the location of the sound inside 'mods/sounds'. The sound
+--         is expected to be an .ogg file.
+--      -> 'tag' is a name for this given sound, which you can use to replace
+--         or stop it at any time. Can be ommited.
+--      -> 'vol' is the playback volume (0.0 to 1.0). Can be ommited.
+--
+-- 3. Stop Sound: Allows you to stop a sound that had previously started to play.
+--
+--      @stopSound tag="cancelSfx"
+--
+--      -> 'tag' is the name given to the sound you want to stop.
+--
+-- 4. Trigger Event: It triggers any event you want via `triggerEvent()`.
+--
+--      @event "Custom Event" "value1" "value2"
+--
+--    The parameters expected are the event name and its two values.
+--
+-- 5. Wait: It stops the dialogue for a moment. You can use this time to let a
+--    sound play or something.
+--
+--      @wait time="1s"
+--
+--      -> 'time' defines how long the pause will last. It can be specified in
+--         seconds (s) or milliseconds (ms).
+--
+-- 6. Background change: It lets you change the background of the dialogue to
+--    something else, like an image or a solid color. You can also pick between
+--    a bunch of predefined transition effects, this can be particularly useful
+--    for changing scenarios, fullscreen slides or comic-like cutscenes.
+--
+--      @bgChange src="path/to/file" pos="0,0" scale="1.0,1.0" transition="colorfade" time="2s" focused="true" color="000000"
+--
+--      -> 'src' has the location of the image inside 'mods/images'. The image
+--         is expected to be a .png file.
+--      -> 'pos' has the X and Y position coordinates relative to the canvas,
+--         separated by commas.
+--      -> 'scale' has the X and Y scaling proportions for the background
+--         sprite, separated by commas.
+--      -> 'color' has an RGB color encoded as a hex. You can set this value
+--         instead of 'src', 'pos' and 'scale' in order to use a background of
+--         a solid color covering the entire screen, not an image.
+--      -> 'transition' defines the effect to apply when changing from the
+--         previous background to this one. You can pick between:
+--         - 'crossfade': Does a progressive blend between the two backgrounds.
+--           Set 'time' to asign a duration for it.
+--         - 'colorfade': Fades the previous background to a given color first,
+--           then fades that to the new background. The color will be picked up
+--           from the property 'color'. Set 'time' to asign a duration for it.
+--         - 'shake': Cuts to the next background image/color and shakes the
+--           screen for as long as defined by the property 'time'. You may set
+--           'intensity' to control how much the screen will shake. You may set
+--           'flash' with an RGB color for the screen to briefly flash in it as
+--           it begins to shake.
+--         - 'none': Cuts to the next background image/color immediately.
+--      -> 'focused' can be set to "true" for the dialogue panels to be
+--         temporarily hidden while the transition, if any, takes effect.
+--
+-- 7. Background move: It lets you move the existing background around the
+--    screen. It works best with image backgrouds.
+--
+--      @bgMove pos="-400,-400" scale="1.05,1.05" time="4s" ease="sinOut" focused="false"
+--
+--      -> 'pos' and 'scale' work the same way as in @bgChange. They are to be
+--         considered effective when the movement animation ends.
+--      -> 'time' defines the time the movement will take to complete.
+--      -> 'ease' defines the easing animation to follow during the movement.
+--         Any value accepted by Psych is valid here.
+--      -> 'focused' can be set to "true" for the dialogue panels to be
+--         temporarily hidden while the animation takes effect.
+--
+-- 8. End Dialogue: Ends the dialogue at the given position, ignoring everything
+--    that comes after. The line looks like this:
+--
+--      @endDialogue "Bad Ending"
+--
+--    It accepts only one value, a label used in the event this script will
+--    emit signaling the end of the dialogue as result of this command.
+--
+-- 9. Control-IF: It lets you have branches with different dialogues according
+--    to a given condition. All you need to do is include a Lua expression that
+--    will be evaluated at load time. Here's an example:
+--
+--      #if "songName == 'Chad Song'"
+--      	@dialogue pos="R" portrait="bf" text="Beep!"
+--      #else if "songName == 'GigaChad Song'"
+--      	@dialogue pos="R" portrait="bf" text="Woah! So pro!" dbox="think"
+--      #else
+--      	@dialogue pos="R" portrait="bf" text="Ha ha! Loser!" dbox="shout"
+--          @endDialogue "Bad Ending"
+--      #end
+--      @dialogue pos="R" portrait="bf:happy" text="Coolswag!"
+--
+-- You can include double quotes (") in your values by typing \", and linesplits
+-- by typing \n like this:
+--
+--   text="Here is a \"line\" of text.\nAnd here is another!"
+--
+-- NOTE: It is important to use manual linesplits in your dialogues because
+-- there is no way for this script to figure out the spacing at the moment.
+--
+-- At the moment you can only write these by hand, but a GUI-based editor may be
+-- created later if enough people show interest in having one.
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- Multi-language Support
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+-- This script can load different dialogue files based on language. For this,
+-- your build of Psych Engine needs a Lua callback called `getLangCode()` that
+-- returns a short language code (like those used in a browser), corresponding
+-- to the language chosen by the player. When this is available, the returned
+-- code will be prepended to the file extension like this:
+-- 
+-- -> For 'my-dialogue' and language code 'es', the file to load will be:
+--    'mods/data/my-song/my-dialogue.es.txt'
+--    If the file doesn't exist, the file to load as fallback will be:
+--    'mods/data/my-song/my-dialogue.txt'
+--
+-- There is a dummy function included in this script that will return the
+-- default code 'en', for English.
+--------------------------------------------------------------------------------

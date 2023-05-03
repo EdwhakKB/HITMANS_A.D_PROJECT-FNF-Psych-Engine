@@ -1,0 +1,41 @@
+{
+	"storyName": "creation and creator",
+	"difficulties": "heavy, oni",
+	"hideFreeplay": true,
+	"weekBackground": "stage",
+	"weekBefore": "week7",
+	"freeplayColor": [
+		146,
+		113,
+		253
+	],
+	"startUnlocked": true,
+	"hideStoryMode": false,
+	"songs": [
+		[
+			"Annihilate",
+			"edwhakbroken",
+			[
+				0,
+				115,
+				0
+			]
+		],
+		[
+			"IceBeat",
+			"heni",
+			[
+				60,
+				0,
+				0
+			]
+		]
+	],
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"hiddenUntilUnlocked": false,
+	"weekName": "week8"
+}

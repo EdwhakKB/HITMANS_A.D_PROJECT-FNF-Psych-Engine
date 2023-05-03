@@ -1,0 +1,26 @@
+{
+	"storyName": "welcome to hitmans corp!",
+	"difficulties": "begginer",
+	"hideFreeplay": false,
+	"weekBackground": "stage",
+	"weekBefore": "tutorial",
+	"startUnlocked": true,
+	"hideStoryMode": false,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"songs": [
+		[
+			"Operating",
+			"andrea",
+			[
+				100,
+				0,
+				120
+			]
+		]
+	],
+	"weekName": "Tutorial"
+}
