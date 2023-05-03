@@ -201,7 +201,7 @@ class Note extends FlxSprite
 			switch(value) {
 				case 'Hurt Note':
 					ignoreNote = mustPress;
-					reloadNote('HURT');
+					reloadHurtNote('HURT');
 					noteSplashTexture = 'HURTnoteSplashes';
 					copyAlpha=false;
 					alpha=0.55; //not fully invisible but yeah
@@ -615,9 +615,9 @@ class Note extends FlxSprite
 
 		var skin:String = texture;
 		if(texture.length < 1) {
-			skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/HURTNOTE_assets';
+			skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/NOTE_assets';
 			if(skin == null || skin.length < 1) {
-				skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/HURTNOTE_assets';
+				skin = 'Skins/Hurts/'+ClientPrefs.noteSkin+'/NOTE_assets';
 			}
 		}
 
