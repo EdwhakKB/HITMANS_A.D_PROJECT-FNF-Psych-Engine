@@ -2845,7 +2845,14 @@ class PlayState extends MusicBeatState
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
-		FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+		if(Paths.formatToSongPath(SONG.song) == 'System-Reloaded' || Paths.formatToSongPath(SONG.song) == 'MetaKill' && storyDifficulty==1){
+			trace("USING OLD INST");
+			FlxG.sound.playMusic(Paths.instClassic(PlayState.SONG.song), 1, false);
+		}else{
+			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+		}
+
+		//FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		FlxG.sound.music.pitch = playbackRate;
 		FlxG.sound.music.onComplete = finishSong.bind();
 		vocals.play();
@@ -2940,13 +2947,27 @@ class PlayState extends MusicBeatState
 		curSong = songData.song;
 
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			if(Paths.formatToSongPath(SONG.song) == 'System-Reloaded' || Paths.formatToSongPath(SONG.song) == 'MetaKill' && storyDifficulty==1){
+				vocals = new FlxSound().loadEmbedded(Paths.voicesClassic(PlayState.SONG.song));
+			}else{
+				vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			}
 		else
 			vocals = new FlxSound();
 
 		vocals.pitch = playbackRate;
 		FlxG.sound.list.add(vocals);
-		FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
+
+		//THE FUCK!? WHY DOUBLE WHAT-
+
+		if(Paths.formatToSongPath(SONG.song) == 'System-Reloaded' || Paths.formatToSongPath(SONG.song) == 'MetaKill' && storyDifficulty==1){
+			trace("USING OLD INST");
+			FlxG.sound.playMusic(Paths.instClassic(PlayState.SONG.song), 1, false);
+		}else{
+			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+		}
+		
+		//FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);

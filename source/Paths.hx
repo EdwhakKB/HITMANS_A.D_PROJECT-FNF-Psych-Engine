@@ -232,6 +232,20 @@ class Paths
 		return inst;
 	}
 
+	inline static public function voicesClassic(song:String):Any
+		{
+			var songKey:String = '${formatToSongPath(song)}/VoicesClassic';
+			var voices = returnSound('songs', songKey);
+			return voices;
+		}
+	
+		inline static public function instClassic(song:String):Any
+		{
+			var songKey:String = '${formatToSongPath(song)}/InstClassic';
+			var inst = returnSound('songs', songKey);
+			return inst;
+		}
+
 	inline static public function image(key:String, ?library:String):FlxGraphic
 	{
 		// streamlined the assets process more
