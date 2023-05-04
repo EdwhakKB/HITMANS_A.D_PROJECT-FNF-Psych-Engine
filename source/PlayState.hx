@@ -2845,7 +2845,7 @@ class PlayState extends MusicBeatState
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
-		if(Paths.formatToSongPath(SONG.song) == 'System-Reloaded' && storyDifficulty==2){
+		if(Paths.formatToSongPath(SONG.song) == 'system-reloaded' && storyDifficulty==2){
 			trace("USING OLD INST");
 			FlxG.sound.playMusic(Paths.instClassic(PlayState.SONG.song), 1, false);
 		}else{
@@ -2947,7 +2947,7 @@ class PlayState extends MusicBeatState
 		curSong = songData.song;
 
 		if (SONG.needsVoices)
-			if(Paths.formatToSongPath(SONG.song) == 'System-Reloaded' && storyDifficulty==2){
+			if(Paths.formatToSongPath(SONG.song) == 'system-reloaded' && storyDifficulty==2){
 				vocals = new FlxSound().loadEmbedded(Paths.voicesClassic(PlayState.SONG.song));
 			}else{
 				vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
@@ -2960,7 +2960,7 @@ class PlayState extends MusicBeatState
 
 		//THE FUCK!? WHY DOUBLE WHAT-
 
-		if(Paths.formatToSongPath(SONG.song) == 'System-Reloaded' && storyDifficulty==2){
+		if(Paths.formatToSongPath(SONG.song) == 'system-reloaded' && storyDifficulty==2){
 			trace("USING OLD INST");
 			FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.instClassic(PlayState.SONG.song)));
 		}else{
