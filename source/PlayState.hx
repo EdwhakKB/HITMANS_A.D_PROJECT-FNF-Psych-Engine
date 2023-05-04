@@ -2962,9 +2962,9 @@ class PlayState extends MusicBeatState
 
 		if(Paths.formatToSongPath(SONG.song) == 'System-Reloaded' && storyDifficulty==2){
 			trace("USING OLD INST");
-			FlxG.sound.list.(new FlxSound().loadEmbedded(Paths.instClassic(PlayState.SONG.song)));
+			FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.instClassic(PlayState.SONG.song)));
 		}else{
-			FlxG.sound.list.(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
+			FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
 		}
 		
 		//FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
