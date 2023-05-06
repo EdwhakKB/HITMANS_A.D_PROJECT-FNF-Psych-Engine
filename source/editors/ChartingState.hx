@@ -101,7 +101,8 @@ class ChartingState extends MusicBeatState
 		['Change Character', "Value 1: Character to change (Dad, BF, GF)\nValue 2: New character's name"],
 		['Change Scroll Speed', "Value 1: Scroll Speed Multiplier (1 is default)\nValue 2: Time it takes to change fully in seconds."],
 		['Set Property', "Value 1: Variable name\nValue 2: New value"],
-		['ModchartEffects', "Value 1: Modchart variable\n0 = no effects\n1 = side to side movement\n2 = left to right screen angle\n4 = left to right simple move\n7 = copy note spin shit from qt mod (secret shit for her song lmao)\n8 = disable cam rotate effects lol"],
+		['ModchartEffects', "Value 1: Modchart variable\n0 = no effects\n1 = side to side movement\n2 = camera angle rotate\n3 = left to right simple move\n4 = copy note spin shit from qt mod (secret shit for her song lmao)\n8 = disable cam rotate effects lol"],
+		['AllowHealthDrain', "Value 1: \ntrue to enable\nfalse to disable\nONLY WORKS FOR NON EDWHAK SONGS! (since Ed drains auto lmao)"],
 		['Controls Player 2', "Value1: if enable Enables Player 2 shits lmao\ndisable to disable"]
 	];
 

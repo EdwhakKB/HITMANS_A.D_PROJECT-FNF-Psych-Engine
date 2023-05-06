@@ -168,6 +168,7 @@ class PlayState extends MusicBeatState
 	var forceMiddleScroll:Bool = true; //yeah
 	var edwhakDrain:Float = 0.03;
 	var edwhakIsEnemy:Bool = false;
+	public var allowEnemyDrain:Bool = false;
 	public var controlsPlayer2:Bool = false; //mega stupid shit that enables double play lmao, this is disabled in edwhak songs, in 2 ways(song name and dadname so you can't do shit) -Ed
 	var noteSpeen:Int = 0; //Used for interlope
 	var modChartEffectWave:Int = 0; //simple Drunk Y and X shit, use 1 to only Y use 2 to X and Y use 0 to disable
@@ -4652,6 +4653,12 @@ class PlayState extends MusicBeatState
 				var value:Int = Std.parseInt(value2);
 				if(Math.isNaN(value)) value = 0;
 				modChartVariable1 = value;
+			case 'AllowHealthDrain':
+				if (value1 == 'true'){
+					allowEnemyDrain = true;
+				}else if (value1 == 'false'){
+					allowEnemyDrain = false;	
+				}
 			case 'Controls Player 2':
 				if (value1 == 'enable'){
 					controlsPlayer2 = true;
@@ -5622,7 +5629,7 @@ class PlayState extends MusicBeatState
 							if(note.isSustainNote){
 								health -= edwhakDrain+0.02 * healthGain; //Way more drain than normal since these notes are Ed GF ones that help him gain life!			
 							}else if (!note.isSustainNote){
-								health -= edwhakDrain+0.02; //Same as up
+								health -= edwhakDrain+0.02 * healthGain; //Same as up
 							}
 						}else{
 							if(note.isSustainNote){
@@ -5632,6 +5639,32 @@ class PlayState extends MusicBeatState
 							}
 						}
 					}
+			}
+		}else{
+			if (allowEnemyDrain){
+				if (!ClientPrefs.casualMode){
+					if(health - note.hitHealth - 0.17 > maxHealth){
+						//Health drain
+						if (!Note.instakill){
+							if(note.isSustainNote){
+								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao			
+							}else if (!note.isSustainNote){
+								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao
+							}
+						}
+					}
+				}else if(ClientPrefs.casualMode){
+					if(health - note.hitHealth - 0.17 > maxHealth){
+						//Health drain
+						if (!Note.instakill){
+							if(note.isSustainNote){
+								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao			
+							}else if (!note.isSustainNote){
+								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao
+							}
+						}
+					}
+				}
 			}
 		}		
 		if(note.noteType == 'Hey!' && dad.animOffsets.exists('hey')) {
