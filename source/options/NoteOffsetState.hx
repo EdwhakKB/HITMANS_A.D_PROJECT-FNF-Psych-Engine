@@ -73,7 +73,7 @@ class NoteOffsetState extends MusicBeatState
 
 		var extrabg:BGSprite = new BGSprite('menuDesat', 0, 0, 0, 0);
 		extrabg.screenCenter();
-		extrabg.alpha = 0.5;
+		extrabg.alpha = 0.1;
 		add(extrabg);
 
 		if(!ClientPrefs.lowQuality) {

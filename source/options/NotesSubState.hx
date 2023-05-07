@@ -27,6 +27,22 @@ import Controls;
 
 using StringTools;
 
+class NoteSkinSelector extends BaseOptionsMenu
+{
+	public function new()
+	{
+		var option:Option = new Option('Note Skin:',
+		"What Skin You want to use??.",
+		'noteSkin',
+		'string',
+		'HITMANS',
+		['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROOVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR']);
+		addOption(option);
+
+		super();
+	}
+}
+
 class NotesSubState extends MusicBeatSubstate
 {
 	private static var curSelected:Int = 0;
@@ -53,6 +69,7 @@ class NotesSubState extends MusicBeatSubstate
 		blackBG = new FlxSprite(posX - 25).makeGraphic(870, 200, FlxColor.BLACK);
 		blackBG.alpha = 0.4;
 		add(blackBG);
+
 		var staticBG:FlxSprite;
 		staticBG = new FlxSprite();
 		staticBG.frames = Paths.getSparrowAtlas('menuPause');
@@ -93,7 +110,7 @@ class NotesSubState extends MusicBeatSubstate
 			shaderArray.push(newShader);
 		}
 
-		hsbText = new Alphabet(posX + 560, 0, "Hue    Saturation  Brightness", false);
+		hsbText = new Alphabet(posX + 560, 0, "Hue  Saturation  Brightness", false);
 		hsbText.scaleX = 0.6;
 		hsbText.scaleY = 0.6;
 		add(hsbText);
