@@ -587,8 +587,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
                             daNote.mesh.vertices.push(nextNotePos.x+(daNote.frameWidth*(1/-nextNotePos.z)*nextNotePos.scaleX));
                             daNote.mesh.vertices.push(nextNotePos.y+yOffset);
                         }
-                        daNote.mesh.cameras = this.cameras;
-                        daNote.mesh.draw();
+                        notes.members[noteData.index].mesh.cameras = this.cameras;
+                        notes.members[noteData.index].mesh.draw();
                     }
                 }
             else if (!notes.members[noteData.index].isSustainNote) //draw regular note
