@@ -1,0 +1,6 @@
+@dialogue pos="R" portrait="bf" text="Cmon! babe be faster!"
+@dialogue pos="R" portrait="bf" text="Wait! one thing before we go"
+@dialogue pos="R" portrait="bf" text="What it is?"
+@dialogue pos="R" portrait="bf" text="*Smooch*"
+@dialogue pos="R" portrait="bf" text="O-Oh"
+@endDialogue "Ending"

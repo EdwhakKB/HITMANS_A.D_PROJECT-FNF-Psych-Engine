@@ -1,0 +1,42 @@
+{
+	"modifiers": [
+		[
+			"FreezeNotes",
+			"timeStop",
+			"Player",
+			-1,
+			-1
+		]
+	],
+	"playfields": 1,
+	"events": [
+		[
+			"ease",
+			[
+				384,
+				1,
+				"cubeInOut",
+				"1,FreezeNotes"
+			],
+			[
+				false,
+				1,
+				1
+			]
+		],
+		[
+			"ease",
+			[
+				448,
+				1,
+				"cubeInOut",
+				"0,FreezeNotes"
+			],
+			[
+				false,
+				1,
+				1
+			]
+		]
+	]
+}
