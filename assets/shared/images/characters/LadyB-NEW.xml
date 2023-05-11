@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="LadyB-NEW.png">
+	<!-- Created with Adobe Animate version 22.0.8.217 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="LadyBIdle0000" x="10" y="10" width="280" height="791" frameX="0" frameY="-4" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0001" x="300" y="10" width="280" height="792" frameX="0" frameY="-3" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0002" x="590" y="10" width="280" height="791" frameX="0" frameY="-4" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0003" x="880" y="10" width="280" height="792" frameX="0" frameY="-3" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0004" x="1170" y="10" width="280" height="792" frameX="0" frameY="-3" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0005" x="1460" y="10" width="280" height="793" frameX="0" frameY="-2" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0006" x="1750" y="10" width="280" height="793" frameX="0" frameY="-2" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0007" x="10" y="813" width="280" height="794" frameX="0" frameY="-1" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0008" x="300" y="813" width="280" height="794" frameX="0" frameY="-1" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0009" x="590" y="813" width="280" height="795"/>
+	<SubTexture name="LadyBIdle0010" x="880" y="813" width="280" height="793" frameX="0" frameY="-2" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0011" x="880" y="813" width="280" height="793" frameX="0" frameY="-2" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0012" x="880" y="813" width="280" height="793" frameX="0" frameY="-2" frameWidth="280" frameHeight="795"/>
+	<SubTexture name="LadyBIdle0013" x="880" y="813" width="280" height="793" frameX="0" frameY="-2" frameWidth="280" frameHeight="795"/>
+</TextureAtlas>
