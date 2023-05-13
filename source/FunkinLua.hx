@@ -21,6 +21,7 @@ import flixel.system.FlxSound;
 import flixel.util.FlxTimer;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
+import FlxTransWindow;
 import flixel.util.FlxColor;
 import flixel.FlxBasic;
 import flixel.FlxObject;
@@ -750,6 +751,63 @@ class FunkinLua {
 			}
 			Lua.pushnil(lua);
 		});*/
+		Lua_helper.add_callback(lua, 'addWindowTransparency', function(value:Dynamic)){
+        	#if windows
+			if (value == true){
+				var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(24, 24, 24));
+				bg.cameras = [Playstate.instance.camGame]
+			if (Playstate.instance.defaultCamZoom < 1)
+				{
+  					bg.scale.scale(1 / Playstate.instance.defaultCamZoom);
+				}
+				bg.scrollFactor.set();
+				getInstance().add(bg);
+			}
+
+			FlxTransWindow.getWindowsTransparent();
+			#else
+			luaTrace("WindowsModifiers: Transparency, can't add transparency since device its not supported!", false, false, FlxColor.RED);
+			#end
+			return false;
+		}
+		#if desktop
+		Lua_helper.add_callback(lua, 'setWindowModifier', function(modifier:Dynamic, value:String)){
+			//this is kinda hard but cmon if it does what i want, come here code! -Ed
+			var haveModifier:Bool = false;
+			if (modifier == 'Xmodifier' | 'xmodifier' | 'X' | 'x'){
+				modifier = 'x';
+				haveModifier = true;
+			}else if{(modifier == 'Ymodifier' | 'ymodifier' | 'Y' | 'y'){
+				modifier = 'y';
+				haveModifier = true;
+			}else{
+				haveModifier = false;
+				luaTrace("WindowsModifiers: nonExistent modifier name", false, false, FlxColor.WHITE);
+			}
+			if (haveModifier == true){
+				Lib.application.window.+modifier = value;
+			}
+		}
+		#end
+		#if desktop
+		Lua_helper.add_callback(lua, 'easeWindowModifier', function(modifier:Dynamic, value:String, duration:String, ease:String)){
+			//this is kinda hard but cmon if it does what i want, come here code! -Ed
+			var haveModifier:Bool = false;
+			if (modifier == 'Xmodifier' | 'xmodifier' | 'X' | 'x'){
+				modifier = 'x';
+				haveModifier = true;
+			}else if{(modifier == 'Ymodifier' | 'ymodifier' | 'Y' | 'y'){
+				modifier = 'y';
+				haveModifier = true;
+			}else{
+				haveModifier = false;
+				luaTrace("WindowsModifiers: nonExistent modifier name", false, false, FlxColor.WHITE);
+			}
+			if (haveModifier == true){
+				FlxTween.tween(Lib.application.window, {modifier: value}, duration, {ease: getFlxEaseByString(ease)});
+			}
+		}
+		#end
 		Lua_helper.add_callback(lua, "isRunning", function(luaFile:String){
 			var cervix = luaFile + ".lua";
 			if(luaFile.endsWith(".lua"))cervix=luaFile;
