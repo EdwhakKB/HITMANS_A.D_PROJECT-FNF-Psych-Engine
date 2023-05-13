@@ -751,62 +751,57 @@ class FunkinLua {
 			}
 			Lua.pushnil(lua);
 		});*/
-		Lua_helper.add_callback(lua, 'addWindowTransparency', function(value:Dynamic)){
-        	#if windows
+		Lua_helper.add_callback(lua, 'addWindowTransparency', function(value:Dynamic){
+        	#if desktop
+			var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(24, 24, 24));
+			bg.cameras = [PlayState.instance.camGame];
+			{
+				bg.scale.scale(1 / PlayState.instance.defaultCamZoom);
+		  	}
+		  	bg.scrollFactor.set();
 			if (value == true){
-				var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(24, 24, 24));
-				bg.cameras = [Playstate.instance.camGame]
-			if (Playstate.instance.defaultCamZoom < 1)
-				{
-  					bg.scale.scale(1 / Playstate.instance.defaultCamZoom);
-				}
-				bg.scrollFactor.set();
 				getInstance().add(bg);
+				FlxTransWindow.getWindowsTransparent();
+			}else{
+				getInstance().remove(bg);
+				FlxTransWindow.getWindowsbackward();
 			}
-
-			FlxTransWindow.getWindowsTransparent();
 			#else
 			luaTrace("WindowsModifiers: Transparency, can't add transparency since device its not supported!", false, false, FlxColor.RED);
 			#end
 			return false;
-		}
+		});
 		#if desktop
-		Lua_helper.add_callback(lua, 'setWindowModifier', function(modifier:Dynamic, value:String)){
+		Lua_helper.add_callback(lua, 'setWindowModifier', function(modifier:Dynamic, value:Int){
 			//this is kinda hard but cmon if it does what i want, come here code! -Ed
-			var haveModifier:Bool = false;
-			if (modifier == 'Xmodifier' | 'xmodifier' | 'X' | 'x'){
-				modifier = 'x';
-				haveModifier = true;
-			}else if{(modifier == 'Ymodifier' | 'ymodifier' | 'Y' | 'y'){
-				modifier = 'y';
-				haveModifier = true;
-			}else{
-				haveModifier = false;
-				luaTrace("WindowsModifiers: nonExistent modifier name", false, false, FlxColor.WHITE);
+			switch(modifier)
+			{
+				case 'Xmodifier' | 'xmodifier' | 'X' | 'x':
+					Lib.application.window.x = value;
+				case 'Ymodifier' | 'ymodifier' | 'Y' | 'y':
+					Lib.application.window.y = value;
+				default:
+					Lib.application.window.x = 0;
+					Lib.application.window.y = 0;
+					luaTrace("WindowsModifiers: nonExistent modifier name", false, false, FlxColor.WHITE);
 			}
-			if (haveModifier == true){
-				Lib.application.window.+modifier = value;
-			}
-		}
+		});
 		#end
 		#if desktop
-		Lua_helper.add_callback(lua, 'easeWindowModifier', function(modifier:Dynamic, value:String, duration:String, ease:String)){
+		Lua_helper.add_callback(lua, 'easeWindowModifier', function(modifier:Dynamic, value:Int, duration:Int, ease:String){
 			//this is kinda hard but cmon if it does what i want, come here code! -Ed
-			var haveModifier:Bool = false;
-			if (modifier == 'Xmodifier' | 'xmodifier' | 'X' | 'x'){
-				modifier = 'x';
-				haveModifier = true;
-			}else if{(modifier == 'Ymodifier' | 'ymodifier' | 'Y' | 'y'){
-				modifier = 'y';
-				haveModifier = true;
-			}else{
-				haveModifier = false;
-				luaTrace("WindowsModifiers: nonExistent modifier name", false, false, FlxColor.WHITE);
+			switch(modifier)
+			{
+				case 'Xmodifier' | 'xmodifier' | 'X' | 'x':
+					FlxTween.tween(Lib.application.window, {x: value}, duration, {ease: getFlxEaseByString(ease)});
+				case 'Ymodifier' | 'ymodifier' | 'Y' | 'y':
+					FlxTween.tween(Lib.application.window, {y: value}, duration, {ease: getFlxEaseByString(ease)});
+				default:
+					FlxTween.tween(Lib.application.window, {x: 0}, 1, {ease:FlxEase.sineInOut});
+					FlxTween.tween(Lib.application.window, {y: 0}, 1, {ease:FlxEase.sineInOut});
+					luaTrace("WindowsModifiers: nonExistent modifier name", false, false, FlxColor.WHITE);
 			}
-			if (haveModifier == true){
-				FlxTween.tween(Lib.application.window, {modifier: value}, duration, {ease: getFlxEaseByString(ease)});
-			}
-		}
+		});
 		#end
 		Lua_helper.add_callback(lua, "isRunning", function(luaFile:String){
 			var cervix = luaFile + ".lua";
