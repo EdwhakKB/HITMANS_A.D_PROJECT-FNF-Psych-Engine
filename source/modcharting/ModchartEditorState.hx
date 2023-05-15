@@ -209,7 +209,7 @@ class ModchartEditorState extends MusicBeatState
         BounceXModifier, BounceYModifier, BounceZModifier, 
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
         InvertSineModifier, BoostModifier, BrakeModifier, JumpModifier, WaveXModifier, WaveYModifier,
-        WaveZModifier, TimeStopModifier
+        WaveZModifier, TimeStopModifier, StrumAngleModifier
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -852,7 +852,7 @@ class ModchartEditorState extends MusicBeatState
                 event[EVENT_DATA][EVENT_EASE] = highlightedEvent[EVENT_DATA][EVENT_EASE];
                 event[EVENT_DATA][EVENT_EASEDATA] = highlightedEvent[EVENT_DATA][EVENT_EASEDATA];
             }
-            else 
+            else if (event[EVENT_TYPE] == 'set')
             {
                 event[EVENT_DATA][EVENT_SETDATA] = highlightedEvent[EVENT_TYPE][EVENT_SETDATA];
             }

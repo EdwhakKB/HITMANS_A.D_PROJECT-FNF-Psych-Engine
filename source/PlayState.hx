@@ -280,6 +280,8 @@ class PlayState extends MusicBeatState
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
+	public var playerNotesCam:FlxCamera;
+	public var enemyNotesCam:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var camRate:FlxCamera;
@@ -521,9 +523,13 @@ class PlayState extends MusicBeatState
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
+		playerNotesCam = new FlxCamera();
+		enemyNotesCam = new FlxCamera();
 		camOther = new FlxCamera();
 		camRate = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
+		playerNotesCam.bgColor.alpha = 0;
+		enemyNotesCam.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
 		camRate.bgColor.alpha = 0;
 		noteCameras0 = new FlxCamera();
@@ -598,6 +604,8 @@ class PlayState extends MusicBeatState
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD, false);
+		FlxG.cameras.add(playerNotesCam, false);
+		FlxG.cameras.add(enemyNotesCam, false);
 
 		FlxG.cameras.add(noteCameras0, false);
 		FlxG.cameras.add(noteCameras1, false);
@@ -1426,6 +1434,9 @@ class PlayState extends MusicBeatState
 
 		opponentStrums = new FlxTypedGroup<StrumNote>();
 		playerStrums = new FlxTypedGroup<StrumNote>();
+
+		opponentStrums.cameras = [enemyNotesCam];
+		playerStrums.cameras = [playerNotesCam];
 
 		// startCountdown();
 
