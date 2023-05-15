@@ -980,7 +980,7 @@ class StrumAngleModifier extends Modifier
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
-        noteData.angle += (subValues.get('y').value);
+        // noteData.angle += (subValues.get('y').value/2);
         noteMath(noteData, lane, 0, pf);
     }
     override function incomingAngleMath(lane:Int, curPos:Float, pf:Int)
