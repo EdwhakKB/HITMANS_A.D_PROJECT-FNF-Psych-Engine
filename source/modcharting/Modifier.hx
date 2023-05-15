@@ -899,7 +899,7 @@ class WaveZModifier extends Modifier
     }
 }
 
-class TimeStopModifier extends Modifier 
+class TimeStopModifier extends Modifier
 {
     override function curPosMath(lane:Int, curPos:Float, pf:Int)
         {
@@ -915,19 +915,19 @@ class TimeStopModifier extends Modifier
         if (curPos <= -1250)
         {
             curPos = -1250 + (curPos*0.02);
-            notes.members[noteData.index].colorSwap.saturation = -0.95;
-            notes.members[noteData.index].colorSwap.brightness = -0.2;
+            // notes.members[noteData.index].colorSwap.saturation = -0.95;
+            // notes.members[noteData.index].colorSwap.brightness = -0.2;
         } 
         else if (curPos <= -700)
         {
             var a = (700-Math.abs(curPos))/(700-1250); //lerp out the desat
-            notes.members[noteData.index].colorSwap.saturation = -0.95*a;
-            notes.members[noteData.index].colorSwap.brightness = -0.2*a;
+            // notes.members[noteData.index].colorSwap.saturation = -0.95*a;
+            // notes.members[noteData.index].colorSwap.brightness = -0.2*a;
         }
         else 
         {
-            notes.members[noteData.index].colorSwap.saturation = 0;
-            notes.members[noteData.index].colorSwap.brightness = 0;
+            // notes.members[noteData.index].colorSwap.saturation = 0;
+            // notes.members[noteData.index].colorSwap.brightness = 0;
         }
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
@@ -991,5 +991,39 @@ class StrumAngleModifier extends Modifier
     {
         super.reset();
         currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
+    }
+}
+
+class JumpTargetModifier extends Modifier
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        var beatVal = Modifier.beat - Math.floor(Modifier.beat); //should give decimal
+
+        var scrollSwitch = 1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                scrollSwitch = -1;
+
+        
+
+        noteData.y += (beatVal*(Conductor.stepCrochet*currentValue))*renderer.getCorrectScrollSpeed()*0.45*scrollSwitch;
+    }
+}
+
+class JumpNotesModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var beatVal = Modifier.beat - Math.floor(Modifier.beat); //should give decimal
+
+        var scrollSwitch = 1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                scrollSwitch = -1;
+
+        
+
+        noteData.y += (beatVal*(Conductor.stepCrochet*currentValue))*renderer.getCorrectScrollSpeed()*0.45*scrollSwitch;
     }
 }
