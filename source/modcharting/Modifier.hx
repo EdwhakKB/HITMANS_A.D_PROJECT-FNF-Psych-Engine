@@ -543,6 +543,14 @@ class NoteStealthModifier extends Modifier
     }
 }
 
+class LaneStealthModifier extends Modifier
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.alpha *= 1-currentValue;
+    }
+}
+
 
 class InvertModifier extends Modifier
 {
