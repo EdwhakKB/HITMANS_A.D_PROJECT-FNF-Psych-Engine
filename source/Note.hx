@@ -1,6 +1,5 @@
 package;
 
-import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -8,7 +7,6 @@ import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import flash.display.BitmapData;
 import editors.ChartingState;
-import flixel.math.FlxPoint;
 
 using StringTools;
 
@@ -33,14 +31,9 @@ class Note extends FlxSprite
 	public var hitByOpponent:Bool = false;
 	public var noteWasHit:Bool = false;
 	public var prevNote:Note;
+	public var nextNote:Note;
 	public var mesh:flixel.FlxStrip = null; 
   	public var z:Float = 0;
-	// public var z:Float = 0; // for modchart system
-	// public var zIndex:Float = 0;
-	// public var desiredAlpha:Float = 1;
-	// public var baseAlpha:Float = 1;
-	// public var scaleDefault:FlxPoint;
-	public var nextNote:Note;
 
 	public var spawned:Bool = false;
 	public var tail:Array<Note> = []; // for sustains
@@ -66,10 +59,6 @@ class Note extends FlxSprite
 	public var lowPriority:Bool = false;
 
 	public static var swagWidth:Float = 160 * 0.7;
-	public static var PURP_NOTE:Int = 0;
-	public static var GREEN_NOTE:Int = 2;
-	public static var BLUE_NOTE:Int = 1;
-	public static var RED_NOTE:Int = 3;
 	
 	private var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
 	private var pixelInt:Array<Int> = [0, 1, 2, 3];
@@ -100,7 +89,6 @@ class Note extends FlxSprite
 	public var ratingDisabled:Bool = false;
 	public static var canDamagePlayer:Bool = true; //for edwhak Instakill Notes and others :3 -Ed
 	public static var edwhakIsPlayer:Bool = false; //made to make Ed special Mechanics lmao
-	public static var valueAlpha:Float = 0.6; //now fixing shits YEAAAA BABY
 
 	public var texture(default, set):String = null;
 
@@ -108,17 +96,6 @@ class Note extends FlxSprite
 	public var noMissAnimation:Bool = false;
 	public var hitCausesMiss:Bool = false;
 
-	// public var parentNote:Note;
-	// public var childrenNotes:Array<Note> = [];
-	// public var endHoldOffset:Float = Math.NEGATIVE_INFINITY;
-
-	// public var speed:Float = 1;
-	// @:isVar
-	// public var isSustainEnd( get, null):Bool = false;
-
-	// function get_isSustainEnd(){
-	// 	return animation!=null && animation.curAnim!=null && animation.curAnim.name.endsWith("holdend");
-	// }
 	//added this so Hitmans game over can load this variables lmao -Ed
 	public static var instakill:Bool = false;
 	public static var mine:Bool = false;
@@ -130,39 +107,11 @@ class Note extends FlxSprite
 	public var specialHurt:Bool  = false;
 	public var hurtNote:Bool  = false;
 
-	//ONLY FOR ME~
 	public static var tlove:Bool = false;
 	//i love how fun its this (help) -Ed
 	public var distance:Float = 2000; //plan on doing scroll directions soon -bb
 
 	public var hitsoundDisabled:Bool = false;
-
-	public var flipSkew:Bool = false;
-    public var skewExtra:Float = 1.04;
-    public function updateSustainSkew():Void{
-	if(!isSustainNote)
-		return;
-
-	//Far from perfect, but good enough! -Haz
-	//LMAO WHY WHEN I WAS CODING THIS MY PC GET A BSOD LOL? -Ed
-	var skewMath:Float = 0;
-	if(nextNote != null && nextNote.isSustainNote){
-		var a:Float = height;
-		var b:Float = (nextNote.x - this.x);
-		var angle:Float = Math.atan(b/a);
-		angle *= (180/Math.PI);
-		skewMath = angle;
-	}
-	else if(prevNote != null && prevNote.isSustainNote){
-		var a:Float = height;
-		var b:Float = (this.x - prevNote.x);
-		var angle:Float = Math.atan(b/a);
-		angle *= (180/Math.PI);
-		skewMath = angle;
-	}
-	flipSkew = ClientPrefs.downScroll;
-	//skew.x = skewMath * skewExtra * (ClientPrefs.downScroll ? -1 : 1);
-    }
 
 	private function set_multSpeed(value:Float):Float {
 		resizeByRatio(value / multSpeed);
@@ -484,17 +433,6 @@ class Note extends FlxSprite
 
 			if (prevNote.isSustainNote)
 			{
-				// switch (prevNote.noteData)
-				// {
-				// 	case 0:
-				// 		prevNote.animation.play('purplehold');
-				// 	case 1:
-				// 		prevNote.animation.play('bluehold');
-				// 	case 2:
-				// 		prevNote.animation.play('greenhold');
-				// 	case 3:
-				// 		prevNote.animation.play('redhold');
-				// }
 				prevNote.animation.play(colArray[prevNote.noteData % 4] + 'hold');
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
@@ -508,7 +446,6 @@ class Note extends FlxSprite
 					prevNote.scale.y *= (6 / height); //Auto adjust note size
 				}
 
-				// prevNote.scaleDefault.set(prevNote.scale.x,prevNote.scale.y);
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
@@ -521,17 +458,6 @@ class Note extends FlxSprite
 			earlyHitMult = 1;
 		}
 		x += offsetX;
-
-		// determine parent note
-		// if (isSustainNote && prevNote != null) {
-		// 	parentNote = prevNote;
-		// 	while (parentNote.parentNote != null)
-		// 		parentNote = parentNote.parentNote;
-		// 	parentNote.childrenNotes.push(this);
-		// } else if (!isSustainNote)
-		// 	parentNote = null;
-		
-		// scaleDefault.set(scale.x,scale.y);
 	}
 
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
@@ -633,24 +559,6 @@ class Note extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		// if(!inEditor){
-		// 	alpha = CoolUtil.scale(desiredAlpha,0,1,0,baseAlpha);
-		// 	if (tooLate || (parentNote != null && parentNote.tooLate))
-		// 		alpha *= 0.3;
-		// }
-
-		// if(isSustainNote){
-		// 	if(prevNote!=null && prevNote.isSustainNote){
-		// 		zIndex=prevNote.zIndex;
-		// 	}else if(prevNote!=null && !prevNote.isSustainNote){
-		// 		zIndex=prevNote.zIndex-1;
-		// 	}
-		// }else{
-		// 	zIndex=z;
-		// }
-
-		// zIndex-=(mustPress==true?0:1);
-
 		super.update(elapsed);
 
 		if (mustPress)
@@ -675,12 +583,11 @@ class Note extends FlxSprite
 					wasGoodHit = true;
 			}
 		}
+		if (tooLate && !inEditor)
+		{
+			if (alpha > 0.3)
+				alpha = 0.3;
+		}
 
-	}
-
-	override function draw(){
-	if(ClientPrefs.schmovin)if(isSustainNote)return;
-
-		super.draw();
 	}
 }
