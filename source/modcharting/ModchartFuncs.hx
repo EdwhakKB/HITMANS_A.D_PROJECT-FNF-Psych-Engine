@@ -10,11 +10,6 @@ import llua.State;
 import llua.Convert;
 #end
 
-#if LEATHER
-import states.PlayState;
-import game.Conductor;
-#end
-
 import modcharting.Modifier;
 import modcharting.PlayfieldRenderer;
 import modcharting.NoteMovement;
@@ -30,7 +25,6 @@ class ModchartFuncs
 {
     public static function loadLuaFunctions()
     {
-        #if PSYCH
         #if LUA_ALLOWED
         for (funkin in PlayState.instance.luaArray)
         {
@@ -90,11 +84,6 @@ class ModchartFuncs
             FunkinLua.hscript.variables.set('NotePositionData', PlayfieldRenderer.NotePositionData);
             FunkinLua.hscript.variables.set('ModchartFile', ModchartFile);
         }
-        #end
-
-
-        #elseif LEATHER
-
         #end
     }
 

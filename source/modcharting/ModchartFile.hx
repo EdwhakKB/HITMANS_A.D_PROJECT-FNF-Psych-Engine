@@ -4,11 +4,6 @@ import haxe.Exception;
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
-#if LEATHER
-import states.PlayState;
-import game.Note;
-import game.Conductor;
-#end
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -70,21 +65,15 @@ class ModchartFile
         var rawJson = null;
         var folderShit:String = "";
         #if sys
-        #if PSYCH
 		var moddyFile:String = Paths.modsJson(Paths.formatToSongPath(folder) + '/modchart');
 		if(FileSystem.exists(moddyFile)) {
 			rawJson = File.getContent(moddyFile).trim();
             folderShit = moddyFile.replace("modchart.json", "customMods/");
 		}
-		#end
         #end
         if (rawJson == null)
         {
-            #if LEATHER
-            var filePath = Paths.json("song data/" + folder + '/modchart');
-            #else 
             var filePath = Paths.json(folder + '/modchart');
-            #end
             folderShit = filePath.replace("modchart.json", "customMods/");
             //trace(filePath);
             #if sys
@@ -253,10 +242,8 @@ class CustomModifierScript
         interp.variables.set('StringTools', StringTools);
         interp.variables.set('Note', Note);
 
-        #if PSYCH
         interp.variables.set('ClientPrefs', ClientPrefs);
         interp.variables.set('ColorSwap', ColorSwap);
-        #end
 
         
     }

@@ -6,15 +6,8 @@ import modcharting.PlayfieldRenderer.NotePositionData;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 
-#if LEATHER
-import states.PlayState;
-import game.Note;
-import game.StrumNote;
-import game.Conductor;
-#else 
 import PlayState;
 import Note;
-#end
 
 //import haxe.macro.Context;
 //import haxe.macro.Expr;

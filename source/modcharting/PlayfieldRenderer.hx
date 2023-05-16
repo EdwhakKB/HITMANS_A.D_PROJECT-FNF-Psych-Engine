@@ -18,15 +18,8 @@ import flixel.FlxG;
 import modcharting.Modifier;
 import flixel.system.FlxAssets.FlxShader;
 
-#if LEATHER
-import states.PlayState;
-import game.Note;
-import game.StrumNote;
-import game.Conductor;
-#else 
 import PlayState;
 import Note;
-#end
 
 using StringTools;
 
@@ -66,12 +59,7 @@ typedef Playfield =
     var z:Float;
 }
 
-typedef StrumNoteType = 
-#if (PSYCH || LEATHER) StrumNote
-#elseif KADE StaticArrow
-#elseif FOREVER_LEGACY UIStaticArrow
-#elseif ANDROMEDA Receptor
-#else FlxSprite #end;
+typedef StrumNoteType = StrumNote
 
 class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can edit draw
 {
@@ -336,13 +324,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
     private function getNoteCurPos(noteIndex:Int, strumTimeOffset:Float = 0)
     {
-        #if PSYCH
         if (notes.members[noteIndex].isSustainNote && ModchartUtil.getDownscroll(instance))
             strumTimeOffset -= Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); //psych does this to fix its sustains but that breaks the visuals so basically reverse it back to normal
-        #else 
-        if (notes.members[noteIndex].isSustainNote && !ModchartUtil.getDownscroll(instance))
-            strumTimeOffset += Conductor.stepCrochet; //fix upscroll lol
-        #end
         var distance = (Conductor.songPosition - notes.members[noteIndex].strumTime) + strumTimeOffset;
         return distance*getCorrectScrollSpeed();
     }
