@@ -500,7 +500,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     
                     if (daNote.mesh == null)
                     {
-                        daNote.alpha = 1;
+                        daNote.alpha = 0.6;
                         daNote.mesh = new FlxStrip(0,0); //setup strip
                         daNote.mesh.loadGraphic(daNote.updateFramePixels());
                         daNote.mesh.shader = daNote.shader;
@@ -512,8 +512,10 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
                     daNote.mesh.scrollFactor = daNote.scrollFactor;
                     daNote.mesh.x = 0;
                     daNote.mesh.y = 0;
-                    daNote.alpha = noteData.alpha;
+                    daNote.alpha = 0.6;
                     daNote.mesh.alpha = daNote.alpha;
+                    //daNote.alpha = noteData.alpha;
+                    //daNote.mesh.alpha = daNote.alpha;
     
                     var songSpeed = getCorrectScrollSpeed();
                     var lane = noteData.lane;
@@ -536,7 +538,6 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
                     var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain*0.5);
                     var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
                     
-                    var doDraw = noteData.alpha > 0;
                     var strumData = getDataForStrum(getLane(noteData.index), noteData.playfieldIndex);
                     //need to calculate for clipping and shit            
                     //var clipBullshit = ModchartUtil.calculatePerspective(new Vector3D(strumData.x+ModchartUtil.getNoteOffsetX(daNote)+(daNote.width/2), strumData.y, strumData.z*0.001), 
@@ -545,7 +546,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
                     //var clipPointY = clipBullshit.y;    
         
                         
-                    if (doDraw)
+                    if (noteData.alpha > 0)
                     {
                         var flipGraphic = false;
     
