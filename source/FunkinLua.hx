@@ -1602,7 +1602,12 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "endSong", function() {
 			PlayState.instance.KillNotes();
-			PlayState.instance.realendSong();
+			PlayState.instance.endSong();
+			return true;
+		});
+		Lua_helper.add_callback(lua, "startRating", function() {
+			PlayState.instance.KillNotes();
+			PlayState.instance.Rating();
 			return true;
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(?skipTransition:Bool = false) {
@@ -2236,7 +2241,7 @@ class FunkinLua {
 			} else {
 				luaTrace('startDialogue: Dialogue file not found', false, false, FlxColor.RED);
 				if(PlayState.instance.endingSong) {
-					PlayState.instance.realendSong();
+					PlayState.instance.endSong();
 				} else {
 					PlayState.instance.startCountdown();
 				}

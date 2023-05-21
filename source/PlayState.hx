@@ -2085,7 +2085,7 @@ class PlayState extends MusicBeatState
 	function startAndEnd()
 	{
 		if(endingSong)
-			endSong();
+			Rating();
 		else
 			startCountdown();
 	}
@@ -2107,7 +2107,7 @@ class PlayState extends MusicBeatState
 			if(endingSong) {
 				psychDialogue.finishThing = function() {
 					psychDialogue = null;
-					endSong();
+					Rating();
 				}
 			} else {
 				psychDialogue.finishThing = function() {
@@ -2122,7 +2122,7 @@ class PlayState extends MusicBeatState
 		} else {
 			FlxG.log.warn('Your dialogue file is badly formatted!');
 			if(endingSong) {
-				endSong();
+				Rating();
 			} else {
 				startCountdown();
 			}
@@ -4751,7 +4751,7 @@ class PlayState extends MusicBeatState
 
 	public function finishSong(?ignoreNoteOffset:Bool = false):Void
 	{
-		var finishCallback:Void->Void = endSong; //In case you want to change it in a specific song.
+		var finishCallback:Void->Void = Rating; //In case you want to change it in a specific song.
 
 		if (isStoryMode)
 		{
@@ -4774,7 +4774,7 @@ class PlayState extends MusicBeatState
 
 	public var transitioning = false;
 
-	function endSong():Void
+	public function Rating():Void
 	{
 	canPause = false;
 	FlxG.sound.music.volume = 0;
@@ -4789,22 +4789,13 @@ class PlayState extends MusicBeatState
 	reme = new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), sicks, goods, bads, shits, songMisses);
 	reme.scrollFactor.set();
 	reme.cameras = [camRate];
-	reme.end = realendSong;
+	reme.end = endSong;
 
 	add(reme);
 
-	iconP1.visible = false;
-	iconP2.visible = false;
-	healthBarHit.visible = false;
-	healthHitBar.visible = false;
-	healthBar.visible = false;
-	healthBarBG.visible = false;
-	scoreTxt.visible = false;
-	scoreTxtHit.visible = false;
-	botplayTxt.visible = false;
 	inResultsScreen = true;
 
-	var ret:Dynamic = callOnLuas('onEndSong', [], false);
+	var ret:Dynamic = callOnLuas('onRating', [], false);
 	#if PRELOAD_ALL
 	sys.thread.Thread.create(() ->
 	{
@@ -4826,7 +4817,7 @@ class PlayState extends MusicBeatState
 	reme.load();
 	#end
     }
-	public function realendSong():Void
+	public function endSong():Void
 	{
 		//Should kill you if you tried to cheat
 		if(!startingSong) {
@@ -4873,7 +4864,7 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
-		var ret:Dynamic = callOnLuas('onRealEndSong', [], false);
+		var ret:Dynamic = callOnLuas('onEndSong', [], false);
 		if(ret != FunkinLua.Function_Stop && !transitioning) {
 			if (SONG.validScore && notITGMod)
 			{
@@ -4999,7 +4990,7 @@ class PlayState extends MusicBeatState
 	{
 		achievementObj = null;
 		if(endingSong && !inCutscene) {
-			endSong();
+			Rating();
 		}
 	}
 	#end

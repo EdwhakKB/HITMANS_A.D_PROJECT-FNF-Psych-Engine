@@ -4,6 +4,14 @@ import haxe.Exception;
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
+#if LEATHER
+import states.PlayState;
+import game.Note;
+import game.Conductor;
+#if polymod
+import polymod.backends.PolymodAssets;
+#end
+#end
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -50,14 +58,13 @@ class ModchartFile
     public var customModifiers:Map<String, CustomModifierScript> = new Map<String, CustomModifierScript>();
     public function new(renderer:PlayfieldRenderer)
     {
+
         data = loadFromJson(PlayState.SONG.song.toLowerCase());
         this.renderer = renderer;
         renderer.modchart = this;
-        if (ClientPrefs.getGameplaySetting('modchart', true)){
-            loadPlayfields();
-            loadEvents();
-        }
+        loadPlayfields();
         loadModifiers();
+        loadEvents();
     }
 
     public function loadFromJson(folder:String):ModchartJson //load da shit
@@ -65,16 +72,24 @@ class ModchartFile
         var rawJson = null;
         var folderShit:String = "";
         #if sys
+        #if PSYCH
 		var moddyFile:String = Paths.modsJson(Paths.formatToSongPath(folder) + '/modchart');
 		if(FileSystem.exists(moddyFile)) {
 			rawJson = File.getContent(moddyFile).trim();
             folderShit = moddyFile.replace("modchart.json", "customMods/");
 		}
+		#end
         #end
         if (rawJson == null)
         {
+            #if LEATHER
+            var filePath = Paths.json("song data/" + folder + '/modchart');
+            folderShit = PolymodAssets.getPath(filePath.replace("modchart.json", "customMods/"));
+            #else 
             var filePath = Paths.json(folder + '/modchart');
             folderShit = filePath.replace("modchart.json", "customMods/");
+            #end
+            
             //trace(filePath);
             #if sys
             if(FileSystem.exists(filePath))
@@ -85,32 +100,34 @@ class ModchartFile
                 
         }
         var json:ModchartJson = null;
-            if (rawJson != null)
+        if (rawJson != null)
+        {
+            json = cast Json.parse(rawJson);
+            //trace('loaded json');
+            trace(folderShit);
+            #if sys
+            if (FileSystem.isDirectory(folderShit))
             {
-                json = cast Json.parse(rawJson);
-                //trace('loaded json');
-                trace(folderShit);
-                #if sys
-                if (FileSystem.isDirectory(folderShit))
+                //trace("folder le exists");
+                for (file in FileSystem.readDirectory(folderShit))
                 {
-                    //trace("folder le exists");
-                    for (file in FileSystem.readDirectory(folderShit))
+                    //trace(file);
+                    if(file.endsWith('.hx')) //custom mods!!!!
                     {
-                        if(file.endsWith('.hx')) //custom mods!!!!
-                        {
-                            var scriptStr = File.getContent(folderShit + file);
-                            var script = new CustomModifierScript(scriptStr);
-                            customModifiers.set(file.replace(".hx", ""), script);
-                        }
+                        var scriptStr = File.getContent(folderShit + file);
+                        var script = new CustomModifierScript(scriptStr);
+                        customModifiers.set(file.replace(".hx", ""), script);
+                        //trace('loaded custom mod: ' + file);
                     }
                 }
-                #end
             }
-            else 
-            {
-                json = {modifiers: [], events: [], playfields: 1};
-            }
-            return json;
+            #end
+        }
+        else 
+        {
+            json = {modifiers: [], events: [], playfields: 1};
+        }
+        return json;
     }
     public function loadEmpty()
     {
@@ -123,14 +140,14 @@ class ModchartFile
     {
         if (data == null || renderer == null)
             return;
-        renderer.modifiers.clear();
-        renderer.loadDefaultModifiers();
+        renderer.modifierTable.clear();
         for (i in data.modifiers)
         {
             ModchartFuncs.startMod(i[MOD_NAME], i[MOD_CLASS], i[MOD_TYPE], Std.parseInt(i[MOD_PF]), renderer.instance);
             if (i[MOD_LANE] != null)
                 ModchartFuncs.setModTargetLane(i[MOD_NAME], i[MOD_LANE], renderer.instance);
         }
+        renderer.modifierTable.reconstructTable();
     }
     public function loadPlayfields()
     {
@@ -139,13 +156,13 @@ class ModchartFile
 
         renderer.playfields = [];
         for (i in 0...data.playfields)
-            renderer.addNewplayfield(0,0,0);
+            renderer.addNewPlayfield(0,0,0,1);
     }
     public function loadEvents()
     {
         if (data == null || renderer == null)
             return;
-        renderer.events = [];
+        renderer.eventManager.clearEvents();
         for (i in data.events)
         {
             if (i[EVENT_REPEAT] == null) //add repeat data if it doesnt exist
@@ -226,7 +243,7 @@ class CustomModifierScript
         interp.variables.set('ModifierSubValue', Modifier.ModifierSubValue);
         interp.variables.set('BeatXModifier', Modifier.BeatXModifier);
         interp.variables.set('NoteMovement', NoteMovement);
-        interp.variables.set('NotePositionData', PlayfieldRenderer.NotePositionData);
+        interp.variables.set('NotePositionData', NotePositionData);
         interp.variables.set('ModchartFile', ModchartFile);
         interp.variables.set('FlxG', flixel.FlxG);
 		interp.variables.set('FlxSprite', flixel.FlxSprite);
@@ -242,8 +259,10 @@ class CustomModifierScript
         interp.variables.set('StringTools', StringTools);
         interp.variables.set('Note', Note);
 
+        #if PSYCH
         interp.variables.set('ClientPrefs', ClientPrefs);
         interp.variables.set('ColorSwap', ColorSwap);
+        #end
 
         
     }
@@ -275,5 +294,4 @@ class CustomModifierScript
     {
         interp = null;
     }
-
 }

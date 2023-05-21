@@ -32,7 +32,7 @@ class Note extends FlxSprite
 	public var noteWasHit:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;
-	public var mesh:flixel.FlxStrip = null; 
+	public var mesh:modcharting.SustainStrip = null; 
   	public var z:Float = 0;
 
 	public var spawned:Bool = false;
