@@ -75,6 +75,7 @@ class ModchartFuncs
                 ease(beat, time, easeStr, argsAsString);
                 
             });
+            trace('luaFunctionsEnabled');
         }
         #end
         #if hscript
