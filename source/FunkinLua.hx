@@ -751,7 +751,7 @@ class FunkinLua {
 			}
 			Lua.pushnil(lua);
 		});*/
-		Lua_helper.add_callback(lua, 'addWindowTransparency', function(value:Dynamic){
+		/*Lua_helper.add_callback(lua, 'addWindowTransparency', function(value:Dynamic){
         	#if desktop
 			var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(24, 24, 24));
 			bg.cameras = [PlayState.instance.camGame];
@@ -802,7 +802,7 @@ class FunkinLua {
 					luaTrace("WindowsModifiers: nonExistent modifier name", false, false, FlxColor.WHITE);
 			}
 		});
-		#end
+		#end*/
 		Lua_helper.add_callback(lua, "isRunning", function(luaFile:String){
 			var cervix = luaFile + ".lua";
 			if(luaFile.endsWith(".lua"))cervix=luaFile;

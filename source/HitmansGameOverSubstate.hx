@@ -180,6 +180,8 @@ class HitmansGameOverSubstate extends MusicBeatSubstate
 
 	public function new(diedTo:String, state:PlayState)
 	{
+        super();
+
         trace("Died To ",diedTo);
         deathVariable = diedTo;
         repeatDeath = diedTo;
@@ -285,7 +287,6 @@ class HitmansGameOverSubstate extends MusicBeatSubstate
         trace("FireAmount: ",fireDead);
 
 		PlayState.instance.setOnLuas('inGameOver', true);
-		super();
 
 		Conductor.songPosition = 0;
         camHUD = new FlxCamera();
@@ -433,6 +434,8 @@ class HitmansGameOverSubstate extends MusicBeatSubstate
     var characterFor:Int = 0;
 	override function update(elapsed:Float)
 	{
+        super.update(elapsed);
+        
         switch (characterFor)
         {
             case 1:
@@ -458,7 +461,6 @@ class HitmansGameOverSubstate extends MusicBeatSubstate
         } else if (masterAnby){
             characterFor = 4;
         }
-		super.update(elapsed);
 
 		if (musicplaying && FlxG.sound.music.volume < 0.8)
 		{

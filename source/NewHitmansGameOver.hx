@@ -21,7 +21,7 @@ import Song.SwagSong;
 class NewHitmansGameOver extends MusicBeatSubstate
 {
 	public static var deathSoundName:String = 'Edwhak/death';
-	public static var loopSoundName:String = 'Edwhak/curiousDeath';
+	public static var loopSoundName:String = 'Edwhak/gameOverNew';
 	public static var endSoundName:String = 'inhuman_gameOverEnd';
     public static var characterName = 'Enemy';  //Character = (SONG.player2);
 
@@ -73,7 +73,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
 	public static function resetVariables() {
         deathSoundName = 'Edwhak/death';
-        loopSoundName = 'Edwhak/curiousDeath';
+        loopSoundName = 'Edwhak/gameOverNew';
         endSoundName = 'inhuman_gameOverEnd';
 	}
 
@@ -90,6 +90,8 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
 	public function new(diedTo:String, state:PlayState)
 	{
+        super();
+
         trace("Died To ",diedTo);
         deathVariable = diedTo;
 		musicplaying=false;
@@ -125,7 +127,6 @@ class NewHitmansGameOver extends MusicBeatSubstate
         trace("Character: ",characterName);
 
 		PlayState.instance.setOnLuas('inGameOver', true);
-		super();
 
 		Conductor.songPosition = 0;
         camHUD = new FlxCamera();
@@ -414,6 +415,8 @@ class NewHitmansGameOver extends MusicBeatSubstate
                 FlxTween.tween(youdied, {y: 5}, 1, {ease:FlxEase.smoothStepIn});
                 FlxTween.tween(taunt, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepIn});
                 FlxTween.tween(offEffect, {alpha: 0}, 1, {ease:FlxEase.smoothStepIn});
+                retry.animation.play('start');
+                retry.alpha = 0.5;
             });
         }
 

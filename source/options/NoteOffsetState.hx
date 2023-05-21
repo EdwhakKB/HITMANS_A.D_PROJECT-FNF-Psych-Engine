@@ -24,10 +24,10 @@ class NoteOffsetState extends MusicBeatState
 
 	public var square:FlxSprite;
 	public var squareline:FlxSprite;
-	public var cube:FlxSprite;
-	public var cube1:FlxSprite;
-	public var cube2:FlxSprite;
-	public var cube3:FlxSprite;
+	public var island:FlxSprite;
+	public var island1:FlxSprite;
+	public var island2:FlxSprite;
+	public var island3:FlxSprite;
 
 	var coolText:FlxText;
 	var rating:FlxSprite;
@@ -67,53 +67,47 @@ class NoteOffsetState extends MusicBeatState
 
 		// Stage
 
-		var bg:BGSprite = new BGSprite('Edwhak/Hitmans/offsetShit/bg', 0, 0, 0, 0);
+		var bg:BGSprite = new BGSprite('Edwhak/Hitmans/offsetShit/baseBG', 0, 0, 0, 0);
 		bg.screenCenter();
 		add(bg);
 
-		var extrabg:BGSprite = new BGSprite('menuDesat', 0, 0, 0, 0);
+		var extrabg:BGSprite = new BGSprite('Edwhak/Hitmans/offsetShit/bg', 0, 0, 0, 0);
 		extrabg.screenCenter();
 		extrabg.alpha = 0.1;
 		add(extrabg);
 
 		if(!ClientPrefs.lowQuality) {
-			cube = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/mini-square'));
-			cube.scrollFactor.set();
-			cube.screenCenter();
-			cube.alpha = 0.3;
-			cube.x += 400;
-			cube.y += 200;
-			add(cube);
+			island = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/flotant1'));
+			island.scrollFactor.set();
+			island.screenCenter();
+			island.alpha = 1;
+			island.x = 0;
+			island.y = 0;
+			add(island);
 
-			cube1 = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/mini-square'));
-			cube1.scrollFactor.set();
-			cube1.screenCenter();
-			cube1.alpha = 0.5;
-			cube1.scale.x = 0.75;
-			cube1.scale.y = 0.75;
-			cube1.x -= 400;
-			cube1.y -= 200;
-			add(cube1);
+			island1 = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/flotant2'));
+			island1.scrollFactor.set();
+			island1.screenCenter();
+			island1.alpha = 1;
+			island1.x = 0;
+			island1.y = 0;
+			add(island1);
 
-			cube2 = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/mini-square'));
-			cube2.scrollFactor.set();
-			cube2.screenCenter();
-			cube2.alpha = 0.1;
-			cube2.scale.x = 1.25;
-			cube2.scale.y = 1.25;
-			cube2.x += 600;
-			cube2.y -= 300;
-			add(cube2);
+			island2 = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/flotant3'));
+			island2.scrollFactor.set();
+			island2.screenCenter();
+			island2.alpha = 1;
+			island2.x = 0;
+			island2.y = 0;
+			add(island2);
 			
-			cube3 = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/mini-square'));
-			cube3.scrollFactor.set();
-			cube3.screenCenter();
-			cube3.alpha = 0.3;
-			cube3.scale.x = 1.5;
-			cube3.scale.y = 1.5;
-			cube3.x -= 600;
-			cube3.y += 300;
-			add(cube3);
+			island3 = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/flotant4'));
+			island3.scrollFactor.set();
+			island3.screenCenter();
+			island3.alpha = 1;
+			island3.x = 0;
+			island3.y = 0;
+			add(island3);
 		}
 
 		square = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/square'));
@@ -246,10 +240,10 @@ class NoteOffsetState extends MusicBeatState
 	{
 		square.angle = square.angle + 0.025;
 		squareline.angle = square.angle + 0.025;
-		cube.angle = cube.angle - 0.05;
-		cube1.angle = cube1.angle - 0.025;
-		cube2.angle = cube.angle + 0.1;
-		cube3.angle = cube1.angle + 0.025;
+		island.y = Math.sin((Conductor.songPosition/Conductor.crochet)*Math.PI) * 0.5;
+		island1.y = Math.sin((Conductor.songPosition/Conductor.crochet)*Math.PI) * 0.3;
+		island2.y = Math.sin((Conductor.songPosition/Conductor.crochet)*Math.PI) * 0.6;
+		island3.y = Math.sin((Conductor.songPosition/Conductor.crochet)*Math.PI) * 0.8;
 
 		var addNum:Int = 1;
 		if(FlxG.keys.pressed.SHIFT) addNum = 10;
