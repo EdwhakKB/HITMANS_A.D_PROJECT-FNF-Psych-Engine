@@ -1,5 +1,7 @@
 package;
 
+import flixel.addons.display.FlxBackdrop;
+import flixel.util.FlxSave;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
@@ -16,6 +18,9 @@ using StringTools;
 class ResultScreen extends FlxSpriteGroup
 {
 	var bgFade:FlxSprite;
+	var background:FlxBackdrop;
+	var topUp:FlxSprite;
+	var topDown:FlxSprite;
 	var numbers:FlxText;
 	var song:FlxText;
 	var newBest:FlxText;
@@ -60,10 +65,25 @@ class ResultScreen extends FlxSpriteGroup
 		dacom = maxc;
 		daBest = oldBest;
 
+		background = new FlxBackdrop(Paths.getPath('images/rating/background.png', IMAGE),XY, 0,0);
+		background.velocity.set(100, 50);
+		background.alpha = 1;
+		add(background);
+
 		bgFade = new FlxSprite(-200, -200).makeGraphic(Std.int(FlxG.width * 1.3), Std.int(FlxG.height * 1.3), 0xFF000000);
 		bgFade.scrollFactor.set();
 		bgFade.alpha = 0.7;
 		add(bgFade);
+
+		topDown = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-down.png', IMAGE));
+		topDown.scrollFactor.set();
+		topDown.alpha = 1;
+		add(topDown);
+
+		topUp = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-up.png', IMAGE));
+		topUp.scrollFactor.set();
+		topUp.alpha = 1;
+		add(topUp);
 
 		numbers = new FlxText(850, 80, Std.int(FlxG.width * 0.6), "0", 120);
 		numbers.font = "Assassin Nation Regular";
@@ -77,7 +97,7 @@ class ResultScreen extends FlxSpriteGroup
 		newBest.alpha = 0;
 		add(newBest);
 
-		song = new FlxText(10, 70, Std.int(FlxG.width * 0.6),"BEATED " + PlayState.SONG.song + " IN ( " + CoolUtil.difficultyString() + " ) DIFFICULTY", 34);
+		song = new FlxText(50, 70, Std.int(FlxG.width * 0.6),PlayState.SONG.song, 88);
 		song.font = "Assassin Nation Regular";
 		song.alpha = 0;
 		add(song);
@@ -104,8 +124,8 @@ class ResultScreen extends FlxSpriteGroup
 		hasModchart.alpha = 0;
 		add(hasModchart);
 
-		rating = new FlxSprite(672.1,435.2);
-		rating.frames = Paths.getSparrowAtlas('ratings');
+		rating = new FlxSprite(872.1,435.2);
+		rating.frames = Paths.getSparrowAtlas('rating/ratings');
 		rating.animation.addByPrefix('PERFECT', 'PLUS', 24, true);
 		rating.animation.addByPrefix('S', 'S', 24, true);
 		rating.animation.addByPrefix('A', 'A', 24, true);

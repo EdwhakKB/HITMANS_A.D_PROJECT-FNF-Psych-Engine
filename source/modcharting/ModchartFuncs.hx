@@ -104,6 +104,7 @@ class ModchartFuncs
             if (instance.playfieldRenderer.modchart.scriptListen)
             {
                 instance.playfieldRenderer.modchart.data.modifiers.push([name, modClass, type, pf]);
+                trace(name,modClass,type,pf);
             }
         }
 

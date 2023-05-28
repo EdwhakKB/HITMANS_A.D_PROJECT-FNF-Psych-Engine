@@ -74,7 +74,7 @@ using StringTools;
 
 class ModchartEditorEvent extends FlxSprite
 {
-    #if ((PSYCH || LEATHER) && !DISABLE_MODCHART_EDITOR)
+    #if ((PSYCH || LEATHER))
     public var data:Array<Dynamic>;
     public function new (data:Array<Dynamic>)
     {
@@ -98,7 +98,7 @@ class ModchartEditorEvent extends FlxSprite
     public function getBeatTime():Float { return data[ModchartFile.EVENT_DATA][ModchartFile.EVENT_TIME]; }
     #end
 }
-#if ((PSYCH || LEATHER) && !DISABLE_MODCHART_EDITOR)
+#if ((PSYCH || LEATHER))
 class ModchartEditorState extends MusicBeatState
 {
     var hasUnsavedChanges:Bool = false;
@@ -207,7 +207,7 @@ class ModchartEditorState extends MusicBeatState
         BounceXModifier, BounceYModifier, BounceZModifier, 
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
         InvertSineModifier, BoostModifier, BrakeModifier, JumpModifier, WaveXModifier, WaveYModifier,
-        WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier
+        WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier, EaseXModifier
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -1184,9 +1184,9 @@ class ModchartEditorState extends MusicBeatState
             var x:Int = 0;
             while (x <= Width)
             {
-                if (timesFilled % 4 == 0)
+                if (timesFilled % 2 == 0)
                     lastColor = Color1;
-                else if (timesFilled % 4 == 2)
+                else if (timesFilled % 2 == 1)
                     lastColor = Color2;
                 // else 
                 //     lastColor = Color3;
