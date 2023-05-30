@@ -87,7 +87,7 @@ using StringTools;
 
 class PlayState extends MusicBeatState
 {
-	// var modchartedSongs:Array<String> = []; // PUT THE SONG NAME HERE IF YOU WANT TO USE THE ANDROMEDA MODIFIER SYSTEM!!
+	var modchartedSongs:Array<String> = []; // PUT THE SONG NAME HERE IF YOU WANT TO USE THE ANDROMEDA MODIFIER SYSTEM!!
 
 	// // THEN GOTO MODCHARTSHIT.HX TO DEFINE MODIFIERS ETC
 	// // IN THE SETUPMODCHART FUNCTION
@@ -272,7 +272,7 @@ class PlayState extends MusicBeatState
 	public var instakillOnMiss:Bool = false;
 	public var cpuControlled:Bool = false;
 	public var practiceMode:Bool = false;
-	public var notITGMod:Bool = false;
+	public var notITGMod:Bool = true;
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
@@ -403,6 +403,9 @@ class PlayState extends MusicBeatState
 	public static var lastScore:Array<FlxSprite> = [];
 
 	public var ratings:FlxSprite;
+	var ratingsBumpTween:FlxTween;
+	var ratingsBumpTween2:FlxTween;
+	var ratingsBumpTimer:FlxTimer;
 	public var inX:FlxTween;
 	public var inY:FlxTween;
 	public var inX2:FlxTween;
@@ -483,7 +486,7 @@ class PlayState extends MusicBeatState
 		ratingsData.push(rating);
 
 		//Hitmans Ratings (Kinda Better LOL)
-		ratings = new FlxSprite(500, 350);
+		ratings = new FlxSprite(570, 200);
 		ratings.frames = Paths.getSparrowAtlas('judgements');
 		ratings.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
 		ratings.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -2856,7 +2859,7 @@ class PlayState extends MusicBeatState
 
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
-		if(SONG.song.toLowerCase() == "System-reloaded" && storyDifficulty == 2){
+		if((SONG.song.toLowerCase() == "system-reloaded" || SONG.song.toLowerCase() == "metakill" ) && storyDifficulty == 1){
 			trace("USING OLD INST");
 			FlxG.sound.playMusic(Paths.instClassic(PlayState.SONG.song), 1, false);
 		}else{
@@ -2871,34 +2874,37 @@ class PlayState extends MusicBeatState
 
 		HitmansGameOverSubstate.characterName = dad.curCharacter;
 		NewHitmansGameOver.characterName = dad.curCharacter;
-		if(SONG.song.toLowerCase() == "fatal error"){
-			HitmansGameOverSubstate.characterName = 'Edwhak';
-			NewHitmansGameOver.characterName = 'Edwhak';
-            controlsPlayer2 = false;
-		}else if(SONG.song.toLowerCase() == "killer instinct"){
-			HitmansGameOverSubstate.characterName = 'Edwhak';
-			NewHitmansGameOver.characterName = 'Edwhak';
-            controlsPlayer2 = false;
-	    }else if(SONG.song.toLowerCase() == "annihilate"){
-			HitmansGameOverSubstate.characterName = 'Edwhak';
-			NewHitmansGameOver.characterName = 'Edwhak';
-            controlsPlayer2 = false;
-		}else if(SONG.song.toLowerCase() == "c18h27no3-demo"){
-			HitmansGameOverSubstate.characterName = 'Edwhak';
-			NewHitmansGameOver.characterName = 'Edwhak';
-            controlsPlayer2 = false;
-		}else if(SONG.song.toLowerCase() == "c18h27no3"){
-			HitmansGameOverSubstate.characterName = 'Edwhak';
-			NewHitmansGameOver.characterName = 'Edwhak';
-            controlsPlayer2 = false;
-		}else if(SONG.song.toLowerCase() == "killbot"){
-			HitmansGameOverSubstate.characterName = 'Edwhak';
-			NewHitmansGameOver.characterName = 'Edwhak';
-            controlsPlayer2 = false;
-		}else if(SONG.song.toLowerCase() == "digital massacre"){
-			HitmansGameOverSubstate.characterName = 'HITMANS';
-			NewHitmansGameOver.characterName = 'HITMANS';
-            controlsPlayer2 = false;
+		
+		switch (SONG.song.toLowerCase())
+		{
+			case "fatal error":
+				HitmansGameOverSubstate.characterName = 'Edwhak';
+				NewHitmansGameOver.characterName = 'Edwhak';
+				controlsPlayer2 = false;
+			case "killer instinct":
+				HitmansGameOverSubstate.characterName = 'Edwhak';
+				NewHitmansGameOver.characterName = 'Edwhak';
+				controlsPlayer2 = false;
+			case "annihilate":
+				HitmansGameOverSubstate.characterName = 'Edwhak';
+				NewHitmansGameOver.characterName = 'Edwhak';
+				controlsPlayer2 = false;
+			case "c18h27no3-demo":
+				HitmansGameOverSubstate.characterName = 'Edwhak';
+				NewHitmansGameOver.characterName = 'Edwhak';
+				controlsPlayer2 = false;
+			case "c18h27no3":
+				HitmansGameOverSubstate.characterName = 'Edwhak';
+				NewHitmansGameOver.characterName = 'Edwhak';
+				controlsPlayer2 = false;
+			case "killbot":
+				HitmansGameOverSubstate.characterName = 'Edwhak';
+				NewHitmansGameOver.characterName = 'Edwhak';
+				controlsPlayer2 = false;
+			case "digital massacre":
+				HitmansGameOverSubstate.characterName = 'HITMANS';
+				NewHitmansGameOver.characterName = 'HITMANS';
+				controlsPlayer2 = false;
 		}
 
 
@@ -2959,7 +2965,7 @@ class PlayState extends MusicBeatState
 		curSong = songData.song;
 
 		if (SONG.needsVoices)
-			if(SONG.song.toLowerCase() == "System-reloaded" && storyDifficulty == 2){
+			if((SONG.song.toLowerCase() == "system-reloaded" || SONG.song.toLowerCase() == "metakill" ) && storyDifficulty == 1){
 				trace("USING OLD VOCALS");
 				vocals = new FlxSound().loadEmbedded(Paths.voicesClassic(PlayState.SONG.song));
 			}else{
@@ -2968,13 +2974,15 @@ class PlayState extends MusicBeatState
 			}
 		else
 			vocals = new FlxSound();
+		
+		trace(storyDifficulty);
 
 		vocals.pitch = playbackRate;
 		FlxG.sound.list.add(vocals);
 
 		//THE FUCK!? WHY DOUBLE WHAT-
 
-		if(SONG.song.toLowerCase() == "System-reloaded" && storyDifficulty == 2){
+		if((SONG.song.toLowerCase() == "system-reloaded" || SONG.song.toLowerCase() == "metakill" ) && storyDifficulty == 1){
 			trace("USING OLD INST");
 			FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.instClassic(PlayState.SONG.song)));
 		}else{
@@ -4563,6 +4571,26 @@ class PlayState extends MusicBeatState
 						charType = Std.parseInt(value1);
 						if(Math.isNaN(charType)) charType = 0;
 				}
+			
+				switch(charType){
+					case 1:
+						switch(value2.toLowerCase()) {
+							case 'edwhak' | 'he' | 'edwhakbroken' | 'edkbmassacre' | 'frontedwhak':
+								edwhakIsEnemy = true;
+							default:
+								edwhakIsEnemy = false;
+						}
+					case 0:
+						switch(value2.toLowerCase()) {
+							case 'edwhak' | 'he' | 'edwhakbroken' | 'edkbmassacre' | 'frontedwhak':
+								Note.canDamagePlayer = false;
+								Note.edwhakIsPlayer = true;
+							default:
+								Note.canDamagePlayer = false;
+								Note.edwhakIsPlayer = true;
+						}
+					
+				}
 
 				switch(charType) {
 					case 0:
@@ -5092,15 +5120,15 @@ class PlayState extends MusicBeatState
 		rating.cameras = [camOther];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
-		rating.scale.x = 1.5;
-		rating.scale.y = 1.5;
-		FlxTween.tween(rating.scale, {x: 1}, 0.1, {ease:FlxEase.circOut});
-		FlxTween.tween(rating.scale, {y: 1}, 0.1, {ease:FlxEase.circOut});
+		rating.scale.x = 0.9;
+		rating.scale.y = 0.9;
+		FlxTween.tween(rating.scale, {x: 0.5}, 0.1, {ease:FlxEase.circIn});
+		FlxTween.tween(rating.scale, {y: 0.5}, 0.1, {ease:FlxEase.circIn});
 		// rating.y -= 60;
 		// rating.acceleration.y = 550 * playbackRate * playbackRate;
 		// rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
 		// rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
-		rating.visible = (!ClientPrefs.hideHud && showRating);
+		rating.visible = (!ClientPrefs.hideHud && showRating && ClientPrefs.hudStyle == 'Classic');
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
@@ -5850,7 +5878,7 @@ class PlayState extends MusicBeatState
 			if (!note.isSustainNote)
 			{
 				ratingsBumpScale();
-				setRatingImage();
+				setRatingImage(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 				combo += 1;
 				if(combo > 9999) combo = 9999;
 				if (combo > maxCombo) maxCombo = combo;
@@ -5967,48 +5995,60 @@ class PlayState extends MusicBeatState
 	}
 
 	public function ratingsBumpScale() {
+
+		if(ratingsBumpTween != null) {
+			ratingsBumpTween.cancel();
+		}
+		if(ratingsBumpTween2 != null) {
+			ratingsBumpTween2.cancel();
+		}
+		if(ratingsBumpTimer != null) {
+			ratingsBumpTimer.cancel();
+		}
 		ratings.scale.x = 1.5;
 		ratings.scale.y = 1.5;
-		inX = FlxTween.tween(ratings.scale, {x: 1.3}, 0.1, {ease:FlxEase.circOut});
-		inY = FlxTween.tween(ratings.scale, {y: 1.3}, 0.1, {ease:FlxEase.circOut});
-		new FlxTimer().start(1, function(flxTimer:FlxTimer){timerCallBack('RatingTween');});
-		}
-		
-		
-		public function timerCallBack(tag:String){
-		switch (tag)
-		{
-		case 'RatingTween':
-			inX2 = FlxTween.tween(ratings.scale, {x: 1}, 0.2, {ease:FlxEase.circIn});
-			inY2 = FlxTween.tween(ratings.scale, {y: 1}, 0.2, {ease:FlxEase.circIn});
+		ratingsBumpTween = FlxTween.tween(ratings.scale, {x: 1.3, y: 1.3}, 0.1, {ease:FlxEase.circOut,
+			onComplete: function(twn:FlxTween) {
+				ratingsBumpTween = null;
+				ratingsBumpTimer = new FlxTimer().start(1, function(flxTimer:FlxTimer){
+						ratingsBumpTween2 = FlxTween.tween(ratings.scale, {x: 0, y: 0}, 0.2, {ease:FlxEase.circIn,
+						onComplete: function(twn:FlxTween) {
+							ratingsBumpTimer = null;
+							ratingsBumpTween2 = null;
+						}
+					});			
+				
+				});
+			}
+		});
+		if (ClientPrefs.hudStyle == 'HITMANS'){
+			ratings.visible = true;
 		}
 	}
 
-	public function setRatingImage(){
-		var rat:Int = 0;
-
+	public function setRatingImage(rat:Float){
 		if (rat >= 0){
-				if (rat <= ClientPrefs.sickWindow / 2.5){
-					ratings.animation.play("fantastic");
-				} else if (rat <= ClientPrefs.sickWindow){
-					ratings.animation.play("excellent Early");
-				}else if (rat >= ClientPrefs.sickWindow && rat <= ClientPrefs.goodWindow){
-					ratings.animation.play("great Early");
-				}else if (rat >= ClientPrefs.goodWindow && rat <= ClientPrefs.badWindow){
-					ratings.animation.play("decent Early");
-				}else if (rat >= ClientPrefs.badWindow){
-					ratings.animation.play("way Off Early");
-				}
+			if (rat <= ClientPrefs.sickWindow / 2.5){
+				ratings.animation.play("fantastic");
+			} else if (rat <= ClientPrefs.sickWindow){
+				ratings.animation.play("excellent Early");
+			}else if (rat >= ClientPrefs.sickWindow && rat <= ClientPrefs.goodWindow){
+				ratings.animation.play("great Early");
+			}else if (rat >= ClientPrefs.goodWindow && rat <= ClientPrefs.badWindow){
+				ratings.animation.play("decent Early");
+			}else if (rat >= ClientPrefs.badWindow){
+				ratings.animation.play("way Off Early");
+			}
 		} else {
 			if (rat >= ClientPrefs.sickWindow * -1 / 2.5){
 				ratings.animation.play("fantastic");
-			} else if (rat >= ClientPrefs.sickWindow){
+			} else if (rat >= ClientPrefs.sickWindow * -1){
 				ratings.animation.play("excellent Late");
-			}else if (rat <= ClientPrefs.sickWindow && rat >= ClientPrefs.goodWindow * -1){
+			}else if (rat <= ClientPrefs.sickWindow * -1 && rat >= ClientPrefs.goodWindow * -1){
 				ratings.animation.play("great Late");
-			}else if (rat <= ClientPrefs.goodWindow && rat >= ClientPrefs.badWindow * -1){
+			}else if (rat <= ClientPrefs.goodWindow * -1 && rat >= ClientPrefs.badWindow * -1){
 				ratings.animation.play("decent Late");
-			}else if (rat <= ClientPrefs.badWindow){
+			}else if (rat <= ClientPrefs.badWindow * -1){
 				ratings.animation.play("way Off Late");
 			}
 		}
