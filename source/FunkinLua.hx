@@ -2828,6 +2828,8 @@ class FunkinLua {
 			return list;
 		});
 
+		Discord.DiscordClient.addLuaCallbacks(lua);
+		
 		call('onCreate', []);
 		#end
 	}
