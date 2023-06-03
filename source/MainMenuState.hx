@@ -26,7 +26,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.2.0'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.2.5'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -283,7 +283,8 @@ class MainMenuState extends MusicBeatState
 
 			if (FlxG.mouse.overlaps(storyMode)) {
 				if (FlxG.mouse.justPressed) {
-					folder.alpha = 1;
+					MusicBeatState.switchState(new StoryMenuState());
+					folder.alpha = 0;
 					inFolder = true;
 					storyMode.animation.play('selected');
 					freeplay.animation.play('normal');
@@ -294,7 +295,8 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(freeplay)) {
 				if (FlxG.mouse.justPressed) {
-					folder.alpha = 1;
+					MusicBeatState.switchState(new FreeplayState());
+					folder.alpha = 0;
 					inFolder = true;
 					freeplay.animation.play('selected');
 					storyMode.animation.play('normal');
@@ -305,7 +307,8 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(awards)) {
 				if (FlxG.mouse.justPressed) {
-					folder.alpha = 1;
+					MusicBeatState.switchState(new AchievementsMenuState());
+					folder.alpha = 0;
 					inFolder = true;
 					awards.animation.play('selected');
 					storyMode.animation.play('normal');
@@ -316,7 +319,8 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(credits)) {
 				if (FlxG.mouse.justPressed) {
-					folder.alpha = 1;
+					MusicBeatState.switchState(new CreditsState());
+					folder.alpha = 0;
 					inFolder = true;
 					credits.animation.play('selected');
 					storyMode.animation.play('normal');
@@ -327,7 +331,8 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(settings)) {
 				if (FlxG.mouse.justPressed) {
-					folder.alpha = 1;
+					LoadingState.loadAndSwitchState(new options.OptionsState());
+					folder.alpha = 0;
 					inFolder = true;
 					settings.animation.play('selected');
 					storyMode.animation.play('normal');
