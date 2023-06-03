@@ -44,6 +44,9 @@ class PauseSubState extends MusicBeatSubstate
 
 	var antialias:Bool = ClientPrefs.globalAntialiasing;
 	public var notes:FlxTypedGroup<Note>;
+
+	public static var goToOptions:Bool = false;
+    public static var goBack:Bool = false;
 	//var botplayText:FlxText;
 
 	public static var songName:String = '';
@@ -368,7 +371,8 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.changedDifficulty = true;
 					trace('Variable Changed','yes');
 				case 'Options':
-					LoadingState.loadAndSwitchState(new options.OptionsState());
+					goToOptions = true;
+                    close();
 				case 'Gameplay Modifiers':
 					openSubState(new GameplayChangersSubstate());
 				case "Exit to menu":

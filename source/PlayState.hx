@@ -3329,8 +3329,11 @@ class PlayState extends MusicBeatState
 
 	override function closeSubState()
 	{
-		if (paused)
-		{
+		
+		if (PauseSubState.goToOptions){
+			MusicBeatState.switchState(new options.OptionsState(true)); // isInPause yes!
+		}else if (paused){
+				
 			if (FlxG.sound.music != null && !startingSong)
 			{
 				resyncVocals();

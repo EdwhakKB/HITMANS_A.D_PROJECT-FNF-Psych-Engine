@@ -258,7 +258,7 @@ class ReverseModifier extends Modifier
         var scrollSwitch = 520;
         if (instance != null)
             if (ModchartUtil.getDownscroll(instance))
-                scrollSwitch = -520;
+                scrollSwitch *= -1;
         noteData.y += scrollSwitch * currentValue;
     }
     override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)

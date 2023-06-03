@@ -178,6 +178,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             noteAlpha = notes.members[noteIndex].multAlpha;
             if (notes.members[noteIndex].hurtNote)
                 noteAlpha = 0.55;
+        }else{
+            noteAlpha = 0;
         }
         #else 
         if (notes.members[noteIndex].isSustainNote)
@@ -352,7 +354,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         
         var timeToNextSustain = ModchartUtil.getFakeCrochet()/4;
         if (noteData.noteDist < 0)
-            timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
+            timeToNextSustain *= -1; //weird shit that fixes upscroll lol
+            // timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
 
         var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain*0.5);
         var nextNotePos = getSustainPoint(noteData, timeToNextSustain);

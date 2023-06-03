@@ -34,6 +34,15 @@ class OptionsState extends MusicBeatState
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 
+	public static var isInPause = false;
+
+    public function new(pauseMenu:Bool = false)
+    {
+        super();
+
+        isInPause = pauseMenu;
+    }
+
 	function openSelectedSubstate(label:String) {
 		switch(label) {
 			case 'Note Options':
@@ -115,9 +124,15 @@ class OptionsState extends MusicBeatState
 		}
 
 		if (controls.BACK) {
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
-		}
+            FlxG.sound.play(Paths.sound('cancelMenu'));
+            if (!isInPause)
+                MusicBeatState.switchState(new MainMenuState());
+            else
+            {
+                PauseSubState.goToOptions = false;
+                LoadingState.loadAndSwitchState(new PlayState());
+            }
+        }
 
 		if (controls.ACCEPT) {
 			openSelectedSubstate(options[curSelected]);
