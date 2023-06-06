@@ -323,6 +323,8 @@ class PauseSubState extends MusicBeatSubstate
 						else if (unPauseTimer.finished && unPauseTimer.loopsLeft == 0)
 						{
 							PlayState.instance.modchartTimers.remove('unPauseTimer');
+							if (PlayState.SONG.song.toLowerCase() == "cyber" && PlayState.storyDifficulty != 0)
+								PlayWindow.reset();
 							close();
 						}
 					}, 5);

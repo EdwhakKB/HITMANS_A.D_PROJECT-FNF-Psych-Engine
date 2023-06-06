@@ -486,7 +486,8 @@ class PlayState extends MusicBeatState
 		ratingsData.push(rating);
 
 		//Hitmans Ratings (Kinda Better LOL)
-		ratings = new FlxSprite(570, 200);
+		//570 x and 200 y (just in case)
+		ratings = new FlxSprite(0, 0);
 		ratings.frames = Paths.getSparrowAtlas('judgements');
 		ratings.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
 		ratings.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -502,6 +503,9 @@ class PlayState extends MusicBeatState
         // FlxTween.tween(ratings.scale, {y: 0}, 0.1, {ease:FlxEase.elasticOut});
 		ratings.antialiasing = true;
 		ratings.updateHitbox();
+		ratings.screenCenter();
+		// ratings.x += ClientPrefs.comboOffset[0];
+		// ratings.y -= ClientPrefs.comboOffset[1];
 		ratings.scrollFactor.set();
 		ratings.visible = false;
 		add(ratings);
@@ -4021,6 +4025,8 @@ class PlayState extends MusicBeatState
 			if(startedCountdown)
 			{
 				var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
+				var rollNote:FlxTimer;
+				var isHolding:Bool = false;
 				notes.forEachAlive(function(daNote:Note)
 				{
 					var strumGroup:FlxTypedGroup<StrumNote> = playerStrums;
@@ -4105,6 +4111,29 @@ class PlayState extends MusicBeatState
 						}
 					}
 
+					switch (daNote.noteType)
+                    {
+                        case 'RollNote':
+                            if (daNote.isSustainNote)
+                            {
+                                isHolding = true;
+                            }
+                            if (daNote.mustPress && daNote.canBeHit)
+                            {
+                                daNote.isSustainNote = true;
+                                isHolding = false;
+                            }
+                            else if (daNote.mustPress && daNote.isSustainNote && daNote.canBeHit && !isHolding)
+                            {
+                                if (rollNote != null)
+                                    rollNote.cancel();
+                                rollNote = new FlxTimer().start(0.1, function(tmr){
+                                    daNote.isSustainNote = false;
+                                    daNote.active = false;
+                                });
+                            }
+                    }
+
 					var center:Float = strumY + Note.swagWidth / 2;
 					if(strumGroup.members[daNote.noteData].sustainReduce && daNote.isSustainNote && (daNote.mustPress || !daNote.ignoreNote) &&
 						(!daNote.mustPress || (daNote.wasGoodHit || (daNote.prevNote.wasGoodHit && !daNote.canBeHit))))
@@ -4142,11 +4171,11 @@ class PlayState extends MusicBeatState
 
 						daNote.active = false;
 						daNote.visible = false;
-
+	
 						daNote.kill();
 						notes.remove(daNote, true);
 						daNote.destroy();
-					}
+					}	
 				});
 			}
 			else
@@ -4244,8 +4273,6 @@ class PlayState extends MusicBeatState
 					openSubState(new HitmansGameOverSubstate(deathVariableTXT,this));
 				}else if (ClientPrefs.goStyle == 'NEW'){
 					openSubState(new NewHitmansGameOver(deathVariableTXT,this));
-				}else{
-
 				}
        			FlxG.save.flush();
 				//openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
@@ -5136,6 +5163,9 @@ class PlayState extends MusicBeatState
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
+		ratings.x = rating.x;
+		ratings.y = rating.y;
+
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
 		comboSpr.cameras = [camHUD];
 		comboSpr.screenCenter();
@@ -5495,7 +5525,7 @@ class PlayState extends MusicBeatState
 		//Dupe note remove
 		notes.forEachAlive(function(note:Note) {
 			if (daNote != note && daNote.mustPress && daNote.noteData == note.noteData && daNote.isSustainNote == note.isSustainNote && Math.abs(daNote.strumTime - note.strumTime) < 1) {
-				if(!note.hitCausesMiss){
+				if(daNote.noteType == ''){
 					deathVariableTXT = 'Notes';
 				}
 				note.kill();

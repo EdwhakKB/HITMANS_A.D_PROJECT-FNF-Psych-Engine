@@ -102,16 +102,19 @@ class NewHitmansGameOver extends MusicBeatSubstate
             noteWhoKilled = 'HURTNOTE';
         }else if(deathVariable == 'Instakill' ){
             noteWhoKilled = 'INSTAKILLNOTE';
+            yOffset += 80;
         }else if(deathVariable == 'Mine' ){
             noteWhoKilled = 'MINENOTE';
         }else if(deathVariable == 'Ice' ){
             noteWhoKilled = 'ICENOTE';
         }else if(deathVariable == 'Love' ){
             noteWhoKilled = 'LOVENOTE';
+            yOffset += 80;
         }else if(deathVariable == 'Corrupted' ){
             noteWhoKilled = 'GLITCHNOTE';
         }else if(deathVariable == 'HD' ){
             noteWhoKilled = 'HDNOTE';
+            yOffset += 80;
         }else if(deathVariable == 'TV' ){
             killedByANote = false;
         }else if(deathVariable == 'ALERTS' ){
@@ -187,20 +190,6 @@ class NewHitmansGameOver extends MusicBeatSubstate
 		killedByCharacter.alpha = 1;
 		add(killedByCharacter);
 
-        retry = new FlxSprite();
-        retry.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/retry');
-		retry.animation.addByPrefix('empty', "gameover-retry-introEMPTY.png", 24, true);
-        retry.animation.addByPrefix('start', "gameover-retry-start", 12, false);
-        retry.animation.addByPrefix('idle', "gameover-retry-loop", 8, true);
-        retry.setGraphicSize(Std.int(retry.width * 0.375));
-		retry.screenCenter();
-		retry.x = 270;
-		retry.y = 440;
-		retry.antialiasing = ClientPrefs.globalAntialiasing;
-        add(retry);
-		retry.alpha=0;
-		retry.animation.play('empty');
-
         text1 = new FlxText(80, 250, Std.int(FlxG.width * 0.6), "-", 60);
         text1.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         text1.borderSize = 2;
@@ -237,6 +226,20 @@ class NewHitmansGameOver extends MusicBeatSubstate
         tauntPanel.antialiasing = ClientPrefs.globalAntialiasing;
         add(tauntPanel);
 
+        retry = new FlxSprite();
+        retry.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/retry');
+		retry.animation.addByPrefix('empty', "gameover-retry-introEMPTY.png", 24, true);
+        retry.animation.addByPrefix('start', "gameover-retry-start", 12, false);
+        retry.animation.addByPrefix('idle', "gameover-retry-loop", 2, true);
+        retry.setGraphicSize(Std.int(retry.width * 0.375));
+		retry.screenCenter();
+		retry.x = 560;
+		retry.y = 540;
+		retry.antialiasing = ClientPrefs.globalAntialiasing;
+        add(retry);
+		retry.alpha=0;
+		retry.animation.play('empty');
+
         staticDeath = new FlxSprite();
         staticDeath.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/Static');
         staticDeath.animation.addByPrefix('idle', 'Static Animated', 48, true);	
@@ -266,8 +269,9 @@ class NewHitmansGameOver extends MusicBeatSubstate
         youdied.antialiasing = ClientPrefs.globalAntialiasing;
         add(youdied);
 
-        taunt = new FlxText(370, 450, Std.int(FlxG.width * 0.6), "TheThing", 60);
-        taunt.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+        taunt = new FlxText(0, 450, Std.int(FlxG.width * 0.6), "Game over player!", 60);
+        taunt.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+        taunt.screenCenter(X);
         taunt.borderSize = 2;
 		taunt.alpha = 0;
 		add(taunt);
@@ -317,77 +321,129 @@ class NewHitmansGameOver extends MusicBeatSubstate
         diedToAnote.text = deathVariable;
         killedByCharacter.text = "Killed by " + characterName;
 
-        if(deathVariable == 'Notes' ){
-            text1.text = "-The usual notes";
-            text2.text = "-Hit them to gain life";
-            text3.text = "-Don't miss them";
-            text4.text = "-They appear in all songs";
-            text5.text = "-Good luck next time";
-        }else if(deathVariable == 'Hurts' ){
-            text1.text = "-The Damage Notes";
-            text2.text = "-DO NOT hit them";
-            text3.text = "-They're skin its mostly red";
-            text4.text = "-They only appears in easy chart songs";
-            text5.text = "-You got this, try again";
-        }else if(deathVariable == 'Instakill' ){
-            text1.text = "-The Killbot notes";
-            text2.text = "-DO NOT TOUCH";
-            text3.text = "-Any hit of those notes will kill";
-            text4.text = "-Mostly appears in Edwhak songs";
-            text5.text = "-Don't get distracted, you can do it";
-        }else if(deathVariable == 'Mine' ){
-            text1.text = "-The Boom Notes";
-            text2.text = "-Hit them will cause a lot of damage";
-            text3.text = "-Evade the most as possible";
-            text4.text = "-They only appears in hard charts";
-            text5.text = "-Focus, concentrate";
-        }else if(deathVariable == 'Ice' ){
-            text1.text = "-The Frost notes";
-            text2.text = "-Any hit disables your strums";
-            text3.text = "-Lethal when hard charts";
-            text4.text = "-They appear in all Anby songs";
-            text5.text = "-You can beat this, try again";
-        }else if(deathVariable == 'Love' ){
-            text1.text = "-The Lovely note";
-            text2.text = "-If you aren't santyax they damage";
-            text3.text = "-Miss them in that case";
-            text4.text = "-Mainly used to help santyax";
-            text5.text = "-Do not fail in that false notes again";
-        }else if(deathVariable == 'Corrupted' ){
-            text1.text = "-The Weird ones";
-            text2.text = "-More than 5 hits kills you";
-            text3.text = "-every hit change something";
-            text4.text = "-They appear in virus sections";
-            text5.text = "-Don't feel scared, you are strong";
-        }else if(deathVariable == 'HD' ){
-            text1.text = "-The Alert Notes";
-            text2.text = "-You need hit them";
-            text3.text = "-Any miss can be lethal";
-            text4.text = "-They appear in all songs";
-            text5.text = "-Be pattient, you'll get it soon";
-        }else if(deathVariable == 'TV' ){
-            text1.text = "-The Tv";
-            text2.text = "-You need follow the patern";
-            text3.text = "-you can fail 5 times";
-            text4.text = "-Used by Anby mainly";
-            text5.text = "-Never give up and you'll get it";
-        }else if(deathVariable == 'ALERTS' ){
-            text1.text = "-The Ding Ding";
-            text2.text = "-Dodge when its needed";
-            text3.text = "-Be ultra carefull";
-            text4.text = "-Used by Edwhak mainly";
-            text5.text = "-Don't get nervous";
-        }else if(deathVariable == 'VISION' ){
-            text1.text = "-The Less vision";
-            text2.text = "-Will make your screen less visible";
-            text3.text = "-Remember focus in the notes";
-            text4.text = "-It can appear in Ak song mainly";
-            text5.text = "-Do not be scare of what you see";
+        switch (deathVariable)
+        {
+            case 'Notes':
+                text1.text = "-The usual notes";
+                text2.text = "-Hit them to gain life";
+                text3.text = "-Don't miss them";
+                text4.text = "-They appear in all songs";
+                text5.text = "-Good luck next time";
+            case 'Hurts':
+                text1.text = "-The Damage Notes";
+                text2.text = "-DO NOT hit them";
+                text3.text = "-They're skin its mostly red";
+                text4.text = "-They only appears in easy chart songs";
+                text5.text = "-You got this, try again";
+            case 'Instakill':
+                text1.text = "-The Killbot notes";
+                text2.text = "-DO NOT TOUCH";
+                text3.text = "-Any hit of those notes will kill";
+                text4.text = "-Mostly appears in Edwhak songs";
+                text5.text = "-Don't get distracted, you can do it";
+            case 'Mine':
+                text1.text = "-The Boom Notes";
+                text2.text = "-Hit them will cause a lot of damage";
+                text3.text = "-Evade the most as possible";
+                text4.text = "-They only appears in hard charts";
+                text5.text = "-Focus, concentrate";
+            case 'Ice':
+                text1.text = "-The Frost notes";
+                text2.text = "-Any hit disables your strums";
+                text3.text = "-Lethal when hard charts";
+                text4.text = "-They appear in all Anby songs";
+                text5.text = "-You can beat this, try again";
+            case 'Love':
+                text1.text = "-The Lovely note";
+                text2.text = "-If you aren't santyax they damage";
+                text3.text = "-Miss them in that case";
+                text4.text = "-Mainly used to help santyax";
+                text5.text = "-Do not fail in that false notes again";
+            case 'Corrupted':
+                text1.text = "-The Weird ones";
+                text2.text = "-More than 5 hits kills you";
+                text3.text = "-every hit change something";
+                text4.text = "-They appear in virus sections";
+                text5.text = "-Don't feel scared, you are strong";
+            case 'HD':
+                text1.text = "-The Alert Notes";
+                text2.text = "-You need hit them";
+                text3.text = "-Any miss can be lethal";
+                text4.text = "-They appear in all songs";
+                text5.text = "-Be pattient, you'll get it soon";
+            case 'TV':
+                text1.text = "-The Tv";
+                text2.text = "-You need follow the patern";
+                text3.text = "-you can fail 5 times";
+                text4.text = "-Used by Anby mainly";
+                text5.text = "-Never give up and you'll get it";
+            case 'ALERTS':
+                text1.text = "-The Ding Ding";
+                text2.text = "-Dodge when its needed";
+                text3.text = "-Be ultra carefull";
+                text4.text = "-Used by Edwhak mainly";
+                text5.text = "-Don't get nervous";
+            case 'VISION':
+                text1.text = "-The Less vision";
+                text2.text = "-Will make your screen less visible";
+                text3.text = "-Remember focus in the notes";
+                text4.text = "-It can appear in Ak song mainly";
+                text5.text = "-Do not be scare of what you see";
         }
 
-        if (characterName == 'Edwhak'){
-            taunt.text = "Thats all what you got!?";
-            taunt.color = 0xff007500;
+        switch (characterName)
+        {
+            case 'Edwhak':
+                taunt.text = "Thats all what you got!?";
+                taunt.color = 0xff007500;
+            case 'anby':
+                taunt.text = "Another day, another death, your time was choosen, by me";
+                taunt.color = 0xff0058aa;
+            case 'ladyB':
+                taunt.text = "Is that your best sweetHeart~?";
+                taunt.color = 0xffff00d4;
+            case 'lady':
+                taunt.text = "My movements distract you~?";
+                taunt.color = 0xff00a300;
+            case 'medy':
+                taunt.text = "Try harder next time buddy, but the outcome will still be a fail";
+                taunt.color = 0xffff31ee;
+            case 'mary':
+                taunt.text = "Objective was succesfully exterminated";
+                taunt.color = 0xff00ffdd;
+            case 'johan':
+                taunt.text = "Didn't you watch that!?";
+                taunt.color = 0xff9e0000;
+            case 'mia':
+                taunt.text = "Cmon its not like 6 me vs you";
+                taunt.color = 0xff9e009e;
+            case 'vanessa':
+                taunt.text = "As an angel i can wellcome you to the heaven";
+                taunt.color = 0xff7eff5d;
+            case 'violette':
+                taunt.text = "You are no worthy to a true fight";
+                taunt.color = 0xffd341d3;
+            case 'virus':
+                taunt.text = "SYSTEM 32 HAS BEEN DELETED";
+                taunt.color = 0xffffffff;
+            case 'demency':
+                taunt.text = "USELESS PIECE OF SHIT WAS DEFEATED!";
+                taunt.color = 0xff5a0000;
+            case 'chip':
+                taunt.text = "I expected a true fight, not a kid game";
+                taunt.color = 0xff868686;
+            case 'alice':
+                taunt.text = "So you died huh?, i really expected that";
+                taunt.color = 0xffff82ea;
+            case 'andrea':
+                taunt.text = "Game over Edwhak, you aren't that strong as you presume";
+                taunt.color = 0xff7a296d;
+            case 'santyax':
+                taunt.text = "Did my fire stoped your systems?, edwhak?";
+                taunt.color = 0xffff8800;
+            case 'enemy':
+                taunt.text = "Game over";
+                taunt.color = 0xff2d2a58;
         }
 
 		PlayState.instance.callOnLuas('onUpdate', [elapsed]);

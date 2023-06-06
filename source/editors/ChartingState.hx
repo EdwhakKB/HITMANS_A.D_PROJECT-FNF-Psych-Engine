@@ -76,12 +76,8 @@ class ChartingState extends MusicBeatState
 		'Fire Note',
 		'True Love Note',
 		'GF Sing',
-		'No Animation'
-	];
-	public static var sustainTypeList:Array<String> = //Used for backwards compatibility with 0.1 - 0.3.2 charts, though, you should add your hardcoded custom sustains here too.
-	[
-		'',
-		'Roll',
+		'No Animation',
+		'RollNote',
 		'EndHit'
 	];
 	private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
@@ -948,9 +944,7 @@ class ChartingState extends MusicBeatState
 	var stepperSusLength:FlxUINumericStepper;
 	var strumTimeInputText:FlxUIInputText; //I wanted to use a stepper but we can't scale these as far as i know :(
 	var noteTypeDropDown:FlxUIDropDownMenuCustom;
-	var sustainTypeDropDown:FlxUIDropDownMenuCustom;
 	var currentType:Int = 0;
-	var currentTypeSus:Int = 0;
 
 	function addNoteUI():Void
 	{
@@ -973,15 +967,6 @@ class ChartingState extends MusicBeatState
 			noteTypeMap.set(noteTypeList[key], key);
 			noteTypeIntMap.set(key, noteTypeList[key]);
 			key++;
-		}
-
-		var keySus:Int = 0;
-		var displaySusNameList:Array<String> = [];
-		while (keySus < sustainTypeList.length) {
-			displaySusNameList.push(sustainTypeList[keySus]);
-			susTypeMap.set(sustainTypeList[keySus], keySus);
-			susTypeIntMap.set(keySus, sustainTypeList[keySus]);
-			keySus++;
 		}
 
 		#if LUA_ALLOWED
@@ -1017,10 +1002,6 @@ class ChartingState extends MusicBeatState
 			displayNameList[i] = i + '. ' + displayNameList[i];
 		}
 
-		for (i in 1...displaySusNameList.length) {
-			displaySusNameList[i] = i + '. ' + displaySusNameList[i];
-		}
-
 		noteTypeDropDown = new FlxUIDropDownMenuCustom(10, 105, FlxUIDropDownMenuCustom.makeStrIdLabelArray(displayNameList, true), function(character:String)
 		{
 			currentType = Std.parseInt(character);
@@ -1031,23 +1012,12 @@ class ChartingState extends MusicBeatState
 		});
 		blockPressWhileScrolling.push(noteTypeDropDown);
 
-		sustainTypeDropDown = new FlxUIDropDownMenuCustom(10, 155, FlxUIDropDownMenuCustom.makeStrIdLabelArray(displaySusNameList, true), function(character:String)
-			{
-				currentTypeSus = Std.parseInt(character);
-				if(curSelectedNote != null && curSelectedNote[1] > -1) {
-					curSelectedNote[3] = susTypeIntMap.get(currentTypeSus);
-					updateGrid();
-				}
-			});
-		blockPressWhileScrolling.push(sustainTypeDropDown);
 
 		tab_group_note.add(new FlxText(10, 10, 0, 'Sustain length:'));
 		tab_group_note.add(new FlxText(10, 50, 0, 'Strum time (in miliseconds):'));
 		tab_group_note.add(new FlxText(10, 90, 0, 'Note type:'));
-		tab_group_note.add(new FlxText(10, 140, 0, 'Sustain type:'));
 		tab_group_note.add(stepperSusLength);
 		tab_group_note.add(strumTimeInputText);
-		tab_group_note.add(sustainTypeDropDown);
 		tab_group_note.add(noteTypeDropDown);
 
 		UI_box.addGroup(tab_group_note);
@@ -2605,15 +2575,6 @@ class ChartingState extends MusicBeatState
 					} else {
 						noteTypeDropDown.selectedLabel = currentType + '. ' + curSelectedNote[3];
 					}				
-				}
-				if(curSelectedNote[3] != null) {
-					currentType = susTypeMap.get(curSelectedNote[3]);
-					if(currentType <= 0) {
-						sustainTypeDropDown.selectedLabel = '';
-					} else {
-						sustainTypeDropDown.selectedLabel = currentType + '. ' + curSelectedNote[3];
-					}
-					
 				}
 			} else {
 				eventDropDown.selectedLabel = curSelectedNote[1][curEventSelected][0];

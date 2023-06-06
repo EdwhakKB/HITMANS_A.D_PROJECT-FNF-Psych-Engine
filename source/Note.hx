@@ -106,6 +106,7 @@ class Note extends FlxSprite
 	public static var fire:Bool = false;
 	public var specialHurt:Bool  = false;
 	public var hurtNote:Bool  = false;
+	public static var isRoll:Bool = false;
 
 	public static var tlove:Bool = false;
 	//i love how fun its this (help) -Ed
@@ -240,6 +241,7 @@ class Note extends FlxSprite
 					}
 				case 'Mine Note':
 					ignoreNote = mustPress;
+					isRoll = false;
 					reloadNote('MINE');
 					// texture = 'MINENOTE_assets';
 					noteSplashTexture = 'HURTnoteSplashes';
@@ -364,6 +366,9 @@ class Note extends FlxSprite
 					noMissAnimation = true;
 				case 'GF Sing':
 					gfNote = true;
+				case 'RollNote':
+					isRoll = true;
+					reloadNote('ROLL');
 			}
 			noteType = value;
 		}
@@ -539,6 +544,8 @@ class Note extends FlxSprite
 
 		if (isSustainNote)
 		{
+			animation.addByPrefix(colArray[noteData] + 'rollend', 'Roll' + colArray[noteData] + 'End');
+			animation.addByPrefix(colArray[noteData] + 'roll', 'Roll' + colArray[noteData]);
 			animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
 			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end');
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece');

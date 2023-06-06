@@ -701,7 +701,7 @@ class ModchartEditorState extends MusicBeatState
                             onSelectEvent();
                             //trace(stackedHighlightedEvents);
                         }   
-                        if (FlxG.keys.justPressed.DELETE)
+                        if (FlxG.keys.justPressed.BACKSPACE)
                             deleteEvent();
                     }
                 });

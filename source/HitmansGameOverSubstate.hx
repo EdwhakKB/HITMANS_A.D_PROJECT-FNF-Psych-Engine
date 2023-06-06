@@ -1945,7 +1945,6 @@ class HitmansGameOverSubstate extends MusicBeatSubstate
             }
             if (!skiped){
                 skiped = true;
-                FlxG.sound.music.time = 550;
             }
 		}
 
