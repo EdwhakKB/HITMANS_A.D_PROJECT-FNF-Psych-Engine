@@ -16,6 +16,12 @@ class ClientPrefs {
 	public static var globalAntialiasing:Bool = true;
 	public static var mineNoteAlpha:Float = 0.6;
 	public static var hudStyle:String = 'HITMANS';
+	public static var customHudName:String = 'FNF';
+    public static var healthBarStyle:String = 'healthBar';
+    public static var countDownStyle:Array<String> = ["get", "ready", "set", "go"];
+    public static var countDownSounds:Array<String> = ["intro3", "intro2", "intro1", "introGo"];
+    public static var ratingStyle:Array<Dynamic> = ["", null];
+    public static var memoryDisplay:Bool = true;
 	public static var noteSkin:String = 'HITMANS';
 	public static var goStyle:String = 'OLD';
 	public static var noteSplashes:Bool = true;
@@ -114,6 +120,12 @@ class ClientPrefs {
 		FlxG.save.data.shaders = shaders;
 		FlxG.save.data.framerate = framerate;
 		FlxG.save.data.hudStyle = hudStyle;
+		// Custom HUD Stuff
+        FlxG.save.data.customHudName = customHudName;
+        FlxG.save.data.healthBarStyle = healthBarStyle;
+        FlxG.save.data.countDownStyle = countDownStyle;
+        FlxG.save.data.countDownSounds = countDownSounds;
+        FlxG.save.data.ratingStyle = ratingStyle;
 		FlxG.save.data.noteSkin = noteSkin;
 		FlxG.save.data.gameOverStyle = goStyle;
 		//FlxG.save.data.cursing = cursing;
@@ -199,6 +211,22 @@ class ClientPrefs {
 		if(FlxG.save.data.hudStyle != null) {
 			hudStyle = FlxG.save.data.hudStyle;
 		}
+		//Custom HUD Stuff
+        if (FlxG.save.data.customHudName != null) {
+            customHudName = FlxG.save.data.customHudName;
+        }
+        if (FlxG.save.data.healthBarStyle  != null) {
+            healthBarStyle = FlxG.save.data.healthBarStyle;
+        }
+        if (FlxG.save.data.countDownStyle != null) {
+            countDownStyle = FlxG.save.data.countDownStyle;
+        }
+        if (FlxG.save.data.countDownSounds != null) {
+            countDownSounds = FlxG.save.data.countDownSounds;
+        }
+        if (FlxG.save.data.ratingStyle != null) {
+            ratingStyle = FlxG.save.data.ratingStyle;
+        }
 		if(FlxG.save.data.noteSkin != null) {
 			noteSkin = FlxG.save.data.noteSkin;
 		}

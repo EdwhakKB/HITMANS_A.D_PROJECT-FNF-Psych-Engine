@@ -165,7 +165,11 @@ class PlayState extends MusicBeatState
 	public static var storyDifficulty:Int = 1;
 	//make it public so i can edit that when i need it lmao
 	//stolen from Qt mod lmao, don't kill me hazzy pls -Ed
-	var forceMiddleScroll:Bool = true; //yeah
+	var forceMiddleScroll:Bool = false; //yeah
+	var forceRightScroll:Bool = false; //so modcharts that NEED rightscroll will be forced (mainly for player vs enemy classic stuff like bf vs someone)
+	var prefixMiddleScroll:Bool = false;
+	var prefixRightScroll:Bool = false; //so if someone force the scroll in chart and clientPrefs are the other option it will be autoLoaded again
+	var savePrefixScroll:Bool = false;
 	var edwhakDrain:Float = 0.03;
 	var edwhakIsEnemy:Bool = false;
 	public var allowEnemyDrain:Bool = false;
@@ -678,7 +682,13 @@ class PlayState extends MusicBeatState
 		NewHitmansGameOver.resetVariables();
 		var songName:String = Paths.formatToSongPath(SONG.song);
 
-		forceMiddleScroll = ClientPrefs.middleScroll;
+		if (ClientPrefs.middleScroll){
+			prefixMiddleScroll = true;
+			prefixRightScroll = false;
+		}else if (!ClientPrefs.middleScroll){
+			prefixRightScroll = true;
+			prefixMiddleScroll = false;
+		}
 
 		curStage = SONG.stage;
 		//trace('stage is: ' + curStage);
@@ -1385,7 +1395,24 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000 / Conductor.songPosition;
 
-		strumLine = new FlxSprite(forceMiddleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
+		
+		if (SONG.middleScroll){
+			forceMiddleScroll = true;
+			forceRightScroll = false;
+			ClientPrefs.middleScroll = true;
+		}else if (SONG.rightScroll){
+			forceMiddleScroll = false;
+			forceRightScroll = true;
+			ClientPrefs.middleScroll = false;
+		}
+
+		if (forceMiddleScroll && !ClientPrefs.middleScroll){
+			savePrefixScroll = true;
+		}else if (forceRightScroll && ClientPrefs.middleScroll){
+			savePrefixScroll = true;
+		}
+
+		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
 		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
 		strumLine.scrollFactor.set();
 
@@ -3260,7 +3287,7 @@ class PlayState extends MusicBeatState
 				else if(ClientPrefs.middleScroll) targetAlpha = 0.35;
 			}
 
-			var babyArrow:StrumNote = new StrumNote(forceMiddleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player);
+			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player);
 			babyArrow.downScroll = ClientPrefs.downScroll;
 			if (!isStoryMode && !skipArrowStartTween)
 			{
@@ -5033,6 +5060,16 @@ class PlayState extends MusicBeatState
 				changedDifficulty = false;
 			}
 			transitioning = true;
+
+			if (forceMiddleScroll){
+				if (savePrefixScroll && prefixRightScroll){
+					ClientPrefs.middleScroll = false;
+				}
+			}else if (forceRightScroll){
+				if (savePrefixScroll && prefixMiddleScroll){
+					ClientPrefs.middleScroll = true;
+				}
+			}
 		}
 	
 	}
@@ -5163,7 +5200,7 @@ class PlayState extends MusicBeatState
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
-		ratings.x = rating.x;
+		ratings.x = rating.x + 40;
 		ratings.y = rating.y;
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));

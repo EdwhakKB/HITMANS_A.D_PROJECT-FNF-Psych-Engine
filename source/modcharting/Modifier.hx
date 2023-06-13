@@ -1026,3 +1026,19 @@ class EaseXModifier extends Modifier
         noteMath(noteData, lane, 0, pf); //just reuse same thing
     }
 }
+
+class YDModifier extends Modifier 
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var daswitch = 1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                daswitch = -1;
+        noteData.y += currentValue * daswitch;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+}

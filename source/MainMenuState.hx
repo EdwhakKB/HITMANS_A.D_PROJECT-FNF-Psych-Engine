@@ -189,7 +189,7 @@ class MainMenuState extends MusicBeatState
 
 		helpText = new FlxText(0, 0, FlxG.width, 
 		    "'DEBUG'      - Watch last debug\n
-			'SET'       - Change a variable inside the systems\n
+			'OPTIONS'    - Launch Options.exe\n
 			'RESTART'   - Restart the whole system (unestable)\n
 			'RESETDATA' - Reset your Data\n
 			'LOGIN'     - Login into your corporation profile\n
@@ -223,7 +223,7 @@ class MainMenuState extends MusicBeatState
 		infoText.borderSize = 2.5;
 		add(infoText);	
 
-		promptText = new FlxText(0, 0, FlxG.width, "Hitmans Corporation [C.D.B]\nWarning: Modify anything can be very unstable, continue by your own risk", 16);
+		promptText = new FlxText(0, 0, FlxG.width, "Hitmans Corporation [C.D.B]\nWarning: Modifying anything can be very unstable, continue at your own risk", 16);
 		promptText.setFormat(Paths.font("pixel.otf"), 16, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		promptText.scrollFactor.set();
 		promptText.screenCenter();
@@ -602,7 +602,7 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										infoText.text = 
-										"HITMANS A.D PROJECT V1\nHello everyone its me Edwhak, the coder\nThis Hitmans version its a demo of the mod itself\nRemember watch this every time you want to check whats new\n
+										"HITMANS A.D PROJECT V1\nHello everyone it's me Edwhak, the coder\nThis Hitmans version is a demo of the mod itself\nRemember to check this everytime you want to see what's new\n
                                         -Added Better modchart system (ZoroModTools)\n
                                         -Fixed crash in the engine (finally)\n
                                         -Updated HUD and menu\n
@@ -611,14 +611,15 @@ class MainMenuState extends MusicBeatState
 									});
 							}
 							
-						else if(wordText.text == 'SET')
+						else if(wordText.text == 'OPTIONS')
 							{
-								infoText.text = 'PLEASE WAIT...';
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
-										infoText.text = "THIS IS STILL UNDER DEVELOPMENT\nCOME BACK LATER";
+										infoText.text = " ";
+										LoadingState.loadAndSwitchState(new options.OptionsState());
 									});
 							}
 

@@ -30,6 +30,8 @@ typedef SwagSong =
 	var splashSkin:String;
 	var validScore:Bool;
 	var notITG:Bool;
+	var rightScroll:Bool;
+	var middleScroll:Bool;
 }
 
 class Song

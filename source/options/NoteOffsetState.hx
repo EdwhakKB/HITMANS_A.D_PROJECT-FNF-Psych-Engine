@@ -13,8 +13,23 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.ui.FlxBar;
 import flixel.math.FlxPoint;
+import haxe.Json;
+import openfl.Assets;
+#if MODS_ALLOWED
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 using StringTools;
+
+typedef CustomHud = {
+    var CustomHudName:String;
+    var HealthBarStyle:String;
+    var CountDownStyle:Array<String>;
+    var CountDownSounds:Array<String>;
+    var RatingStyle:Array<Dynamic>;
+    var GameOverStyle:String;
+}
 
 class NoteOffsetState extends MusicBeatState
 {
@@ -45,8 +60,79 @@ class NoteOffsetState extends MusicBeatState
 
 	var changeModeText:FlxText;
 
+	public var styleModAntiCrash:String = 'FNF';
+
+	public static var styleMod:String = 'DEFAULT';
+
+    public static var customHudName:String = 'FNF';
+
+    public static var healthType:String = 'healthBar';
+
+    public static var countdownType:Array<String> = ["get", "ready", "set", "go"];
+    public static var countdownsoundsType:Array<String> = ["intro3", "intro2", "intro1", "introGo"];
+
+    public static var ratingType:Array<Dynamic> = ['', null];
+
+    public static var gameoverType:String = "NEW";
+
 	override public function create()
 	{
+
+		var hudJsonPath:String = 'customHuds/' + styleMod + '.json';
+
+        #if MODS_ALLOWED
+        var path:String = Paths.modFolders(hudJsonPath);
+        if (!FileSystem.exists(path))
+        {
+            path = Paths.getPreloadPath(hudJsonPath);
+        }
+
+        if (!FileSystem.exists(hudJsonPath))
+        #else
+        var path:String = Paths.getPreloadPath(hudJsonPath);
+        if (!Assets.exists(hudJsonPath))
+        #end
+        {
+            path = Paths.getPreloadPath('customHuds/' + styleModAntiCrash + '.json'); 
+            // If a json couldn't be found, change it to FNF just to prevent a crash
+        }
+
+        #if MODS_ALLOWED
+        var rawHudJson = File.getContent(path);
+        #else
+        var rawHudJson = Assets.getText(path);
+        #end
+
+        trace(path);
+
+        var hudJson:CustomHud = cast Json.parse(rawHudJson);
+
+        if (hudJson == null)
+        {
+            hudJson = {
+                CustomHudName: "FNF",
+                HealthBarStyle: "FNF",
+                CountDownStyle: ["get", "ready", "set", "go"],
+                CountDownSounds: ["intro3", "intro2", "intro1", "introGo"],
+                RatingStyle: ["", null],
+                GameOverStyle: "gameOver"
+            };
+        }
+
+        hudJson.CustomHudName = customHudName;
+        hudJson.HealthBarStyle = healthType;
+        hudJson.CountDownStyle = countdownType;
+        hudJson.CountDownSounds = countdownsoundsType;
+        hudJson.RatingStyle = ratingType;
+        hudJson.GameOverStyle = gameoverType;
+
+        customHudName = ClientPrefs.hudStyle;
+        healthType = ClientPrefs.healthBarStyle;
+		countdownType = ClientPrefs.countDownStyle;
+        countdownsoundsType = ClientPrefs.countDownSounds;
+        ratingType = ClientPrefs.ratingStyle;
+        gameoverType = ClientPrefs.goStyle;
+
 		// Cameras
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -127,6 +213,12 @@ class NoteOffsetState extends MusicBeatState
 		add(box);
 
 		// Combo stuff
+
+		var blackBoxSide:FlxSprite = new FlxSprite().makeGraphic(255, FlxG.height, FlxColor.BLACK);
+		blackBoxSide.scrollFactor.set();
+		blackBoxSide.alpha = 0.6;
+		blackBoxSide.cameras = [camHUD];
+		add(blackBoxSide);
 
 		coolText = new FlxText(0, 0, 0, '', 32);
 		coolText.screenCenter();
@@ -453,7 +545,7 @@ class NoteOffsetState extends MusicBeatState
 
 	function createTexts()
 	{
-		for (i in 0...4)
+		for (i in 0...19)
 		{
 			var text:FlxText = new FlxText(10, 48 + (i * 30), 0, '', 24);
 			text.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -481,6 +573,20 @@ class NoteOffsetState extends MusicBeatState
 				case 1: dumbTexts.members[i].text = '[' + ClientPrefs.comboOffset[0] + ', ' + ClientPrefs.comboOffset[1] + ']';
 				case 2: dumbTexts.members[i].text = 'Numbers Offset:';
 				case 3: dumbTexts.members[i].text = '[' + ClientPrefs.comboOffset[2] + ', ' + ClientPrefs.comboOffset[3] + ']';
+				case 5: dumbTexts.members[i].text = 'Hud Mode:';
+				case 6: dumbTexts.members[i].text = '[' + ClientPrefs.customHudName + ']';
+				case 7: dumbTexts.members[i].text = 'Hud Name:';
+				case 8: dumbTexts.members[i].text = '[' + ClientPrefs.customHudName + ']';
+				case 9: dumbTexts.members[i].text = 'HealthBar Type:';
+				case 10: dumbTexts.members[i].text = '[' + ClientPrefs.healthBarStyle + ']';
+				case 11: dumbTexts.members[i].text = 'CountDown Type:';
+				case 12: dumbTexts.members[i].text = '[' + ClientPrefs.countDownStyle + ']';
+				case 13: dumbTexts.members[i].text = 'CountDownSound Type:';
+				case 14: dumbTexts.members[i].text = '[' + ClientPrefs.countDownSounds + ']';
+				case 15: dumbTexts.members[i].text = 'Rating Type:';
+				case 16: dumbTexts.members[i].text = '[' + ClientPrefs.ratingStyle + ']';
+				case 17: dumbTexts.members[i].text = 'GameOver Type:';
+				case 18: dumbTexts.members[i].text = '[' + ClientPrefs.goStyle + ']';
 			}
 		}
 	}

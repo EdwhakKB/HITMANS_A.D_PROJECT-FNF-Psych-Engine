@@ -200,7 +200,7 @@ class ModchartEditorState extends MusicBeatState
         TipsyXModifier, TipsyYModifier, TipsyZModifier,
         ReverseModifier, IncomingAngleModifier, RotateModifier, StrumLineRotateModifier,
         BumpyModifier,
-        XModifier, YModifier, ZModifier, ConfusionModifier, 
+        XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier, 
         ScaleModifier, ScaleXModifier, ScaleYModifier, SpeedModifier, 
         StealthModifier, NoteStealthModifier, LaneStealthModifier, InvertModifier, FlipModifier, 
         MiniModifier, ShrinkModifier, BeatXModifier, BeatYModifier, BeatZModifier, 
@@ -356,7 +356,11 @@ class ModchartEditorState extends MusicBeatState
 
         #end
 
-
+        if (PlayState.SONG.middleScroll){
+			ClientPrefs.middleScroll = true;
+		}else if (PlayState.SONG.rightScroll){
+			ClientPrefs.middleScroll = false;
+		}
 
         #if PSYCH
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 50).makeGraphic(FlxG.width, 10);

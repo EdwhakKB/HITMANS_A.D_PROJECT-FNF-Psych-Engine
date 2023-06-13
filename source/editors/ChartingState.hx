@@ -242,7 +242,9 @@ class ChartingState extends MusicBeatState
 				speed: 1,
 				stage: 'stage',
 				validScore: false,
-				notITG: false
+				notITG: false,
+				rightScroll: false,
+				middleScroll: false
 			};
 			addSection();
 			PlayState.SONG = _song;
@@ -418,6 +420,8 @@ class ChartingState extends MusicBeatState
 	var playSoundBf:FlxUICheckBox = null;
 	var playSoundDad:FlxUICheckBox = null;
 	var notITGModchart:FlxUICheckBox = null;
+	var ForceRightScroll:FlxUICheckBox = null;
+	var ForceMiddleScroll:FlxUICheckBox = null;
 	var UI_songTitle:FlxUIInputText;
 	var noteSkinInputText:FlxUIInputText;
 	var noteSplashesInputText:FlxUIInputText;
@@ -630,7 +634,20 @@ class ChartingState extends MusicBeatState
 		notITGModchart.callback = function()
 		{
 			_song.notITG = notITGModchart.checked;
-			//trace('CHECKED!');
+		};
+
+		var forceRightScroll = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y - 10, null, null, "Forced RightScroll", 100);
+		forceRightScroll.checked = _song.rightScroll;
+		forceRightScroll.callback = function()
+		{
+			_song.rightScroll = forceRightScroll.checked;
+		};
+
+		var forceMiddleScroll = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y - 30, null, null, "Forced MiddleScroll", 100);
+		forceMiddleScroll.checked = _song.middleScroll;
+		forceMiddleScroll.callback = function()
+		{
+			_song.middleScroll = forceMiddleScroll.checked;
 		};
 
 		var tab_group_song = new FlxUI(null, UI_box);
@@ -639,6 +656,8 @@ class ChartingState extends MusicBeatState
 
 		tab_group_song.add(check_voices);
 		tab_group_song.add(notITGModchart);
+		tab_group_song.add(forceMiddleScroll);
+		tab_group_song.add(forceRightScroll);
 		tab_group_song.add(clear_events);
 		tab_group_song.add(clear_notes);
 		tab_group_song.add(saveButton);
