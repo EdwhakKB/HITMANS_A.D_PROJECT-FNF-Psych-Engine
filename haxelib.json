@@ -1,13 +1,11 @@
 {
-    "name": "fnf-modcharting-tools",
-    "url" : "https://github.com/TheZoroForce240/FNF-Modcharting-Tools",
-    "license": "Apache",
-    "tags": ["fnf"],
-    "description": "A modchart framework for Friday Night Funkin.",
-    "version": "1.0.1",
-    "classPath": "source/",
-    "releasenote": "",
-    "contributors": ["TheZoroForce240","UncertainProd"],
-    "dependencies": {
-    }
+	"name": "flixel",
+	"url" : "https://github.com/HaxeFlixel/flixel",
+	"license": "MIT",
+	"tags": ["game", "openfl", "flash", "html5", "neko", "cpp", "android", "ios", "cross"],
+	"description": "HaxeFlixel is a 2D game engine based on OpenFL that delivers cross-platform games.",
+	"version": "5.3.1",
+	"releasenote": "fix haxe 4.3.1 warnings",
+	"contributors": ["haxeflixel", "Gama11", "GeoKureli"],
+	"dependencies": {}
 }

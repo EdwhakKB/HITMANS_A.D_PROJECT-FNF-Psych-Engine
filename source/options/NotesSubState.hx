@@ -27,22 +27,6 @@ import Controls;
 
 using StringTools;
 
-class NoteSkinSelector extends BaseOptionsMenu
-{
-	public function new()
-	{
-		var option:Option = new Option('Note Skin:',
-		"What Skin You want to use??.",
-		'noteSkin',
-		'string',
-		'HITMANS',
-		['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROOVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR']);
-		addOption(option);
-
-		super();
-	}
-}
-
 class NotesSubState extends MusicBeatSubstate
 {
 	private static var curSelected:Int = 0;
@@ -57,9 +41,38 @@ class NotesSubState extends MusicBeatSubstate
 	var blackBG:FlxSprite;
 	var hsbText:Alphabet;
 
+	public var note:FlxSprite;
+
 	var posX = 230;
+
+	var animations:Array<String> = ['purple0', 'blue0', 'green0', 'red0'];
+	var noteSkinArray:Array<String> = ['FNF', 'HITMANS', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR'];
+	var noteSkinTypes:Int = 0;
 	public function new() {
 		super();
+
+		switch (ClientPrefs.noteSkin){
+			case 'FNF':
+				noteSkinTypes = 0;
+			case 'HITMANS':
+				noteSkinTypes = 1;
+			case 'INHUMAN':
+				noteSkinTypes = 2;
+			case 'STEPMANIA':
+				noteSkinTypes = 3;
+			case 'DELTA':
+				noteSkinTypes = 4;
+			case 'GROVE':
+				noteSkinTypes = 5;
+			case 'SUSSY':
+				noteSkinTypes = 6;
+			case 'EPIC':
+				noteSkinTypes = 7;
+			case 'ITGOPT':
+				noteSkinTypes = 8;
+			case 'DDR':
+				noteSkinTypes = 9;
+		}
 		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.screenCenter();
@@ -87,16 +100,15 @@ class NotesSubState extends MusicBeatSubstate
 		grpNumbers = new FlxTypedGroup<Alphabet>();
 		add(grpNumbers);
 
-		for (i in 0...ClientPrefs.arrowHSV.length) {
+		for (i in 0...4) {
 			var yPos:Float = (165 * i) + 35;
 			for (j in 0...3) {
 				var optionText:Alphabet = new Alphabet(posX + (225 * j) + 250, yPos + 60, Std.string(ClientPrefs.arrowHSV[i][j]), true);
 				grpNumbers.add(optionText);
 			}
 
-			var note:FlxSprite = new FlxSprite(posX, yPos);
+			note = new FlxSprite(posX, yPos);
 			note.frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets');
-			var animations:Array<String> = ['purple0', 'blue0', 'green0', 'red0'];
 			note.animation.addByPrefix('idle', animations[i]);
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;
@@ -198,6 +210,14 @@ class NotesSubState extends MusicBeatSubstate
 			}
 		}
 
+		if (FlxG.keys.justPressed.Q){
+			updateNoteSkin(-1);
+		}
+
+		if (FlxG.keys.justPressed.E){
+			updateNoteSkin(1);
+		}
+
 		if (controls.BACK || (changingNote && controls.ACCEPT)) {
 			if(!changingNote) {
 				close();
@@ -212,6 +232,26 @@ class NotesSubState extends MusicBeatSubstate
 			nextAccept -= 1;
 		}
 		super.update(elapsed);
+	}
+
+	function updateNoteSkin(curSelectedNoteSkin:Int = 0){
+		noteSkinTypes += curSelectedNoteSkin;
+		if (noteSkinTypes < 0)
+			noteSkinTypes = noteSkinArray.length - 1;
+		if (noteSkinTypes >= noteSkinArray.length)
+			noteSkinTypes = 0;
+
+		new FlxTimer().start(0.1, function(tmr:FlxTimer){
+			resetSubState();
+        });
+
+		ClientPrefs.noteSkin = noteSkinArray[noteSkinTypes];
+		for (i in 0...4) {
+			note.frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets');
+			note.animation.addByPrefix('idle', animations[i]);
+			note.animation.play('idle');
+			note.antialiasing = ClientPrefs.globalAntialiasing;
+		}
 	}
 
 	function changeSelection(change:Int = 0) {

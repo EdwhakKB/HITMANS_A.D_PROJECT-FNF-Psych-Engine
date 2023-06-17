@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="InsanityEye.png">
+<SubTexture name="InsanityEye attack_alert0000" x="0" y="0" width="511" height="518" frameX="-1" frameY="7" frameWidth="507" frameHeight="504" />
+<SubTexture name="InsanityEye attack_alert0001" x="991" y="518" width="490" height="471" frameX="-12" frameY="-17" frameWidth="507" frameHeight="504" />
+<SubTexture name="InsanityEye attack_alert0002" x="384" y="1019" width="431" height="407" frameX="-41" frameY="-49" frameWidth="507" frameHeight="504" />
+<SubTexture name="InsanityEye attack_alert0003" x="484" y="518" width="507" height="495" frameX="0" frameY="-5" frameWidth="507" frameHeight="504" />
+<SubTexture name="InsanityEye attack_alert0004" x="511" y="0" width="507" height="504" frameX="0" frameY="0" frameWidth="507" frameHeight="504" />
+<SubTexture name="InsanityEye attack_alert0005" x="0" y="518" width="484" height="501" frameX="-15" frameY="-2" frameWidth="507" frameHeight="504" />
+<SubTexture name="InsanityEye attack_alert0006" x="0" y="1019" width="384" height="431" frameX="-65" frameY="-37" frameWidth="507" frameHeight="504" />
+<SubTexture name="InsanityEye attack_alert0007" x="1018" y="0" width="486" height="504" frameX="-14" frameY="0" frameWidth="507" frameHeight="504" />
+</TextureAtlas>

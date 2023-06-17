@@ -1,0 +1,6 @@
+this event makes red Killerbot (edkb) images appear
+value 1
+1 = cry 
+value 2
+time that the image takes to go
+if you leave 1 empty it will show random images

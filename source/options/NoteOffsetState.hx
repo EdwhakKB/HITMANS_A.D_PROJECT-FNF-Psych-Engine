@@ -37,6 +37,11 @@ class NoteOffsetState extends MusicBeatState
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 
+	private static var curSelected:Int = 0;
+	private static var curSelecPrefx:Int = 0;
+	var currentSelected:Array<String> = ['Offset&Beat', 'HudEditor', 'ChangeSickWindow'];
+	var option:Array<String> = ['HudName', 'HealthBarStyle', 'CountDownStyle', 'CountDownSounds', 'RatingStyle', 'GameOverStyle'];
+
 	public var square:FlxSprite;
 	public var squareline:FlxSprite;
 	public var island:FlxSprite;
@@ -48,6 +53,7 @@ class NoteOffsetState extends MusicBeatState
 	var rating:FlxSprite;
 	var comboNums:FlxSpriteGroup;
 	var dumbTexts:FlxTypedGroup<FlxText>;
+	var dumbOpTexts:FlxTypedGroup<FlxText>;
 
 	var barPercent:Float = 0;
 	var delayMin:Int = 0;
@@ -58,11 +64,13 @@ class NoteOffsetState extends MusicBeatState
 	var beatText:Alphabet;
 	var beatTween:FlxTween;
 
+	var blackBoxSide:FlxSprite;
+
 	var changeModeText:FlxText;
 
-	public var styleModAntiCrash:String = 'FNF';
+	public var styleModAntiCrash:String = 'HITMANS';
 
-	public static var styleMod:String = 'DEFAULT';
+	public static var styleMod:String = 'HITMANS';
 
     public static var customHudName:String = 'FNF';
 
@@ -74,6 +82,10 @@ class NoteOffsetState extends MusicBeatState
     public static var ratingType:Array<Dynamic> = ['', null];
 
     public static var gameoverType:String = "NEW";
+
+	public var onComboMenu:Bool = true;
+	public var onHudMenu:Bool = false;
+	public var onBeatOffMenu:Bool = false;
 
 	override public function create()
 	{
@@ -108,30 +120,36 @@ class NoteOffsetState extends MusicBeatState
         var hudJson:CustomHud = cast Json.parse(rawHudJson);
 
         if (hudJson == null)
-        {
-            hudJson = {
-                CustomHudName: "FNF",
-                HealthBarStyle: "FNF",
-                CountDownStyle: ["get", "ready", "set", "go"],
-                CountDownSounds: ["intro3", "intro2", "intro1", "introGo"],
-                RatingStyle: ["", null],
-                GameOverStyle: "gameOver"
-            };
-        }
-
-        hudJson.CustomHudName = customHudName;
-        hudJson.HealthBarStyle = healthType;
-        hudJson.CountDownStyle = countdownType;
-        hudJson.CountDownSounds = countdownsoundsType;
-        hudJson.RatingStyle = ratingType;
-        hudJson.GameOverStyle = gameoverType;
-
-        customHudName = ClientPrefs.hudStyle;
-        healthType = ClientPrefs.healthBarStyle;
-		countdownType = ClientPrefs.countDownStyle;
-        countdownsoundsType = ClientPrefs.countDownSounds;
-        ratingType = ClientPrefs.ratingStyle;
-        gameoverType = ClientPrefs.goStyle;
+			{
+				hudJson = {
+					CustomHudName: "FNF",
+					HealthBarStyle: "FNF",
+					CountDownStyle: ["get", "ready", "set", "go"],
+					CountDownSounds: ["intro3", "intro2", "intro1", "introGo"],
+					RatingStyle: ["", ""],
+					GameOverStyle: "gameOver"
+				};
+			}
+	
+			if (hudJson.CustomHudName != "")
+				hudJson.CustomHudName = customHudName;
+			if (hudJson.HealthBarStyle != "")
+				hudJson.HealthBarStyle = healthType;
+			if (hudJson.CountDownStyle != ["", "", "", ""])
+				hudJson.CountDownStyle = countdownType;
+			if (hudJson.CountDownSounds != ["", "", "", ""])
+				hudJson.CountDownSounds = countdownsoundsType;
+			if (hudJson.RatingStyle != ["", ""])
+				hudJson.RatingStyle = ratingType;
+			if (hudJson.GameOverStyle != "")
+				hudJson.GameOverStyle = gameoverType;
+	
+			ClientPrefs.hudStyle = customHudName;
+			ClientPrefs.healthBarStyle = healthType;
+			ClientPrefs.countDownStyle = countdownType;
+			ClientPrefs.countDownSounds = countdownsoundsType;
+			ClientPrefs.ratingStyle = ratingType;
+			ClientPrefs.goStyle = gameoverType;
 
 		// Cameras
 		camGame = new FlxCamera();
@@ -214,7 +232,7 @@ class NoteOffsetState extends MusicBeatState
 
 		// Combo stuff
 
-		var blackBoxSide:FlxSprite = new FlxSprite().makeGraphic(255, FlxG.height, FlxColor.BLACK);
+		blackBoxSide = new FlxSprite().makeGraphic(255, FlxG.height, FlxColor.BLACK);
 		blackBoxSide.scrollFactor.set();
 		blackBoxSide.alpha = 0.6;
 		blackBoxSide.cameras = [camHUD];
@@ -257,6 +275,9 @@ class NoteOffsetState extends MusicBeatState
 		dumbTexts = new FlxTypedGroup<FlxText>();
 		dumbTexts.cameras = [camHUD];
 		add(dumbTexts);
+		dumbOpTexts = new FlxTypedGroup<FlxText>();
+		dumbOpTexts.cameras = [camHUD];
+		add(dumbOpTexts);
 		createTexts();
 
 		repositionCombo();
@@ -322,7 +343,6 @@ class NoteOffsetState extends MusicBeatState
 	}
 
 	var holdTime:Float = 0;
-	var onComboMenu:Bool = true;
 	var holdingObjectType:Null<Bool> = null;
 
 	var startMousePos:FlxPoint = new FlxPoint();
@@ -432,7 +452,8 @@ class NoteOffsetState extends MusicBeatState
 				repositionCombo();
 			}
 		}
-		else
+
+		if (onBeatOffMenu)
 		{
 			if(controls.UI_LEFT_P)
 			{
@@ -471,8 +492,8 @@ class NoteOffsetState extends MusicBeatState
 
 		if(controls.ACCEPT)
 		{
-			onComboMenu = !onComboMenu;
 			updateMode();
+			changeSelectedPart(1);
 		}
 
 		if(controls.BACK)
@@ -489,6 +510,20 @@ class NoteOffsetState extends MusicBeatState
             }
 			FlxG.sound.playMusic(Paths.music('freakyMenu'), 1, true);
 			FlxG.mouse.visible = false;
+		}
+
+		if (curSelecPrefx == 0){
+			onComboMenu = true;
+			onHudMenu = false;
+			onBeatOffMenu = false;
+		}else if (curSelecPrefx == 1){
+			onComboMenu = false;
+			onHudMenu = true;
+			onBeatOffMenu = false;
+		}else if (curSelecPrefx == 2){
+			onComboMenu = false;
+			onHudMenu = false;
+			onBeatOffMenu = true;
 		}
 
 		Conductor.songPosition = FlxG.sound.music.time;
@@ -545,7 +580,7 @@ class NoteOffsetState extends MusicBeatState
 
 	function createTexts()
 	{
-		for (i in 0...19)
+		for (i in 0...4)
 		{
 			var text:FlxText = new FlxText(10, 48 + (i * 30), 0, '', 24);
 			text.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -561,6 +596,22 @@ class NoteOffsetState extends MusicBeatState
 				text.y += 24;
 			}
 		}
+		for (i in 0...14)
+			{
+				var text:FlxText = new FlxText(10, 48 + (i * 30), 0, '', 24);
+				text.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				text.scrollFactor.set();
+				text.borderSize = 2;
+				dumbOpTexts.add(text);
+				text.cameras = [camHUD];
+				text.x += 20;
+				text.y += 20;
+	
+				if(i > 1)
+				{
+					text.y += 24;
+				}
+			}
 	}
 
 	function reloadTexts()
@@ -573,22 +624,28 @@ class NoteOffsetState extends MusicBeatState
 				case 1: dumbTexts.members[i].text = '[' + ClientPrefs.comboOffset[0] + ', ' + ClientPrefs.comboOffset[1] + ']';
 				case 2: dumbTexts.members[i].text = 'Numbers Offset:';
 				case 3: dumbTexts.members[i].text = '[' + ClientPrefs.comboOffset[2] + ', ' + ClientPrefs.comboOffset[3] + ']';
-				case 5: dumbTexts.members[i].text = 'Hud Mode:';
-				case 6: dumbTexts.members[i].text = '[' + ClientPrefs.customHudName + ']';
-				case 7: dumbTexts.members[i].text = 'Hud Name:';
-				case 8: dumbTexts.members[i].text = '[' + ClientPrefs.customHudName + ']';
-				case 9: dumbTexts.members[i].text = 'HealthBar Type:';
-				case 10: dumbTexts.members[i].text = '[' + ClientPrefs.healthBarStyle + ']';
-				case 11: dumbTexts.members[i].text = 'CountDown Type:';
-				case 12: dumbTexts.members[i].text = '[' + ClientPrefs.countDownStyle + ']';
-				case 13: dumbTexts.members[i].text = 'CountDownSound Type:';
-				case 14: dumbTexts.members[i].text = '[' + ClientPrefs.countDownSounds + ']';
-				case 15: dumbTexts.members[i].text = 'Rating Type:';
-				case 16: dumbTexts.members[i].text = '[' + ClientPrefs.ratingStyle + ']';
-				case 17: dumbTexts.members[i].text = 'GameOver Type:';
-				case 18: dumbTexts.members[i].text = '[' + ClientPrefs.goStyle + ']';
 			}
 		}
+		for (i in 0...dumbOpTexts.length)
+			{
+				switch(i)
+				{
+					case 0: dumbOpTexts.members[i].text = 'Hud Mode:';
+					case 1: dumbOpTexts.members[i].text = '[' + ClientPrefs.customHudName + ']';
+					case 2: dumbOpTexts.members[i].text = 'Hud Name:';
+					case 3: dumbOpTexts.members[i].text = '[' + ClientPrefs.hudStyle + ']';
+					case 4: dumbOpTexts.members[i].text = 'HealthBar Type:';
+					case 5: dumbOpTexts.members[i].text = '[' + ClientPrefs.healthBarStyle + ']';
+					case 6: dumbOpTexts.members[i].text = 'CountDown Type:';
+					case 7: dumbOpTexts.members[i].text = '[' + ClientPrefs.countDownStyle + ']';
+					case 8: dumbOpTexts.members[i].text = 'CountDownSound Type:';
+					case 9: dumbOpTexts.members[i].text = '[' + ClientPrefs.countDownSounds + ']';
+					case 10: dumbOpTexts.members[i].text = 'Rating Type:';
+					case 11: dumbOpTexts.members[i].text = '[' + ClientPrefs.ratingStyle + ']';
+					case 12: dumbOpTexts.members[i].text = 'GameOver Type:';
+					case 13: dumbOpTexts.members[i].text = '[' + ClientPrefs.goStyle + ']';
+				}
+			}
 	}
 
 	function updateNoteDelay()
@@ -602,18 +659,56 @@ class NoteOffsetState extends MusicBeatState
 		rating.visible = onComboMenu;
 		comboNums.visible = onComboMenu;
 		dumbTexts.visible = onComboMenu;
+
+		blackBoxSide.visible = !onBeatOffMenu;
+
+		dumbOpTexts.visible = onHudMenu;
 		
-		timeBarBG.visible = !onComboMenu;
-		timeBar.visible = !onComboMenu;
-		timeTxt.visible = !onComboMenu;
-		beatText.visible = !onComboMenu;
+		timeBarBG.visible = onBeatOffMenu;
+		timeBar.visible = onBeatOffMenu;
+		timeTxt.visible = onBeatOffMenu;
+		beatText.visible = onBeatOffMenu;
 
 		if(onComboMenu)
 			changeModeText.text = '< Combo Offset (Press Accept to Switch) >';
-		else
+		else if (onBeatOffMenu)
 			changeModeText.text = '< Note/Beat Delay (Press Accept to Switch) >';
+		else if (onHudMenu)
+			changeModeText.text = '< Hud Customizer (Press Accept to Switch) >';
 
 		changeModeText.text = changeModeText.text.toUpperCase();
 		FlxG.mouse.visible = onComboMenu;
+	}
+
+	function changeSelection(change:Int = 0) {
+		curSelected += change;
+		if (curSelected < 0)
+			curSelected = option.length - 1;
+		if (curSelected >= option.length)
+			curSelected = 0;
+
+		var bullShit:Int = 0;
+
+		// for (item in grpOptions.members) {
+		// 	item.targetY = bullShit - curSelected;
+		// 	bullShit++;
+
+		// 	item.alpha = 0.6;
+		// 	if (item.targetY == 0) {
+		// 		item.alpha = 1;
+		// 		selectorLeft.x = item.x - 63;
+		// 		selectorLeft.y = item.y;
+		// 		selectorRight.x = item.x + item.width + 15;
+		// 		selectorRight.y = item.y;
+		// 	}
+		// }
+	}
+
+	function changeSelectedPart(change:Int = 0) {
+		curSelecPrefx += change;
+		if (curSelecPrefx < 0)
+			curSelecPrefx = currentSelected.length - 1;
+		if (curSelecPrefx >= currentSelected.length)
+			curSelecPrefx = 0;
 	}
 }

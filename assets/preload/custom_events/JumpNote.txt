@@ -1,0 +1,8 @@
+This is very simple to use
+value 1 and value 2
+this event use a bit of the "change scroll speed" event
+this is how it works
+value 1 = how fast in steps it make the effect 
+value 2 = this enable and disable it 
+(if value 1 = " " or "null" or "0" the game just load
+default 

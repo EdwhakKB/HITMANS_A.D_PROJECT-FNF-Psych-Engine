@@ -1,0 +1,12 @@
+this event works ONLY for ladyB things lmao
+value 1: set TV things
+-0 = default
+-1 = alert
+-2 = ready
+-3 = psol (enables auto when pink event)
+if null then nothing
+value 2: ladyB
+-0 happy
+-1 neutral
+-2 yandere
+-3 mad yandere

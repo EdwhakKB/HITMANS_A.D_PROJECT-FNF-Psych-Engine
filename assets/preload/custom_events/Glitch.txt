@@ -1,0 +1,9 @@
+Value 1: amount / glitching / chromatic                              (Leave it blank for a random number between 0.10 to 0.50)
+Value 2: on / chromatic amount                                          (Value 2 is only for glitching / chromatic)
+Recommended to use numbers between 0 to 1.
+
+You can only choose "on" with glitching on Value 1.
+With "chromatic" the same, with "amount" is only
+a number. If you did not understand the above then:
+Glitching screen: v1 = glitching, v2 = on
+Chromatic: v1 = chromatic, v2 = your amount

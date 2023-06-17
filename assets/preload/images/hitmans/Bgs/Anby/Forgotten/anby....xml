@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="anby.png">
+<SubTexture name="talk loop0000" x="0" y="0" width="338" height="486" frameX="-6" frameY="-32" frameWidth="396" frameHeight="526" />
+<SubTexture name="talk loop0001" x="0" y="0" width="338" height="486" frameX="-6" frameY="-32" frameWidth="396" frameHeight="526" />
+<SubTexture name="talk0000" x="0" y="0" width="338" height="486" frameX="-6" frameY="-32" frameWidth="396" frameHeight="526" />
+<SubTexture name="talk0001" x="676" y="0" width="346" height="484" frameX="-2" frameY="-34" frameWidth="396" frameHeight="526" />
+<SubTexture name="talk0002" x="0" y="486" width="346" height="484" frameX="-2" frameY="-34" frameWidth="396" frameHeight="526" />
+<SubTexture name="confused loop0000" x="1022" y="484" width="338" height="472" frameX="-6" frameY="-46" frameWidth="396" frameHeight="526" />
+<SubTexture name="confused loop0001" x="1022" y="484" width="338" height="472" frameX="-6" frameY="-46" frameWidth="396" frameHeight="526" />
+<SubTexture name="confused0000" x="1022" y="484" width="338" height="472" frameX="-6" frameY="-46" frameWidth="396" frameHeight="526" />
+<SubTexture name="confused0001" x="1368" y="482" width="342" height="476" frameX="-6" frameY="-42" frameWidth="396" frameHeight="526" />
+<SubTexture name="confused0002" x="1368" y="0" width="348" height="482" frameX="-2" frameY="-36" frameWidth="396" frameHeight="526" />
+<SubTexture name="bored loop0000" x="338" y="0" width="338" height="486" frameX="-6" frameY="-32" frameWidth="396" frameHeight="526" />
+<SubTexture name="bored loop0001" x="338" y="0" width="338" height="486" frameX="-6" frameY="-32" frameWidth="396" frameHeight="526" />
+<SubTexture name="bored0000" x="338" y="0" width="338" height="486" frameX="-6" frameY="-32" frameWidth="396" frameHeight="526" />
+<SubTexture name="bored0001" x="346" y="486" width="346" height="484" frameX="-2" frameY="-34" frameWidth="396" frameHeight="526" />
+<SubTexture name="bored0002" x="1022" y="0" width="346" height="484" frameX="-2" frameY="-34" frameWidth="396" frameHeight="526" />
+</TextureAtlas>

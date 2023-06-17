@@ -29,7 +29,11 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.math.FlxMath;
 import flixel.FlxSprite;
 import flixel.util.FlxSort;
+#if (flixel >= "5.3.0")
+import flixel.sound.FlxSound;
+#else
 import flixel.system.FlxSound;
+#end
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxCamera;
 import flixel.FlxG;
@@ -43,6 +47,7 @@ import flixel.addons.ui.FlxUIInputText;
 import flixel.addons.ui.FlxUINumericStepper;
 import flixel.addons.ui.FlxUISlider;
 import flixel.addons.ui.FlxUITabMenu;
+import flixel.util.FlxDestroyUtil;
 import flixel.addons.ui.FlxUITooltip.FlxUITooltipStyle;
 
 
@@ -207,7 +212,8 @@ class ModchartEditorState extends MusicBeatState
         BounceXModifier, BounceYModifier, BounceZModifier, 
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
         InvertSineModifier, BoostModifier, BrakeModifier, JumpModifier, WaveXModifier, WaveYModifier,
-        WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier, EaseXModifier
+        WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier, EaseXModifier,
+        StealthBoostModifier
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -391,10 +397,16 @@ class ModchartEditorState extends MusicBeatState
 		//notes.cameras = [camHUD];
 
         #if ("flixel-addons" >= "3.0.0")
-        grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, Std.int(gridSize*48), gridSize)), FlxAxes.X, 0, 0);
+        grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, FlxG.width, gridSize)), FlxAxes.X, 0, 0);
         #else 
-        grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, Std.int(gridSize*48), gridSize)), 0, 0, true, false);
+        grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, FlxG.width, gridSize)), 0, 0, true, false);
         #end
+
+        // #if ("flixel-addons" >= "3.0.0")
+        // grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, Std.int(gridSize*48), gridSize)), FlxAxes.X, 0, 0);
+        // #else 
+        // grid = new FlxBackdrop(FlxGraphic.fromBitmapData(createGrid(gridSize, gridSize, Std.int(gridSize*48), gridSize)), 0, 0, true, false);
+        // #end
         
         add(grid);
         
@@ -852,19 +864,21 @@ class ModchartEditorState extends MusicBeatState
 
     function updateEventSprites()
     {
-        /*var i = eventSprites.length - 1;
-        while (i >= 0) {
-            var daEvent:ModchartEditorEvent = eventSprites.members[i];
-            if(curBeat < daEvent.beatTime-4 && curBeat > daEvent.beatTime+16)
-            {
-                daEvent.active = false;
-                daEvent.visible = false;
-                eventSprites.remove(daEvent, true);
-                trace(daEvent.beatTime);
-                trace("removed event sprite "+ daEvent.beatTime);
-            }
-            --i;
-        }*/
+        // var i = eventSprites.length - 1;
+        // while (i >= 0) {
+        //     var daEvent:ModchartEditorEvent = eventSprites.members[i];
+        //     var beat:Float = playfieldRenderer.modchart.data.events[i][1][0];
+        //     if(curBeat < beat-4 && curBeat > beat+16)
+        //     {
+        //         daEvent.active = false;
+        //         daEvent.visible = false;
+        //         daEvent.alpha = 0;
+        //         eventSprites.remove(daEvent, true);
+        //         trace(daEvent.getBeatTime());
+        //         trace("removed event sprite "+ daEvent.getBeatTime());
+        //     }
+        //     --i;
+        // }
         eventSprites.clear();
         for (i in 0...playfieldRenderer.modchart.data.events.length)
         {
@@ -1179,6 +1193,12 @@ class ModchartEditorState extends MusicBeatState
         var lastColor:Int = Color1;
         var grid:BitmapData = new BitmapData(Width, Height, true);
 
+        // grid.lock();
+
+        // FlxDestroyUtil.dispose(grid);
+
+        // grid = null;
+
         // If there aren't an even number of cells in a row then we need to swap the lastColor value
         var y:Int = 0;
         var timesFilled:Int = 0;
@@ -1196,6 +1216,7 @@ class ModchartEditorState extends MusicBeatState
                 //     lastColor = Color3;
 
                 grid.fillRect(new Rectangle(x, y, CellWidth, CellHeight), lastColor);
+                // grid.unlock();
                 timesFilled++;
 
                 x += CellWidth;

@@ -1,0 +1,7 @@
+English:
+Value 1 is the name of the image 
+Value 2 is how long it's there for.
+
+Português:
+Valor 1: Nome da imagem
+Valor 2: Tempo de duração 

@@ -1042,3 +1042,35 @@ class YDModifier extends Modifier
         noteMath(noteData, lane, 0, pf); //just reuse same thing
     }
 }
+
+class StealthBoostModifier extends Modifier
+{
+    override function curPosMath(lane:Int, curPos:Float, pf:Int)
+        {
+            if (curPos <= -950)
+                {
+                    curPos = -950 + (curPos*0.02);
+                }
+            return curPos;
+        }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        //desaturate the notes
+        if (curPos <= -950)
+        {
+            noteData.alpha = 0;
+        } 
+        else if (curPos <= -100)
+        {
+            noteData.alpha += 0.1;
+        }
+        else 
+        {
+
+        }
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="Edwhak.png">
+<SubTexture name="Edwhak_Idle0000" x="0" y="0" width="1133" height="1161" frameX="-85" frameY="-4" frameWidth="1348" frameHeight="1143" />
+<SubTexture name="Edwhak_Idle0001" x="0" y="0" width="1133" height="1161" frameX="-85" frameY="-4" frameWidth="1348" frameHeight="1143" />
+<SubTexture name="Edwhak_Smile0000" x="1133" y="0" width="1195" height="1159" frameX="-10" frameY="-6" frameWidth="1348" frameHeight="1143" />
+<SubTexture name="Edwhak_Smile0001" x="1133" y="0" width="1195" height="1159" frameX="-10" frameY="-6" frameWidth="1348" frameHeight="1143" />
+</TextureAtlas>
