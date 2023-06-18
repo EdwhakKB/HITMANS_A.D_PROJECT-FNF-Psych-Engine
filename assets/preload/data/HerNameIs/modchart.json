@@ -275,7 +275,7 @@
 		],
 		[
 			"YMod",
-			"YModifier",
+			"YDModifier",
 			"Player",
 			-1,
 			-1
@@ -394,7 +394,7 @@
 				76,
 				"1",
 				"cubeOut",
-				"-10,angleNotes:y,-200,Xall"
+				"-10,angleNotes,-200,Xall"
 			],
 			[
 				false,
@@ -408,7 +408,7 @@
 				78,
 				"1",
 				"cubeOut",
-				"10,angleNotes:y,200,Xall"
+				"10,angleNotes,200,Xall"
 			],
 			[
 				false,
@@ -422,7 +422,7 @@
 				80,
 				"1",
 				"cubeOut",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				false,
@@ -478,7 +478,7 @@
 				108,
 				"1",
 				"cubeOut",
-				"-10,angleNotes:y,-200,Xall"
+				"-10,angleNotes,-200,Xall"
 			],
 			[
 				false,
@@ -492,7 +492,7 @@
 				110,
 				"1",
 				"cubeOut",
-				"10,angleNotes:y,200,Xall"
+				"10,angleNotes,200,Xall"
 			],
 			[
 				false,
@@ -506,7 +506,7 @@
 				112,
 				"1",
 				"cubeOut",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				false,
@@ -940,7 +940,7 @@
 				132,
 				"0.01",
 				"circIn",
-				"-20,angleNotes:y"
+				"-20,angleNotes"
 			],
 			[
 				true,
@@ -954,7 +954,7 @@
 				132.25,
 				"1",
 				"circIn",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				true,
@@ -1808,7 +1808,7 @@
 				315.5,
 				1,
 				"cubeInOut",
-				"1,Love,-500,Zin,-250,YMod,0.5,flip"
+				"1,Love,-500,Zin,270,YMod,0.5,flip"
 			],
 			[
 				false,
@@ -1990,7 +1990,7 @@
 				421.25,
 				"1",
 				"backInOut",
-				"0,invert,20,angleNotes:y"
+				"0,invert,20,angleNotes"
 			],
 			[
 				false,
@@ -2004,7 +2004,7 @@
 				422.25,
 				"1",
 				"backInOut",
-				"-20,angleNotes:y"
+				"-20,angleNotes"
 			],
 			[
 				false,
@@ -2018,7 +2018,7 @@
 				423.25,
 				"1",
 				"backInOut",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				false,
@@ -2144,7 +2144,7 @@
 				439.25,
 				"1",
 				"cubeOut",
-				"-10,angleNotes:y,-200,Xall"
+				"-10,angleNotes,-200,Xall"
 			],
 			[
 				false,
@@ -2158,7 +2158,7 @@
 				441,
 				"1",
 				"cubeOut",
-				"10,angleNotes:y,200,Xall"
+				"10,angleNotes,200,Xall"
 			],
 			[
 				false,
@@ -2172,7 +2172,7 @@
 				442.75,
 				"4",
 				"cubeOut",
-				"0,angleNotes:y,0,Xall"
+				"0,angleNotes,0,Xall"
 			],
 			[
 				false,
@@ -2242,7 +2242,7 @@
 				725,
 				1,
 				"cubeInOut",
-				"1,Love,0.5,flip,-250,YMod,-500,Zin"
+				"1,Love,0.5,flip,270,YMod,-500,Zin"
 			],
 			[
 				false,
@@ -2354,7 +2354,7 @@
 				508.25,
 				1,
 				"circInOut",
-				"-20,angleNotes:y"
+				"-20,angleNotes"
 			],
 			[
 				false,
@@ -2368,7 +2368,7 @@
 				509.25,
 				1,
 				"circInOut",
-				"20,angleNotes:y"
+				"20,angleNotes"
 			],
 			[
 				false,
@@ -2382,7 +2382,7 @@
 				510.25,
 				1,
 				"circInOut",
-				"-20,angleNotes:y"
+				"-20,angleNotes"
 			],
 			[
 				false,
@@ -2396,7 +2396,7 @@
 				511.25,
 				"2",
 				"circInOut",
-				"10,angleNotes:y"
+				"10,angleNotes"
 			],
 			[
 				false,
@@ -2410,7 +2410,7 @@
 				512.75,
 				"2",
 				"circInOut",
-				"-10,angleNotes:y"
+				"-10,angleNotes"
 			],
 			[
 				false,
@@ -2424,7 +2424,7 @@
 				514.5,
 				"4",
 				"circInOut",
-				"40,angleNotes:y"
+				"40,angleNotes"
 			],
 			[
 				false,
@@ -2438,7 +2438,7 @@
 				518.25,
 				"1",
 				"circInOut",
-				"-20,angleNotes:y"
+				"-20,angleNotes"
 			],
 			[
 				false,
@@ -2452,7 +2452,7 @@
 				519.25,
 				"1",
 				"circInOut",
-				"20,angleNotes:y"
+				"20,angleNotes"
 			],
 			[
 				false,
@@ -2466,7 +2466,7 @@
 				520.75,
 				"1",
 				"circInOut",
-				"-20,angleNotes:y"
+				"-20,angleNotes"
 			],
 			[
 				false,
@@ -2480,7 +2480,7 @@
 				522.25,
 				"4",
 				"circInOut",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				false,
@@ -2522,7 +2522,7 @@
 				527.25,
 				"0.01",
 				"sineInOut",
-				"20,angleNotes:y"
+				"20,angleNotes"
 			],
 			[
 				true,
@@ -2536,7 +2536,7 @@
 				527.5,
 				"1",
 				"sineInOut",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				true,
@@ -2550,7 +2550,7 @@
 				529.25,
 				"0.01",
 				"sineInOut",
-				"-20,angleNotes:y"
+				"-20,angleNotes"
 			],
 			[
 				true,
@@ -2564,7 +2564,7 @@
 				529.5,
 				"1",
 				"sineInOut",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				true,
@@ -2816,7 +2816,7 @@
 				130,
 				"0.01",
 				"circIn",
-				"20,angleNotes:y"
+				"20,angleNotes"
 			],
 			[
 				true,
@@ -2830,7 +2830,7 @@
 				130.25,
 				"1",
 				"circIn",
-				"0,angleNotes:y"
+				"0,angleNotes"
 			],
 			[
 				true,

@@ -27,7 +27,7 @@ class SustainStrip extends FlxStrip
     override public function new(daNote:Note)
     {
         this.daNote = daNote;
-        daNote.alpha = 0.6;
+        daNote.alpha = 1;
         super(0,0);
         loadGraphic(daNote.updateFramePixels());
         shader = daNote.shader;
