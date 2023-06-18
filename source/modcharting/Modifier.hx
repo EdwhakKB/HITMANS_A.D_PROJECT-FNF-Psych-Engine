@@ -835,11 +835,11 @@ class WaveXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += 260*currentValue*Math.sin(((Conductor.songPosition+curPos)*0.0008 * (subValues.get('speed').value*0.2))+(lane/4));
+        noteData.x += 260*currentValue*Math.sin(((Conductor.songPosition+curPos)*0.0008)+(lane/4) * (subValues.get('speed').value*0.2));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
-        noteData.x += 260*currentValue*Math.sin(((Conductor.songPosition)*0.0008 * (subValues.get('speed').value*0.2))+(lane/4));
+        noteData.x += 260*currentValue*Math.sin(((Conductor.songPosition)*0.0008)+(lane/4)  * (subValues.get('speed').value*0.2));
     }
 }
 class WaveYModifier extends Modifier 
@@ -850,11 +850,11 @@ class WaveYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.y += 260*currentValue*Math.sin(((Conductor.songPosition+curPos)*0.0008 * (subValues.get('speed').value*0.2))+(lane/4));
+        noteData.y += 260*currentValue*Math.sin(((Conductor.songPosition+curPos)*0.0008)+(lane/4) * (subValues.get('speed').value*0.2));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
-        noteData.y += 260*currentValue*Math.sin(((Conductor.songPosition)*0.0008 * (subValues.get('speed').value*0.2))+(lane/4));
+        noteData.y += 260*currentValue*Math.sin(((Conductor.songPosition)*0.0008)+(lane/4)  * (subValues.get('speed').value*0.2));
     }
 }
 class WaveZModifier extends Modifier 
@@ -865,11 +865,11 @@ class WaveZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.z += 260*currentValue*Math.sin(((Conductor.songPosition+curPos)*0.0008 * (subValues.get('speed').value*0.2))+(lane/4));
+        noteData.z += 260*currentValue*Math.sin(((Conductor.songPosition+curPos)*0.0008)+(lane/4) * (subValues.get('speed').value*0.2));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
-        noteData.z += 260*currentValue*Math.sin(((Conductor.songPosition)*0.0008 * (subValues.get('speed').value*0.2))+(lane/4));
+        noteData.z += 260*currentValue*Math.sin(((Conductor.songPosition)*0.0008)+(lane/4)  * (subValues.get('speed').value*0.2));
     }
 }
 
