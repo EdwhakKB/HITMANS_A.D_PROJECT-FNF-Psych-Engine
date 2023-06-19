@@ -473,6 +473,7 @@ class MainMenuState extends MusicBeatState
 			if (FlxG.keys.justPressed.CONTROL && !selectedSomethin)
 				{
 					FlxTween.tween(prompt, {alpha: 1}, 0.25, {ease: FlxEase.circOut});
+					FlxTween.tween(helpText, {alpha: 1}, 0.25, {ease: FlxEase.circOut});
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 				}
 			#if desktop
@@ -602,11 +603,11 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										infoText.text = 
-										"HITMANS A.D PROJECT V1\nHello everyone it's me Edwhak, the coder\nThis Hitmans version is a demo of the mod itself\nRemember to check this everytime you want to see what's new\n
-                                        -Added Better modchart system (ZoroModTools)\n
-                                        -Fixed crash in the engine (finally)\n
-                                        -Updated HUD and menu\n
-                                        -Added Casual mode (SKILL ISSUE MODE LMAO)\n
+										"HITMANS A.D PROJECT V1\nThis update adds\n
+                                        -Fixed sustains alpha in modcharts\n
+                                        -Better modcharts for main songs\n
+                                        -Added the variable options inside cmd\n
+                                        -Now you can change the noteSkin pressing q/e in noteColors\n
                                         ENJOY!";
 									});
 							}

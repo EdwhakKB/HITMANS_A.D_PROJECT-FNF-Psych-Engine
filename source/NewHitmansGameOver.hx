@@ -107,19 +107,19 @@ class NewHitmansGameOver extends MusicBeatSubstate
             noteWhoKilled = 'HURTNOTE';
         }else if(deathVariable == 'Instakill' ){
             noteWhoKilled = 'INSTAKILLNOTE';
-            yOffset += 80;
+            yOffset -= 80;
         }else if(deathVariable == 'Mine' ){
             noteWhoKilled = 'MINENOTE';
         }else if(deathVariable == 'Ice' ){
             noteWhoKilled = 'ICENOTE';
         }else if(deathVariable == 'Love' ){
             noteWhoKilled = 'LOVENOTE';
-            yOffset += 80;
+            yOffset -= 80;
         }else if(deathVariable == 'Corrupted' ){
             noteWhoKilled = 'GLITCHNOTE';
         }else if(deathVariable == 'HD' ){
             noteWhoKilled = 'HDNOTE';
-            yOffset += 80;
+            yOffset -= 80;
         }else if(deathVariable == 'TV' ){
             killedByANote = false;
         }else if(deathVariable == 'ALERTS' ){
