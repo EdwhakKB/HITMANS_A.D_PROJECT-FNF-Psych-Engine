@@ -4305,7 +4305,6 @@ class PlayState extends MusicBeatState
 				}else if (ClientPrefs.goStyle == 'NEW'){
 					openSubState(new NewHitmansGameOver(deathVariableTXT,this));
 				}
-       			FlxG.save.flush();
 				//openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
