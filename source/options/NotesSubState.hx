@@ -44,14 +44,13 @@ class NotesSubState extends MusicBeatSubstate
 	public var note:FlxSprite;
 
 	var posX = 230;
-
-	var animations:Array<String> = ['purple0', 'blue0', 'green0', 'red0'];
-	var noteSkinArray:Array<String> = ['FNF', 'HITMANS', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR'];
-	var noteSkinTypes:Int = 0;
+	var arrowHSV = ClientPrefs.arrowHSV;
+	//var noteSkinArray:Array<String> = ['FNF', 'HITMANS', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR'];
+	//var noteSkinTypes:Int = 0;
 	public function new() {
 		super();
 
-		switch (ClientPrefs.noteSkin){
+		/*switch (ClientPrefs.noteSkin){
 			case 'FNF':
 				noteSkinTypes = 0;
 			case 'HITMANS':
@@ -72,7 +71,7 @@ class NotesSubState extends MusicBeatSubstate
 				noteSkinTypes = 8;
 			case 'DDR':
 				noteSkinTypes = 9;
-		}
+		}*/
 		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.screenCenter();
@@ -100,18 +99,22 @@ class NotesSubState extends MusicBeatSubstate
 		grpNumbers = new FlxTypedGroup<Alphabet>();
 		add(grpNumbers);
 
-		for (i in 0...4) {
+		for (i in 0...arrowHSV.length) {
 			var yPos:Float = (165 * i) + 35;
 			for (j in 0...3) {
-				var optionText:Alphabet = new Alphabet(posX + (225 * j) + 250, yPos + 60, Std.string(ClientPrefs.arrowHSV[i][j]), true);
+				var optionText:Alphabet = new Alphabet(0, yPos + 60, Std.string(ClientPrefs.arrowHSV[i][j]), true);
+				optionText.x = posX + (225 * j) + 250;
+				optionText.ID = i;
 				grpNumbers.add(optionText);
 			}
 
-			note = new FlxSprite(posX, yPos);
-			note.frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets');
-			note.animation.addByPrefix('idle', animations[i]);
+			var note:FlxSprite = new FlxSprite(posX, yPos);
+			note.frames = Paths.getSparrowAtlas('shaggyNotes', 'shared');
+			var animation = Note.gfxLetter[i];
+			note.animation.addByPrefix('idle', animation + '0');
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;
+			note.ID = i;
 			grpNotes.add(note);
 
 			var newShader:ColorSwap = new ColorSwap();
@@ -210,13 +213,13 @@ class NotesSubState extends MusicBeatSubstate
 			}
 		}
 
-		if (FlxG.keys.justPressed.Q){
+		/*if (FlxG.keys.justPressed.Q){
 			updateNoteSkin(-1);
 		}
 
 		if (FlxG.keys.justPressed.E){
 			updateNoteSkin(1);
-		}
+		}*/
 
 		if (controls.BACK || (changingNote && controls.ACCEPT)) {
 			if(!changingNote) {
@@ -234,7 +237,7 @@ class NotesSubState extends MusicBeatSubstate
 		super.update(elapsed);
 	}
 
-	function updateNoteSkin(curSelectedNoteSkin:Int = 0){
+	/*function updateNoteSkin(curSelectedNoteSkin:Int = 0){
 		noteSkinTypes += curSelectedNoteSkin;
 		if (noteSkinTypes < 0)
 			noteSkinTypes = noteSkinArray.length - 1;
@@ -246,13 +249,13 @@ class NotesSubState extends MusicBeatSubstate
         });
 
 		ClientPrefs.noteSkin = noteSkinArray[noteSkinTypes];
-		for (i in 0...4) {
-			note.frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets');
+		for (i in 0...arrowHSV.length) {
+			note.frames = Paths.getSparrowAtlas('shaggyNotes', 'shared');
 			note.animation.addByPrefix('idle', animations[i]);
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;
 		}
-	}
+	}*/
 
 	function changeSelection(change:Int = 0) {
 		curSelected += change;

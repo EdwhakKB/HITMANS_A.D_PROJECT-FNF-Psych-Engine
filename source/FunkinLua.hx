@@ -132,6 +132,7 @@ class FunkinLua {
 		set('songPath', Paths.formatToSongPath(PlayState.SONG.song));
 		set('startedCountdown', false);
 		set('curStage', PlayState.SONG.stage);
+		set('mania', PlayState.mania);
 
 		set('isStoryMode', PlayState.isStoryMode);
 		set('difficulty', PlayState.storyDifficulty);
@@ -180,7 +181,7 @@ class FunkinLua {
 		set('practice', PlayState.instance.practiceMode);
 		set('modchart', PlayState.instance.notITGMod);
 
-		for (i in 0...4) {
+		for (i in 0...PlayState.mania) {
 			set('defaultPlayerStrumX' + i, 0);
 			set('defaultPlayerStrumY' + i, 0);
 			set('defaultOpponentStrumX' + i, 0);
@@ -232,6 +233,10 @@ class FunkinLua {
 		set('buildTarget', 'unknown');
 		#end
 
+		Lua_helper.add_callback(lua, "changeMania", function(newValue:Int, skipTwn:Bool = false) {
+			PlayState.instance.changeMania(newValue, skipTwn);
+		});
+		
 		// custom substate
 		Lua_helper.add_callback(lua, "openCustomSubstate", function(name:String, pauseGame:Bool = false) {
 			if(pauseGame)
