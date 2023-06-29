@@ -35,15 +35,7 @@ class ClientPrefs {
 	public static var hideHud:Bool = false;
 	public static var noteOffset:Int = 0;
 	public static var arrowHSV:Array<Array<Int>> = [
-		[0, 0, 0], [0, 0, 0], 
-		[0, 0, 0], [0, 0, 0], 
-		[0, 0, 0], [0, 0, 0], 
-		[0, 0, 0], [0, 0, 0], 
-		[0, 0, 0], [0, 0, 0],
-		[0, 0, 0], [0, 0, 0], 
-		[0, 0, 0], [0, 0, 0], 
-		[0, 0, 0], [0, 0, 0], 
-		[0, 0, 0], [0, 0, 0]
+		[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]
 	]; // Fuck
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';

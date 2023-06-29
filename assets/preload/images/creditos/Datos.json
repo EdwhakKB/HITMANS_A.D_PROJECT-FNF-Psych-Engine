@@ -1,39 +1,15 @@
 {	
-	"roles":
-	[
-		["Coder",32,			232,43,46],
-		["Artist",	32,			242,219,23],
-		["Compositor",32,		76,183,242],
-		["Animator",32,			98,224,117],
-		["Helper",32,			98,224,117],
-		["Leader",32,			98,224,117]
-	],
-
 	"character":
 	[
-		["Edwhak",60,				"Mod creator (charter,animator,modcharter)",32,						5,"https://youtube.com/channel/UCx0C2tzHoThNbpPcfWT1LsA"],
-		["Hazard24",64,				"Help with some HUI code (skins)",32,								4,"https://twitter.com/RiverOaken"],
-		["Zoro",64,					"Modchart template source creator",32,								4,"https://twitter.com/yoshubs"],
-		["Vill",64,					"Composer from the mod",32,											2,"https://twitter.com/yoshubs"],
-		["Tails",64,				"Composer from the mod",32,											2,"https://twitter.com/yoshubs"],
-		["Anby",64,					"Composer from the mod",32,											2,"https://twitter.com/yoshubs"],
-		["Glowsoony",64,			"ModchartEditor fix",32,											4,"https://twitter.com/yoshubs"],
-		["Yuyu",64,			        "Main artist of the mod",32,										1,"https://twitter.com/yoshubs"],
-		["Shadow Mario",40,			"Main Programmer of Psych Engine",32,								0,"https://twitter.com/Shadow_Mario_"],
-		["RiverOaken",64,			"Main Artist/Animator of Psych Engine",32,							1,"https://twitter.com/RiverOaken"],
-		["shubs",64,				"Additional Programmer of Psych Engine",32,							0,"https://twitter.com/yoshubs"],
-		["bb-panzu",64,				"Ex-Programmer of Psych Engine",32,									0,"https://twitter.com/bbsub3"],
-		["iFlicky",	64,				"Composer of Psync and Tea Time\nMade the Dialogue Sounds",32,		2,"https://twitter.com/flicky_i"],
-		["SqirraRNG",64,			"Crash Handler and Base code for\nChart Editor's Waveform",32,		0,"https://twitter.com/gedehari"],
-		["EliteMasterEric",40,		"Runtime Shaders support",32,										0,"https://twitter.com/EliteMasterEric"],
-		["PolybiusProxy",40,		".MP4 Video Loader Library (hxCodec)",32,							0,"https://twitter.com/polybiusproxy"],
-		["KadeDev",64,				"Fixed some cool stuff on Chart Editor\nand other PRs",32,			0,"https://twitter.com/kade0912"],
-		["Keoiki",64,				"Note Splash Animations",32,										1,"https://twitter.com/Keoiki_"],
-		["Nebula the Zorua",40,		"LUA JIT Fork and some Lua reworks",32,								0,"https://twitter.com/Nebula_Zorua"],
-		["Smokey",64,				"Sprite Atlas Support",32,											1,"https://twitter.com/Smokey_5_"],
-		["ninjamuffin99",40,		"Programmer of Friday Night Funkin'",32,							0,"https://twitter.com/ninja_muffin99"],
-		["PhantomArcade",40,		"Animator of Friday Night Funkin'",32,								3,"https://twitter.com/PhantomArcade3K"],
-		["evilsk8r",64,				"Artist of Friday Night Funkin'",32,								1,"https://twitter.com/evilsk8r"],
-		["kawaisprite",	64,			"Composer of Friday Night Funkin'",32,								2,"https://twitter.com/kawaisprite"]
+		["Edwhak",60,				"Hitman Leader (Mod Creator)",32,									5,"https://youtube.com/channel/UCx0C2tzHoThNbpPcfWT1LsA"],
+		["Luna",60,					"Support in the creation of the mod",32,							5,"https://www.youtube.com/channel/UCSr0Im-3c9dDfjmTFzkAlag"],
+		["Hazard24",64,				"Note Skin code",32,												4,"https://www.youtube.com/@hazard2483"],
+		["Zoro",40,					"Modcharting Tools (base modchart things used in the mod)",32,		4,"https://www.youtube.com/@TheZoroForce240"],
+		["Vill",64,					"Composer",32,														2,"https://www.youtube.com/channel/UCAfSkFfZDcNKjy8gGhAhMyg "],
+		["Tails",64,				"Composer",32,														2,"https://www.youtube.com/@TailsPuro"],
+		["Anby",64,					"Composer/Dr anby Character",32,									2,"https://www.youtube.com/@AnbyArcticFox"],
+		["Glowsoony",64,			"Main Code Helper",32,												4,"https://www.youtube.com/channel/UCQQo4VDFWv_LX6tHzmBu8kA"],
+		["PsychEngineTeam",40,		"Psych Engine Source",32,											0,"https://discord.gg/psychengine"],
+		["TheFunkinCrew",40,		"Friday Night Funkin creators",32,									0,"https://github.com/FunkinCrew/Funkin"]
 	]
 }

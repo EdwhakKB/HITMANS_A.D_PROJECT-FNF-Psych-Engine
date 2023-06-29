@@ -72,7 +72,7 @@ class NoteOffsetState extends MusicBeatState
 
 	public static var styleMod:String = 'HITMANS';
 
-    public static var customHudName:String = 'FNF';
+    public static var customHudName:String = 'CLASSIC';
 
     public static var healthType:String = 'healthBar';
 
@@ -122,8 +122,8 @@ class NoteOffsetState extends MusicBeatState
         if (hudJson == null)
 			{
 				hudJson = {
-					CustomHudName: "FNF",
-					HealthBarStyle: "FNF",
+					CustomHudName: "CLASSIC",
+					HealthBarStyle: "CLASSIC",
 					CountDownStyle: ["get", "ready", "set", "go"],
 					CountDownSounds: ["intro3", "intro2", "intro1", "introGo"],
 					RatingStyle: ["", ""],
@@ -338,6 +338,7 @@ class NoteOffsetState extends MusicBeatState
 
 		Conductor.changeBPM(128.0);
 		FlxG.sound.playMusic(Paths.music('offsetSong'), 1, true);
+		changeSelectedPart(0);
 
 		super.create();
 	}
@@ -492,7 +493,6 @@ class NoteOffsetState extends MusicBeatState
 
 		if(controls.ACCEPT)
 		{
-			updateMode();
 			changeSelectedPart(1);
 		}
 
@@ -513,19 +513,20 @@ class NoteOffsetState extends MusicBeatState
 		}
 
 		if (curSelecPrefx == 0){
-			onComboMenu = true;
-			onHudMenu = false;
-			onBeatOffMenu = false;
-		}else if (curSelecPrefx == 1){
 			onComboMenu = false;
 			onHudMenu = true;
 			onBeatOffMenu = false;
-		}else if (curSelecPrefx == 2){
+		}else if (curSelecPrefx == 1){
 			onComboMenu = false;
 			onHudMenu = false;
 			onBeatOffMenu = true;
+		}else if (curSelecPrefx == 2){
+			onComboMenu = true;
+			onHudMenu = false;
+			onBeatOffMenu = false;
 		}
 
+		updateMode();
 		Conductor.songPosition = FlxG.sound.music.time;
 		super.update(elapsed);
 	}

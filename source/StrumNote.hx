@@ -21,6 +21,8 @@ class StrumNote extends FlxSprite
 	
 	private var player:Int;
 
+	public var texture(default, set):String = null;
+
 	// public function getZIndex(){
 	// 	var animZOffset:Float = 0;
 	// 	if(animation.curAnim!=null && animation.curAnim.name=='confirm')animZOffset+=1;
@@ -70,7 +72,6 @@ class StrumNote extends FlxSprite
 		return value;
 	}
 
-	public var texture(default, set):String = null;
 	private function set_texture(value:String):String {
 		if(texture != value) {
 			texture = value;
@@ -97,9 +98,9 @@ class StrumNote extends FlxSprite
 		if (ClientPrefs.noteSkin != 'NONE' && PlayState.mania == 3)
 			skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
 		else{
-			skin = (PlayState.mania == 3  ? 'NOTE_assets' : 'shaggyNotes');
+			skin = (PlayState.mania == 3  ? 'NOTE_assets' : 'HITMANS_assets');
 		}
-		if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
+		if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = skin = (PlayState.mania == 3  ? PlayState.SONG.arrowSkin : 'HITMANS_assets');
 		texture = skin; //Load texture and anims
 
 		scrollFactor.set();
@@ -130,9 +131,9 @@ class StrumNote extends FlxSprite
 		}
 		else
 		{
-			frames = Paths.getSparrowAtlas((PlayState.mania == 3 ? texture : 'shaggyNotes'));
+			frames = Paths.getSparrowAtlas((PlayState.mania == 3 ? texture : 'HITMANS_assets'));
 			if (frames == null){
-				frames = Paths.getSparrowAtlas(PlayState.mania == 3 ? 'NOTE_assets' : 'shaggyNotes');
+				frames = Paths.getSparrowAtlas(PlayState.mania == 3 ? 'NOTE_assets' : 'HITMANS_assets');
 			}
 			antialiasing = ClientPrefs.globalAntialiasing;
 			setGraphicSize(Std.int(width * Note.scales[PlayState.mania]));
@@ -184,7 +185,7 @@ class StrumNote extends FlxSprite
 			}
 		}
 		//if(animation.curAnim != null){ //my bad i was upset
-		if(animation.curAnim.name == 'confirm' && !texture.contains('pixel')) {
+		if(animation.curAnim.name == 'confirm' && (!texture.contains('pixel') || !PlayState.isPixelStage)) {
 			centerOrigin();
 		//}
 		}
@@ -208,7 +209,7 @@ class StrumNote extends FlxSprite
 				colorSwap.brightness = ClientPrefs.arrowHSV[Std.int(Note.keysShit.get(PlayState.mania).get('pixelAnimIndex')[noteData] % Note.ammo[PlayState.mania])][2] / 100;
 			}
 
-			if(animation.curAnim.name == 'confirm' && !texture.contains('pixel')) {
+			if(animation.curAnim.name == 'confirm' && (!texture.contains('pixel') || !PlayState.isPixelStage)) {
 				centerOrigin();
 			}
 		}

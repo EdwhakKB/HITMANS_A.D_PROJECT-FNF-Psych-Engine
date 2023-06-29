@@ -102,7 +102,7 @@ class ResultScreen extends FlxSpriteGroup
 		song.alpha = 0;
 		add(song);
 
-		ranking = new FlxText(10, FlxG.height - 50, Std.int(FlxG.width * 0.6),"Rank ", 40);
+		ranking = new FlxText(20, FlxG.height - 90, Std.int(FlxG.width * 0.6),"Rank ", 40);
 		ranking.font = "Assassin Nation Regular";
 		ranking.alpha = 0;
 		add(ranking);
@@ -124,17 +124,16 @@ class ResultScreen extends FlxSpriteGroup
 		hasModchart.alpha = 0;
 		add(hasModchart);
 
-		rating = new FlxSprite(872.1,435.2);
+		rating = new FlxSprite(972.1,435.2);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
-		rating.animation.addByPrefix('PERFECT', 'PLUS', 24, true);
-		rating.animation.addByPrefix('S', 'S', 24, true);
-		rating.animation.addByPrefix('A', 'A', 24, true);
-		rating.animation.addByPrefix('B', 'B', 24, true);
-		rating.animation.addByPrefix('C', 'C', 24, true);
-		rating.animation.addByPrefix('D', 'D', 24, true);
-        rating.animation.addByPrefix('E', 'E', 24, true);
-        rating.animation.addByPrefix('F', 'F', 24, true);
-        rating.animation.addByPrefix('?', '?', 24, true);
+		rating.animation.addByPrefix('PERFECT', 'Rating-H', 24, true);
+		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
+		rating.animation.addByPrefix('A', 'Rating-A', 24, true);
+		rating.animation.addByPrefix('B', 'Rating-B', 24, true);
+		rating.animation.addByPrefix('C', 'Rating-C', 24, true);
+		rating.animation.addByPrefix('D', 'Rating-D', 24, true);
+        rating.animation.addByPrefix('E', 'Rating-E', 24, true);
+        rating.animation.addByPrefix('F', 'Rating-F', 24, true);
 		rating.antialiasing = true;
 		rating.updateHitbox();
 		rating.scrollFactor.set();
@@ -211,21 +210,19 @@ class ResultScreen extends FlxSpriteGroup
 				else if (daacc >= 95)
 					rating.animation.play("S");
 				else if (daacc >= 90)
-					rating.animation.play("S");
-				else if (daacc >= 80)
 					rating.animation.play("A");
-				else if (daacc >= 70)
+				else if (daacc >= 80)
 					rating.animation.play("B");
-				else if (daacc >= 60)
+				else if (daacc >= 70)
 					rating.animation.play("C");
-                else if (daacc >= 50)
+				else if (daacc >= 60)
 					rating.animation.play("D");
-                else if (daacc <= 40)
+                else if (daacc >= 50)
 					rating.animation.play("E");
+                else if (daacc <= 40)
+					rating.animation.play("F");
 				else if (daacc <= 30)
 					rating.animation.play("F");
-                else if (daacc <= 1)
-                    rating.animation.play("?");
 			}
 			
 				if (daacc == 100)

@@ -25,7 +25,6 @@ using StringTools;
 typedef DatosMenu = {
 
 	var character:Array<Array<Dynamic>>;
-	var roles:Array<Array<Dynamic>>;
 
 }
 class CreditsState extends MusicBeatState
@@ -37,13 +36,19 @@ class CreditsState extends MusicBeatState
 	var datos:DatosMenu;
 
 	var bg:FlxSprite;
-	var marcoSelector:FlxSprite;
 	var personajes:FlxSprite;
 	var cuadroTexto:FlxSprite;
+
+	var characterImage:FlxSprite;
+	var imagenPath:String = 'creditos/characters/';
+	var placeHolder:String = 'PLACEHOLDER';
 	
-	var nombre:FlxText;
-	var rol:FlxText;
 	var descripcion:FlxText;
+
+	var grupo:FlxTypedGroup<FlxSprite>;
+	var grupoImagen:FlxTypedGroup<FlxSprite>;
+
+	var characterData:Array<String> = [];
 
 	override function create()
 	{
@@ -56,7 +61,8 @@ class CreditsState extends MusicBeatState
 
 		FlxG.mouse.visible = true;
 
-		bg = new FlxSprite();
+		bg = new FlxSprite().loadGraphic(Paths.image('MenuShit/wallPaper'));
+		bg.updateHitbox();
 		add(bg);
 		
 		grpOptions = new FlxTypedGroup<FlxSprite>();
@@ -64,62 +70,63 @@ class CreditsState extends MusicBeatState
 
 		datos = Json.parse(Paths.getTextFromFile('images/creditos/Datos.json'));
 
+		grupoImagen = new FlxTypedGroup<FlxSprite>();
+		add(grupoImagen);
+
+		grupo = new FlxTypedGroup<FlxSprite>();
+		add(grupo);
+
 		for (i in 0...datos.character.length)
 		{
 
-			var icon:FlxSprite = new FlxSprite().loadGraphic(Paths.image('creditos/icons/'+ datos.character[i][0]));
-			icon.antialiasing = ClientPrefs.globalAntialiasing;
-			icon.setGraphicSize(102,102);
-			icon.updateHitbox();
-			icon.ID = i;
-
-			if (i < 28)
-			{
-				icon.x = (17 + ((i * 110) % (7 * 110)));
-				icon.y = 25 + (110 * Math.ffloor(i / 7));
-			}
-			else
-			{
-				icon.x = (55 + (((i - 1) * 110) % (6 * 110)));
-				icon.y = 25 + (110 * (Math.ffloor((i - 4) / 6)));
-			}
-
-			grpOptions.add(icon);
+			var box:FlxSprite = new FlxSprite();
+				box.loadGraphic(Paths.image('freeplay/EmptyBox'));
+				// box.x=FlxG.width / 2 -(box.width/16);
+				box.x = FlxG.width / 2 - (box.width / 1.2) + (i * 815);
+				box.y = FlxG.height / 6;
+				box.antialiasing = ClientPrefs.globalAntialiasing;
+				box.ID = i;
+				grupo.add(box);
+	
+				var imageShow:String = datos.character[i][0];
+				var imagen:FlxSprite = new FlxSprite();
+				characterData.push(datos.character[i][0]);
+	
+				imagen.loadGraphic(Paths.image(imagenPath+imageShow));
+				if(imagen.graphic == null) //if no graphic was loaded, then load the placeholder
+					imagen.loadGraphic(Paths.image(imagenPath+placeHolder));
+	
+				// imagen.x=FlxG.width / 2 -(imagen.width/16);
+				imagen.x = FlxG.width / 2 - (imagen.width / 1.2) + (i * 815);
+				imagen.y = FlxG.height / 6;
+				imagen.antialiasing = ClientPrefs.globalAntialiasing;
+				imagen.ID = i;
+				grupoImagen.add(imagen);
 		}
-		
-		personajes = new FlxSprite(815,50);
+		personajes = new FlxSprite(0,0);
 		personajes.antialiasing = ClientPrefs.globalAntialiasing;
+		personajes.visible = false;
 		add(personajes);
 
-		nombre = new FlxText(774, 422, 450, 'nombre');
-		nombre.setFormat(Paths.font("DEADLY KILLERS.ttf"), 0, FlxColor.WHITE);
-		nombre.alignment = CENTER;
-		add(nombre);
-
-		rol = new FlxText(770, 478, 450, 'rol');
-		rol.setFormat(Paths.font("DEADLY KILLERS.ttf"), 0);
-		rol.alignment = CENTER;
-		add(rol);
-
-		cuadroTexto = new FlxSprite(744, 535).loadGraphic(Paths.image('creditos/quote_box'));
+		cuadroTexto = new FlxSprite(744, 155).loadGraphic(Paths.image('creditos/quote_box'));
 		cuadroTexto.setGraphicSize(500,110);
 		cuadroTexto.updateHitbox();
 		cuadroTexto.antialiasing = ClientPrefs.globalAntialiasing;
 		cuadroTexto.blend = OVERLAY;
 		add(cuadroTexto);
 
-		descripcion = new FlxText(774, 0, 450, 'descripcion');
+		descripcion = new FlxText(770, 170, 450, 'descripcion');
 		descripcion.setFormat(Paths.font("DEADLY KILLERS.ttf"), 0, FlxColor.WHITE);
 		descripcion.alignment = CENTER;
 		add(descripcion);
 
-		marcoSelector = new FlxSprite().loadGraphic(Paths.image('creditos/selector'));
-		marcoSelector.setGraphicSize(129,129);
-		marcoSelector.updateHitbox();
-		marcoSelector.antialiasing = ClientPrefs.globalAntialiasing;
-		add(marcoSelector);
+		var pcInterfas:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('MenuShit/CreditsInterfas'));
+		pcInterfas.updateHitbox();
+		pcInterfas.screenCenter();
+		pcInterfas.antialiasing = ClientPrefs.globalAntialiasing;
+		add(pcInterfas);
 
-		select();
+		changeItem();
 
 		super.create();
 	}
@@ -139,66 +146,78 @@ class CreditsState extends MusicBeatState
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
-		grpOptions.forEach(function(spr:FlxSprite)
-		{
-			if (FlxG.mouse.overlaps(spr))
-			{
-				curSelected = spr.ID;
+		if (controls.UI_LEFT_P)
+			changeItem(-1);
 
-				if (selecto == -1){
+		if (controls.UI_RIGHT_P)
+			changeItem(1);
 
-				 selecto = spr.ID;
-				 FlxG.sound.play(Paths.sound('scrollMenu'));
-				 select();
-				}
+		if (controls.ACCEPT){
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+			CoolUtil.browserLoad(datos.character[curSelected][5]);
+		}
 
-				else if (selecto != curSelected){
-					selecto = -1;
-				}
+		if (curSelected == 0){
+			descripcion.text = 'Hitmans Leader (Mod Creator)';
+		}
 
-				if(FlxG.mouse.justPressed)
-				{
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-					CoolUtil.browserLoad(datos.character[curSelected][5]);
-				}
-			}
-		});
 		super.update(elapsed);
 	}
 
-	function select() {
+	function changeItem(huh:Int = 0)
+		{
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+	
+			curSelected += huh;
+	
+			if (curSelected >= datos.character.length)
+				curSelected = 0;
+			if (curSelected < 0)
+				curSelected = datos.character.length - 1;
 
-		grpOptions.forEach(function(sprite:FlxSprite){
-			if(sprite.ID == curSelected){
-				sprite.alpha = 1;
-				FlxTween.tween(marcoSelector,{x:sprite.x- 14,y:sprite.y- 14}, 0.125);
+			if (curSelected == 0){
+				descripcion.text = 'Hitmans Leader (Mod Creator)';
+			}else{
+				descripcion.text = datos.character[curSelected][2];
 			}
-			else{
-				sprite.alpha = 0.5;
-			}
-		});
+			descripcion.size = datos.character[curSelected][3];
 
-		nombre.text = datos.character[curSelected][0];
-		nombre.size = datos.character[curSelected][1];
+			grupo.forEach(function(spr:FlxSprite)
+				{
+					FlxTween.tween(spr.offset, {x: 815 * curSelected}, 0.2, {ease: FlxEase.expoOut, type: FlxTween.ONESHOT});
+		
+					if (spr.ID == curSelected)
+					{
+						FlxTween.tween(spr, {alpha: 1}, 0.1);
+						FlxTween.tween(spr.scale, {x: 0.865, y: 0.865}, 0.2, {ease: FlxEase.expoOut});
+					}
+					else
+					{
+						FlxTween.tween(spr, {alpha: 0.8}, 0.1);
+						FlxTween.tween(spr.scale, {x: 0.465, y: 0.465}, 0.2, {ease: FlxEase.expoOut});
+					}
+				});
+		
+				grupoImagen.forEach(function(spr:FlxSprite)
+				{
+					FlxTween.tween(spr.offset, {x: 815 * curSelected}, 0.2, {ease: FlxEase.expoOut, type: FlxTween.ONESHOT});
+		
+					if (spr.ID == curSelected)
+					{
+						FlxTween.tween(spr, {alpha: 1}, 0.1);
+						FlxTween.tween(spr.scale, {x: 0.865, y: 0.865}, 0.2, {ease: FlxEase.expoOut});
+					}
+					else
+					{
+						FlxTween.tween(spr, {alpha: 0.8}, 0.1);
+						FlxTween.tween(spr.scale, {x: 0.465, y: 0.465}, 0.2, {ease: FlxEase.expoOut});
+					}
+				});
 
-		descripcion.text = datos.character[curSelected][2];
-		descripcion.size = datos.character[curSelected][3];
-		descripcion.y = 590 - descripcion.height/2;
-
-		rol.text = datos.roles[datos.character[curSelected][4]][0];
-		rol.size = datos.roles[datos.character[curSelected][4]][1];
-		rol.color = FlxColor.fromRGB(
-		datos.roles[datos.character[curSelected][4]][2], 
-		datos.roles[datos.character[curSelected][4]][3], 
-		datos.roles[datos.character[curSelected][4]][4]);
-
-		bg.loadGraphic(Paths.image('creditos/imagenes/' + datos.roles[datos.character[curSelected][4]][0]));
-		bg.setGraphicSize(1280,720);
-		bg.updateHitbox();
-
-		personajes.loadGraphic(Paths.image('creditos/icons/' + datos.character[curSelected][0]));
-		personajes.setGraphicSize(360,360);
-		personajes.updateHitbox();
-
-	}
+			personajes.loadGraphic(Paths.image(imagenPath + characterData[curSelected]));
+			personajes.setGraphicSize(Std.int(personajes.width * 1.5));
+			personajes.updateHitbox();
+			personajes.screenCenter();
+			personajes.y -= 20;
+		}
 }

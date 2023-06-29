@@ -49,6 +49,7 @@ class FreeplayState extends MusicBeatState
 	var lerpRating:Float = 0;
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
+	var rating:FlxSprite;
 
 	var bg:FlxSprite;
 	var sliceBar2:FlxSprite;
@@ -169,6 +170,22 @@ class FreeplayState extends MusicBeatState
 
 		add(scoreText);
 
+		rating = new FlxSprite(72.1,435.2);
+		rating.frames = Paths.getSparrowAtlas('rating/ratings');
+		rating.animation.addByPrefix('PERFECT', 'Rating-H', 24, true);
+		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
+		rating.animation.addByPrefix('A', 'Rating-A', 24, true);
+		rating.animation.addByPrefix('B', 'Rating-B', 24, true);
+		rating.animation.addByPrefix('C', 'Rating-C', 24, true);
+		rating.animation.addByPrefix('D', 'Rating-D', 24, true);
+        rating.animation.addByPrefix('E', 'Rating-E', 24, true);
+        rating.animation.addByPrefix('F', 'Rating-F', 24, true);
+		rating.antialiasing = true;
+		rating.alpha = 0;
+		rating.updateHitbox();
+		rating.scrollFactor.set();
+		add(rating);
+
 		if (lastDifficultyName == '')
 		{
 			lastDifficultyName = CoolUtil.defaultDifficulty;
@@ -235,11 +252,42 @@ class FreeplayState extends MusicBeatState
 			ratingSplit[1] += '0';
 		}
 
+		if(ratingSplit.join('.') == '100.00'){
+			rating.visible = true;
+			rating.animation.play("PERFECT");
+		}else if(ratingSplit.join('.') >= '95.00'){
+			rating.visible = true;
+			rating.animation.play("S");
+		}else if(ratingSplit.join('.') >= '90.00'){
+			rating.visible = true;
+			rating.animation.play("A");
+		}else if(ratingSplit.join('.') >= '80.00'){
+			rating.visible = true;
+			rating.animation.play("B");
+		}else if(ratingSplit.join('.') >= '70.00'){
+			rating.visible = true;
+			rating.animation.play("C");
+		}else if(ratingSplit.join('.') >= '70.00'){
+			rating.visible = true;
+			rating.animation.play("D");
+		}else if(ratingSplit.join('.') >= '60.00'){
+			rating.visible = true;
+			rating.animation.play("E");
+		}else if(ratingSplit.join('.') >= '50.00'){
+			rating.visible = true;
+			rating.animation.play("F");
+		}else if(ratingSplit.join('.') > '0.00' && ratingSplit.join('.') < '40.00'){
+			rating.visible = false;	
+		}else{
+			rating.visible = false;
+		}
+
 		songText.text = WeekData.weeksList[curSelected];
 
-		scoreText.text = 'Score  ' + lerpScore;
+		scoreText.text = 'Score  ' + lerpScore + ' [' + ratingSplit.join('.') + '%]';
 		positionHighscore();
 
+		changeDiff();
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
 		var accepted = controls.ACCEPT;
@@ -317,6 +365,7 @@ class FreeplayState extends MusicBeatState
 			if (weekOn)
 			{
 				weekOn = false;
+				rating.alpha = 0;
 				instPlaying = -1;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 			}
@@ -363,6 +412,7 @@ class FreeplayState extends MusicBeatState
 			if (!weekOn)
 			{
 				weekOn = true;
+				rating.alpha = 1;
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				changeDiff();
 				changeSong();

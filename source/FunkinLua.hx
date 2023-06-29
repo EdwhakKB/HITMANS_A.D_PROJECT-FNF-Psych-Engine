@@ -181,7 +181,7 @@ class FunkinLua {
 		set('practice', PlayState.instance.practiceMode);
 		set('modchart', PlayState.instance.notITGMod);
 
-		for (i in 0...PlayState.mania) {
+		for (i in 0...(PlayState.mania+1)) {
 			set('defaultPlayerStrumX' + i, 0);
 			set('defaultPlayerStrumY' + i, 0);
 			set('defaultOpponentStrumX' + i, 0);
@@ -1646,6 +1646,15 @@ class FunkinLua {
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
 			WeekData.loadTheFirstEnabledMod();
+			if (PlayState.forceMiddleScroll){
+				if (PlayState.savePrefixScrollR && PlayState.prefixRightScroll){
+					ClientPrefs.middleScroll = false;
+				}
+			}else if (PlayState.forceRightScroll){
+				if (PlayState.savePrefixScrollM && PlayState.prefixMiddleScroll){
+					ClientPrefs.middleScroll = true;
+				}
+			}
 			return true;
 		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {

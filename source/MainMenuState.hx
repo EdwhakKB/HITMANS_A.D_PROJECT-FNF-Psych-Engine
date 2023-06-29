@@ -30,7 +30,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.2.5'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.3.0 (DEMO V1)'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 	public static var enable:Bool = false;
 
@@ -73,6 +73,7 @@ class MainMenuState extends MusicBeatState
 	var wordText:FlxText;
 	var wordCode:Int = 0;
 	var infoText:FlxText;
+	var versionShit1:FlxText;
 
 	var promptText:FlxText;
 
@@ -194,7 +195,7 @@ class MainMenuState extends MusicBeatState
 			'RESETDATA' - Reset your Data\n
 			'LOGIN'     - Login into your corporation profile\n
 			'TEST'      - Load THE TUTORIAL Song\n
-			'OPTIONS'   - Open the options\n
+			'LOAD'   	- Loads a song\n
 			'EXIT'      - Exit the system", 12);
 		helpText.setFormat(Paths.font("pixel.otf"), 12, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		helpText.scrollFactor.set();
@@ -264,13 +265,15 @@ class MainMenuState extends MusicBeatState
 
 		// FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Hitmans Engine ver " + psychEngineVersion, 24);
-		versionShit.scrollFactor.set();
-		versionShit.setFormat("Assassin Nation Regular", 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(versionShit);
+		versionShit1 = new FlxText(72, FlxG.height - 50, 0, "HITMANS " + psychEngineVersion, 16);
+		versionShit1.setFormat(Paths.font("pixel.otf"), 16, 0xffffffff, LEFT);
+		versionShit1.scrollFactor.set();
+		add(versionShit1);
+
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 24);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("Assassin Nation Regular", 18, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		versionShit.visible = false;
 		add(versionShit);
 
 		// NG.core.calls.event.logEvent('swag').send();
@@ -360,7 +363,10 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(storyMode)) {
 				if (FlxG.mouse.justPressed) {
-					MusicBeatState.switchState(new StoryMenuState());
+					new FlxTimer().start(1, function(tmrS:FlxTimer)
+					{
+						MusicBeatState.switchState(new StoryMenuState());
+					});
 					folder.alpha = 0;
 					inFolder = true;
 					storyMode.animation.play('selected');
@@ -372,7 +378,10 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(freeplay)) {
 				if (FlxG.mouse.justPressed) {
-					MusicBeatState.switchState(new FreeplayState());
+					new FlxTimer().start(1, function(tmrF:FlxTimer)
+						{
+							MusicBeatState.switchState(new FreeplayState());
+						});
 					folder.alpha = 0;
 					inFolder = true;
 					freeplay.animation.play('selected');
@@ -384,7 +393,10 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(awards)) {
 				if (FlxG.mouse.justPressed) {
-					MusicBeatState.switchState(new AchievementsMenuState());
+					new FlxTimer().start(1, function(tmrA:FlxTimer)
+						{
+							MusicBeatState.switchState(new AchievementsMenuState());
+						});
 					folder.alpha = 0;
 					inFolder = true;
 					awards.animation.play('selected');
@@ -396,7 +408,10 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(credits)) {
 				if (FlxG.mouse.justPressed) {
-					MusicBeatState.switchState(new CreditsState());
+					new FlxTimer().start(1, function(tmrC:FlxTimer)
+						{
+							MusicBeatState.switchState(new CreditsState());
+						});
 					folder.alpha = 0;
 					inFolder = true;
 					credits.animation.play('selected');
@@ -408,7 +423,10 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(settings)) {
 				if (FlxG.mouse.justPressed) {
-					LoadingState.loadAndSwitchState(new options.OptionsState());
+					new FlxTimer().start(1, function(tmrSe:FlxTimer)
+						{
+							LoadingState.loadAndSwitchState(new options.OptionsState());
+						});
 					folder.alpha = 0;
 					inFolder = true;
 					settings.animation.play('selected');
@@ -473,7 +491,6 @@ class MainMenuState extends MusicBeatState
 			if (FlxG.keys.justPressed.CONTROL && !selectedSomethin)
 				{
 					FlxTween.tween(prompt, {alpha: 1}, 0.25, {ease: FlxEase.circOut});
-					FlxTween.tween(helpText, {alpha: 1}, 0.25, {ease: FlxEase.circOut});
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 				}
 			#if desktop
@@ -604,10 +621,10 @@ class MainMenuState extends MusicBeatState
 									{
 										infoText.text = 
 										"HITMANS A.D PROJECT V1\nThis update adds\n
-                                        -Fixed sustains alpha in modcharts\n
-                                        -Better modcharts for main songs\n
-                                        -Added the variable options inside cmd\n
-                                        -Now you can change the noteSkin pressing q/e in noteColors\n
+                                        -Modchated songs with own bgs\n
+                                        -An amount of 7 songs\n
+                                        -Command Prommt with more variables\n
+                                        -Multikeys\n
                                         ENJOY!";
 									});
 							}
@@ -623,7 +640,60 @@ class MainMenuState extends MusicBeatState
 										LoadingState.loadAndSwitchState(new options.OptionsState());
 									});
 							}
-
+						else if(wordText.text == 'FREEPLAY'){
+							infoText.text = 'EXECUTING...';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new FreeplayState());
+									});
+						}
+						else if(wordText.text == 'STORYMODE'){
+							infoText.text = 'EXECUTING...';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new StoryMenuState());
+									});
+						}
+						else if(wordText.text == 'CREDITS'){
+							infoText.text = 'EXECUTING...';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new CreditsState());
+									});
+						}
+						else if(wordText.text == 'MODS'){
+							infoText.text = 'EXECUTING...';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										#if MODS_ALLOWED
+										infoText.text = " ";
+										MusicBeatState.switchState(new ModsMenuState());
+										#else
+										infoText.text = "SYSTEM DON'T SUPPORT ANY MODIFICATION";
+										#end
+									});
+						}
+						else if(wordText.text == 'AWARDS'){
+							infoText.text = 'EXECUTING...';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new AchievementsMenuState());
+									});
+						}
 						else if(wordText.text == 'LOGIN')
 							{
 								infoText.text = 'PLEASE WAIT...';
@@ -690,9 +760,9 @@ class MainMenuState extends MusicBeatState
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
 
-					    else if(wordText.text == 'PASSWORD')
+					    else if(wordText.text == 'EDWHAK')
 							{
-								infoText.text = 'Nope!\nYou have to guess for yourself!\nIt\'s not that hard!';
+								infoText.text = 'So...\nYou wanted talk with me?\nNah go ahead and pick something else';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
@@ -730,16 +800,16 @@ class MainMenuState extends MusicBeatState
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
 
-						else if(wordText.text == 'HAZARD24')
+						else if(wordText.text == 'LOG24')
 							{
-								infoText.text = 'Cute! OwO';
+								infoText.text = '"Forgotten" project it\'s still under development';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
 
-						else if(wordText.text == '77')
+						else if(wordText.text == 'EXPERIMENT1213')
 							{
-								infoText.text = 'I think you wanted to say 150.\nYeah. 150.';
+								infoText.text = 'REDACTED';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
@@ -753,11 +823,11 @@ class MainMenuState extends MusicBeatState
 									{
 										persistentUpdate = false;
 								        var songLowercase:String = 'Operating';
-								        var poop:String = Highscore.formatSong(songLowercase, 0);
+								        var poop:String = Highscore.formatSong(songLowercase, 1);
 								        trace(poop);
 								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = 0;
+								        PlayState.storyDifficulty = 1;
 
 										if(FreeplayState.vocals != null)
 											{
@@ -776,7 +846,7 @@ class MainMenuState extends MusicBeatState
 									);
 							}
 
-						else if(wordText.text == 'COMPLETE')
+						else if(wordText.text == 'BEATMOD')
 							{
 								infoText.text = '';
 								wordText.text = '';

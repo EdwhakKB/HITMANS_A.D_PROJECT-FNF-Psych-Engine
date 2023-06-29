@@ -405,7 +405,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 2:
                         taunt.text = "Target Exterminated";
                     case 3:
-                        taunt.text = "Do you call that an attempt?";
+                        taunt.text = "I expected you to last more time, dissapointing";
                 }
                 taunt.color = 0xff007500;
             case 'anby':
@@ -443,7 +443,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 1:
                         taunt.text = "Try harder next time buddy, but the outcome will still be a fail";
                     case 2:
-                        taunt.text = "It was hard enough for chu...?";
+                        taunt.text = "Was it hard enough for chu...?";
                     case 3:
                         taunt.text = "Do chu want me two nerf this?";
                 }
@@ -543,9 +543,9 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 1:
                         taunt.text = "Game over Edwhak you are not as strong as you presume";
                     case 2:
-                        taunt.text = "So i'm your weakness?";
+                        taunt.text = "Just like a kid game!, i ended dominating";
                     case 3:
-                        taunt.text = "Even the gods can be beated, like you right now";
+                        taunt.text = "Even the gods can be defeated, like you right now";
                 }
                 taunt.color = 0xff7a296d;
             case 'santyax':
@@ -563,11 +563,20 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 1:
                         taunt.text = "Game over";
                     case 2:
-                        taunt.text = "SYSTEM FAILURE";
+                        taunt.text = "END OF THE GAME";
+                    case 3:
+                        taunt.text = "Try again?";
+                }
+                taunt.color = 0xff2d2a58;
+            default:
+                switch (tauntNum){
+                    case 1:
+                        taunt.text = "CONNECTION LOST";
+                    case 2:
+                        taunt.text = "SYSTEM 32 STOPED WORKING";
                     case 3:
                         taunt.text = "END OF THE REPORT";
                 }
-                taunt.color = 0xff2d2a58;
         }
 
 		PlayState.instance.callOnLuas('onUpdate', [elapsed]);

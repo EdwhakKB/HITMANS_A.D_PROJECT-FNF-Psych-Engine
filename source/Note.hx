@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
+import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import flash.display.BitmapData;
 import editors.ChartingState;
@@ -19,7 +20,7 @@ typedef EventNote = {
 
 class Note extends FlxSprite
 {
-		//Extra keys stuff
+	//Extra keys stuff
 
 	//Important stuff
 	public static var gfxLetter:Array<String> = 
@@ -70,11 +71,16 @@ class Note extends FlxSprite
 	public static var pixelNotesDivisionValue:Int = 18;
 	public static var pixelScales:Array<Float> = EKData.pixelScales;
 
+	public static var sizeOfNotes:Array<Float> = [112, 112, 112, 112, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108];
+
 	public static var keysShit:Map<Int, Map<String, Dynamic>> = EKData.keysShit;
 
 	// End of extra keys stuff
 	//////////////////////////////////////////////////
 
+
+	public var mesh:modcharting.SustainStrip = null; 
+	public var z:Float = 0;
 	public var extraData:Map<String,Dynamic> = [];
 
 	public var strumTime:Float = 0;
@@ -88,8 +94,6 @@ class Note extends FlxSprite
 	public var noteWasHit:Bool = false;
 	public var prevNote:Note;
 	public var nextNote:Note;
-	public var mesh:modcharting.SustainStrip = null; 
-  	public var z:Float = 0;
 
 	public var spawned:Bool = false;
 	public var tail:Array<Note> = []; // for sustains
@@ -165,6 +169,8 @@ class Note extends FlxSprite
 	public var hurtNote:Bool  = false;
 	public static var isRoll:Bool = false;
 
+	public var usedDifferentWidth:Bool = false; //to fix some issues LMAO
+
 	public static var tlove:Bool = false;
 	//i love how fun its this (help) -Ed
 	public var distance:Float = 2000; //plan on doing scroll directions soon -bb
@@ -217,6 +223,7 @@ class Note extends FlxSprite
 		if(noteData > -1 && noteType != value) {
 			switch(value) {
 				case 'Hurt Note':
+					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('HURT');
 					noteSplashTexture = 'HURTnoteSplashes';
@@ -235,6 +242,7 @@ class Note extends FlxSprite
 					hurtNote = true;
 					hitCausesMiss = true;
 				case 'HurtAgressive':
+					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('HURTAG');
 					noteSplashTexture = 'HURTnoteSplashes';
@@ -250,6 +258,7 @@ class Note extends FlxSprite
 					}
 					hitCausesMiss = true;
 				case 'Invisible Hurt Note':
+					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					copyAlpha=false;
 					alpha=0; //Makes them invisible.
@@ -283,6 +292,7 @@ class Note extends FlxSprite
 					hurtNote = true;
 					hitCausesMiss = true;
 				case 'Instakill Note':
+					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('INSTAKILL');
 					// texture = 'INSTAKILLNOTE_assets';
@@ -326,6 +336,7 @@ class Note extends FlxSprite
 					//not used since in Lua you can load that variables too lmao
 					//maybe in a future i'll port it to Haxe lmao -Ed
 				case 'HD note':
+					usedDifferentWidth = true;
 					reloadNote('HD');
 					// texture = 'HDNOTE_assets';
 					noteSplashTexture = 'HURTnoteSplashes';
@@ -341,6 +352,7 @@ class Note extends FlxSprite
 					hd = true;
 					hitCausesMiss = false;
 				case 'Love Note':
+					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('LOVE');
 					// texture = 'LOVENOTE_assets';
@@ -364,6 +376,7 @@ class Note extends FlxSprite
 						}
 					}
 				case 'Fire Note':
+					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('FIRE');
 					// texture = 'FIRENOTE_assets';
@@ -388,6 +401,7 @@ class Note extends FlxSprite
 						fire = true;
 					}
 				case 'True Love Note':
+					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('TLOVE');
 					// texture = 'TLOVENOTE_assets';
@@ -501,7 +515,7 @@ class Note extends FlxSprite
 
 			offsetX -= width / 2;
 
-			if (texture.contains('pixel'))
+			if (texture.contains('pixel') || PlayState.isPixelStage)
 				offsetX += 30 * Note.pixelScales[mania];
 
 			if (prevNote.isSustainNote)
@@ -514,7 +528,7 @@ class Note extends FlxSprite
 					prevNote.scale.y *= PlayState.instance.songSpeed;
 				}
 
-				if(texture.contains('pixel')) {
+				if(texture.contains('pixel') || PlayState.isPixelStage) {
 					prevNote.scale.y *= 1.19;
 					prevNote.scale.y *= (6 / height); //Auto adjust note size
 				}
@@ -523,7 +537,7 @@ class Note extends FlxSprite
 				// prevNote.setGraphicSize();
 			}
 
-			if(texture.contains('pixel')) {
+			if(texture.contains('pixel') || PlayState.isPixelStage) {
 				scale.y *= PlayState.daPixelZoom;
 				updateHitbox();
 			}
@@ -543,12 +557,16 @@ class Note extends FlxSprite
 
 		var skin:String = texture;
 		if(texture.length < 1) {
-			skin = PlayState.SONG.arrowSkin;
+			skin = (PlayState.mania == 3  ? PlayState.SONG.arrowSkin : 'HITMANS_assets');
 			if(skin == null || skin.length < 1) {
 				if (ClientPrefs.noteSkin != 'NONE' && mania == 3)
 					skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
 				else{
-					skin = (mania == 3 ? 'NOTE_assets' : 'shaggyNotes');
+					if (ClientPrefs.noteSkin == 'HITMANS'){
+						skin = 'HITMANS_assets';
+					}else{
+						skin = (mania == 3 ? 'shaggyNotes' : 'HITMANS_assets');
+					}
 				}
 			}
 		}
@@ -566,7 +584,7 @@ class Note extends FlxSprite
 
 		defaultWidth = 157;
 		defaultHeight = 154;
-		if(texture.contains('pixel')) {
+		if(texture.contains('pixel') || PlayState.isPixelStage) {
 			if(isSustainNote) {
 				loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'));
 				width = width / pixelNotesDivisionValue;
@@ -597,9 +615,9 @@ class Note extends FlxSprite
 				}*/
 			}
 		} else {
-			frames = Paths.getSparrowAtlas((mania == 3 ? blahblah : 'shaggyNotes'));
+			frames = Paths.getSparrowAtlas((mania == 3 ? blahblah : 'HITMANS_assets'));
 			if (frames == null){
-				frames = Paths.getSparrowAtlas((mania == 3 ? 'NOTE_assets' : 'shaggyNotes'));
+				frames = Paths.getSparrowAtlas((mania == 3 ? 'NOTE_assets' : 'HITMANS_assets'));
 			}
 			loadNoteAnims();
 			antialiasing = ClientPrefs.globalAntialiasing;
@@ -618,15 +636,16 @@ class Note extends FlxSprite
 		}
 	}
 	
-	function loadNoteAnims() {
+	function loadNoteAnims() 
+	{
 		for (i in 0...gfxLetter.length)
 		{
 			animation.addByPrefix(gfxLetter[i], gfxLetter[i] + '0');
 			
 			if (isSustainNote)
 			{
-				animation.addByPrefix(gfxLetter[i] + 'rollend', 'Roll' + gfxLetter[i] + 'End');
-				animation.addByPrefix(gfxLetter[i] + 'roll', 'Roll' + gfxLetter[i]);
+				// animation.addByPrefix(gfxLetter[i] + 'rollend', 'Roll' + gfxLetter[i] + 'End');
+				// animation.addByPrefix(gfxLetter[i] + 'roll', 'Roll' + gfxLetter[i]);
 				animation.addByPrefix(gfxLetter[i] + ' holdend', gfxLetter[i] + ' hold end');
 				animation.addByPrefix(gfxLetter[i] + ' hold', gfxLetter[i] + ' hold piece');
 			}
@@ -634,10 +653,15 @@ class Note extends FlxSprite
 						
 		ogW = width;
 		ogH = height;
-		if (!isSustainNote)
-			setGraphicSize(Std.int(defaultWidth * scales[mania]));
-		else
-			setGraphicSize(Std.int(defaultWidth * scales[mania]), Std.int(defaultHeight * scales[0]));
+		if (!usedDifferentWidth)
+		{
+			if (!isSustainNote)
+				setGraphicSize(Std.int(defaultWidth * scales[mania]));
+			else
+				setGraphicSize(Std.int(defaultWidth * scales[mania]), Std.int(defaultHeight * scales[0]));
+		}else if (usedDifferentWidth){
+			setGraphicSize(Std.int(width * scales[mania]));
+		}
 		updateHitbox();
 	}
 
@@ -720,11 +744,22 @@ class Note extends FlxSprite
 					wasGoodHit = true;
 			}
 		}
+
 		if (tooLate && !inEditor)
 		{
 			if (alpha > 0.3)
 				alpha = 0.3;
 		}
+	}
 
+	@:noCompletion
+	override function set_clipRect(rect:FlxRect):FlxRect
+	{
+		clipRect = rect;
+
+		if (frames != null)
+			frame = frames.frames[animation.frameIndex];
+
+		return rect;
 	}
 }

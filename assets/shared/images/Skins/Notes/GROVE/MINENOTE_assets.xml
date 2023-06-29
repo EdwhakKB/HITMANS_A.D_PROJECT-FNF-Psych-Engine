@@ -6,7 +6,7 @@
   <SubTexture name="blue hold piece0000"   x="900" y="1050"  width="150"  height="44"frameX="-3"frameY="0"frameWidth="150"frameHeight="150"/>
   <SubTexture name="red hold end0000"      x="750" y="1050"  width="150"  height="99"frameX="9" frameY="0"frameWidth="150"frameHeight="150"/>
   <SubTexture name="red hold piece0000"    x="900" y="1050"  width="150"  height="44"frameX="9" frameY="0"frameWidth="150"frameHeight="150"/>
-  <SubTexture name="pruple end hold0000"   x="750" y="1050"  width="150"  height="99"frameX="-7"frameY="0"frameWidth="150"frameHeight="150"/>
+  <SubTexture name="purple hold end0000"   x="750" y="1050"  width="150"  height="99"frameX="-7"frameY="0"frameWidth="150"frameHeight="150"/>
   <SubTexture name="purple hold piece0000" x="900" y="1050"  width="150"  height="44"frameX="-7"frameY="0"frameWidth="150"frameHeight="150"/>
   <SubTexture name="green0000"  x="0"    y="0"   width="150" height="150" frameX="3" frameY="0"frameWidth="150"frameHeight="150"/>
   <SubTexture name="green0001"  x="150"  y="0"   width="150" height="150" frameX="3" frameY="0"frameWidth="150"frameHeight="150"/>

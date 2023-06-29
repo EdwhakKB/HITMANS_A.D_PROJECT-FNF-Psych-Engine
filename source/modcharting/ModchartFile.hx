@@ -62,8 +62,10 @@ class ModchartFile
         data = loadFromJson(PlayState.SONG.song.toLowerCase());
         this.renderer = renderer;
         renderer.modchart = this;
-        loadPlayfields();
-        loadModifiers();
+        if (ClientPrefs.getGameplaySetting('modchart', true)){
+            loadPlayfields();
+            loadModifiers();
+        }
         loadEvents();
     }
 

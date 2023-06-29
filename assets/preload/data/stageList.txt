@@ -1,9 +1,8 @@
 stage
-spooky
-philly
-limo
-mall
-mallEvil
-school
-schoolEvil
-tank
+forgotten
+frost
+HallWay
+Facility
+killbot
+labsBG
+love

@@ -171,11 +171,12 @@ class PlayState extends MusicBeatState
 	public static var storyDifficulty:Int = 1;
 	//make it public so i can edit that when i need it lmao
 	//stolen from Qt mod lmao, don't kill me hazzy pls -Ed
-	var forceMiddleScroll:Bool = false; //yeah
-	var forceRightScroll:Bool = false; //so modcharts that NEED rightscroll will be forced (mainly for player vs enemy classic stuff like bf vs someone)
-	var prefixMiddleScroll:Bool = false;
-	var prefixRightScroll:Bool = false; //so if someone force the scroll in chart and clientPrefs are the other option it will be autoLoaded again
-	var savePrefixScroll:Bool = false;
+	public static var forceMiddleScroll:Bool = false; //yeah
+	public static var forceRightScroll:Bool = false; //so modcharts that NEED rightscroll will be forced (mainly for player vs enemy classic stuff like bf vs someone)
+	public static var prefixMiddleScroll:Bool = false;
+	public static var prefixRightScroll:Bool = false; //so if someone force the scroll in chart and clientPrefs are the other option it will be autoLoaded again
+	public static var savePrefixScrollM:Bool = false;
+	public static var savePrefixScrollR:Bool = false;
 	var edwhakDrain:Float = 0.03;
 	var edwhakIsEnemy:Bool = false;
 	public var allowEnemyDrain:Bool = false;
@@ -499,7 +500,7 @@ class PlayState extends MusicBeatState
 
 		//Hitmans Ratings (Kinda Better LOL)
 		//570 x and 200 y (just in case)
-		ratings = new FlxSprite(0, 0);
+		ratings = new FlxSprite(900, 230);
 		ratings.frames = Paths.getSparrowAtlas('judgements');
 		ratings.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
 		ratings.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -515,7 +516,6 @@ class PlayState extends MusicBeatState
         // FlxTween.tween(ratings.scale, {y: 0}, 0.1, {ease:FlxEase.elasticOut});
 		ratings.antialiasing = true;
 		ratings.updateHitbox();
-		ratings.screenCenter();
 		// ratings.x += ClientPrefs.comboOffset[0];
 		// ratings.y -= ClientPrefs.comboOffset[1];
 		ratings.scrollFactor.set();
@@ -1418,20 +1418,20 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000 / Conductor.songPosition;
 
 		
-		if (SONG.middleScroll){
+		if (SONG.middleScroll && !ClientPrefs.middleScroll){
 			forceMiddleScroll = true;
 			forceRightScroll = false;
 			ClientPrefs.middleScroll = true;
-		}else if (SONG.rightScroll){
+		}else if (SONG.rightScroll && ClientPrefs.middleScroll){
 			forceMiddleScroll = false;
 			forceRightScroll = true;
 			ClientPrefs.middleScroll = false;
 		}
 
 		if (forceMiddleScroll && !ClientPrefs.middleScroll){
-			savePrefixScroll = true;
+			savePrefixScrollR = true;
 		}else if (forceRightScroll && ClientPrefs.middleScroll){
-			savePrefixScroll = true;
+			savePrefixScrollM = true;
 		}
 
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
@@ -5274,11 +5274,11 @@ class PlayState extends MusicBeatState
 			transitioning = true;
 
 			if (forceMiddleScroll){
-				if (savePrefixScroll && prefixRightScroll){
+				if (savePrefixScrollR && prefixRightScroll){
 					ClientPrefs.middleScroll = false;
 				}
 			}else if (forceRightScroll){
-				if (savePrefixScroll && prefixMiddleScroll){
+				if (savePrefixScrollM && prefixMiddleScroll){
 					ClientPrefs.middleScroll = true;
 				}
 			}
@@ -5406,9 +5406,6 @@ class PlayState extends MusicBeatState
 		rating.visible = (!ClientPrefs.hideHud && showRating && ClientPrefs.hudStyle == 'Classic');
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
-
-		ratings.x = rating.x + 40;
-		ratings.y = rating.y;
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
 		comboSpr.cameras = [camHUD];
@@ -6272,7 +6269,7 @@ class PlayState extends MusicBeatState
 			onComplete: function(twn:FlxTween) {
 				ratingsBumpTween = null;
 				ratingsBumpTimer = new FlxTimer().start(1, function(flxTimer:FlxTimer){
-						ratingsBumpTween2 = FlxTween.tween(ratings.scale, {x: 0, y: 0}, 0.2, {ease:FlxEase.circIn,
+						ratingsBumpTween2 = FlxTween.tween(ratings.scale, {x: 0, y: 0}, 0.1, {ease:FlxEase.circIn,
 						onComplete: function(twn:FlxTween) {
 							ratingsBumpTimer = null;
 							ratingsBumpTween2 = null;
