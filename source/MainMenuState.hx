@@ -818,12 +818,9 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-								        var songLowercase:String = 'forgotten';
-								        var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-								        trace(poop);
-								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+										PlayState.SONG = Song.loadFromJson('forgotten-heavy', 'forgotten');
 								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = curDifficulty;
+								        PlayState.storyDifficulty = 1;
 
 										if(FreeplayState.vocals != null)
 											{
@@ -856,12 +853,9 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-								        var songLowercase:String = 'c18h27no3-demo';
-								        var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-								        trace(poop);
-								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+										PlayState.SONG = Song.loadFromJson('c18h27no3-demo-heavy', 'c18h27no3-demo');
 								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = curDifficulty;
+								        PlayState.storyDifficulty = 1;
 
 										if(FreeplayState.vocals != null)
 											{
@@ -891,12 +885,9 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-								        var songLowercase:String = 'combo-meal';
-								        var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-								        trace(poop);
-								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+										PlayState.SONG = Song.loadFromJson('operating-heavy', 'c18h27no3');
 								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = curDifficulty;
+								        PlayState.storyDifficulty = 1;
 
 										if(FreeplayState.vocals != null)
 											{
@@ -938,14 +929,14 @@ class MainMenuState extends MusicBeatState
 									edwhakBG.updateHitbox();
 									edwhakBG.scrollFactor.set(1);
 									edwhakBG.screenCenter();
-									edwhakBG.x-=295;
+									edwhakBG.x=0;
 						
 									var cheater:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat', -600, -480, 0.5, 0.5);
 									cheater.setGraphicSize(Std.int(cheater.width * 1.5));
 									cheater.updateHitbox();
 									cheater.scrollFactor.set(1);
 									cheater.screenCenter();	
-									cheater.x-=295;
+									cheater.x=0;
 						
 									add(edwhakBlack);
 									add(edwhakBG);
