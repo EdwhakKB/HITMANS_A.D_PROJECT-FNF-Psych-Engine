@@ -4138,7 +4138,7 @@ class PlayState extends MusicBeatState
 					cheater.updateHitbox();
 					cheater.scrollFactor.set(1);
 					cheater.screenCenter();	
-					cheater.x=0;
+					cheater.x+=200;
 		
 					add(edwhakBlack);
 					add(edwhakBG);
