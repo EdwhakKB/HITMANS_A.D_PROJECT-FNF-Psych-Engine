@@ -39,7 +39,11 @@ class MainMenuState extends MusicBeatState
 	private var camAchievement:FlxCamera;
 
 	public var pcTime:FlxText;
-	
+
+	var curDifficulty:Int = -1;
+
+	private static var lastDifficultyName:String = '';
+
 	var dateThings = DateTools.format(Date.now(), "%Y-%m-%d | %H:%M");
 	var optionShit:Array<String> = [
 		'story_mode',
@@ -292,6 +296,12 @@ class MainMenuState extends MusicBeatState
 			}
 		}
 		#end
+
+		if (lastDifficultyName == '')
+			{
+				lastDifficultyName = CoolUtil.defaultDifficulty;
+			}
+			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
 
 		super.create();
 	}
@@ -809,11 +819,11 @@ class MainMenuState extends MusicBeatState
 									{
 										persistentUpdate = false;
 								        var songLowercase:String = 'forgotten';
-								        var poop:String = Highscore.formatSong(songLowercase, 1);
+								        var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 								        trace(poop);
 								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = 1;
+								        PlayState.storyDifficulty = curDifficulty;
 
 										if(FreeplayState.vocals != null)
 											{
@@ -847,11 +857,11 @@ class MainMenuState extends MusicBeatState
 									{
 										persistentUpdate = false;
 								        var songLowercase:String = 'c18h27no3-demo';
-								        var poop:String = Highscore.formatSong(songLowercase, 1);
+								        var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 								        trace(poop);
 								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = 1;
+								        PlayState.storyDifficulty = curDifficulty;
 
 										if(FreeplayState.vocals != null)
 											{
@@ -881,12 +891,12 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-								        var songLowercase:String = 'operating';
-								        var poop:String = Highscore.formatSong(songLowercase, 1);
+								        var songLowercase:String = 'combo-meal';
+								        var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 								        trace(poop);
 								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = 1;
+								        PlayState.storyDifficulty = curDifficulty;
 
 										if(FreeplayState.vocals != null)
 											{
@@ -917,45 +927,47 @@ class MainMenuState extends MusicBeatState
 										FlxG.sound.music.pause();
 									}
 									
-								var hazardBlack:BGSprite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
-								hazardBlack.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.BLACK);
-								hazardBlack.scrollFactor.set(1);
-					
-								var hazardBG:BGSprite = new BGSprite('hazard/cheat-bg');
-								hazardBG.setGraphicSize(FlxG.width, FlxG.height);
-								//hazardBG.x += (FlxG.width/2); //Mmmmmm scuffed positioning, my favourite!
-								//hazardBG.y += (FlxG.height/2) - 20;
-								hazardBG.updateHitbox();
-								hazardBG.scrollFactor.set(1);
-								hazardBG.screenCenter();
-					
-								var cheater:BGSprite = new BGSprite('hazard/cheat', -600, -480, 0.5, 0.5);
-								cheater.setGraphicSize(Std.int(cheater.width * 1.5));
-								cheater.updateHitbox();
-								cheater.scrollFactor.set(1);
-								cheater.screenCenter();	
-					
-								add(hazardBlack);
-								add(hazardBG);
-								add(cheater);
-								FlxG.camera.shake(0.05,5);
-								FlxG.sound.play(Paths.sound('cheatercheatercheater'), 1, true);
-								#if desktop
-								// Updating Discord Rich Presence
-								DiscordClient.changePresence("CHEATER CHEATER CHEATER","CHEATER CHEATER CHEATER", null);
-								#end
-					
-								//Stolen from the bob mod LMAO
-								new FlxTimer().start(0.01, function(tmr:FlxTimer)
+									var edwhakBlack:BGSprite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
+									edwhakBlack.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.BLACK);
+									edwhakBlack.scrollFactor.set(1);
+						
+									var edwhakBG:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat-bg');
+									edwhakBG.setGraphicSize(FlxG.width, FlxG.height);
+									//edwhakBG.x += (FlxG.width/2); //Mmmmmm scuffed positioning, my favourite!
+									//edwhakBG.y += (FlxG.height/2) - 20;
+									edwhakBG.updateHitbox();
+									edwhakBG.scrollFactor.set(1);
+									edwhakBG.screenCenter();
+									edwhakBG.x-=295;
+						
+									var cheater:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat', -600, -480, 0.5, 0.5);
+									cheater.setGraphicSize(Std.int(cheater.width * 1.5));
+									cheater.updateHitbox();
+									cheater.scrollFactor.set(1);
+									cheater.screenCenter();	
+									cheater.x-=295;
+						
+									add(edwhakBlack);
+									add(edwhakBG);
+									add(cheater);
+									FlxG.camera.shake(0.05,5);
+									FlxG.sound.play(Paths.sound('Edwhak/cheatercheatercheater'), 1, true);
+									#if desktop
+									// Updating Discord Rich Presence
+									DiscordClient.changePresence("CHEATER CHEATER CHEATER CHEATER CHEATER CHEATER ", null);
+									#end
+						
+									//Stolen from the bob mod LMAO
+									new FlxTimer().start(0.01, function(tmr:FlxTimer)
+										{
+											Lib.application.window.move(Lib.application.window.x + FlxG.random.int( -10, 10),Lib.application.window.y + FlxG.random.int( -8, 8));
+										}, 0);
+						
+									new FlxTimer().start(1.5, function(tmr:FlxTimer) 
 									{
-										Lib.application.window.move(Lib.application.window.x + FlxG.random.int( -10, 10),Lib.application.window.y + FlxG.random.int( -8, 8));
-									}, 0);
-					
-								new FlxTimer().start(1.5, function(tmr:FlxTimer) 
-								{
-									//trace("Quit");
-									System.exit(0);
-								});
+										//trace("Quit");
+										System.exit(0);
+									});
 							}
 						else
 							{

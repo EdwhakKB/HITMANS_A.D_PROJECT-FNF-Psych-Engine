@@ -34,29 +34,6 @@ class CoolUtil
 	public static var defaultDifficulty:String = 'standard'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
 
 	public static var difficulties:Array<String> = [];
-
-	public static inline function GetPlayer(note:Note) // schmovin
-		{
-			return note.mustPress ? 1 : 0;
-		}
-	
-		public static inline function GetTotalColumn(note:Note)
-		{
-			return note.noteData + GetPlayer(note) * 4;
-		}
-
-		public static function rotate(x:Float, y:Float, angle:Float, ?point:FlxPoint):FlxPoint{
-			var p = point==null?FlxPoint.get():point;
-			p.set(
-				(x*Math.cos(angle))-(y*Math.sin(angle)),
-				(x*Math.sin(angle))+(y*Math.cos(angle))
-			);
-			return p;
-		}
-	
-		inline public static function scale(x:Float,l1:Float,h1:Float,l2:Float,h2:Float):Float
-			return ((x - l1) * (h2 - l2) / (h1 - l1) + l2);
-
 		
 	public static function getDifficultyFilePath(num:Null<Int> = null)
 	{
