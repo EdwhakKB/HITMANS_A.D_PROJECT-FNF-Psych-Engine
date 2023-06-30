@@ -51,6 +51,10 @@ import openfl.net.FileReference;
 import openfl.utils.Assets as OpenFlAssets;
 import openfl.utils.ByteArray;
 
+import flixel.util.FlxTimer;
+import flash.system.System;
+import openfl.Lib;
+
 using StringTools;
 #if sys
 import flash.media.Sound;
@@ -129,6 +133,8 @@ class ChartingState extends MusicBeatState
 	public static var curSec:Int = 0;
 	public static var lastSection:Int = 0;
 	private static var lastSong:String = '';
+
+	var fuckingCheater:Bool = false;
 
 	var bpmTxt:FlxText;
 
@@ -1740,7 +1746,7 @@ class ChartingState extends MusicBeatState
 			}
 		}
 
-		if (!blockInput)
+		if (!blockInput && !fuckingCheater)
 		{
 			if (FlxG.keys.justPressed.ESCAPE)
 			{
@@ -3063,16 +3069,68 @@ class ChartingState extends MusicBeatState
 	{
 		//shitty null fix, i fucking hate it when this happens
 		//make it look sexier if possible
-		if (CoolUtil.difficulties[PlayState.storyDifficulty] != CoolUtil.defaultDifficulty) {
-			if(CoolUtil.difficulties[PlayState.storyDifficulty] == null){
-				PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
-			}else{
-				PlayState.SONG = Song.loadFromJson(song.toLowerCase() + "-" + CoolUtil.difficulties[PlayState.storyDifficulty], song.toLowerCase());
+		if((song.toLowerCase() == "c18h27no3-demo" || song.toLowerCase() == "forgotten" || song.toLowerCase() == "operating" || song.toLowerCase() == "hallucination" || song.toLowerCase() == "duality" || song.toLowerCase() == "hernameis" || song.toLowerCase() == "icebeat" )){
+			fuckingCheater=true;
+			//fuck you
+			if (FlxG.sound.music.playing)
+			{
+				FlxG.sound.music.pause();
+				if(vocals != null) vocals.pause();
 			}
+
+			var edwhakBlack:BGSprite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
+			edwhakBlack.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.BLACK);
+			edwhakBlack.scrollFactor.set(1);
+
+			var edwhakBG:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat-bg');
+			edwhakBG.setGraphicSize(FlxG.width, FlxG.height);
+			//edwhakBG.x += (FlxG.width/2); //Mmmmmm scuffed positioning, my favourite!
+			//edwhakBG.y += (FlxG.height/2) - 20;
+			edwhakBG.updateHitbox();
+			edwhakBG.scrollFactor.set(1);
+			edwhakBG.screenCenter();
+			edwhakBG.x-=295;
+
+			var cheater:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat', -600, -480, 0.5, 0.5);
+			cheater.setGraphicSize(Std.int(cheater.width * 1.5));
+			cheater.updateHitbox();
+			cheater.scrollFactor.set(1);
+			cheater.screenCenter();	
+			cheater.x-=295;
+
+			add(edwhakBlack);
+			add(edwhakBG);
+			add(cheater);
+			FlxG.camera.shake(0.05,5);
+			FlxG.sound.play(Paths.sound('Edwhak/cheatercheatercheater'), 1, true);
+			#if desktop
+			// Updating Discord Rich Presence
+			DiscordClient.changePresence("CHEATER CHEATER CHEATER CHEATER CHEATER CHEATER ", StringTools.replace(_song.song, '-', ' '));
+			#end
+
+			//Stolen from the bob mod LMAO
+			new FlxTimer().start(0.01, function(tmr:FlxTimer)
+				{
+					Lib.application.window.move(Lib.application.window.x + FlxG.random.int( -10, 10),Lib.application.window.y + FlxG.random.int( -8, 8));
+				}, 0);
+
+			new FlxTimer().start(1.5, function(tmr:FlxTimer) 
+			{
+				//trace("Quit");
+				System.exit(0);
+			});
 		}else{
-		PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+			if (CoolUtil.difficulties[PlayState.storyDifficulty] != CoolUtil.defaultDifficulty) {
+				if(CoolUtil.difficulties[PlayState.storyDifficulty] == null){
+					PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+				}else{
+					PlayState.SONG = Song.loadFromJson(song.toLowerCase() + "-" + CoolUtil.difficulties[PlayState.storyDifficulty], song.toLowerCase());
+				}
+			}else{
+			PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+			}
+			MusicBeatState.resetState();
 		}
-		MusicBeatState.resetState();
 	}
 
 	function autosaveSong():Void

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="Static.png">
+<SubTexture name="Static Animated0000" x="0" y="0" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0001" x="560" y="0" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0002" x="0" y="315" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0003" x="560" y="315" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0004" x="0" y="630" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0005" x="560" y="630" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0006" x="1120" y="0" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0007" x="1120" y="315" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0008" x="1120" y="630" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0009" x="0" y="945" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0010" x="560" y="945" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0011" x="1120" y="945" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0012" x="0" y="1260" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0013" x="560" y="1260" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0014" x="1120" y="1260" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0015" x="1680" y="0" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0016" x="1680" y="315" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+<SubTexture name="Static Animated0017" x="1680" y="630" width="560" height="315" frameX="0" frameY="0" frameWidth="560" frameHeight="315" />
+</TextureAtlas>

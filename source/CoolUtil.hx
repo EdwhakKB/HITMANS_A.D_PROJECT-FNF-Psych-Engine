@@ -23,15 +23,15 @@ using StringTools;
 class CoolUtil
 {
 	public static var defaultDifficulties:Array<String> = [
-		'Begginer',
-		'Light',
-		'Standard',
-		'Heavy',
-		'Oni',
-		'Massacre',
-		'Hitman'
+		'begginer',
+		'light',
+		'standard',
+		'heavy',
+		'oni',
+		'massacre',
+		'hitman'
 	];
-	public static var defaultDifficulty:String = 'Standard'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
+	public static var defaultDifficulty:String = 'standard'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
 
 	public static var difficulties:Array<String> = [];
 

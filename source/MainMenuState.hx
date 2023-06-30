@@ -363,10 +363,10 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(storyMode)) {
 				if (FlxG.mouse.justPressed) {
-					new FlxTimer().start(1, function(tmrS:FlxTimer)
-					{
-						MusicBeatState.switchState(new StoryMenuState());
-					});
+					// new FlxTimer().start(1, function(tmrS:FlxTimer)
+					// {
+					// 	MusicBeatState.switchState(new StoryMenuState());
+					// });
 					folder.alpha = 0;
 					inFolder = true;
 					storyMode.animation.play('selected');
@@ -469,7 +469,7 @@ class MainMenuState extends MusicBeatState
 								switch (daChoice)
 								{
 									case 'story_mode':
-										MusicBeatState.switchState(new StoryMenuState());
+										MusicBeatState.switchState(new FreeplayState());
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
 									#if MODS_ALLOWED
@@ -621,9 +621,9 @@ class MainMenuState extends MusicBeatState
 									{
 										infoText.text = 
 										"HITMANS A.D PROJECT V1\nThis update adds\n
-                                        -Modchated songs with own bgs\n
+                                        -Modcharted songs with own bgs\n
                                         -An amount of 7 songs\n
-                                        -Command Prommt with more variables\n
+                                        -Command Prompt with more variables\n
                                         -Multikeys\n
                                         ENJOY!";
 									});
@@ -802,11 +802,70 @@ class MainMenuState extends MusicBeatState
 
 						else if(wordText.text == 'LOG24')
 							{
-								infoText.text = '"Forgotten" project it\'s still under development';
+								infoText.text = 'Loading "Forgotten" project...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										persistentUpdate = false;
+								        var songLowercase:String = 'forgotten';
+								        var poop:String = Highscore.formatSong(songLowercase, 1);
+								        trace(poop);
+								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+								        PlayState.isStoryMode = false;
+								        PlayState.storyDifficulty = 1;
 
+										if(FreeplayState.vocals != null)
+											{
+												FreeplayState.vocals.fadeOut(0.3);
+												FreeplayState.vocals = null;
+											}
+
+									        LoadingState.loadAndSwitchState(new PlayState());
+								            
+					
+								        FlxG.sound.music.volume = 0;
+									}
+									);
+							}
+						else if(wordText.text == 'MERCYLESS')
+							{
+								infoText.text = 'Wait a few seconds...';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+								{
+									infoText.text = 'Please, put the Password';
+								});
+							}
+						else if(wordText.text == 'CAPSAICIN' && infoText.text == 'Please, put the Password')
+							{
+								infoText.text = 'EXECUTING...';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										persistentUpdate = false;
+								        var songLowercase:String = 'c18h27no3-demo';
+								        var poop:String = Highscore.formatSong(songLowercase, 1);
+								        trace(poop);
+								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+								        PlayState.isStoryMode = false;
+								        PlayState.storyDifficulty = 1;
+
+										if(FreeplayState.vocals != null)
+											{
+												FreeplayState.vocals.fadeOut(0.3);
+												FreeplayState.vocals = null;
+											}
+
+									        LoadingState.loadAndSwitchState(new PlayState());
+								            
+					
+								        FlxG.sound.music.volume = 0;
+									}
+									);
+							}
 						else if(wordText.text == 'EXPERIMENT1213')
 							{
 								infoText.text = 'REDACTED';
@@ -822,7 +881,7 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-								        var songLowercase:String = 'Operating';
+								        var songLowercase:String = 'operating';
 								        var poop:String = Highscore.formatSong(songLowercase, 1);
 								        trace(poop);
 								        PlayState.SONG = Song.loadFromJson(poop, songLowercase);
@@ -834,12 +893,9 @@ class MainMenuState extends MusicBeatState
 												FreeplayState.vocals.fadeOut(0.3);
 												FreeplayState.vocals = null;
 											}
-								
-								        if (FlxG.keys.pressed.SHIFT){
-									            LoadingState.loadAndSwitchState(new editors.ChartingState());
-								            }else{
-									            LoadingState.loadAndSwitchState(new PlayState());
-								            }
+
+									        LoadingState.loadAndSwitchState(new PlayState());
+
 					
 								        FlxG.sound.music.volume = 0;
 									}
