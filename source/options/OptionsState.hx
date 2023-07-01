@@ -65,10 +65,12 @@ class OptionsState extends MusicBeatState
 
 	override function create() {
 		#if desktop
-		DiscordClient.changePresence("Menu - Options", null);
+		DiscordClient.changePresence("System - Options", null);
 		#end
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg.scale.x = 0.6;
+		bg.scale.y = 0.6;
 		bg.updateHitbox();
 
 		bg.screenCenter();

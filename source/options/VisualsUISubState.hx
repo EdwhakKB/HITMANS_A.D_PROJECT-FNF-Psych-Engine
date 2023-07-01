@@ -29,6 +29,8 @@ using StringTools;
 
 class VisualsUISubState extends BaseOptionsMenu
 {
+	var note:FlxSprite;
+
 	public function new()
 	{
 		title = 'Visuals and UI';
@@ -56,14 +58,15 @@ class VisualsUISubState extends BaseOptionsMenu
 		'HITMANS',
 		['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR']);
 		addOption(option);
+		option.onChange = onChangeSkin;
 
-		var option:Option = new Option('GameOver Style:',
-		"What Game Over do you want to see?.",
-		'goStyle',
-		'string',
-		'OLD',
-		['OLD', 'NEW']);
-		addOption(option);
+		// var option:Option = new Option('GameOver Style:',
+		// "What Game Over do you want to see?.",
+		// 'goStyle',
+		// 'string',
+		// 'NEW',
+		// ['OLD', 'NEW']);
+		// addOption(option);
 
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
@@ -149,6 +152,38 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 
 		super();
+
+		note = new FlxSprite(FlxG.width, FlxG.height);
+        note.frames = Paths.getSparrowAtlas('NOTE_assets', 'shared');
+        note.animation.addByPrefix('note1', 'purple0', 24, true);
+        note.animation.play('note1', true);
+        note.visible = false;
+        note.screenCenter(Y);
+        note.scale.set(0.8, 0.8);
+        note.x = (FlxG.width - note.width) / 2 + 340;
+        add(note);
+	}
+
+	override function changeSelection(change:Int = 0) {
+        super.changeSelection(change);
+        if (note != null) {
+            note.visible = false;
+            if (optionsArray[curSelected].name == 'Note Skin:') {
+                note.visible = true;
+            }
+        }
+	}
+
+	inline function onChangeSkin(){
+		if (note != null){
+			note.visible = true;
+			if (ClientPrefs.noteSkin != 'NONE')
+				note.frames = Paths.getSparrowAtlas('Skins/Notes/' + ClientPrefs.noteSkin + '/NOTE_assets', 'shared');
+			else
+				note.frames = Paths.getSparrowAtlas('NOTE_assets', 'shared');
+		note.animation.addByPrefix('note1', 'purple0', 24, true);
+		note.animation.play('note1', true);
+		}
 	}
 
 	var changedMusic:Bool = false;

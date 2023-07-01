@@ -23,7 +23,7 @@ class ClientPrefs {
     public static var ratingStyle:Array<Dynamic> = ["", null];
     public static var memoryDisplay:Bool = true;
 	public static var noteSkin:String = 'HITMANS';
-	public static var goStyle:String = 'OLD';
+	public static var goStyle:String = 'NEW';
 	public static var noteSplashes:Bool = true;
 	public static var lowQuality:Bool = false;
 	public static var shaders:Bool = true;

@@ -661,14 +661,14 @@ class MainMenuState extends MusicBeatState
 									});
 						}
 						else if(wordText.text == 'STORYMODE'){
-							infoText.text = 'EXECUTING...';
+							infoText.text = 'NOT IN DEMO';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										MusicBeatState.switchState(new StoryMenuState());
-									});
+								// new FlxTimer().start(1, function(tmr:FlxTimer) 
+								// 	{
+								// 		infoText.text = " ";
+								// 		MusicBeatState.switchState(new StoryMenuState());
+								// 	});
 						}
 						else if(wordText.text == 'CREDITS'){
 							infoText.text = 'EXECUTING...';
@@ -818,7 +818,7 @@ class MainMenuState extends MusicBeatState
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-										PlayState.SONG = Song.loadFromJson('forgotten-heavy', 'forgotten');
+										PlayState.SONG = Song.loadFromJson('forgotten-oni', 'forgotten');
 								        PlayState.isStoryMode = false;
 								        PlayState.storyDifficulty = 1;
 
@@ -936,7 +936,7 @@ class MainMenuState extends MusicBeatState
 									cheater.updateHitbox();
 									cheater.scrollFactor.set(1);
 									cheater.screenCenter();	
-									cheater.x+=200;
+									cheater.x+=50;
 						
 									add(edwhakBlack);
 									add(edwhakBG);

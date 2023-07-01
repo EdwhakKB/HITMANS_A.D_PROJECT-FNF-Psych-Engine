@@ -4138,7 +4138,7 @@ class PlayState extends MusicBeatState
 					cheater.updateHitbox();
 					cheater.scrollFactor.set(1);
 					cheater.screenCenter();	
-					cheater.x+=200;
+					cheater.x+=50;
 		
 					add(edwhakBlack);
 					add(edwhakBG);
@@ -5517,7 +5517,7 @@ class PlayState extends MusicBeatState
 		comboSpr.x = coolText.x;
 		// comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
 		// comboSpr.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-		comboSpr.visible = (!ClientPrefs.hideHud && showCombo);
+		comboSpr.visible = (!ClientPrefs.hideHud && showCombo && ClientPrefs.hudStyle == 'Classic');
 		comboSpr.x += ClientPrefs.comboOffset[0];
 		comboSpr.y -= ClientPrefs.comboOffset[1];
 		// comboSpr.y += 60;
@@ -5600,7 +5600,7 @@ class PlayState extends MusicBeatState
 			numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
 			numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
 			numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
-			numScore.visible = !ClientPrefs.hideHud;
+			numScore.visible = (!ClientPrefs.hideHud && ClientPrefs.hudStyle == 'Classic');
 
 			//if (combo >= 10 || combo == 0)
 			if(showComboNum)

@@ -3096,7 +3096,7 @@ class ChartingState extends MusicBeatState
 			cheater.updateHitbox();
 			cheater.scrollFactor.set(1);
 			cheater.screenCenter();	
-			cheater.x+=200;
+			cheater.x+=50;
 
 			add(edwhakBlack);
 			add(edwhakBG);
