@@ -93,7 +93,8 @@ using StringTools;
 
 class PlayState extends MusicBeatState
 {
-	var modchartedSongs:Array<String> = []; // PUT THE SONG NAME HERE IF YOU WANT TO USE THE ANDROMEDA MODIFIER SYSTEM!!
+	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
+	// var modchartedSongs:Array<String> = []; PUT THE SONG NAME HERE IF YOU WANT TO USE THE ANDROMEDA MODIFIER SYSTEM!!
 
 	// // THEN GOTO MODCHARTSHIT.HX TO DEFINE MODIFIERS ETC
 	// // IN THE SETUPMODCHART FUNCTION
@@ -4049,165 +4050,21 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
 		{
-			if((SONG.song.toLowerCase() == "c18h27no3-demo" || SONG.song.toLowerCase() == "forgotten" || SONG.song.toLowerCase() == "operating" || SONG.song.toLowerCase() == "hallucination" || SONG.song.toLowerCase() == "duality" || SONG.song.toLowerCase() == "hernameis" || SONG.song.toLowerCase() == "icebeat" )){
-				//fuck you
-				if (FlxG.sound.music.playing)
-				{
-					FlxG.sound.music.pause();
-					if(vocals != null) vocals.pause();
-				}
-	
-				var edwhakBlack:BGSprite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
-				edwhakBlack.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.BLACK);
-				edwhakBlack.scrollFactor.set(1);
-	
-				var edwhakBG:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat-bg');
-				edwhakBG.setGraphicSize(FlxG.width, FlxG.height);
-				//edwhakBG.x += (FlxG.width/2); //Mmmmmm scuffed positioning, my favourite!
-				//edwhakBG.y += (FlxG.height/2) - 20;
-				edwhakBG.updateHitbox();
-				edwhakBG.scrollFactor.set(1);
-				edwhakBG.screenCenter();
-				edwhakBG.x-=295;
-	
-				var cheater:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat', -600, -480, 0.5, 0.5);
-				cheater.setGraphicSize(Std.int(cheater.width * 1.5));
-				cheater.updateHitbox();
-				cheater.scrollFactor.set(1);
-				cheater.screenCenter();	
-				cheater.x-=295;
-	
-				add(edwhakBlack);
-				add(edwhakBG);
-				add(cheater);
-				FlxG.camera.shake(0.05,5);
-				FlxG.sound.play(Paths.sound('Edwhak/cheatercheatercheater'), 1, true);
-				#if desktop
-				// Updating Discord Rich Presence
-				DiscordClient.changePresence("CHEATER CHEATER CHEATER CHEATER CHEATER CHEATER ", StringTools.replace(SONG.song, '-', ' '));
-				#end
-	
-				//Stolen from the bob mod LMAO
-				new FlxTimer().start(0.01, function(tmr:FlxTimer)
-					{
-						Lib.application.window.move(Lib.application.window.x + FlxG.random.int( -10, 10),Lib.application.window.y + FlxG.random.int( -8, 8));
-					}, 0);
-	
-				new FlxTimer().start(1.5, function(tmr:FlxTimer) 
-				{
-					//trace("Quit");
-					System.exit(0);
-				});
+			if (hitmansSongs.contains(SONG.song.toLowerCase())){
+				antiCheat();
 			}else{
-				persistentUpdate = false;
-				paused = true;
-				cancelMusicFadeTween();
-				MusicBeatState.switchState(new ChartingState());
-				chartingMode = true;
-	
-				#if desktop
-				DiscordClient.changePresence("Chart Editor", null, null, true);
-				#end
+				openChartEditor();
 			}
 		}
-		if (FlxG.keys.anyJustPressed(debugKeysModchart) && !endingSong && !inCutscene)
-			{
-				if((SONG.song.toLowerCase() == "c18h27no3-demo" || SONG.song.toLowerCase() == "forgotten" || SONG.song.toLowerCase() == "operating" || SONG.song.toLowerCase() == "hallucination" || SONG.song.toLowerCase() == "duality" || SONG.song.toLowerCase() == "hernameis" || SONG.song.toLowerCase() == "icebeat" )){
-					//fuck you
-					if (FlxG.sound.music.playing)
-					{
-						FlxG.sound.music.pause();
-						if(vocals != null) vocals.pause();
-					}
-		
-					var edwhakBlack:BGSprite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
-					edwhakBlack.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.BLACK);
-					edwhakBlack.scrollFactor.set(1);
-		
-					var edwhakBG:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat-bg');
-					edwhakBG.setGraphicSize(FlxG.width, FlxG.height);
-					//edwhakBG.x += (FlxG.width/2); //Mmmmmm scuffed positioning, my favourite!
-					//edwhakBG.y += (FlxG.height/2) - 20;
-					edwhakBG.updateHitbox();
-					edwhakBG.scrollFactor.set(1);
-					edwhakBG.screenCenter();
-					edwhakBG.x=0;
-		
-					var cheater:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat', -600, -480, 0.5, 0.5);
-					cheater.setGraphicSize(Std.int(cheater.width * 1.5));
-					cheater.updateHitbox();
-					cheater.scrollFactor.set(1);
-					cheater.screenCenter();	
-					cheater.x+=50;
-		
-					add(edwhakBlack);
-					add(edwhakBG);
-					add(cheater);
-					FlxG.camera.shake(0.05,5);
-					FlxG.sound.play(Paths.sound('Edwhak/cheatercheatercheater'), 1, true);
-					#if desktop
-					// Updating Discord Rich Presence
-					DiscordClient.changePresence("CHEATER CHEATER CHEATER CHEATER CHEATER CHEATER ", StringTools.replace(SONG.song, '-', ' '));
-					#end
-		
-					//Stolen from the bob mod LMAO
-					new FlxTimer().start(0.01, function(tmr:FlxTimer)
-						{
-							Lib.application.window.move(Lib.application.window.x + FlxG.random.int( -10, 10),Lib.application.window.y + FlxG.random.int( -8, 8));
-						}, 0);
-		
-					new FlxTimer().start(1.5, function(tmr:FlxTimer) 
-					{
-						//trace("Quit");
-						System.exit(0);
-					});
-				}else{
-					persistentUpdate = false;
-					paused = true;
-					cancelMusicFadeTween();
-					MusicBeatState.switchState(new modcharting.ModchartEditorState());
-					chartingMode = true;
-					if (!instance.notITGMod)
-						{
-							instance.notITGMod = true;
-							// do nothing lamoo
-						}
-		
-					#if desktop
-					DiscordClient.changePresence("Modchart Editor", null, null, true);
-					#end
-				}
-			}
 
-		// if (useModchart)
-		// 	{
-		// 		playerStrums.forEach(function(spr:StrumNote)
-		// 		{
-		// 			var pos = modManager.getReceptorPos(spr, 0);
-		// 			var scale = modManager.getReceptorScale(spr, 0);
-		// 			modManager.updateReceptor(spr, 0, scale, pos);
-	
-		// 			spr.x = pos.x;
-		// 			spr.y = pos.y;
-		// 			spr.z = pos.z;
-		// 			spr.scale.set(scale.x, scale.y);
-	
-		// 			scale.put();
-		// 		});
-		// 		opponentStrums.forEach(function(spr:StrumNote)
-		// 		{
-		// 			var pos = modManager.getReceptorPos(spr, 1);
-		// 			var scale = modManager.getReceptorScale(spr, 1);
-		// 			modManager.updateReceptor(spr, 1, scale, pos);
-	
-		// 			spr.x = pos.x;
-		// 			spr.y = pos.y;
-		// 			spr.z = pos.z;
-		// 			spr.scale.set(scale.x, scale.y);
-	
-		// 			scale.put();
-		// 		});
-		// 	}
+		if (FlxG.keys.anyJustPressed(debugKeysModchart) && !endingSong && !inCutscene)
+		{
+			if (hitmansSongs.contains(SONG.song.toLowerCase())){
+				antiCheat();
+			}else{
+				openModchartEditor();
+			}
+		}
 
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
@@ -4569,6 +4426,57 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
+	function antiCheat()
+	{
+		if (FlxG.sound.music.playing)
+			{
+				FlxG.sound.music.pause();
+				if(vocals != null) vocals.pause();
+			}
+
+			var edwhakBlack:BGSprite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
+			edwhakBlack.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.BLACK);
+			edwhakBlack.scrollFactor.set(1);
+
+			var edwhakBG:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat-bg');
+			edwhakBG.setGraphicSize(FlxG.width, FlxG.height);
+			//edwhakBG.x += (FlxG.width/2); //Mmmmmm scuffed positioning, my favourite!
+			//edwhakBG.y += (FlxG.height/2) - 20;
+			edwhakBG.updateHitbox();
+			edwhakBG.scrollFactor.set(1);
+			edwhakBG.screenCenter();
+			edwhakBG.x=0;
+
+			var cheater:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat', -600, -480, 0.5, 0.5);
+			cheater.setGraphicSize(Std.int(cheater.width * 1.5));
+			cheater.updateHitbox();
+			cheater.scrollFactor.set(1);
+			cheater.screenCenter();	
+			cheater.x+=50;
+
+			add(edwhakBlack);
+			add(edwhakBG);
+			add(cheater);
+			FlxG.camera.shake(0.05,5);
+			FlxG.sound.play(Paths.sound('Edwhak/cheatercheatercheater'), 1, true);
+			#if desktop
+			// Updating Discord Rich Presence
+			DiscordClient.changePresence("CHEATER CHEATER CHEATER CHEATER CHEATER CHEATER ", StringTools.replace(SONG.song, '-', ' '));
+			#end
+
+			//Stolen from the bob mod LMAO
+			new FlxTimer().start(0.01, function(tmr:FlxTimer)
+				{
+					Lib.application.window.move(Lib.application.window.x + FlxG.random.int( -10, 10),Lib.application.window.y + FlxG.random.int( -8, 8));
+				}, 0);
+
+			new FlxTimer().start(1.5, function(tmr:FlxTimer) 
+			{
+				//trace("Quit");
+				System.exit(0);
+			});
+	}
+
 	function openChartEditor()
 	{
 		persistentUpdate = false;
@@ -4579,6 +4487,24 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		DiscordClient.changePresence("Chart Editor", null, null, true);
+		#end
+	}
+
+	function openModchartEditor()
+	{
+		persistentUpdate = false;
+		paused = true;
+		cancelMusicFadeTween();
+		MusicBeatState.switchState(new modcharting.ModchartEditorState());
+		chartingMode = true;
+		if (!instance.notITGMod)
+			{
+				instance.notITGMod = true;
+				// do nothing lamoo
+			}
+		
+		#if desktop
+		DiscordClient.changePresence("Modchart Editor", null, null, true);
 		#end
 	}
 
@@ -5512,7 +5438,7 @@ class PlayState extends MusicBeatState
 		rating.y -= ClientPrefs.comboOffset[1];
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
-		comboSpr.cameras = [camHUD];
+		comboSpr.cameras = [camOther];
 		comboSpr.screenCenter();
 		comboSpr.x = coolText.x;
 		// comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
@@ -5559,11 +5485,9 @@ class PlayState extends MusicBeatState
 		{
 			insert(members.indexOf(strumLineNotes), comboSpr);
 		}
-		if (!ClientPrefs.comboStacking)
-		{
-			if (lastCombo != null) lastCombo.kill();
-			lastCombo = comboSpr;
-		}
+		if (lastCombo != null) lastCombo.kill();
+		lastCombo = comboSpr;
+
 		if (lastScore != null)
 		{
 			while (lastScore.length > 0)
@@ -5575,16 +5499,15 @@ class PlayState extends MusicBeatState
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			numScore.cameras = [camHUD];
+			numScore.cameras = [camOther];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
-			numScore.y += 80;
+			numScore.y += 120;
 
 			numScore.x += ClientPrefs.comboOffset[2];
 			numScore.y -= ClientPrefs.comboOffset[3];
 			
-			if (!ClientPrefs.comboStacking)
-				lastScore.push(numScore);
+			lastScore.push(numScore);
 
 			if (!PlayState.isPixelStage)
 			{
@@ -5597,9 +5520,13 @@ class PlayState extends MusicBeatState
 			}
 			numScore.updateHitbox();
 
-			numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
-			numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
-			numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
+			numScore.scale.x = 0.5;
+			numScore.scale.y = 0.5;
+			FlxTween.tween(numScore.scale, {x: 0.4}, 0.1, {ease:FlxEase.circIn});
+			FlxTween.tween(numScore.scale, {y: 0.4}, 0.1, {ease:FlxEase.circIn});
+			// numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
+			// numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
+			// numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
 			numScore.visible = (!ClientPrefs.hideHud && ClientPrefs.hudStyle == 'Classic');
 
 			//if (combo >= 10 || combo == 0)
@@ -5611,7 +5538,7 @@ class PlayState extends MusicBeatState
 				{
 					numScore.destroy();
 				},
-				startDelay: Conductor.crochet * 0.002 / playbackRate
+				startDelay: Conductor.crochet * 0.001 / playbackRate
 			});
 
 			daLoop++;
@@ -5638,7 +5565,7 @@ class PlayState extends MusicBeatState
 
 				rating.destroy();
 			},
-			startDelay: Conductor.crochet * 0.002 / playbackRate
+			startDelay: Conductor.crochet * 0.001 / playbackRate
 		});
 	 	}
 	}

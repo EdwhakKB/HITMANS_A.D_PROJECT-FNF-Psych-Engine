@@ -1,5 +1,0 @@
-this event makes my alert show (att edwhak)
-just place the event
-if you put "random" in v1 the X and Y poss will change
-to a random value to be more alive the effect
-thats all

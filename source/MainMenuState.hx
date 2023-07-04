@@ -485,9 +485,10 @@ class MainMenuState extends MusicBeatState
 									#if MODS_ALLOWED
 									case 'mods':
 										MusicBeatState.switchState(new ModsMenuState());
-									#end
 									case 'awards':
-										MusicBeatState.switchState(new AchievementsMenuState());
+										MusicBeatState.switchState(new ModsMenuState());
+										// MusicBeatState.switchState(new AchievementsMenuState());
+									#end
 									case 'credits':
 										MusicBeatState.switchState(new CreditsState());
 									case 'options':
@@ -695,14 +696,14 @@ class MainMenuState extends MusicBeatState
 									});
 						}
 						else if(wordText.text == 'AWARDS'){
-							infoText.text = 'EXECUTING...';
+							infoText.text = 'NOT IN DEMO';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										MusicBeatState.switchState(new AchievementsMenuState());
-									});
+								// new FlxTimer().start(1, function(tmr:FlxTimer) 
+								// 	{
+								// 		infoText.text = " ";
+								// 		MusicBeatState.switchState(new StoryMenuState());
+								// 	});
 						}
 						else if(wordText.text == 'LOGIN')
 							{

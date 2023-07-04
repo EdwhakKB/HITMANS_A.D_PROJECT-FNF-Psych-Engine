@@ -1,4 +1,0 @@
-this event enable the funny screen bump lol
-v1 only
-true this enable the bump
-false this disable

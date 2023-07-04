@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<TextureAtlas imagePath="LadyB_love_alert.png">
-<SubTexture name="LadyB_broken_alert_quad0000" x="0" y="0" width="609" height="514" frameX="-115" frameY="-143" frameWidth="800" frameHeight="800" />
-<SubTexture name="LadyB_broken_alert_quad0001" x="609" y="0" width="597" height="502" frameX="-121" frameY="-149" frameWidth="800" frameHeight="800" />
-</TextureAtlas>

@@ -72,7 +72,7 @@ class NoteOffsetState extends MusicBeatState
 
 	public static var styleMod:String = 'HITMANS';
 
-    public static var customHudName:String = 'CLASSIC';
+    public static var customHudName:String = 'Classic';
 
     public static var healthType:String = 'healthBar';
 
@@ -122,8 +122,8 @@ class NoteOffsetState extends MusicBeatState
         if (hudJson == null)
 			{
 				hudJson = {
-					CustomHudName: "CLASSIC",
-					HealthBarStyle: "CLASSIC",
+					CustomHudName: "Classic",
+					HealthBarStyle: "Classic",
 					CountDownStyle: ["get", "ready", "set", "go"],
 					CountDownSounds: ["intro3", "intro2", "intro1", "introGo"],
 					RatingStyle: ["", ""],

@@ -431,14 +431,14 @@ class FreeplayState extends MusicBeatState
 
 				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 
-				if (FlxG.keys.pressed.SHIFT)
-				{
-					LoadingState.loadAndSwitchState(new ChartingState());
-				}
-				else
-				{
+				// if (FlxG.keys.pressed.SHIFT)
+				// {
+				// 	LoadingState.loadAndSwitchState(new ChartingState());
+				// }
+				// else
+				// {
 					LoadingState.loadAndSwitchState(new PlayState());
-				}
+				// }
 
 				FlxG.sound.music.volume = 0;
 

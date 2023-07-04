@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<TextureAtlas imagePath="corrupted.png">
-<SubTexture name="idle0000" x="364" y="0" width="369" height="409" frameX="0" frameY="-20" frameWidth="365" frameHeight="420" />
-<SubTexture name="idle0001" x="0" y="0" width="364" height="412" frameX="-4" frameY="-17" frameWidth="365" frameHeight="420" />
-<SubTexture name="idle0002" x="733" y="0" width="372" height="409" frameX="-1" frameY="-19" frameWidth="365" frameHeight="420" />
-</TextureAtlas>

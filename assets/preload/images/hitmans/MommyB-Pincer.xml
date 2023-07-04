@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<TextureAtlas imagePath="MommyB-Pincer.png">
-<SubTexture name="MommyB-Pincer-closed0000" x="426" y="0" width="434" height="182" frameX="-50" frameY="-44" frameWidth="522" frameHeight="293" />
-<SubTexture name="MommyB-Pincer-open0000" x="0" y="0" width="426" height="204" frameX="-50" frameY="-37" frameWidth="522" frameHeight="293" />
-</TextureAtlas>

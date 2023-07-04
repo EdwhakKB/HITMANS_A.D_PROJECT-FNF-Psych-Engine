@@ -1,6 +1,0 @@
-In this event you can make the red shit appear in screen
-value 1 its how time will be there
-low for 5 secs
-mid for 2.5
-fast for 1.25
-have fun :)

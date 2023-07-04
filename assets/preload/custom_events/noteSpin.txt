@@ -1,2 +1,0 @@
-yeahh note spinny
-value1: 1 = clockwise 0 = counter-clockwise

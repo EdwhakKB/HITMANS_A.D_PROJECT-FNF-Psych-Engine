@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<TextureAtlas imagePath="HackHand.png">
-<SubTexture name="HackHand Closed0000" x="0" y="190" width="422" height="180" frameX="-28" frameY="-46" frameWidth="522" frameHeight="293" />
-<SubTexture name="HackHand Open0000" x="0" y="0" width="461" height="190" frameX="-28" frameY="-37" frameWidth="522" frameHeight="293" />
-</TextureAtlas>

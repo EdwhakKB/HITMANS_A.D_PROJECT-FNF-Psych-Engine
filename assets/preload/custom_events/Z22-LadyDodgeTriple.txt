@@ -1,2 +1,0 @@
-with this event you can add a timer with the sawblade
-if value 1 = true it will instakill on Miss
