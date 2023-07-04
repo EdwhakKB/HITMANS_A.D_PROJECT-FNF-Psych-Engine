@@ -169,7 +169,7 @@ class ModTable
                 return;
             }
             time /= renderer.speed;
-            var tween = renderer.tweenManager.tween(modifiers.get(modifier), {currentValue: val}, time, {ease: easefunc,
+            var tween = renderer.createTween(modifiers.get(modifier), {currentValue: val}, time, {ease: easefunc,
                 onComplete: function(twn:FlxTween) {
     
                 }
@@ -204,7 +204,7 @@ class ModTable
                     return;
                 }
                 time /= renderer.speed;
-                var tween = renderer.tweenManager.num(startValue, val, time, {ease: easefunc,
+                var tween = renderer.createTweenNum(startValue, val, time, {ease: easefunc,
                     onComplete: function(twn:FlxTween) {
                         if (modifiers.exists(modifier))
                             modifiers.get(modifier).subValues.get(subValue).value = val;

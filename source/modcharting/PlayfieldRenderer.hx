@@ -16,6 +16,7 @@ import flixel.FlxSprite;
 
 import flixel.FlxG;
 import modcharting.Modifier;
+import managers.*;
 import flixel.system.FlxAssets.FlxShader;
 
 #if LEATHER
@@ -55,7 +56,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
     public var eventManager:ModchartEventManager;
     public var modifierTable:ModTable;
-    public var tweenManager:FlxTweenManager;
+    public var tweenManager:FlxTweenManager = null;
+    public var timerManager:FlxTimerManager = null;
 
     public var modchart:ModchartFile;
     public var inEditor:Bool = false;
@@ -87,6 +89,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         instance.playfieldRenderer = this;
 
         tweenManager = new FlxTweenManager();
+        timerManager = new FlxTimerManager();
         eventManager = new ModchartEventManager(this);
         modifierTable = new ModTable(instance, this);
         addNewPlayfield(0,0,0);
@@ -103,6 +106,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     {
         eventManager.update(elapsed);
         tweenManager.update(elapsed); //should be automatically paused when you pause in game
+        timerManager.update(elapsed);
         super.update(elapsed);
     }
 

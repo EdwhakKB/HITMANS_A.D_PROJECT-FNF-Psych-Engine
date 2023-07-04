@@ -83,8 +83,13 @@ import sys.FileSystem;
 import sys.io.File;
 #end
 
-#if VIDEOS_ALLOWED
-import vlc.MP4Handler;
+#if VIDEOS_ALLOWED 
+#if (hxCodec >= "3.0.0")
+import hxcodec.flixel.FlxVideo as VideoHandler;
+import lime.app.Event;
+#elseif (hxCodec >= "2.6.1") import hxcodec.VideoHandler as VideoHandler;
+#elseif (hxCodec == "2.6.0") import VideoHandler as VideoHandler;
+#else import vlc.VideoHandler; #end
 #end
 
 import flash.system.System;
@@ -450,9 +455,37 @@ class PlayState extends MusicBeatState
 	public var noteCameras21:FlxCamera;
 	public var noteCameras22:FlxCamera;
 
+	public var tweenManager:FlxTweenManager = null;
+	public var timerManager:FlxTimerManager = null;
+
+	public function createTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
+	{
+		var tween:FlxTween = tweenManager.tween(Object, Values, Duration, Options);
+		tween.manager = tweenManager;
+		return tween;
+	}
+
+	public function createTweenNum(FromValue:Float, ToValue:Float, Duration:Float = 1, ?Options:TweenOptions, ?TweenFunction:Float->Void):FlxTween
+	{
+		var tween:FlxTween = tweenManager.num(FromValue, ToValue, Duration, Options, TweenFunction);
+		tween.manager = tweenManager;
+		return tween;
+	}
+
+	public function createTimer(Time:Float = 1, ?OnComplete:FlxTimer->Void, Loops:Int = 1):FlxTimer
+	{
+		var timer:FlxTimer = new FlxTimer();
+		timer.manager = timerManager;
+		return timer.start(Time, OnComplete, Loops);
+	}
+
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
+
+		tweenManager = new FlxTweenManager();
+		timerManager = new FlxTimerManager();
+
 		Paths.clearStoredMemory();
 
 		// for lua
@@ -2127,13 +2160,24 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		var video:MP4Handler = new MP4Handler();
-		video.playVideo(filepath);
-		video.finishCallback = function()
-		{
-			startAndEnd();
-			return;
-		}
+		var video:VideoHandler = new VideoHandler();
+			#if (hxCodec >= "3.0.0")
+			// Recent versions
+			video.play(filepath);
+			video.onEndReached.add(function()
+			{
+				startAndEnd();
+				return;
+			}, true);
+			#else
+			// Older versions
+			video.playVideo(filepath);
+			video.finishCallback = function()
+			{
+				startAndEnd();
+				return;
+			}
+			#end
 		#else
 		FlxG.log.warn('Platform not supported!');
 		startAndEnd();
@@ -4007,6 +4051,12 @@ class PlayState extends MusicBeatState
 			} else {
 				boyfriendIdleTime = 0;
 			}
+		}
+
+		if (!paused)
+		{
+			tweenManager.update(elapsed);
+			timerManager.update(elapsed);
 		}
 
 		super.update(elapsed);
@@ -6522,6 +6572,13 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	private function cleanManagers()
+	{
+		timerManager.clear();
+
+		tweenManager.clear();
+	}
+
 	override function destroy() {
 		for (lua in luaArray) {
 			lua.call('onDestroy', []);
@@ -6540,6 +6597,7 @@ class PlayState extends MusicBeatState
 		}
 		FlxAnimationController.globalSpeed = 1;
 		FlxG.sound.music.pitch = 1;
+		cleanManagers();
 		super.destroy();
 	}
 
