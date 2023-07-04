@@ -1,6 +1,7 @@
 package modcharting;
 
 
+import flixel.util.FlxTimer.FlxTimerManager;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
 import flixel.tweens.FlxEase;
@@ -444,6 +445,20 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         else
             return ModchartUtil.getScrollSpeed(playStateInstance);
         return 1.0; 
+    }
+
+    public function createTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
+    {
+        var tween:FlxTween = tweenManager.tween(Object, Values, Duration, Options);
+        tween.manager = tweenManager;
+        return tween;
+    }
+    
+    public function createTweenNum(FromValue:Float, ToValue:Float, Duration:Float = 1, ?Options:TweenOptions, ?TweenFunction:Float->Void):FlxTween
+    {
+        var tween:FlxTween = tweenManager.num(FromValue, ToValue, Duration, Options, TweenFunction);
+        tween.manager = tweenManager;
+        return tween;
     }
 
     override public function destroy()
