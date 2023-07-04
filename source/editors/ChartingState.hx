@@ -231,6 +231,9 @@ class ChartingState extends MusicBeatState
 	var text:String = "";
 	public static var vortex:Bool = false;
 	public var mouseQuant:Bool = false;
+
+	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
+
 	override function create()
 	{
 		if (PlayState.SONG != null)
@@ -3069,8 +3072,47 @@ class ChartingState extends MusicBeatState
 	{
 		//shitty null fix, i fucking hate it when this happens
 		//make it look sexier if possible
-		if((song.toLowerCase() == "c18h27no3-demo" || song.toLowerCase() == "forgotten" || song.toLowerCase() == "operating" || song.toLowerCase() == "hallucination" || song.toLowerCase() == "duality" || song.toLowerCase() == "hernameis" || song.toLowerCase() == "icebeat" )){
-			fuckingCheater=true;
+		if (hitmansSongs.contains(song.toLowerCase())){
+			// antiCheat();
+			if (CoolUtil.difficulties[PlayState.storyDifficulty] != CoolUtil.defaultDifficulty) {
+				if(CoolUtil.difficulties[PlayState.storyDifficulty] == null){
+					PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+				}else{
+					PlayState.SONG = Song.loadFromJson(song.toLowerCase() + "-" + CoolUtil.difficulties[PlayState.storyDifficulty], song.toLowerCase());
+				}
+			}else{
+			PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+			}
+			MusicBeatState.resetState();
+		}else{
+			if (CoolUtil.difficulties[PlayState.storyDifficulty] != CoolUtil.defaultDifficulty) {
+				if(CoolUtil.difficulties[PlayState.storyDifficulty] == null){
+					PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+				}else{
+					PlayState.SONG = Song.loadFromJson(song.toLowerCase() + "-" + CoolUtil.difficulties[PlayState.storyDifficulty], song.toLowerCase());
+				}
+			}else{
+			PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
+			}
+			MusicBeatState.resetState();
+		}
+	}
+
+	function autosaveSong():Void
+	{
+		FlxG.save.data.autosave = Json.stringify({
+			"song": _song
+		});
+		FlxG.save.flush();
+	}
+
+	function clearEvents() {
+		_song.events = [];
+		updateGrid();
+	}
+
+	function antiCheat(){
+		fuckingCheater=true;
 			//fuck you
 			if (FlxG.sound.music.playing)
 			{
@@ -3119,31 +3161,6 @@ class ChartingState extends MusicBeatState
 				//trace("Quit");
 				System.exit(0);
 			});
-		}else{
-			if (CoolUtil.difficulties[PlayState.storyDifficulty] != CoolUtil.defaultDifficulty) {
-				if(CoolUtil.difficulties[PlayState.storyDifficulty] == null){
-					PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
-				}else{
-					PlayState.SONG = Song.loadFromJson(song.toLowerCase() + "-" + CoolUtil.difficulties[PlayState.storyDifficulty], song.toLowerCase());
-				}
-			}else{
-			PlayState.SONG = Song.loadFromJson(song.toLowerCase(), song.toLowerCase());
-			}
-			MusicBeatState.resetState();
-		}
-	}
-
-	function autosaveSong():Void
-	{
-		FlxG.save.data.autosave = Json.stringify({
-			"song": _song
-		});
-		FlxG.save.flush();
-	}
-
-	function clearEvents() {
-		_song.events = [];
-		updateGrid();
 	}
 
 	private function saveLevel()

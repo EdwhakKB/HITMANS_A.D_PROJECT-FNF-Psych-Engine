@@ -65,8 +65,8 @@ class ModchartFile
         if (ClientPrefs.getGameplaySetting('modchart', true)){
             loadPlayfields();
             loadModifiers();
+            loadEvents();
         }
-        loadEvents();
     }
 
     public function loadFromJson(folder:String):ModchartJson //load da shit

@@ -1503,7 +1503,7 @@ class PlayState extends MusicBeatState
 
 		// After all characters being loaded, it makes then invisible 0.01s later so that the player won't freeze when you change characters
 		// add(strumLine);
-		if (SONG.notITG){
+		if (SONG.notITG && notITGMod){
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
 			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
 				noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
@@ -4051,7 +4051,8 @@ class PlayState extends MusicBeatState
 		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
 		{
 			if (hitmansSongs.contains(SONG.song.toLowerCase())){
-				antiCheat();
+				// antiCheat();
+				openChartEditor();
 			}else{
 				openChartEditor();
 			}
@@ -4060,7 +4061,8 @@ class PlayState extends MusicBeatState
 		if (FlxG.keys.anyJustPressed(debugKeysModchart) && !endingSong && !inCutscene)
 		{
 			if (hitmansSongs.contains(SONG.song.toLowerCase())){
-				antiCheat();
+				// antiCheat();
+				openModchartEditor();
 			}else{
 				openModchartEditor();
 			}
