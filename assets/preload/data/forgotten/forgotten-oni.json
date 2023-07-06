@@ -21152,7 +21152,7 @@
 		"splashSkin": "icenoteSplashes",
 		"song": "Forgotten",
 		"needsVoices": true,
-		"arrowSkin": "ICENOTE_assets",
+		"arrowSkin": "",
 		"validScore": true,
 		"stage": "forgotten",
 		"bpm": 208,

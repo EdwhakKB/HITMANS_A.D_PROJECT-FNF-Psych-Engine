@@ -39,7 +39,7 @@ function onCreatePost()
     scaleObject('flash', 1, 1)
     setProperty('flash.alpha', 0)
 
-    makeLuaSprite('red', 'Inhuman/alert-vignette', 0, 0);
+    makeLuaSprite('red', 'hitmans/alert-vignette', 0, 0);
     addLuaSprite('red', true);
     setProperty('red.alpha', 0)
     setObjectCamera('red', 'other');
@@ -239,6 +239,7 @@ function onStepHit()
     if curStep >= 1248 and curStep <= 1487 then
 
         if curStep % 4 == 0 then
+            triggerEvent('Chromatic Aberration', 0.3, 1)
             setProperty('alert.alpha', 1)
             doTweenAlpha('alertAlpha', 'alert', 0, 0.3, 'cubeInOut')
             setProperty('red.alpha', 1)

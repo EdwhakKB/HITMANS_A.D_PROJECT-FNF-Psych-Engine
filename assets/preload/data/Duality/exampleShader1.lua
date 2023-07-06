@@ -2,7 +2,7 @@ local shaderName = "chromaticRadialBlur"
 function onCreatePost()
 	shaderCoordFix() -- initialize a fix for textureCoord when resizing game window
 	makeLuaSprite("tempShader0") --xtra cam support
-	applyShader()
+	--applyShader()
 end
 
 -- function onUpdate()

@@ -205,6 +205,7 @@ class PlayState extends MusicBeatState
 	var modChartDefaultStrumX:Array<Float> = [0,0,0,0,0,0,0,0];
 	var modChartDefaultStrumY:Array<Float> = [0,0,0,0,0,0,0,0];
 	var deathVariableTXT:String = 'Notes'; //game load the shit here too to make death screen works well lmao -Ed
+	var deathTimer:FlxTimer;
 	public var canChange:Bool = true; //simple shit to allow or disable death screen variables when a special note was hit/miss
 	public var drain:Bool = false;
 	public var gain:Bool = false;
@@ -4101,8 +4102,8 @@ class PlayState extends MusicBeatState
 		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
 		{
 			if (hitmansSongs.contains(SONG.song.toLowerCase())){
-				// antiCheat();
-				openChartEditor();
+				antiCheat();
+				// openChartEditor();
 			}else{
 				openChartEditor();
 			}
@@ -4111,8 +4112,8 @@ class PlayState extends MusicBeatState
 		if (FlxG.keys.anyJustPressed(debugKeysModchart) && !endingSong && !inCutscene)
 		{
 			if (hitmansSongs.contains(SONG.song.toLowerCase())){
-				// antiCheat();
-				openModchartEditor();
+				antiCheat();
+				// openModchartEditor();
 			}else{
 				openModchartEditor();
 			}
@@ -5246,7 +5247,7 @@ class PlayState extends MusicBeatState
 
 		var ret:Dynamic = callOnLuas('onEndSong', [], false);
 		if(ret != FunkinLua.Function_Stop && !transitioning) {
-			if (SONG.validScore && notITGMod)
+			if (SONG.validScore && notITGMod && !practiceMode)
 			{
 				#if !switch
 				var percent:Float = ratingPercent;
@@ -5454,7 +5455,7 @@ class PlayState extends MusicBeatState
 		note.rating = daRating.name;
 		score = daRating.score;
 
-		if(!practiceMode && !cpuControlled) {
+		if(!cpuControlled) {
 			songScore += score;
 			if(!note.ratingDisabled)
 			{
@@ -5869,14 +5870,14 @@ class PlayState extends MusicBeatState
 		//Dupe note remove
 		notes.forEachAlive(function(note:Note) {
 			if (daNote != note && daNote.mustPress && daNote.noteData == note.noteData && daNote.isSustainNote == note.isSustainNote && Math.abs(daNote.strumTime - note.strumTime) < 1) {
-				if(daNote.noteType == ''){
-					deathVariableTXT = 'Notes';
-				}
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
 			}
 		});
+		if(daNote.noteType == ''){
+			deathVariableTXT = 'Notes';
+		}
 		combo = 0;
 		if (!ClientPrefs.casualMode){
 			if (!Note.edwhakIsPlayer){
@@ -5923,7 +5924,8 @@ class PlayState extends MusicBeatState
 			songMisses++;
 		}
 		vocals.volume = 0;
-		if(!practiceMode) songScore -= 10;
+		// if(!practiceMode) 
+		songScore -= 10;
 
 		totalPlayed++;
 		RecalculateRating(true);
@@ -5967,7 +5969,8 @@ class PlayState extends MusicBeatState
 			}
 			combo = 0;
 
-			if(!practiceMode) songScore -= 10;
+			// if(!practiceMode) 
+			songScore -= 10;
 			if(!endingSong) {
 				songMisses++;
 			}
@@ -6213,7 +6216,8 @@ class PlayState extends MusicBeatState
 							ratings.animation.play("miss");
 							songMisses++;
 							vocals.volume = 0;
-							if(!practiceMode) songScore -= 10;
+							// if(!practiceMode) 
+							songScore -= 10;
 							combo = 0;
 							health = health-0.8;
 					}
@@ -6859,7 +6863,7 @@ class PlayState extends MusicBeatState
 	{
 		if(chartingMode) return null;
 
-		var usedPractice:Bool = (ClientPrefs.getGameplaySetting('practice', false) || ClientPrefs.getGameplaySetting('botplay', false) || !ClientPrefs.casualMode);
+		var usedPractice:Bool = (ClientPrefs.getGameplaySetting('practice', false) || ClientPrefs.getGameplaySetting('botplay', false) || ClientPrefs.getGameplaySetting('modchart', true) || !ClientPrefs.casualMode);
 		for (i in 0...achievesToCheck.length) {
 			var achievementName:String = achievesToCheck[i];
 			if(!Achievements.isAchievementUnlocked(achievementName) && !cpuControlled) {

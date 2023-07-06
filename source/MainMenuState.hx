@@ -403,10 +403,12 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(awards)) {
 				if (FlxG.mouse.justPressed) {
+					#if MODS_ALLOWED
 					new FlxTimer().start(1, function(tmrA:FlxTimer)
 						{
-							MusicBeatState.switchState(new AchievementsMenuState());
+							MusicBeatState.switchState(new ModsMenuState());
 						});
+					#end
 					folder.alpha = 0;
 					inFolder = true;
 					awards.animation.play('selected');

@@ -300,9 +300,15 @@
 			"Player",
 			-1,
 			-1
+		],
+		[
+			"SpeedModifier",
+			"SpeedModifier",
+			"Player",
+			-1,
+			-1
 		]
 	],
-	"playfields": 1,
 	"events": [
 		[
 			"ease",
@@ -1808,7 +1814,7 @@
 				315.5,
 				1,
 				"cubeInOut",
-				"1,Love,-500,Zin,270,YMod,0.5,flip"
+				"1,Love,-500,Zin,270,YMod,0.5,flip,0.8,SpeedModifier"
 			],
 			[
 				false,
@@ -2242,7 +2248,7 @@
 				725,
 				1,
 				"cubeInOut",
-				"1,Love,0.5,flip,270,YMod,-500,Zin"
+				"1,Love,0.5,flip,270,YMod,-500,Zin,0.8,SpeedModifier,0,DrunkY,0,InvSine"
 			],
 			[
 				false,
@@ -2256,7 +2262,7 @@
 				787,
 				1,
 				"cubeInOut",
-				"0,Love,0,flip,0,YMod,0,Zin"
+				"0,Love,0,flip,0,YMod,0,Zin,1.3,SpeedModifier"
 			],
 			[
 				false,
@@ -2879,6 +2885,21 @@
 				1,
 				1
 			]
+		],
+		[
+			"ease",
+			[
+				382,
+				1,
+				"cubeInOut",
+				"1,SpeedModifier"
+			],
+			[
+				false,
+				1,
+				1
+			]
 		]
-	]
+	],
+	"playfields": 1
 }
