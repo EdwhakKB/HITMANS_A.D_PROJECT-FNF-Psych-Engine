@@ -13,6 +13,7 @@ import game.Conductor;
 import PlayState;
 import Note;
 #end
+import flixel.group.FlxGroup.FlxTypedGroup;
 
 enum ModifierType
 {
@@ -45,6 +46,7 @@ class Modifier
     public var instance:ModchartMusicBeatState = null;
     public var renderer:PlayfieldRenderer = null;
     public static var beat:Float = 0;
+    public var notes:FlxTypedGroup<Note>;
 
     public function new(tag:String, ?type:ModifierType = ALL, ?playfield:Int = -1)
     {
@@ -1028,32 +1030,15 @@ class YDModifier extends Modifier
 
 class StealthBoostModifier extends Modifier
 {
-    override function curPosMath(lane:Int, curPos:Float, pf:Int)
-        {
-            if (curPos <= -950)
-                {
-                    curPos = -950 + (curPos*0.02);
-                }
-            return curPos;
-        }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        //desaturate the notes
-        if (curPos <= -950)
-        {
-            noteData.alpha = 0;
-        } 
-        else if (curPos <= -100)
-        {
-            noteData.alpha += 0.1;
-        }
-        else 
-        {
+        var alphaOff:Float = 0;
 
-        }
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteMath(noteData, lane, 0, pf); //just reuse same thing
+        var speed = renderer.getCorrectScrollSpeed();
+
+        var alphaOff = (-curPos / speed)*0.01;
+        
+		noteData.alpha += alphaOff;
+
     }
 }

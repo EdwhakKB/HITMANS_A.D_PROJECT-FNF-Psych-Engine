@@ -126,8 +126,8 @@ class FreeplayState extends MusicBeatState
 			box.ID = i;
 			grupo.add(box);
 
-			var imagenPath:String = 'freeplay/weeks/';
 			var imageShow:String = WeekData.weeksList[i];
+			var imagenPath:String = 'freeplay/weeks/';
 			var imagePH:String = 'placeHolder';
 			var imagen:FlxSprite = new FlxSprite();
 

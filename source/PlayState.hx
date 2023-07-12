@@ -89,7 +89,7 @@ import hxcodec.flixel.FlxVideo as VideoHandler;
 import lime.app.Event;
 #elseif (hxCodec >= "2.6.1") import hxcodec.VideoHandler as VideoHandler;
 #elseif (hxCodec == "2.6.0") import VideoHandler as VideoHandler;
-#else import vlc.VideoHandler; #end
+#end
 #end
 
 import flash.system.System;
@@ -275,6 +275,11 @@ class PlayState extends MusicBeatState
 	public static var changedDifficulty:Bool = false;
 	public static var chartingMode:Bool = false;
 
+	public var shaderUpdates:Array<Float->Void> = [];
+	// public var camGameShaders:Array<ShaderEffect> = [];
+	// public var camHUDShaders:Array<ShaderEffect> = [];
+	// public var camOtherShaders:Array<ShaderEffect> = [];
+
 	public static var dasicks:Int = 0;
 	public static var dagoods:Int = 0;
 	public static var dabads:Int = 0;
@@ -300,8 +305,7 @@ class PlayState extends MusicBeatState
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
-	public var playerNotesCam:FlxCamera;
-	public var enemyNotesCam:FlxCamera;
+	public var camInterfaz:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var camRate:FlxCamera;
@@ -579,13 +583,11 @@ class PlayState extends MusicBeatState
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
-		playerNotesCam = new FlxCamera();
-		enemyNotesCam = new FlxCamera();
+		camInterfaz = new FlxCamera();
 		camOther = new FlxCamera();
 		camRate = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
-		playerNotesCam.bgColor.alpha = 0;
-		enemyNotesCam.bgColor.alpha = 0;
+		camInterfaz.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
 		camRate.bgColor.alpha = 0;
 		noteCameras0 = new FlxCamera();
@@ -659,9 +661,8 @@ class PlayState extends MusicBeatState
 		noteCameras22.visible = false;
 
 		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(camInterfaz, false);
 		FlxG.cameras.add(camHUD, false);
-		FlxG.cameras.add(playerNotesCam, false);
-		FlxG.cameras.add(enemyNotesCam, false);
 
 		FlxG.cameras.add(noteCameras0, false);
 		FlxG.cameras.add(noteCameras1, false);
@@ -1528,9 +1529,6 @@ class PlayState extends MusicBeatState
 		opponentStrums = new FlxTypedGroup<StrumNote>();
 		playerStrums = new FlxTypedGroup<StrumNote>();
 
-		opponentStrums.cameras = [enemyNotesCam];
-		playerStrums.cameras = [playerNotesCam];
-
 		// startCountdown();
 
 		generateSong(SONG.song);
@@ -1672,20 +1670,25 @@ class PlayState extends MusicBeatState
 			noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
 			noteCameras20, noteCameras21, noteCameras22
 		];
-		healthBar.cameras = [camOther];
-		ratings.cameras = [camOther];
-		healthBarBG.cameras = [camOther];
+		healthBar.cameras = [camInterfaz];
+		healthBarBG.cameras = [camInterfaz];
 		healthBarHit.cameras = [camOther];
 		healthHitBar.cameras = [camOther];
-		iconP1.cameras = [camOther];
-		iconP2.cameras = [camOther];
-		scoreTxt.cameras = [camOther];
+		ratings.cameras = [camOther];
+		if (ClientPrefs.hudStyle == 'HITMANS'){
+			iconP1.cameras = [camOther];
+			iconP2.cameras = [camOther];	
+		}else if (ClientPrefs.hudStyle == 'Classic'){
+			iconP1.cameras = [camInterfaz];
+			iconP2.cameras = [camInterfaz];
+		}
+		scoreTxt.cameras = [camInterfaz];
 		scoreTxtHit.cameras = [camOther];
 		botplayTxt.cameras = [camOther];
-		timeBar.cameras = [camOther];
-		timeBarBG.cameras = [camOther];
-		timeTxt.cameras = [camOther];
-		doof.cameras = [camOther];
+		timeBar.cameras = [camInterfaz];
+		timeBarBG.cameras = [camInterfaz];
+		timeTxt.cameras = [camInterfaz];
+		doof.cameras = [camInterfaz];
 
 		// if (SONG.song == 'South')
 		// FlxG.camera.alpha = 0.7;
@@ -2126,6 +2129,106 @@ class PlayState extends MusicBeatState
 		}
 		#end
 	}
+
+// 	public function addShaderToCamera(cam:String,effect:ShaderEffect){//STOLE FROM ANDROMEDA
+// 		//i hope this works, ;-; -Ed
+	  
+	  
+	  
+// 		switch(cam.toLowerCase()) {
+// 			case 'camhud' | 'hud':
+// 					camHUDShaders.push(effect);
+// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+// 					for(i in camHUDShaders){
+// 					  newCamEffects.push(new ShaderFilter(i.shader));
+// 					}
+// 					camHUD.setFilters(newCamEffects);
+// 			case 'camother' | 'other':
+// 					camOtherShaders.push(effect);
+// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+// 					for(i in camOtherShaders){
+// 					  newCamEffects.push(new ShaderFilter(i.shader));
+// 					}
+// 					camOther.setFilters(newCamEffects);
+// 			case 'camgame' | 'game':
+// 					camGameShaders.push(effect);
+// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+// 					for(i in camGameShaders){
+// 					  newCamEffects.push(new ShaderFilter(i.shader));
+// 					}
+// 					camGame.setFilters(newCamEffects);
+// 			default:
+// 				if(modchartSprites.exists(cam)) {
+// 					Reflect.setProperty(modchartSprites.get(cam),"shader",effect.shader);
+// 				} else if(modchartTexts.exists(cam)) {
+// 					Reflect.setProperty(modchartTexts.get(cam),"shader",effect.shader);
+// 				} else {
+// 					var OBJ = Reflect.getProperty(PlayState.instance,cam);
+// 					Reflect.setProperty(OBJ,"shader", effect.shader);
+// 				}
+			
+			
+				
+				
+// 		}
+	  
+	  
+	  
+	  
+//   }
+
+//   public function removeShaderFromCamera(cam:String,effect:ShaderEffect){
+	  
+	  
+// 		switch(cam.toLowerCase()) {
+// 			case 'camhud' | 'hud': 
+//     camHUDShaders.remove(effect);
+//     var newCamEffects:Array<BitmapFilter>=[];
+//     for(i in camHUDShaders){
+//       newCamEffects.push(new ShaderFilter(i.shader));
+//     }
+//     camHUD.setFilters(newCamEffects);
+// 			case 'camother' | 'other': 
+// 					camOtherShaders.remove(effect);
+// 					var newCamEffects:Array<BitmapFilter>=[];
+// 					for(i in camOtherShaders){
+// 					  newCamEffects.push(new ShaderFilter(i.shader));
+// 					}
+// 					camOther.setFilters(newCamEffects);
+// 			default: 
+// 				camGameShaders.remove(effect);
+// 				var newCamEffects:Array<BitmapFilter>=[];
+// 				for(i in camGameShaders){
+// 				  newCamEffects.push(new ShaderFilter(i.shader));
+// 				}
+// 				camGame.setFilters(newCamEffects);
+// 		}
+		
+	  
+//   }
+	
+	
+	
+//   public function clearShaderFromCamera(cam:String){
+	  
+	  
+// 		switch(cam.toLowerCase()) {
+// 			case 'camhud' | 'hud': 
+// 				camHUDShaders = [];
+// 				var newCamEffects:Array<BitmapFilter>=[];
+// 				camHUD.setFilters(newCamEffects);
+// 			case 'camother' | 'other': 
+// 				camOtherShaders = [];
+// 				var newCamEffects:Array<BitmapFilter>=[];
+// 				camOther.setFilters(newCamEffects);
+// 			default: 
+// 				camGameShaders = [];
+// 				var newCamEffects:Array<BitmapFilter>=[];
+// 				camGame.setFilters(newCamEffects);
+// 		}
+		
+	  
+//   }
 
 	public function getLuaObject(tag:String, text:Bool=true):FlxSprite {
 		if(modchartSprites.exists(tag)) return modchartSprites.get(tag);
@@ -4450,6 +4553,10 @@ class PlayState extends MusicBeatState
 		setOnLuas('cameraY', camFollowPos.y);
 		setOnLuas('botPlay', cpuControlled);
 
+		for (i in shaderUpdates){
+			i(elapsed);
+		}
+
 		callOnLuas('onUpdatePost', [elapsed]);
 	}
 
@@ -5475,7 +5582,7 @@ class PlayState extends MusicBeatState
 		}
 		if (!cpuControlled){
 		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
-		rating.cameras = [camOther];
+		rating.cameras = [camInterfaz];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
 		rating.scale.x = 0.9;
@@ -5491,7 +5598,7 @@ class PlayState extends MusicBeatState
 		rating.y -= ClientPrefs.comboOffset[1];
 
 		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
-		comboSpr.cameras = [camOther];
+		comboSpr.cameras = [camInterfaz];
 		comboSpr.screenCenter();
 		comboSpr.x = coolText.x;
 		// comboSpr.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
@@ -5552,7 +5659,7 @@ class PlayState extends MusicBeatState
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			numScore.cameras = [camOther];
+			numScore.cameras = [camInterfaz];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
 			numScore.y += 120;
