@@ -75,7 +75,10 @@ import Conductor.Rating;
 
 #if !flash 
 import flixel.addons.display.FlxRuntimeShader;
+import Shaders.ShaderEffect as ShaderEffect;
+import Shaders;
 import openfl.filters.ShaderFilter;
+import openfl.filters.BitmapFilter;
 #end
 
 #if sys
@@ -99,6 +102,8 @@ using StringTools;
 class PlayState extends MusicBeatState
 {
 	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
+	var camShaders:Array<String> = ['camhud', 'noteCameras0', 'noteCameras1', 'noteCameras2', 'noteCameras3', 'noteCameras4', 'noteCameras5', 'noteCameras6', 'noteCameras7', 'noteCameras8', 'noteCameras9', 'noteCameras10', 
+	'noteCameras11', 'noteCameras12', 'noteCameras13', 'noteCameras14', 'noteCameras15', 'noteCameras16', 'noteCameras17', 'noteCameras18', 'noteCameras19', 'noteCameras20', 'noteCameras21', 'noteCameras22']; // MISHADER
 	// var modchartedSongs:Array<String> = []; PUT THE SONG NAME HERE IF YOU WANT TO USE THE ANDROMEDA MODIFIER SYSTEM!!
 
 	// // THEN GOTO MODCHARTSHIT.HX TO DEFINE MODIFIERS ETC
@@ -210,8 +215,53 @@ class PlayState extends MusicBeatState
 	public var drain:Bool = false;
 	public var gain:Bool = false;
 
-	//MY LOVELY GF HELP -Ed from the mod
 	public var tgain:Bool = false;
+
+	//I must add hardcoded shaders! -PastEd
+
+	//and you did man, you did... -Ed
+
+	//Of course, i always don't know how to make better code lmao, but well, this is made to make people have way more fair time doing modcharts with lua so, it is worthy -Ed
+
+	//I HATE DOING THIS STUPID SHIT MANUALLY AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+	//-----------------SHADERS------------------
+
+	public var tiltShiftShader:TiltshiftEffect = null;
+	public var grainShader:GrainEffect = null;
+	public var scanLineShader:ScanlineEffect = null;
+	public var distortionShader:DistortBGEffect = null;
+	public var vcrShader:VCRDistortionEffect = null;
+	public var glitchShader:GlitchEffect = null;
+	public var vcrShader2:VCRDistortionEffect2 = null;
+	public var threeDShader:ThreeDEffect = null;
+	public var bloomShader:BloomEffect = null;
+	public var rgbShader:RGBShiftGlitchEffect = null;
+	public var pulseShader:PulseEffect = null;
+	public var chromaShader:ChromaticAberrationEffect = null;
+	public var desaturationShader:DesaturationEffect = null;
+	public var fishEyeShader:FishEyeEffect = null;
+	public var channelMaskShader:ChannelMaskEffect = null;
+	public var colorMaskShader:ColorMaskEffect = null;
+	public var scrollShader:ScrollEffect = null;
+
+	//--------------END OF SHADERS--------------
+
+	//--------------EFFECT SHIT FOR SHADERS--------------
+
+	// var threeDPerspective:Array<Float> = [0,0,0];
+	var threeDPerspectiveX:Float = 0;
+	var threeDPerspectiveY:Float = 0;
+	var threeDPerspectiveZ:Float = 0;
+	function addThreeDMath(x:Float,y:Float,z:Float)
+	{
+		threeDPerspectiveX = x;
+		threeDPerspectiveY = y;
+		threeDPerspectiveZ = z;
+		threeDShader.setThreeD(threeDPerspectiveX,threeDPerspectiveY,threeDPerspectiveZ);
+	}
+
+	//------------------END OF EFFECTS------------------
 
 	public var spawnTime:Float = 2000;
 
@@ -276,9 +326,9 @@ class PlayState extends MusicBeatState
 	public static var chartingMode:Bool = false;
 
 	public var shaderUpdates:Array<Float->Void> = [];
-	// public var camGameShaders:Array<ShaderEffect> = [];
-	// public var camHUDShaders:Array<ShaderEffect> = [];
-	// public var camOtherShaders:Array<ShaderEffect> = [];
+	public var camGameShaders:Array<ShaderEffect> = [];
+	public var camHUDShaders:Array<ShaderEffect> = [];
+	public var camOtherShaders:Array<ShaderEffect> = [];
 
 	public static var dasicks:Int = 0;
 	public static var dagoods:Int = 0;
@@ -2130,105 +2180,115 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-// 	public function addShaderToCamera(cam:String,effect:ShaderEffect){//STOLE FROM ANDROMEDA
-// 		//i hope this works, ;-; -Ed
-	  
-	  
-	  
-// 		switch(cam.toLowerCase()) {
-// 			case 'camhud' | 'hud':
-// 					camHUDShaders.push(effect);
-// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-// 					for(i in camHUDShaders){
-// 					  newCamEffects.push(new ShaderFilter(i.shader));
-// 					}
-// 					camHUD.setFilters(newCamEffects);
-// 			case 'camother' | 'other':
-// 					camOtherShaders.push(effect);
-// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-// 					for(i in camOtherShaders){
-// 					  newCamEffects.push(new ShaderFilter(i.shader));
-// 					}
-// 					camOther.setFilters(newCamEffects);
-// 			case 'camgame' | 'game':
-// 					camGameShaders.push(effect);
-// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-// 					for(i in camGameShaders){
-// 					  newCamEffects.push(new ShaderFilter(i.shader));
-// 					}
-// 					camGame.setFilters(newCamEffects);
-// 			default:
-// 				if(modchartSprites.exists(cam)) {
-// 					Reflect.setProperty(modchartSprites.get(cam),"shader",effect.shader);
-// 				} else if(modchartTexts.exists(cam)) {
-// 					Reflect.setProperty(modchartTexts.get(cam),"shader",effect.shader);
-// 				} else {
-// 					var OBJ = Reflect.getProperty(PlayState.instance,cam);
-// 					Reflect.setProperty(OBJ,"shader", effect.shader);
-// 				}
-			
-			
-				
-				
-// 		}
-	  
-	  
-	  
-	  
-//   }
+	public function addShaderToCamera(cam:String,effect:ShaderEffect) //STOLE FROM ANDROMEDA
+		{
+			switch(cam.toLowerCase()) 
+			{
+				case 'camhud' | 'hud':
+						camHUDShaders.push(effect);
+						var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+						for(i in camHUDShaders){
+						  newCamEffects.push(new ShaderFilter(i.shader));
+						}
+						camHUD.setFilters(newCamEffects);
+				case 'camother' | 'other':
+						camOtherShaders.push(effect);
+						var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+						for(i in camOtherShaders){
+						  newCamEffects.push(new ShaderFilter(i.shader));
+						}
+						camOther.setFilters(newCamEffects);
+				case 'camgame' | 'game':
+						camGameShaders.push(effect);
+						var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+						for(i in camGameShaders){
+						  newCamEffects.push(new ShaderFilter(i.shader));
+						}
+						camGame.setFilters(newCamEffects);
+				default:
+					var obj = null;
+					for (map in [modchartSprites]) {
+						if (map.exists(cam)) {
+							obj = map.get(cam);
+							break;
+						}
+					}
+					if (obj == null) {
+						obj = Reflect.getProperty(PlayState.instance, cam);
+					}
+					Reflect.setProperty(obj, "shader", effect.shader);
+			}
+		}
+	
+		public function removeShaderFromCamera(cam:String,effect:ShaderEffect)
+		{
+			switch(cam.toLowerCase()) 
+			{
+				case 'camhud' | 'hud': 
+					camHUDShaders.remove(effect);
+					var newCamEffects:Array<BitmapFilter>=[];
+					for(i in camHUDShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+					}
+					camHUD.setFilters(newCamEffects);
+				case 'camother' | 'other': 
+					camOtherShaders.remove(effect);
+					var newCamEffects:Array<BitmapFilter>=[];
+					for(i in camOtherShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+					}
+					camOther.setFilters(newCamEffects);
+				case 'camgame' | 'game':
+					camGameShaders.remove(effect);
+					var newCamEffects:Array<BitmapFilter>=[];
+					for(i in camGameShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+					}
+					camGame.setFilters(newCamEffects);
+				default: 
+					camGameShaders.remove(effect);
+					var newCamEffects:Array<BitmapFilter>=[];
+					for(i in camGameShaders){
+					newCamEffects.push(new ShaderFilter(i.shader));
+					}
+					camGame.setFilters(newCamEffects);
+			}	  
+		}
+	
+		public function clearShaderFromCamera(cam:String)
+		{  
+			var newCamEffects:Array<BitmapFilter>=[];
+	
+			switch(cam.toLowerCase()) 
+			{
+				case 'camhud' | 'hud': 
+					camHUDShaders = [];
+					camHUD.setFilters(newCamEffects);
+				case 'camother' | 'other': 
+					camOtherShaders = [];
+					camOther.setFilters(newCamEffects);
+				case 'camgame' | 'game':
+					camGameShaders = [];
+					camGame.setFilters(newCamEffects);
+				default: 
+					var obj = null;
+					for (map in [modchartSprites]) {
+						if (map.exists(cam)) {
+							obj = map.get(cam);
+							break;
+						}
+					}
+					if (obj == null) {
+						obj = Reflect.getProperty(PlayState.instance, cam);
+					}
+					Reflect.setProperty(obj, "shader", null);
+			}
+		}
 
-//   public function removeShaderFromCamera(cam:String,effect:ShaderEffect){
-	  
-	  
-// 		switch(cam.toLowerCase()) {
-// 			case 'camhud' | 'hud': 
-//     camHUDShaders.remove(effect);
-//     var newCamEffects:Array<BitmapFilter>=[];
-//     for(i in camHUDShaders){
-//       newCamEffects.push(new ShaderFilter(i.shader));
-//     }
-//     camHUD.setFilters(newCamEffects);
-// 			case 'camother' | 'other': 
-// 					camOtherShaders.remove(effect);
-// 					var newCamEffects:Array<BitmapFilter>=[];
-// 					for(i in camOtherShaders){
-// 					  newCamEffects.push(new ShaderFilter(i.shader));
-// 					}
-// 					camOther.setFilters(newCamEffects);
-// 			default: 
-// 				camGameShaders.remove(effect);
-// 				var newCamEffects:Array<BitmapFilter>=[];
-// 				for(i in camGameShaders){
-// 				  newCamEffects.push(new ShaderFilter(i.shader));
-// 				}
-// 				camGame.setFilters(newCamEffects);
-// 		}
-		
-	  
-//   }
-	
-	
-	
-//   public function clearShaderFromCamera(cam:String){
-	  
-	  
-// 		switch(cam.toLowerCase()) {
-// 			case 'camhud' | 'hud': 
-// 				camHUDShaders = [];
-// 				var newCamEffects:Array<BitmapFilter>=[];
-// 				camHUD.setFilters(newCamEffects);
-// 			case 'camother' | 'other': 
-// 				camOtherShaders = [];
-// 				var newCamEffects:Array<BitmapFilter>=[];
-// 				camOther.setFilters(newCamEffects);
-// 			default: 
-// 				camGameShaders = [];
-// 				var newCamEffects:Array<BitmapFilter>=[];
-// 				camGame.setFilters(newCamEffects);
-// 		}
-		
-	  
-//   }
+		public function setThreeDEffect(x:Float,y:Float,z:Float)
+		{  
+			addThreeDMath(x,y,z);
+		}		
 
 	public function getLuaObject(tag:String, text:Bool=true):FlxSprite {
 		if(modchartSprites.exists(tag)) return modchartSprites.get(tag);
@@ -3083,6 +3143,11 @@ class PlayState extends MusicBeatState
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		}
 
+		threeDShader = new ThreeDEffect(0,0,0);
+		for (i in 0...camShaders.length){
+			addShaderToCamera(camShaders[i], threeDShader);
+		}
+		// addShaderToCamera('hud', threeDShader);
 		//FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		FlxG.sound.music.pitch = playbackRate;
 		FlxG.sound.music.onComplete = finishSong.bind();
@@ -3355,7 +3420,15 @@ class PlayState extends MusicBeatState
 		}
 		checkEventNote();
 		generatedMusic = true;
+	
+	function set_chromaIntensity(value:Float):Float {
+		throw new haxe.exceptions.NotImplementedException();
 	}
+
+	function set_chromaIntensity(value:Float):Float {
+		throw new haxe.exceptions.NotImplementedException();
+	}
+}
 
 	function eventPushed(event:EventNote) {
 		switch(event.event) {
@@ -4553,9 +4626,12 @@ class PlayState extends MusicBeatState
 		setOnLuas('cameraY', camFollowPos.y);
 		setOnLuas('botPlay', cpuControlled);
 
-		for (i in shaderUpdates){
-			i(elapsed);
-		}
+		if (shaderUpdates != [])
+			{
+				for (i in shaderUpdates){
+					i(elapsed);
+				}
+			}
 
 		callOnLuas('onUpdatePost', [elapsed]);
 	}
@@ -5264,47 +5340,49 @@ class PlayState extends MusicBeatState
 
 	public function Rating():Void
 	{
-	canPause = false;
-	FlxG.sound.music.volume = 0;
-	vocals.volume = 0;
-	camZooming = false;
-	camHUD.zoom = 1;
-	var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
+		canPause = false;
+		FlxG.sound.music.volume = 0;
+		vocals.volume = 0;
+		camZooming = false;
+		camHUD.zoom = 1;
+		var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
 
-	#if desktop
-	DiscordClient.changePresence("Results - " + detailsText, SONG.song + " (" + storyDifficultyText +")" + "Score:" + Math.round(songScore), iconP2.getCharacter());
-	#end
-	reme = new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), sicks, goods, bads, shits, songMisses);
-	reme.scrollFactor.set();
-	reme.cameras = [camRate];
-	reme.end = endSong;
+		#if desktop
+			DiscordClient.changePresence("Results - " + detailsText, SONG.song + " (" + storyDifficultyText +")" + "Score:" + Math.round(songScore), iconP2.getCharacter());
+		#end
+		reme = new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), sicks, goods, bads, shits, songMisses);
+		reme.scrollFactor.set();
+		reme.cameras = [camRate];
+		reme.end = endSong;
 
-	add(reme);
+		add(reme);
 
-	inResultsScreen = true;
+		inResultsScreen = true;
 
-	var ret:Dynamic = callOnLuas('onRating', [], false);
-	#if PRELOAD_ALL
-	sys.thread.Thread.create(() ->
-	{
-		reme.load();
-		if (!practiceMode && notITGMod && SONG.validScore)
-		{
-			var percent:Float = ratingPercent;
-			if(Math.isNaN(percent)) percent = 0;
-			Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
+		var ret:Dynamic = callOnLuas('onRating', [], false);
+		if (ret != FunkinLua.Function_Stop){
+			#if PRELOAD_ALL	
+				sys.thread.Thread.create(() ->
+				{
+					reme.load();
+					if (!practiceMode && notITGMod && SONG.validScore)
+					{
+						var percent:Float = ratingPercent;
+						if(Math.isNaN(percent)) percent = 0;
+						Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
+					}
+				});
+			#else
+				if (!practiceMode && notITGMod && SONG.validScore)
+				{	
+					var percent:Float = ratingPercent;
+					if(Math.isNaN(percent)) percent = 0;
+					Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
+				}
+				reme.load();
+			#end
 		}
-	});
-	#else
-	if (!practiceMode && notITGMod && SONG.validScore)
-	{
-		var percent:Float = ratingPercent;
-		if(Math.isNaN(percent)) percent = 0;
-		Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
 	}
-	reme.load();
-	#end
-    }
 	public function endSong():Void
 	{
 		//Should kill you if you tried to cheat

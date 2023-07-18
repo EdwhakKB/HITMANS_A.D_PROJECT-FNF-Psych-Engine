@@ -51,6 +51,10 @@ import sys.io.File;
 import Type.ValueType;
 import Controls;
 import DialogueBoxPsych;
+import Shaders.ShaderEffect as ShaderEffect;
+import Shaders;
+import openfl.filters.ShaderFilter;
+import openfl.filters.BitmapFilter;
 
 #if hscript
 import hscript.Parser;
@@ -2845,76 +2849,19 @@ class FunkinLua {
 			#end
 			return list;
 		});
-
-			// Lua_helper.add_callback(lua, "addChromaticAbberationEffect", function(camera:String,chromeOffset:Float = 0.005) {
-				
-			// 	PlayState.instance.addShaderToCamera(camera, new ChromaticAberrationEffect(chromeOffset));
-					
-			// });
-			
-			// Lua_helper.add_callback(lua, "addScanlineEffect", function(camera:String,lockAlpha:Bool=false) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new ScanlineEffect(lockAlpha));
-						
-			// });
-			// Lua_helper.add_callback(lua, "addGrainEffect", function(camera:String,grainSize:Float,lumAmount:Float,lockAlpha:Bool=false) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new GrainEffect(grainSize,lumAmount,lockAlpha));
-					
-			// });
-			// Lua_helper.add_callback(lua, "addTiltshiftEffect", function(camera:String,blurAmount:Float,center:Float) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new TiltshiftEffect(blurAmount,center));
-						
-			// });
-			// Lua_helper.add_callback(lua, "addVCREffect", function(camera:String,glitchFactor:Float = 0.0,distortion:Bool=true,perspectiveOn:Bool=true,vignetteMoving:Bool=true) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new VCRDistortionEffect(glitchFactor,distortion,perspectiveOn,vignetteMoving));
-						
-			// });
-			// Lua_helper.add_callback(lua, "addGlitchEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new GlitchEffect(waveSpeed,waveFrq,waveAmp));
-						
-			// });
-			// Lua_helper.add_callback(lua, "addPulseEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new PulseEffect(waveSpeed,waveFrq,waveAmp));
-						
-			// });
-			// Lua_helper.add_callback(lua, "addDistortionEffect", function(camera:String,waveSpeed:Float = 0.1,waveFrq:Float = 0.1,waveAmp:Float = 0.1) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new DistortBGEffect(waveSpeed,waveFrq,waveAmp));
-						
-			// });
-			// Lua_helper.add_callback(lua, "addInvertEffect", function(camera:String,lockAlpha:Bool=false) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new InvertColorsEffect(lockAlpha));
-					
-			// });
-			// Lua_helper.add_callback(lua, "addGreyscaleEffect", function(camera:String) { //for dem funkies
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new GreyscaleEffect());
-						
-			// });
-			// Lua_helper.add_callback(lua, "addGrayscaleEffect", function(camera:String) { //for dem funkies
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new GreyscaleEffect());
-						
-			// });
-			// Lua_helper.add_callback(lua, "add3DEffect", function(camera:String,xrotation:Float=0,yrotation:Float=0,zrotation:Float=0,depth:Float=0) { //for dem funkies
-				
-			// 	PlayState.instance.addShaderToCamera(camera, new ThreeDEffect(xrotation,yrotation,zrotation,depth));
-						
-			// });
-			// Lua_helper.add_callback(lua, "addBloomEffect", function(camera:String,intensity:Float = 0.35,blurSize:Float=1.0) {
-						
-			// 	PlayState.instance.addShaderToCamera(camera, new BloomEffect(blurSize/512.0,intensity));
-						
-			// });
-			// Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
-			// 	PlayState.instance.clearShaderFromCamera(camera);
-			// });
+		
+			Lua_helper.add_callback(lua, "addEffect", function(camera:String,effect:String, ?val1:Dynamic, ?val2:Dynamic, ?val3:Dynamic, ?val4:Dynamic) {
+				PlayState.instance.addShaderToCamera(camera, getEffectFromString(effect, val1, val2, val3, val4));		
+			});
+			Lua_helper.add_callback(lua, "removeEffects", function(camera:String, effect:String) {
+				PlayState.instance.removeShaderFromCamera(camera, getEffectFromString(effect));
+			});
+			Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
+				PlayState.instance.clearShaderFromCamera(camera);
+			});
+			Lua_helper.add_callback(lua, "setThreeDEffect", function(val1:Float, val2:Float, val3:Float) {
+				PlayState.instance.setThreeDEffect(val1, val2, val3);	
+			});
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		
@@ -3268,6 +3215,34 @@ class FunkinLua {
 			case 'caminterfaz' | 'interfaz': return PlayState.instance.camInterfaz;
 		}
 		return PlayState.instance.camGame;
+	}
+
+	function getEffectFromString(?effect:String = '', ?val1:Dynamic, ?val2:Dynamic, ?val3:Dynamic , ?val4:Dynamic = ""):ShaderEffect {
+		switch(effect.toLowerCase().trim()) {
+			case 'grayscale' | 'greyscale' : return new GreyscaleEffect();
+			case 'oldtv' : return new OldTVEffect();
+			case 'invert' | 'invertcolor': return new InvertColorsEffect();
+			case 'tiltshift': return new TiltshiftEffect(val1,val2);
+			case 'grain': return new GrainEffect(val1,val2,val3);
+			case 'scanline': return new ScanlineEffect(val1);
+			case 'outline': return new OutlineEffect(val1, val2, val3, val4);
+			case 'distortion': return new DistortBGEffect(val1, val2, val3);
+			case 'vcr': return new VCRDistortionEffect(val1,val2,val3,val4);
+			case 'glitch': return new GlitchEffect(val1, val2, val3);
+			case 'vcr2': return new VCRDistortionEffect2(); //the tails doll one
+			case '3d': return new ThreeDEffect(val1, val2);
+			case 'bloom': return new BloomEffect(val1/512.0,val2);
+			case 'rgbshiftglitch' | 'rgbshift': return new RGBShiftGlitchEffect(val1, val2);
+			case 'pulse': return new PulseEffect(val1,val2,val3);
+			case 'chromaticabberation' | 'ca': return new ChromaticAberrationEffect(val1);
+			case 'sketch': return new SketchEffect();
+			case 'desaturation': return new DesaturationEffect(val1);
+			case 'fisheye': return new FishEyeEffect(val1);
+			case 'channelmask': new ChannelMaskEffect(val1, val2, val3);
+			case 'colormask': new ColorMaskEffect(val1, val2);
+			case 'scroll': return new ScrollEffect(val1, val2);
+		}
+		return new GreyscaleEffect();
 	}
 
 	public function luaTrace(text:String, ignoreCheck:Bool = false, deprecated:Bool = false, color:FlxColor = FlxColor.WHITE) {
