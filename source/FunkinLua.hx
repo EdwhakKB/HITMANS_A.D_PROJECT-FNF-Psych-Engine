@@ -2862,6 +2862,35 @@ class FunkinLua {
 			Lua_helper.add_callback(lua, "setThreeDEffect", function(val1:Float, val2:Float, val3:Float) {
 				PlayState.instance.setThreeDEffect(val1, val2, val3);	
 			});
+			// Lua_helper.add_callback(lua, "easeThreeDEffect", function(tag:String, type:String, value:Dynamic, duration:Float, ease:String) {
+			// 	var penisExam:Dynamic = tweenShit(tag, 'easeShader');
+			// 	if(penisExam != null) {
+			// 		if (type == 'x' || type == 'X'){
+			// 			PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {x: value}, duration, {ease: getFlxEaseByString(ease),
+			// 				onComplete: function(twn:FlxTween) {
+			// 					PlayState.instance.callOnLuas('on3DCompleted', [tag]);
+			// 					PlayState.instance.modchartTweens.remove(tag);
+			// 				}
+			// 			}));
+			// 		}else if (type == 'y' || type == 'Y'){
+			// 			PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {y: value}, duration, {ease: getFlxEaseByString(ease),
+			// 				onComplete: function(twn:FlxTween) {
+			// 					PlayState.instance.callOnLuas('on3DCompleted', [tag]);
+			// 					PlayState.instance.modchartTweens.remove(tag);
+			// 				}
+			// 			}));
+			// 		}else if (type == 'z' || type == 'z'){
+			// 			PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {angle: value}, duration, {ease: getFlxEaseByString(ease),
+			// 				onComplete: function(twn:FlxTween) {
+			// 					PlayState.instance.callOnLuas('on3DCompleted', [tag]);
+			// 					PlayState.instance.modchartTweens.remove(tag);
+			// 				}
+			// 			}));
+			// 		}
+			// 	} else {
+			// 		luaTrace('Tweens: Failed load of the ease' + type, false, false, FlxColor.RED);
+			// 	}
+			// });
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		

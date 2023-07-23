@@ -261,6 +261,7 @@ class PlayState extends MusicBeatState
 		threeDShader.setThreeD(threeDPerspectiveX,threeDPerspectiveY,threeDPerspectiveZ);
 	}
 
+	public var easeShader:FlxSprite;
 	//------------------END OF EFFECTS------------------
 
 	public var spawnTime:Float = 2000;
@@ -3222,6 +3223,14 @@ class PlayState extends MusicBeatState
 		#end
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
+	}
+
+	function addTheForcedShaders():Void
+	{
+		threeDShader = new ThreeDEffect(0,0,0);
+		for (i in 0...camShaders.length){
+			addShaderToCamera(camShaders[i], threeDShader);
+		}
 	}
 
 	var debugNum:Int = 0;
