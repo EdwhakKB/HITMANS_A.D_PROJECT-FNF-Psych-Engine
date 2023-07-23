@@ -63,7 +63,7 @@ class MainMenuState extends MusicBeatState
 	//used for "Pc" visuals in the mod!
 	var storyMode:FlxSprite;
 	var freeplay:FlxSprite;
-	var awards:FlxSprite;
+	var mods:FlxSprite;
 	var credits:FlxSprite;
 	var settings:FlxSprite;
 	public var folder:FlxSprite;
@@ -133,17 +133,17 @@ class MainMenuState extends MusicBeatState
 		freeplay.antialiasing = ClientPrefs.globalAntialiasing;
 		add(freeplay);
 
-		awards = new FlxSprite(50, freeplay.y +130);
-		awards.frames = Paths.getSparrowAtlas('MenuShit/mods');
-        awards.animation.addByPrefix('normal', 'mods normal', 48, true);
-		awards.animation.addByPrefix('selected', 'mods selected', 48, true);
-		awards.scale.x = 0.7;
-		awards.scale.y = 0.7;
-		awards.updateHitbox();
-		awards.antialiasing = ClientPrefs.globalAntialiasing;
-		add(awards);
+		mods = new FlxSprite(50, freeplay.y +130);
+		mods.frames = Paths.getSparrowAtlas('MenuShit/mods');
+        mods.animation.addByPrefix('normal', 'mods normal', 48, true);
+		mods.animation.addByPrefix('selected', 'mods selected', 48, true);
+		mods.scale.x = 0.7;
+		mods.scale.y = 0.7;
+		mods.updateHitbox();
+		mods.antialiasing = ClientPrefs.globalAntialiasing;
+		add(mods);
 
-		credits = new FlxSprite(50, awards.y +130);
+		credits = new FlxSprite(50, mods.y +130);
 		credits.frames = Paths.getSparrowAtlas('MenuShit/credits');
         credits.animation.addByPrefix('normal', 'credits normal', 48, true);
 		credits.animation.addByPrefix('selected', 'credits selected', 48, true);
@@ -366,22 +366,22 @@ class MainMenuState extends MusicBeatState
 					inFolder = false;
 					storyMode.animation.play('normal');
 					freeplay.animation.play('normal');
-					awards.animation.play('normal');
+					mods.animation.play('normal');
 					credits.animation.play('normal');
 					settings.animation.play('normal');
 				}
 			}
 			if (FlxG.mouse.overlaps(storyMode)) {
 				if (FlxG.mouse.justPressed) {
-					// new FlxTimer().start(1, function(tmrS:FlxTimer)
-					// {
-					// 	MusicBeatState.switchState(new StoryMenuState());
-					// });
+					new FlxTimer().start(1, function(tmrS:FlxTimer)
+					{
+						MusicBeatState.switchState(new StoryMenuState());
+					});
 					folder.alpha = 0;
 					inFolder = true;
 					storyMode.animation.play('selected');
 					freeplay.animation.play('normal');
-					awards.animation.play('normal');
+					mods.animation.play('normal');
 					credits.animation.play('normal');
 					settings.animation.play('normal');
 				}
@@ -396,12 +396,12 @@ class MainMenuState extends MusicBeatState
 					inFolder = true;
 					freeplay.animation.play('selected');
 					storyMode.animation.play('normal');
-					awards.animation.play('normal');
+					mods.animation.play('normal');
 					credits.animation.play('normal');
 					settings.animation.play('normal');
 				}
 			}
-			if (FlxG.mouse.overlaps(awards)) {
+			if (FlxG.mouse.overlaps(mods)) {
 				if (FlxG.mouse.justPressed) {
 					#if MODS_ALLOWED
 					new FlxTimer().start(1, function(tmrA:FlxTimer)
@@ -411,7 +411,7 @@ class MainMenuState extends MusicBeatState
 					#end
 					folder.alpha = 0;
 					inFolder = true;
-					awards.animation.play('selected');
+					mods.animation.play('selected');
 					storyMode.animation.play('normal');
 					freeplay.animation.play('normal');
 					credits.animation.play('normal');
@@ -429,7 +429,7 @@ class MainMenuState extends MusicBeatState
 					credits.animation.play('selected');
 					storyMode.animation.play('normal');
 					freeplay.animation.play('normal');
-					awards.animation.play('normal');
+					mods.animation.play('normal');
 					settings.animation.play('normal');
 				}
 			}
@@ -444,7 +444,7 @@ class MainMenuState extends MusicBeatState
 					settings.animation.play('selected');
 					storyMode.animation.play('normal');
 					freeplay.animation.play('normal');
-					awards.animation.play('normal');
+					mods.animation.play('normal');
 					credits.animation.play('normal');
 				}
 			}
@@ -481,7 +481,7 @@ class MainMenuState extends MusicBeatState
 								switch (daChoice)
 								{
 									case 'story_mode':
-										MusicBeatState.switchState(new FreeplayState());
+										MusicBeatState.switchState(new StoryMenuState());
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
 									#if MODS_ALLOWED
@@ -664,14 +664,14 @@ class MainMenuState extends MusicBeatState
 									});
 						}
 						else if(wordText.text == 'STORYMODE'){
-							infoText.text = 'NOT IN DEMO';
+							infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								// new FlxTimer().start(1, function(tmr:FlxTimer) 
-								// 	{
-								// 		infoText.text = " ";
-								// 		MusicBeatState.switchState(new StoryMenuState());
-								// 	});
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new StoryMenuState());
+									});
 						}
 						else if(wordText.text == 'CREDITS'){
 							infoText.text = 'EXECUTING...';
