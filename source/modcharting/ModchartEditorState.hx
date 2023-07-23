@@ -213,7 +213,7 @@ class ModchartEditorState extends MusicBeatState
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
         InvertSineModifier, BoostModifier, BrakeModifier, JumpModifier, WaveXModifier, WaveYModifier,
         WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier, EaseXModifier,
-        StealthBoostModifier
+        StealthBoostModifier, StealthBrakeModifier
     ];
     public static var easeList:Array<String> = [
         "backIn",

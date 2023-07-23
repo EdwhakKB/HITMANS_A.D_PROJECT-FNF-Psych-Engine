@@ -91,19 +91,19 @@ class StoryMenuState extends MusicBeatState {
 		// var blackBarThingie:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, 56, FlxColor.BLACK);
 		// add(blackBarThingie);
 
-		daHud = new FlxSprite(0, -20).loadGraphic(Paths.getPath('images/storyMode/Hud.png', IMAGE));
+		daHud = new FlxSprite(120, 0).loadGraphic(Paths.getPath('images/storyMode/panel.png', IMAGE));
 
-		daStart = new FlxSprite(450, 600).loadGraphic(Paths.getPath('images/storyMode/start.png', IMAGE));
+		daStart = new FlxSprite(1063, 609).loadGraphic(Paths.getPath('images/storyMode/start.png', IMAGE));
 		daStart.scale.x = 0.7;
 		daStart.scale.y = 0.7;
 		daStart.updateHitbox();
 
-		daExit = new FlxSprite(650, 600).loadGraphic(Paths.getPath('images/storyMode/exit.png', IMAGE));
+		daExit = new FlxSprite(248, 609).loadGraphic(Paths.getPath('images/storyMode/exit.png', IMAGE));
 		daExit.scale.x = 0.7;
 		daExit.scale.y = 0.7;
 		daExit.updateHitbox();
 
-		daSettings = new FlxSprite(850, 600).loadGraphic(Paths.getPath('images/storyMode/settings.png', IMAGE));
+		daSettings = new FlxSprite(437, 609).loadGraphic(Paths.getPath('images/storyMode/settings.png', IMAGE));
 		daSettings.scale.x = 0.7;
 		daSettings.scale.y = 0.7;
 		daSettings.updateHitbox();

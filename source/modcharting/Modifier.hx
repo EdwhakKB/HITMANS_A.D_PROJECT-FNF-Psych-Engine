@@ -1031,14 +1031,33 @@ class YDModifier extends Modifier
 class StealthBoostModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    {
-        var alphaOff:Float = 0;
+        {
+            if (curPos <= -200)
+            {
+                var a = (200-Math.abs(curPos))/(200-1250); //lerp out the desat
+                noteData.alpha = 0+a;
+            }else{
+                noteData.alpha = 0;
+            }
+        }
+}
 
-        var speed = renderer.getCorrectScrollSpeed();
-
-        var alphaOff = (-curPos / speed)*0.01;
-        
-		noteData.alpha += alphaOff;
-
-    }
+class StealthBrakeModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+        {
+            if (curPos <= -800)
+            {
+                noteData.alpha = 0;
+            } 
+            else if (curPos <= -500)
+            {
+                var a = (500-Math.abs(curPos))/(500-1250); //lerp out the desat
+                noteData.alpha = 1*a;
+            }
+            else 
+            {
+                noteData.alpha = 1;
+            }
+        }
 }
