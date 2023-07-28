@@ -13,11 +13,8 @@ import flixel.tweens.FlxTween;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-#if (flixel >= "5.3.0")
-import flixel.sound.FlxSound;
-#else
 import flixel.system.FlxSound;
-#end
+
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
@@ -44,11 +41,8 @@ class EditorPlayState extends MusicBeatState
 	var startOffset:Float = 0;
 	var startPos:Float = 0;
 
-	var songMania:Int = 0;
-
-	public function new(startPos:Float, songMania:Int = 0) {
+	public function new(startPos:Float) {
 		this.startPos = startPos;
-		this.songMania = songMania;
 		Conductor.songPosition = startPos - startOffset;
 
 		startOffset = Conductor.crochet;
@@ -78,7 +72,12 @@ class EditorPlayState extends MusicBeatState
 		bg.color = FlxColor.fromHSB(FlxG.random.int(0, 359), FlxG.random.float(0, 0.8), FlxG.random.float(0.3, 1));
 		add(bg);
 
-		keysArray = EKData.Keybinds.fill();
+		keysArray = [
+			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
+			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down')),
+			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up')),
+			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
+		];
 		
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 50).makeGraphic(FlxG.width, 10);
 		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
@@ -91,8 +90,6 @@ class EditorPlayState extends MusicBeatState
 		opponentStrums = new FlxTypedGroup<StrumNote>();
 		playerStrums = new FlxTypedGroup<StrumNote>();
 		add(strumLineNotes);
-
-		PlayState.mania = songMania;
 
 		generateStaticArrows(0);
 		generateStaticArrows(1);
@@ -217,11 +214,11 @@ class EditorPlayState extends MusicBeatState
 				if(songNotes[1] > -1) { //Real notes
 					var daStrumTime:Float = songNotes[0];
 					if(daStrumTime >= startPos) {
-						var daNoteData:Int = Std.int(songNotes[1] % Note.ammo[songMania]);
+						var daNoteData:Int = Std.int(songNotes[1] % 4);
 
 						var gottaHitNote:Bool = section.mustHitSection;
 
-						if (songNotes[1] > (Note.ammo[songMania] - 1))
+						if (songNotes[1] > 3)
 						{
 							gottaHitNote = !section.mustHitSection;
 						}
@@ -413,7 +410,7 @@ class EditorPlayState extends MusicBeatState
 								}
 							} 
 							daNote.y += (strumHeight / 2) - (60.5 * (PlayState.SONG.speed - 1));
-							daNote.y += 27.5 * ((PlayState.SONG.bpm / 100) - 1) * (PlayState.SONG.speed - 1) * Note.scales[songMania];
+							daNote.y += 27.5 * ((PlayState.SONG.bpm / 100) - 1) * (PlayState.SONG.speed - 1);
 
 							if(daNote.mustPress || !daNote.ignoreNote)
 							{
@@ -456,7 +453,7 @@ class EditorPlayState extends MusicBeatState
 					if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end')) {
 						time += 0.15;
 					}
-					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)) % Note.ammo[songMania], time);
+					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)), time);
 					daNote.hitByOpponent = true;
 
 					if (!daNote.isSustainNote)
@@ -653,11 +650,11 @@ class EditorPlayState extends MusicBeatState
 	{
 		if(key != NONE)
 		{
-			for (i in 0...keysArray[songMania].length)
+			for (i in 0...keysArray.length)
 			{
-				for (j in 0...keysArray[songMania][i].length)
+				for (j in 0...keysArray[i].length)
 				{
-					if(key == keysArray[songMania][i][j])
+					if(key == keysArray[i][j])
 					{
 						return i;
 					}
@@ -665,26 +662,6 @@ class EditorPlayState extends MusicBeatState
 			}
 		}
 		return -1;
-	}
-
-	private function keysArePressed():Bool
-	{
-		for (i in 0...keysArray[songMania].length) {
-			for (j in 0...keysArray[songMania][i].length) {
-				if (FlxG.keys.checkStatus(keysArray[songMania][i][j], PRESSED)) return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function dataKeyIsPressed(data:Int):Bool
-	{
-		for (i in 0...keysArray[songMania][data].length) {
-			if (FlxG.keys.checkStatus(keysArray[songMania][data][i], PRESSED)) return true;
-		}
-
-		return false;
 	}
 
 	private function keyShit():Void
@@ -717,7 +694,7 @@ class EditorPlayState extends MusicBeatState
 			notes.forEachAlive(function(daNote:Note)
 			{
 				// hold note functions
-				if (daNote.isSustainNote && dataKeyIsPressed(daNote.noteData) && daNote.canBeHit 
+				if (daNote.isSustainNote && controlHoldArray[daNote.noteData] && daNote.canBeHit 
 				&& daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit) {
 					goodNoteHit(daNote);
 				}
@@ -968,7 +945,7 @@ class EditorPlayState extends MusicBeatState
 
 	private function generateStaticArrows(player:Int):Void
 	{
-		for (i in 0...Note.ammo[songMania])
+		for (i in 0...4)
 		{
 			// FlxG.log.add(i);
 			var targetAlpha:Float = 1;
@@ -990,7 +967,7 @@ class EditorPlayState extends MusicBeatState
 				if(ClientPrefs.middleScroll)
 				{
 					babyArrow.x += 310;
-					if(i > Note.separator[songMania]) { //Up and Right
+					if(i > 1) { //Up and Right
 						babyArrow.x += FlxG.width / 2 + 25;
 					}
 				}

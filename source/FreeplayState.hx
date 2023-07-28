@@ -16,11 +16,8 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
 import lime.utils.Assets;
-#if (flixel >= "5.3.0")
-import flixel.sound.FlxSound;
-#else
 import flixel.system.FlxSound;
-#end
+
 import openfl.utils.Assets as OpenFlAssets;
 import flixel.addons.display.FlxBackdrop;
 import flixel.tweens.FlxEase;
@@ -57,6 +54,9 @@ class FreeplayState extends MusicBeatState
 	var grupo:FlxTypedGroup<FlxSprite>;
 	var grupoImagen:FlxTypedGroup<FlxSprite>;
 	var grupoTexto:FlxTypedGroup<FlxText>;
+
+	var missingTextBG:FlxSprite;
+	var missingText:FlxText;
 
 	override function create()
 	{
@@ -185,6 +185,17 @@ class FreeplayState extends MusicBeatState
 		rating.updateHitbox();
 		rating.scrollFactor.set();
 		add(rating);
+
+		missingTextBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		missingTextBG.alpha = 0.6;
+		missingTextBG.visible = false;
+		add(missingTextBG);
+		
+		missingText = new FlxText(50, 0, FlxG.width - 100, '', 24);
+		missingText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		missingText.scrollFactor.set();
+		missingText.visible = false;
+		add(missingText);
 
 		if (lastDifficultyName == '')
 		{
@@ -424,21 +435,32 @@ class FreeplayState extends MusicBeatState
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 
 				trace(poop);
+				
+				try
+				{
+					PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+					PlayState.isStoryMode = false;
+					PlayState.storyDifficulty = curDifficulty;
+	
+					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				}
+				catch(e:Dynamic)
+				{
+					trace('ERROR! $e');
+	
+					var errorStr:String = e.toString();
+					if(errorStr.startsWith('[file_contents,assets/data/')) errorStr = 'Missing file: ' + errorStr.substring(27, errorStr.length-1); //Missing chart
+					missingText.text = 'ERROR WHILE LOADING CHART:\n$errorStr';
+					missingText.screenCenter(Y);
+					missingText.visible = true;
+					missingTextBG.visible = true;
+					FlxG.sound.play(Paths.sound('cancelMenu'));
+	
+					super.update(elapsed);
+					return;
+				}
 
-				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-				PlayState.isStoryMode = false;
-				PlayState.storyDifficulty = curDifficulty;
-
-				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-
-				// if (FlxG.keys.pressed.SHIFT)
-				// {
-				// 	LoadingState.loadAndSwitchState(new ChartingState());
-				// }
-				// else
-				// {
-					LoadingState.loadAndSwitchState(new PlayState());
-				// }
+				LoadingState.loadAndSwitchState(new PlayState());
 
 				FlxG.sound.music.volume = 0;
 
@@ -509,6 +531,9 @@ class FreeplayState extends MusicBeatState
 		intendedScore = Highscore.getScore(songs[curSelected].songName[curSong], curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName[curSong], curDifficulty);
 		#end
+
+		missingText.visible = false;
+		missingTextBG.visible = false;
 
 		PlayState.storyDifficulty = curDifficulty;
 		diffText.text = 'Difficulty  ' + CoolUtil.difficultyString();

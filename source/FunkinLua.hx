@@ -17,11 +17,8 @@ import flixel.tweens.FlxEase;
 import flixel.text.FlxText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxPoint;
-#if (flixel >= "5.3.0")
-import flixel.sound.FlxSound;
-#else
 import flixel.system.FlxSound;
-#end
+
 import flixel.util.FlxTimer;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
@@ -51,8 +48,8 @@ import sys.io.File;
 import Type.ValueType;
 import Controls;
 import DialogueBoxPsych;
-import Shaders.ShaderEffect as ShaderEffect;
-import Shaders;
+import shaders.Shaders.ShaderEffect as ShaderEffect;
+import shaders.Shaders;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 
@@ -136,7 +133,6 @@ class FunkinLua {
 		set('songPath', Paths.formatToSongPath(PlayState.SONG.song));
 		set('startedCountdown', false);
 		set('curStage', PlayState.SONG.stage);
-		set('mania', PlayState.mania);
 
 		set('isStoryMode', PlayState.isStoryMode);
 		set('difficulty', PlayState.storyDifficulty);
@@ -185,7 +181,7 @@ class FunkinLua {
 		set('practice', PlayState.instance.practiceMode);
 		set('modchart', PlayState.instance.notITGMod);
 
-		for (i in 0...(PlayState.mania+1)) {
+		for (i in 0...4) {
 			set('defaultPlayerStrumX' + i, 0);
 			set('defaultPlayerStrumY' + i, 0);
 			set('defaultOpponentStrumX' + i, 0);
@@ -236,10 +232,6 @@ class FunkinLua {
 		#else
 		set('buildTarget', 'unknown');
 		#end
-
-		Lua_helper.add_callback(lua, "changeMania", function(newValue:Int, skipTwn:Bool = false) {
-			PlayState.instance.changeMania(newValue, skipTwn);
-		});
 		
 		// custom substate
 		Lua_helper.add_callback(lua, "openCustomSubstate", function(name:String, pauseGame:Bool = false) {

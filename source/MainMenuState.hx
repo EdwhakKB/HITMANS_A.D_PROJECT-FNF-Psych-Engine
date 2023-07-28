@@ -985,7 +985,6 @@ class MainMenuState extends MusicBeatState
 					//ClientPrefs.showFPS = true; -- does not work for some reason
 					ClientPrefs.flashing = true;
 					ClientPrefs.globalAntialiasing = true;
-					ClientPrefs.noteSplashes = true;
 					ClientPrefs.lowQuality = false;
 					ClientPrefs.shaders = true;
 					ClientPrefs.framerate = 60;
