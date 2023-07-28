@@ -437,10 +437,9 @@ class Note extends FlxSprite{
 
 		var skin:String = texture;
 		if(texture.length < 1) {
-			skin = 'Skins/Notes/HITMANS/NOTE_assets';
+			skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
 			if(skin == null || skin.length < 1) {
-				if (ClientPrefs.noteSkin != 'NONE')
-					skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
+				skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
 			}
 		}
 
@@ -485,7 +484,7 @@ class Note extends FlxSprite{
 				}*/
 			}
 		} else {
-			frames = Paths.getSparrowAtlas('Skins/Notes/HITMANS/NOTE_assets');
+			frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets');
 			loadNoteAnims();
 			antialiasing = ClientPrefs.globalAntialiasing;
 		}
