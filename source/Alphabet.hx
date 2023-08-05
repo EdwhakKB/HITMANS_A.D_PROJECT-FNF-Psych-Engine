@@ -119,6 +119,16 @@ class Alphabet extends FlxSpriteGroup
 		rows = 0;
 	}
 
+	public function setScale(x:Float, y:Null<Float> = null)
+		{
+			set_scaleX(x);
+			if (y == null){
+				set_scaleY(x);
+			}else{
+				set_scaleY(y);
+			}
+		}
+
 	private function set_scaleX(value:Float)
 	{
 		if (value == scaleX) return value;

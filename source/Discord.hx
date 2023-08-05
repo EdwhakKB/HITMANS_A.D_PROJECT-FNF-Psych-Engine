@@ -2,6 +2,7 @@ package;
 
 import Sys.sleep;
 import discord_rpc.DiscordRpc;
+import lime.app.Application;
 
 #if LUA_ALLOWED
 import llua.Lua;
@@ -13,11 +14,22 @@ using StringTools;
 class DiscordClient
 {
 	public static var isInitialized:Bool = false;
+	private static var _defaultID:String = "1021986935792730273";
+	public static var clientID(default, set):String = _defaultID;
+	private static var _options:Dynamic = {
+		details: "Desktop",
+		state: null,
+		largeImageKey: 'icon',
+		largeImageText: "HITMANS A.D",
+		smallImageKey : null,
+		startTimestamp : null,
+		endTimestamp : null
+	};
 	public function new()
 	{
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "1021986935792730273",
+			clientID: clientID,
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -34,6 +46,26 @@ class DiscordClient
 		DiscordRpc.shutdown();
 	}
 	
+	public static function check()
+		{
+			if(!ClientPrefs.discordRPC)
+			{
+				if(isInitialized) shutdown();
+				isInitialized = false;
+			}
+			else start();
+		}
+		
+	public static function start()
+		{
+			if (!isInitialized && ClientPrefs.discordRPC) {
+				initialize();
+				Application.current.window.onClose.add(function() {
+					shutdown();
+				});
+			}
+		}
+
 	public static function shutdown()
 	{
 		DiscordRpc.shutdown();
@@ -41,13 +73,23 @@ class DiscordClient
 	
 	static function onReady()
 	{
-		DiscordRpc.presence({
-			details: "Main Menu",
-			state: null,
-			largeImageKey: 'icon',
-			largeImageText: "Hitmans Engine"
-		});
+		DiscordRpc.presence(_options);
 	}
+
+	private static function set_clientID(newID:String)
+		{
+			var change:Bool = (clientID != newID);
+			clientID = newID;
+	
+			if(change && isInitialized)
+			{
+				shutdown();
+				isInitialized = false;
+				start();
+				DiscordRpc.process();
+			}
+			return newID;
+		}
 
 	static function onError(_code:Int, _message:String)
 	{
@@ -71,31 +113,34 @@ class DiscordClient
 
 	public static function changePresence(details:String, state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)
 	{
-		var startTimestamp:Float = if(hasStartTimestamp) Date.now().getTime() else 0;
+		var startTimestamp:Float = 0;
+		if (hasStartTimestamp) startTimestamp = Date.now().getTime();
+		if (endTimestamp > 0) endTimestamp = startTimestamp + endTimestamp;
 
-		if (endTimestamp > 0)
-		{
-			endTimestamp = startTimestamp + endTimestamp;
-		}
-
-		DiscordRpc.presence({
-			details: details,
-			state: state,
-			largeImageKey: 'icon',
-			largeImageText: "Hitmans Version: " + MainMenuState.psychEngineVersion,
-			smallImageKey : smallImageKey,
-			// Obtained times are in milliseconds so they are divided so Discord can use it
-			startTimestamp : Std.int(startTimestamp / 1000),
-            endTimestamp : Std.int(endTimestamp / 1000)
-		});
+		_options.details = details;
+		_options.state = state;
+		_options.largeImageKey = 'icon';
+		_options.largeImageText = "Hitmans Version: " + MainMenuState.psychEngineVersion;
+		_options.smallImageKey = smallImageKey;
+		// Obtained times are in milliseconds so they are divided so Discord can use it
+		_options.startTimestamp = Std.int(startTimestamp / 1000);
+		_options.endTimestamp = Std.int(endTimestamp / 1000);
+		DiscordRpc.presence(_options);
 
 		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}
+
+	public static function resetClientID()
+		clientID = _defaultID;
 
 	#if LUA_ALLOWED
 	public static function addLuaCallbacks(lua:State) {
 		Lua_helper.add_callback(lua, "changePresence", function(details:String, state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float) {
 			changePresence(details, state, smallImageKey, hasStartTimestamp, endTimestamp);
+		});
+		Lua_helper.add_callback(lua, "changeDiscordClientID", function(?newID:String = null) {
+			if(newID == null) newID = _defaultID;
+			clientID = newID;
 		});
 	}
 	#end

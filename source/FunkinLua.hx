@@ -1636,6 +1636,8 @@ class FunkinLua {
 				MusicBeatState.switchState(new StoryMenuState());
 			else
 				MusicBeatState.switchState(new FreeplayState());
+			
+			#if desktop DiscordClient.resetClientID(); #end
 
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			PlayState.changedDifficulty = false;
@@ -2851,9 +2853,9 @@ class FunkinLua {
 			Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 				PlayState.instance.clearShaderFromCamera(camera);
 			});
-			Lua_helper.add_callback(lua, "setThreeDEffect", function(val1:Float, val2:Float, val3:Float) {
-				PlayState.instance.setThreeDEffect(val1, val2, val3);	
-			});
+			// Lua_helper.add_callback(lua, "setThreeDEffect", function(val1:Float, val2:Float, val3:Float) {
+			// 	PlayState.instance.setThreeDEffect(val1, val2, val3);	
+			//});
 			// Lua_helper.add_callback(lua, "easeThreeDEffect", function(tag:String, type:String, value:Dynamic, duration:Float, ease:String) {
 			// 	var penisExam:Dynamic = tweenShit(tag, 'easeShader');
 			// 	if(penisExam != null) {

@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="MINENEW.png">
+<SubTexture name="blue0000" x="465" y="231" width="230" height="230" frameX="-31" frameY="-23" frameWidth="286" frameHeight="276" />
+<SubTexture name="blue0001" x="0" y="0" width="232" height="233" frameX="-24" frameY="-20" frameWidth="286" frameHeight="276" />
+<SubTexture name="blue0002" x="465" y="0" width="233" height="231" frameX="-23" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="blue0003" x="0" y="233" width="235" height="232" frameX="-27" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="blue0004" x="232" y="0" width="233" height="232" frameX="-35" frameY="-29" frameWidth="286" frameHeight="276" />
+
+<SubTexture name="green0000" x="465" y="231" width="230" height="230" frameX="-31" frameY="-23" frameWidth="286" frameHeight="276" />
+<SubTexture name="green0001" x="0" y="0" width="232" height="233" frameX="-24" frameY="-20" frameWidth="286" frameHeight="276" />
+<SubTexture name="green0002" x="465" y="0" width="233" height="231" frameX="-23" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="green0003" x="0" y="233" width="235" height="232" frameX="-27" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="green0004" x="232" y="0" width="233" height="232" frameX="-35" frameY="-29" frameWidth="286" frameHeight="276" />
+
+<SubTexture name="purple0000" x="465" y="231" width="230" height="230" frameX="-31" frameY="-23" frameWidth="286" frameHeight="276" />
+<SubTexture name="purple0001" x="0" y="0" width="232" height="233" frameX="-24" frameY="-20" frameWidth="286" frameHeight="276" />
+<SubTexture name="purple0002" x="465" y="0" width="233" height="231" frameX="-23" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="purple0003" x="0" y="233" width="235" height="232" frameX="-27" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="purple0004" x="232" y="0" width="233" height="232" frameX="-35" frameY="-29" frameWidth="286" frameHeight="276" />
+
+<SubTexture name="red0000" x="465" y="231" width="230" height="230" frameX="-31" frameY="-23" frameWidth="286" frameHeight="276" />
+<SubTexture name="red0001" x="0" y="0" width="232" height="233" frameX="-24" frameY="-20" frameWidth="286" frameHeight="276" />
+<SubTexture name="red0002" x="465" y="0" width="233" height="231" frameX="-23" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="red0003" x="0" y="233" width="235" height="232" frameX="-27" frameY="-32" frameWidth="286" frameHeight="276" />
+<SubTexture name="red0004" x="232" y="0" width="233" height="232" frameX="-35" frameY="-29" frameWidth="286" frameHeight="276" />
+</TextureAtlas>

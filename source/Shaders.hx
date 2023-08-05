@@ -1243,13 +1243,13 @@ class ThreeDEffect extends Effect
     public var shader:ThreeDShader = new ThreeDShader();
     public function new(x:Float=0,y:Float=0,z:Float=0){
         shader.xrot.value = [x];
-		shader.yrot.value = [3.15+y];
+		shader.yrot.value = [3.1416+y];
 		shader.zrot.value = [z];
     }
 	public function setThreeD(x:Float,y:Float,z:Float)
 	{
 		shader.xrot.value = [x];
-		shader.yrot.value = [3.15+y];
+		shader.yrot.value = [3.1416+y];
 		shader.zrot.value = [z];
 	}
 }
@@ -1264,7 +1264,7 @@ class ThreeDShader extends FlxShader
     //yrot = 0.0
     //dept = 0.0
 	uniform float xrot = 0.0;
-	uniform float yrot = 3.15;
+	uniform float yrot = 3.1416;
 	uniform float zrot = 0.0;
 
 float plane( in vec3 norm, in vec3 po, in vec3 ro, in vec3 rd ) {

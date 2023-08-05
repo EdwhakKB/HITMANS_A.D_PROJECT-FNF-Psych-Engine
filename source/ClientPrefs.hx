@@ -2,8 +2,10 @@ package;
 
 import flixel.FlxG;
 import flixel.util.FlxSave;
+import flixel.util.FlxColor;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
+import Discord;
 import Controls;
 
 class ClientPrefs {
@@ -34,8 +36,15 @@ class ClientPrefs {
 	public static var hideHud:Bool = false;
 	public static var noteOffset:Int = 0;
 	public static var arrowHSV:Array<Array<Int>> = [
-		[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]
+		[0, 0, 0], [0, 0, 0], 
+		[0, 0, 0], [0, 0, 0]
 	]; // Fuck
+	public static var arrowRGB:Array<Array<FlxColor>> = [
+		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],
+		[0xFF00FFFF, 0xFFFFFFFF, 0xFF1542B7],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
+	];
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';
 	public static var scoreZoom:Bool = true;
@@ -74,6 +83,7 @@ class ClientPrefs {
 	public static var goodWindow:Int = 90;
 	public static var badWindow:Int = 135;
 	public static var safeFrames:Float = 10;
+	public static var discordRPC:Bool = true;
 
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
@@ -133,6 +143,7 @@ class ClientPrefs {
 		FlxG.save.data.noteOffset = noteOffset;
 		FlxG.save.data.hideHud = hideHud;
 		FlxG.save.data.arrowHSV = arrowHSV;
+		FlxG.save.data.arrowRGB = arrowRGB;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.timeBarType = timeBarType;
 		FlxG.save.data.scoreZoom = scoreZoom;
@@ -153,6 +164,7 @@ class ClientPrefs {
 		FlxG.save.data.pauseMusic = pauseMusic;
 		FlxG.save.data.checkForUpdates = checkForUpdates;
 		FlxG.save.data.comboStacking = comboStacking;
+		FlxG.save.data.discordRPC = discordRPC;
 	
 		FlxG.save.flush();
 
@@ -247,6 +259,9 @@ class ClientPrefs {
 		if(FlxG.save.data.arrowHSV != null) {
 			arrowHSV = FlxG.save.data.arrowHSV;
 		}
+		if(FlxG.save.data.arrowHSV != null) {
+			arrowRGB = FlxG.save.data.arrowRGB;
+		}
 		if(FlxG.save.data.ghostTapping != null) {
 			ghostTapping = FlxG.save.data.ghostTapping;
 		}
@@ -316,7 +331,15 @@ class ClientPrefs {
 		{
 			comboStacking = FlxG.save.data.comboStacking;
 		}
+		if (FlxG.save.data.comboStacking != null)
+		{
+			discordRPC = FlxG.save.data.discordRPC;
+		}
 	
+		#if desktop
+		DiscordClient.check();
+		#end
+
 		var save:FlxSave = new FlxSave();
 		save.bind('controls_v2', 'ninjamuffin99');
 		if(save != null && save.data.customControls != null) {

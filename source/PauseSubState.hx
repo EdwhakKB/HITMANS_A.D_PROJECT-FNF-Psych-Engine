@@ -1,5 +1,6 @@
 package;
 
+import Discord;
 import Controls.Control;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -379,6 +380,7 @@ class PauseSubState extends MusicBeatSubstate
 				case 'Gameplay Modifiers':
 					openSubState(new GameplayChangersSubstate());
 				case "Exit to menu":
+					#if desktop DiscordClient.resetClientID(); #end
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
 

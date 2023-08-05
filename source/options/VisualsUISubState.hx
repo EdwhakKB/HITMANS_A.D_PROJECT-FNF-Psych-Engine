@@ -44,12 +44,21 @@ class VisualsUISubState extends BaseOptionsMenu
 		['Classic', 'HITMANS']);
 		addOption(option);
 
+		// var option:Option = new Option('Note Skin:',
+		// "What Skin You want to use??.",
+		// 'noteSkin',
+		// 'string',
+		// 'HITMANS',
+		// ['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR', 'ITHIT']);
+		// addOption(option);
+		// option.onChange = onChangeSkin;
+
 		var option:Option = new Option('Note Skin:',
 		"What Skin You want to use??.",
 		'noteSkin',
 		'string',
 		'HITMANS',
-		['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR']);
+		['HITMANS', 'FNF', 'ITHIT']);
 		addOption(option);
 		option.onChange = onChangeSkin;
 
@@ -134,6 +143,14 @@ class VisualsUISubState extends BaseOptionsMenu
 			'checkForUpdates',
 			'bool',
 			true);
+		addOption(option);
+		#end
+
+		#if desktop
+		var option:Option = new Option('Discord Rich Presence',
+			"Uncheck this to prevent accidental leaks, it will hide the Application from your \"Playing\" box on Discord",
+			'discordRPC',
+			'bool');
 		addOption(option);
 		#end
 

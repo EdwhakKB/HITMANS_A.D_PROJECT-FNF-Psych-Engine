@@ -9,6 +9,9 @@ import flixel.util.FlxColor;
 import flash.display.BitmapData;
 import editors.ChartingState;
 
+import RGBPalette;
+import RGBPalette.RGBShaderReference;
+
 using StringTools;
 
 typedef EventNote = {
@@ -41,7 +44,7 @@ class Note extends FlxSprite{
 	public var parent:Note;
 	public var blockHit:Bool = false; // only works for player
 
-	public var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
+	public static var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -53,6 +56,9 @@ class Note extends FlxSprite{
 	public var eventVal2:String = '';
 
 	public var colorSwap:ColorSwap;
+
+	public var rgbShader:RGBShaderReference;
+	public static var globalRgbShaders:Array<RGBPalette> = [];
 	public var inEditor:Bool = false;
 
 	public var animSuffix:String = '';
@@ -138,20 +144,31 @@ class Note extends FlxSprite{
 		return value;
 	}
 
-	private function set_noteType(value:String):String {
-		if (noteData > -1 && noteData < ClientPrefs.arrowHSV.length)
+	public function defaultRGB()
 		{
-			colorSwap.hue = ClientPrefs.arrowHSV[noteData][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[noteData][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[noteData][2] / 100;
+			var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+	
+			if (noteData > -1 && noteData <= arr.length)
+			{
+				rgbShader.r = arr[0];
+				rgbShader.g = arr[1];
+				rgbShader.b = arr[2];
+			}
 		}
+
+	private function set_noteType(value:String):String {
+		defaultRGB();
 
 		if(noteData > -1 && noteType != value) {
 			switch(value) {
 				case 'Hurt Note':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-					reloadNote('HURT');
+
+					rgbShader.r = 0xFF101010;
+					rgbShader.g = 0xFFFF0000;
+					rgbShader.b = 0xFF990022;
+
 					copyAlpha=false;
 					alpha=0.55; //not fully invisible but yeah
 					lowPriority = true;
@@ -166,7 +183,11 @@ class Note extends FlxSprite{
 				case 'HurtAgressive':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-					reloadNote('HURTAG');
+
+					rgbShader.r = 0xFF101010;
+					rgbShader.g = 0xFFA80000;
+					rgbShader.b = 0xFFFF0000;
+
 					lowPriority = true;
 	
 					if(isSustainNote) {
@@ -180,7 +201,11 @@ class Note extends FlxSprite{
 					ignoreNote = mustPress;
 					copyAlpha=false;
 					alpha=0; //Makes them invisible.
-					reloadNote('HURT');
+
+					rgbShader.r = 0xFF101010;
+					rgbShader.g = 0xFFFF0000;
+					rgbShader.b = 0xFF990022;
+
 					lowPriority = true;
 					if(isSustainNote) {
 						missHealth = 0.05;
@@ -193,9 +218,6 @@ class Note extends FlxSprite{
 					ignoreNote = mustPress;
 					copyAlpha=false;
 					alpha=0.55; //not fully invisible but yeah
-					colorSwap.hue = 0;
-					colorSwap.saturation = 0;
-					colorSwap.brightness = 0;
 					lowPriority = true;
 
 					if(isSustainNote) {
@@ -209,6 +231,7 @@ class Note extends FlxSprite{
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('INSTAKILL');
+					rgbShader.enabled = false;
 					// texture = 'INSTAKILLNOTE_assets';
 					lowPriority = true;
 					if (canDamagePlayer) {
@@ -230,6 +253,7 @@ class Note extends FlxSprite{
 					ignoreNote = mustPress;
 					isRoll = false;
 					reloadNote('MINE');
+					rgbShader.enabled = false;
 					// texture = 'MINENOTE_assets';
 					lowPriority = true;
 	
@@ -241,9 +265,10 @@ class Note extends FlxSprite{
 					mine = true;
 					//not used since in Lua you can load that variables too lmao
 					//maybe in a future i'll port it to Haxe lmao -Ed
-				case 'HD note':
+				case 'HD Note':
 					usedDifferentWidth = true;
 					reloadNote('HD');
+					rgbShader.enabled = false;
 					// texture = 'HDNOTE_assets';
 					if(isSustainNote) {
 						missHealth = 1;
@@ -256,6 +281,7 @@ class Note extends FlxSprite{
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('LOVE');
+					rgbShader.enabled = false;
 					// texture = 'LOVENOTE_assets';
 					if (!edwhakIsPlayer){
 						if(isSustainNote) {
@@ -276,6 +302,7 @@ class Note extends FlxSprite{
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('FIRE');
+					rgbShader.enabled = false;
 					// texture = 'FIRENOTE_assets';
 					if (!edwhakIsPlayer){
 						if(isSustainNote) {
@@ -297,6 +324,7 @@ class Note extends FlxSprite{
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					reloadNote('TLOVE');
+					rgbShader.enabled = false;
 					// texture = 'TLOVENOTE_assets';
 					if (!edwhakIsPlayer){
 						if(isSustainNote) {
@@ -363,8 +391,8 @@ class Note extends FlxSprite{
 
 		if(noteData > -1) {
 			texture = '';
-			colorSwap = new ColorSwap();
-			shader = colorSwap.shader;
+			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
+			// shader = rgbShader.shader;
 
 			x += swagWidth * (noteData);
 			if(!isSustainNote && noteData > -1) { //Doing this 'if' check to fix the warnings on Senpai songs
@@ -427,6 +455,24 @@ class Note extends FlxSprite{
 		x += offsetX;
 	}
 
+	public static function initializeGlobalRGBShader(noteData:Int)
+		{
+			if(globalRgbShaders[noteData] == null)
+			{
+				var newRGB:RGBPalette = new RGBPalette();
+				globalRgbShaders[noteData] = newRGB;
+	
+				var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+				if (noteData > -1 && noteData <= arr.length)
+				{
+					newRGB.r = arr[0];
+					newRGB.g = arr[1];
+					newRGB.b = arr[2];
+				}
+			}
+			return globalRgbShaders[noteData];
+		}
+
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
 	var lastNoteScaleToo:Float = 1;
 	public var originalHeightForCalcs:Float = 6;
@@ -437,7 +483,7 @@ class Note extends FlxSprite{
 
 		var skin:String = texture;
 		if(texture.length < 1) {
-			skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
+			skin = PlayState.SONG != null ? PlayState.SONG.arrowSkin : null;
 			if(skin == null || skin.length < 1) {
 				skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
 			}
@@ -484,7 +530,7 @@ class Note extends FlxSprite{
 				}*/
 			}
 		} else {
-			frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets');
+			frames = Paths.getSparrowAtlas(blahblah);
 			loadNoteAnims();
 			antialiasing = ClientPrefs.globalAntialiasing;
 		}

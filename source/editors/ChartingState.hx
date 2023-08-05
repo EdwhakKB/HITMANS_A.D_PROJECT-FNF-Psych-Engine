@@ -76,7 +76,7 @@ class ChartingState extends MusicBeatState
 		'Invisible Hurt Note',
 		'Instakill Note',
 		'Mine Note',
-		'HD note',
+		'HD Note',
 		'Love Note',
 		'Fire Note',
 		'True Love Note',
@@ -325,8 +325,8 @@ class ChartingState extends MusicBeatState
 		bpmTxt.scrollFactor.set();
 		add(bpmTxt);
 
-		/*strumLine = new FlxSprite(0, 50).makeGraphic(Std.int(GRID_SIZE * 9), 4);
-		add(strumLine);*/
+		strumLine = new FlxSprite(0, 50).makeGraphic(Std.int(GRID_SIZE * 9), 4);
+		add(strumLine);
 
 		quant = new AttachedSprite('chart_quant','chart_quant');
 		quant.animation.addByPrefix('q','chart_quant',0,false);

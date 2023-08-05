@@ -3,11 +3,15 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
+import RGBPalette;
+import RGBPalette.RGBShaderReference;
+import flixel.util.FlxColor;
 
 using StringTools;
 
 class StrumNote extends FlxSprite
 {
+	public var rgbShader:RGBShaderReference;
 	private var colorSwap:ColorSwap;
 	public var resetAnim:Float = 0;
 	private var noteData:Int = 0;
@@ -25,21 +29,29 @@ class StrumNote extends FlxSprite
 		}
 		return value;
 	}
-
+	public var useRGBShader:Bool = true;
 	public function new(x:Float, y:Float, leData:Int, player:Int) {
-		colorSwap = new ColorSwap();
-		shader = colorSwap.shader;
+		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
+		rgbShader.enabled = false;
+		var arr:Array<FlxColor> = ClientPrefs.arrowRGB[leData];
+
+		if(leData <= arr.length)
+			{
+				@:bypassAccessor
+				{
+					rgbShader.r = arr[0];
+					rgbShader.g = arr[1];
+					rgbShader.b = arr[2];
+				}
+			}
+
 		noteData = leData;
 		this.player = player;
 		this.noteData = leData;
 		super(x, y);
 
-		var skin:String = 'Skins/Notes/HITMANS/NOTE_assets';
-		if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) 
-			skin = PlayState.SONG.arrowSkin;
-		else{
-			skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
-		}
+		var skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
+		if(PlayState.SONG != null && PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		texture = skin; //Load texture and anims
 
 		scrollFactor.set();
@@ -139,34 +151,16 @@ class StrumNote extends FlxSprite
 				resetAnim = 0;
 			}
 		}
-		//if(animation.curAnim != null){ //my bad i was upset
-		if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
-			centerOrigin();
-		//}
-		}
-
 		super.update(elapsed);
 	}
 
 	public function playAnim(anim:String, ?force:Bool = false) {
 		animation.play(anim, force);
-		centerOffsets();
-		centerOrigin();
-		if(animation.curAnim == null || animation.curAnim.name == 'static') {
-			colorSwap.hue = 0;
-			colorSwap.saturation = 0;
-			colorSwap.brightness = 0;
-		} else {
-			if (noteData > -1 && noteData < ClientPrefs.arrowHSV.length)
+		if(animation.curAnim != null)
 			{
-				colorSwap.hue = ClientPrefs.arrowHSV[noteData][0] / 360;
-				colorSwap.saturation = ClientPrefs.arrowHSV[noteData][1] / 100;
-				colorSwap.brightness = ClientPrefs.arrowHSV[noteData][2] / 100;
-			}
-
-			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) {
+				centerOffsets();
 				centerOrigin();
 			}
-		}
+		if(useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
 	}
 }

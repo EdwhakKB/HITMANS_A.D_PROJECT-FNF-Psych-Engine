@@ -1538,7 +1538,7 @@ class PlayState extends MusicBeatState
 		timeBarBG.sprTracker = timeBar;
 
 		strumLineNotes = new FlxTypedGroup<StrumNote>();
-		//add(strumLineNotes);
+		add(strumLineNotes);
 
 		if(ClientPrefs.timeBarType == 'Song Name')
 		{
@@ -1562,6 +1562,7 @@ class PlayState extends MusicBeatState
 				noteCameras20, noteCameras21, noteCameras22];
 			add(playfieldRenderer);
 		}
+		threeDShader = new ThreeDEffect(0,0,0); //added this since well its cool have this ig (as a secret at least)
 		camFollow = new FlxPoint();
 		camFollowPos = new FlxObject(0, 0, 1, 1);
 
@@ -3110,11 +3111,6 @@ class PlayState extends MusicBeatState
 			trace("USING NEW INST");
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		}
-
-		threeDShader = new ThreeDEffect(0,0,0);
-		for (i in 0...camShaders.length){
-			addShaderToCamera(camShaders[i], threeDShader);
-		}
 		// addShaderToCamera('hud', threeDShader);
 		//FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		FlxG.sound.music.pitch = playbackRate;
@@ -3190,14 +3186,6 @@ class PlayState extends MusicBeatState
 		#end
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
-	}
-
-	function addTheForcedShaders():Void
-	{
-		threeDShader = new ThreeDEffect(0,0,0);
-		for (i in 0...camShaders.length){
-			addShaderToCamera(camShaders[i], threeDShader);
-		}
 	}
 
 	var debugNum:Int = 0;
@@ -4154,6 +4142,7 @@ class PlayState extends MusicBeatState
 			persistentUpdate = false;
 			paused = true;
 			cancelMusicFadeTween();
+			#if desktop DiscordClient.resetClientID(); #end
 			MusicBeatState.switchState(new CharacterEditorState(SONG.player2));
 		}
 		
@@ -4529,6 +4518,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		DiscordClient.changePresence("Chart Editor", null, null, true);
+		DiscordClient.resetClientID();
 		#end
 	}
 
@@ -4545,9 +4535,10 @@ class PlayState extends MusicBeatState
 				// do nothing lamoo
 			}
 		
-		#if desktop
-		DiscordClient.changePresence("Modchart Editor", null, null, true);
-		#end
+			#if desktop
+			DiscordClient.changePresence("Modchart Editor", null, null, true);
+			DiscordClient.resetClientID();
+			#end
 	}
 
 	public var isDead:Bool = false; //Don't mess with this on Lua!!!
@@ -5263,7 +5254,7 @@ class PlayState extends MusicBeatState
 				{
 					WeekData.loadTheFirstEnabledMod();
 					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-
+					#if desktop DiscordClient.resetClientID(); #end
 					cancelMusicFadeTween();
 					if(FlxTransitionableState.skipNextTransIn) {
 						CustomFadeTransition.nextCamera = null;
@@ -5327,6 +5318,7 @@ class PlayState extends MusicBeatState
 			{
 				trace('WENT BACK TO FREEPLAY??');
 				WeekData.loadTheFirstEnabledMod();
+				#if desktop DiscordClient.resetClientID(); #end
 				cancelMusicFadeTween();
 				if(FlxTransitionableState.skipNextTransIn) {
 					CustomFadeTransition.nextCamera = null;
@@ -5836,9 +5828,14 @@ class PlayState extends MusicBeatState
 				note.destroy();
 			}
 		});
-		if(daNote.noteType == ''){
-			deathVariableTXT = 'Notes';
+
+		switch (daNote.noteType){
+			case '':
+				deathVariableTXT = 'Notes';
+			case 'HD Note':
+				deathVariableTXT = 'HD';
 		}
+
 		combo = 0;
 		if (!ClientPrefs.casualMode){
 			if (!Note.edwhakIsPlayer){
@@ -6071,17 +6068,17 @@ class PlayState extends MusicBeatState
 
 		var time:Float = 0.15;
 		if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
-			time += 0.15;
+			time = 0.3;
 		}
 		StrumPlayAnim(true, Std.int(Math.abs(note.noteData)), time);
-		if(!controlsPlayer2 || cpuControlled){
-			if(!note.ignoreNote && !note.hitCausesMiss){
-				if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
-					time += 0.15;
-				}
-				StrumPlayAnim(true, Std.int(Math.abs(note.noteData)) , time);
-			}
-		}
+		// if(!controlsPlayer2 || cpuControlled){
+		// 	if(!note.ignoreNote && !note.hitCausesMiss){
+		// 		if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
+		// 			time += 0.15;
+		// 		}
+		// 		StrumPlayAnim(true, Std.int(Math.abs(note.noteData)), time);
+		// 	}
+		// }
 		note.hitByOpponent = true;
 
 		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
@@ -6108,8 +6105,6 @@ class PlayState extends MusicBeatState
 			if(note.hitCausesMiss) {
 				noteMiss(note);
 
-				deathVariableTXT = 'Hurts';
-
 				if(!note.noMissAnimation)
 				{
 					switch(note.noteType) {
@@ -6119,7 +6114,7 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								
+								deathVariableTXT = 'Hurts';
 							}
 						}
 						case 'Invisible Hurt Note': //what you can't see but it still damage you lmao
@@ -6128,7 +6123,7 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								
+								deathVariableTXT = 'Hurts';
 							}
 						}
 						case 'HurtAgressive': //agressive hurts that cause more damage
@@ -6137,7 +6132,7 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								
+								deathVariableTXT = 'Hurts';
 							}
 						}
 						case 'Mimic Note': //hurts but similar to notes
@@ -6146,7 +6141,7 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								
+								deathVariableTXT = 'Hurts';
 							}
 						}
 					}
@@ -6273,7 +6268,7 @@ class PlayState extends MusicBeatState
 			if(cpuControlled) {
 				var time:Float = 0.15;
 				if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
-					time += 0.15;
+					time = 0.3;
 				}
 				StrumPlayAnim(false, Std.int(Math.abs(note.noteData)), time);
 			} else {
@@ -6757,7 +6752,7 @@ class PlayState extends MusicBeatState
 	function StrumPlayAnim(isDad:Bool, id:Int, time:Float) {
 		var spr:StrumNote = null;
 		if(isDad) {
-			spr = strumLineNotes.members[id];
+			spr = opponentStrums.members[id];
 		} else {
 			spr = playerStrums.members[id];
 		}
