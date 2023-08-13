@@ -1044,7 +1044,7 @@ class ModchartEditorState extends MusicBeatState
 
 
                 #if PSYCH 
-                var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+                var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false);
                 swagNote.sustainLength = songNotes[2];
                 swagNote.mustPress = gottaHitNote;
                 swagNote.gfNote = (section.gfSection && (songNotes[1]<4));

@@ -30,7 +30,6 @@ class NotesSubState extends MusicBeatSubstate
 	var onModeColumn:Bool = true;
 	var curSelectedMode:Int = 0;
 	var curSelectedNote:Int = 0;
-	var onPixel:Bool = false;
 	var dataArray:Array<Array<FlxColor>>;
 
 	var hexTypeLine:FlxSprite;
@@ -59,6 +58,15 @@ class NotesSubState extends MusicBeatSubstate
 	var _lastControllerMode:Bool = false;
 	var tipTxt:FlxText;
 
+	//skins stuff lol
+	public var skinIndicator:FlxText;
+	var skins:Array<String> = ['HITMANS', 'INHUMAN', 'FNF', 'ITHIT']; //There must be a better way but for now with this im okay -Ed
+	private static var curNum:Int = 0;
+	var leftArrow:FlxSprite;
+	var rightArrow:FlxSprite;
+
+	var noteSkinInt:Int = 0;
+
 	public function new() {
 		super();
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -80,12 +88,6 @@ class NotesSubState extends MusicBeatSubstate
         staticBG.alpha = 0.5;
         staticBG.animation.play("glitch");
         add(staticBG);
-
-		var grid:FlxBackdrop = new FlxBackdrop(FlxGridOverlay.createGrid(80, 80, 160, 160, true, 0x33FFFFFF, 0x0));
-		grid.velocity.set(40, 40);
-		grid.alpha = 0;
-		FlxTween.tween(grid, {alpha: 1}, 0.5, {ease: FlxEase.quadOut});
-		add(grid);
 
 		modeBG = new FlxSprite(215, 85).makeGraphic(315, 115, FlxColor.BLACK);
 		modeBG.visible = false;
@@ -110,10 +112,40 @@ class NotesSubState extends MusicBeatSubstate
 		bg.alpha = 0.25;
 		add(bg);
 		
-		var text:Alphabet = new Alphabet(50, 86, 'CTRL', false);
+		var text:Alphabet = new Alphabet(130, 56, 'CTRL', false);
 		text.alignment = CENTERED;
 		text.setScale(0.4);
 		add(text);
+
+		skinIndicator = new FlxText(280, 20, 0, "SkinName", 56);
+		skinIndicator.setFormat(Paths.font("DEADLY KILLERS.ttf"), 56, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		skinIndicator.borderSize = 2;
+		add(skinIndicator);
+
+		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+
+		leftArrow = new FlxSprite(100, 350);
+		leftArrow.frames = ui_tex;
+		leftArrow.animation.addByPrefix('idle', "arrow left");
+		leftArrow.animation.addByPrefix('press', "arrow push left");
+		leftArrow.animation.play('idle');
+		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		leftArrow.scale.x = 2;
+		leftArrow.scale.y = 2;
+		leftArrow.updateHitbox();
+		add(leftArrow);
+
+		rightArrow = new FlxSprite(475, 350);
+		rightArrow.frames = ui_tex;
+		rightArrow.animation.addByPrefix('idle', "arrow left");
+		rightArrow.animation.addByPrefix('press', "arrow push left");
+		rightArrow.animation.play('idle');
+		rightArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		rightArrow.scale.x = 2;
+		rightArrow.scale.y = 2;
+		rightArrow.flipX = true;
+		rightArrow.updateHitbox();
+		add(rightArrow);
 
 		copyButton = new FlxSprite(760, 50).loadGraphic(Paths.image('noteColorMenu/copy'));
 		copyButton.alpha = 0.6;
@@ -161,6 +193,19 @@ class NotesSubState extends MusicBeatSubstate
 		hexTypeLine.visible = false;
 		add(hexTypeLine);
 
+		switch (ClientPrefs.noteSkin)
+		{
+			case 'HITMANS':
+				noteSkinInt = 0;
+			case 'INHUMAN':
+				noteSkinInt = 1;
+			case 'FNF':
+				noteSkinInt = 2;
+			case 'ITHIT':
+				noteSkinInt = 3;
+		}
+
+		onChangeSkin(noteSkinInt);
 		spawnNotes();
 		updateNotes(true);
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -211,10 +256,70 @@ class NotesSubState extends MusicBeatSubstate
 		}
 
 		super.update(elapsed);
+		var qPress = FlxG.keys.justPressed.Q;
+		var ePress = FlxG.keys.justPressed.E;
+
+		var qHold = FlxG.keys.pressed.Q;
+		var eHold = FlxG.keys.pressed.E;
+
+		if(qPress)
+		{
+			onChangeSkin(-1);
+			spawnNotes();
+			updateNotes(true);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+		}
+
+		if(qHold){
+			leftArrow.animation.play('press');
+		}else{
+			leftArrow.animation.play('idle');
+		}
+
+		if(ePress)
+		{
+			onChangeSkin(1);
+			spawnNotes();
+			updateNotes(true);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+		}
+
+		if(eHold){
+			rightArrow.animation.play('press');
+		}else{
+			rightArrow.animation.play('idle');
+		}
+
+		if (FlxG.mouse.overlaps(rightArrow)) {
+			if (FlxG.mouse.justPressed) {
+				onChangeSkin(1);
+				spawnNotes();
+				updateNotes(true);
+				FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			}
+			if (FlxG.mouse.pressed) {
+				rightArrow.animation.play('press');
+			} else {
+				rightArrow.animation.play('idle');
+			}
+		}
+
+		if (FlxG.mouse.overlaps(leftArrow)) {
+			if (FlxG.mouse.justPressed) {
+				onChangeSkin(-1);
+				spawnNotes();
+				updateNotes(true);
+				FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+			}
+			if (FlxG.mouse.pressed) {
+				leftArrow.animation.play('press');
+			} else {
+				leftArrow.animation.play('idle');
+			}
+		}
 
 		if(FlxG.keys.justPressed.CONTROL)
 		{
-			onPixel = !onPixel;
 			spawnNotes();
 			updateNotes(true);
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -358,7 +463,6 @@ class NotesSubState extends MusicBeatSubstate
 			}
 			else if (pointerOverlaps(skinNote))
 			{
-				onPixel = !onPixel;
 				spawnNotes();
 				updateNotes(true);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -415,12 +519,12 @@ class NotesSubState extends MusicBeatSubstate
 		}
 		else if(controls.RESET && hexTypeNum < 0)
 		{
-			if(FlxG.keys.pressed.SHIFT || FlxG.gamepads.anyJustPressed(LEFT_SHOULDER))
+			if(FlxG.keys.pressed.SHIFT)
 			{
 				for (i in 0...3)
 				{
 					var strumRGB:RGBShaderReference = myNotes.members[curSelectedNote].rgbShader;
-					var color:FlxColor = ClientPrefs.arrowRGB[curSelectedNote][i];
+					var color:FlxColor = ClientPrefs.arrowRGBBackUp[curSelectedNote][i];
 					switch(i)
 					{
 						case 0:
@@ -511,6 +615,18 @@ class NotesSubState extends MusicBeatSubstate
 		return text;
 	}
 
+	function onChangeSkin(?val:Int = 0){
+		curNum += val; //So it does a "change" lmao, i still need get some variables such as grab the current skin and load a number -Ed
+
+		if (curNum < 0)
+			curNum = skins.length - 1;
+		if (curNum >= skins.length)
+			curNum = 0;
+
+		ClientPrefs.noteSkin = skins[curNum];
+		skinIndicator.text = skins[curNum];
+	}
+
 	// notes sprites functions
 	var skinNote:FlxSprite;
 	var modeNotes:FlxTypedGroup<FlxSprite>;
@@ -519,7 +635,6 @@ class NotesSubState extends MusicBeatSubstate
 	public function spawnNotes()
 	{
 		dataArray = ClientPrefs.arrowRGB;
-		if (onPixel) PlayState.isPixelStage;
 
 		// clear groups
 		modeNotes.forEachAlive(function(note:FlxSprite) {
@@ -545,17 +660,18 @@ class NotesSubState extends MusicBeatSubstate
 		}
 
 		// respawn stuff
-		var res:Int = onPixel ? 160 : 17;
-		skinNote = new FlxSprite(48, 24).loadGraphic(Paths.image('noteColorMenu/' + (onPixel ? 'note' : 'notePixel')), true, res, res);
+
+		var res:Int = 160;
+		skinNote = new FlxSprite(48, 24).loadGraphic(Paths.image('noteColorMenu/' + 'note'), true, res, res);
 		skinNote.antialiasing = ClientPrefs.globalAntialiasing;
 		skinNote.setGraphicSize(68);
 		skinNote.updateHitbox();
 		skinNote.animation.add('anim', [0], 24, true);
 		skinNote.animation.play('anim', true);
-		if(!onPixel) skinNote.antialiasing = false;
+		skinNote.antialiasing = false;
 		add(skinNote);
 
-		var res:Int = !onPixel ? 160 : 17;
+		var res:Int = 160;
 		for (i in 0...3)
 		{
 			var newNote:FlxSprite = new FlxSprite(230 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/' + 'note'), true, res, res);
@@ -588,8 +704,7 @@ class NotesSubState extends MusicBeatSubstate
 		bigNote.shader = Note.globalRgbShaders[curSelectedNote].shader;
 		for (i in 0...Note.colArray.length)
 		{
-			if(!onPixel) bigNote.animation.addByPrefix('note$i', Note.colArray[i] + '0', 24, true);
-			else bigNote.animation.add('note$i', [i + 4], 24, true);
+			bigNote.animation.addByPrefix('note$i', Note.colArray[i] + '0', 24, true);
 		}
 		insert(members.indexOf(myNotes) + 1, bigNote);
 		_storedColor = getShaderColor();

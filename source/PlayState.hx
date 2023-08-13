@@ -122,7 +122,7 @@ class PlayState extends MusicBeatState
 		['A', 0.8], //From 70% to 79%
 		['S', 0.9], //From 80% to 89%
 		['S+', 1], //From 90% to 99%
-		['HITMAN', 1] //The value on this one isn't used actually, since Perfect is always "1"
+		['H', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	];
 
 	//event variables
@@ -313,6 +313,12 @@ class PlayState extends MusicBeatState
 	public var bads:Int = 0;
 	public var shits:Int = 0;
 
+	public var fantastics:Int = 0;
+	public var excelents:Int = 0;
+	public var greats:Int = 0;
+	public var decents:Int = 0;
+	public var wayoffs:Int = 0;
+
 	private var generatedMusic:Bool = false;
 	public var endingSong:Bool = false;
 	public var startingSong:Bool = false;
@@ -410,7 +416,9 @@ class PlayState extends MusicBeatState
 	var timeTxt:FlxText;
 	var scoreTxtTween:FlxTween;
 	var scoreTxtHitTween:FlxTween;
-	var reme:ResultScreen;
+
+	var resultScreen:ResultScreen;
+
 	public static var inResultsScreen:Bool = false;
 	private var hits:Int = 0;
 	private var total:Int = 0;
@@ -528,6 +536,13 @@ class PlayState extends MusicBeatState
 		timer.manager = timerManager;
 		return timer.start(Time, OnComplete, Loops);
 	}
+
+	//quant stuff
+	var beat:Float = 0;
+	var quantcolord:Array<FlxColor> = [0xFFFF0000,0xFF0000FF,0xFF800080,0xFFFFFF00,0xFFFF00FF,0xFFFF7300,0xFF00FFDD,0xFF00FF00];
+	var quantcolord2:Array<FlxColor> = [0xFF7F0000,0xFF00007F,0xFF400040,0xFF7F7F00,0xFF8A018A,0xFF883D00,0xFF008573,0xFF007F00];
+	var col:Int = 0xFFFFD700;
+	var col2:Int = 0xFFFFD700;
 
 	override public function create()
 	{
@@ -1904,6 +1919,9 @@ class PlayState extends MusicBeatState
 		ModchartFuncs.loadLuaFunctions();
 		callOnLuas('onCreatePost', []);
 
+		if (ClientPrefs.quantization)
+			doNoteQuant();
+
 		super.create();
 
 		cacheCountdown();
@@ -1924,6 +1942,67 @@ class PlayState extends MusicBeatState
 		Paths.clearUnusedMemory();
 		
 		CustomFadeTransition.nextCamera = camOther;
+	}
+
+	public function doNoteQuant()
+	{
+		for (note in unspawnNotes) {
+			if (note.rgbShader.enabled && !note.hurtNote){
+			beat = roundQuantNote(SONG.bpm * note.strumTime / 1000 / 60 * 48,0);
+				if (!note.isSustainNote){
+				if(beat%(192/4)==0){
+					col = quantcolord[0];
+					col2 = quantcolord2[0];
+				}
+				else if(beat%(192/6)==0){
+					col = quantcolord[1];
+					col2 = quantcolord2[1];
+				}
+				else if(beat%(192/8)==0){
+					col = quantcolord[2];
+					col2 = quantcolord2[2];
+				}
+				else if(beat%(192/12)==0){
+					col = quantcolord[3];
+					col2 = quantcolord2[3];
+				}
+				else if(beat%(192/16)==0){
+					col = quantcolord[4];
+					col2 = quantcolord2[4];
+				}
+				else if(beat%(192/24)==0){
+					col = quantcolord[5];
+					col2 = quantcolord2[5];
+				}
+				else if(beat%(192/32)==0){
+					col = quantcolord[6];
+					col2 = quantcolord2[6];
+				}
+				else{
+					col = quantcolord[7];
+					col2 = quantcolord2[7];
+				}
+				note.rgbShader.r = col;
+				note.rgbShader.b = col2;
+			
+				}else{
+					note.rgbShader.r = note.prevNote.rgbShader.r;
+					note.rgbShader.b = note.prevNote.rgbShader.b;  
+				}
+			}
+		}
+		for (this2 in opponentStrums)
+			{
+				this2.rgbShader.r = 0xFFFFFFFF;
+				this2.rgbShader.b = 0xFF000000;  
+				this2.rgbShader.enabled = false;
+			}
+		for (this2 in playerStrums)
+			{
+				this2.rgbShader.r = 0xFFFFFFFF;
+				this2.rgbShader.b = 0xFF000000;  
+				this2.rgbShader.enabled = false;
+			}
 	}
 
 	#if (!flash && sys)
@@ -3182,7 +3261,9 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
+		if (!inResultsScreen){
+			DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
+		}
 		#end
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
@@ -4378,7 +4459,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 
-					// Kill extremely late notes and cause misses
+					// Kill extremly late notes and cause misses
 					if (Conductor.songPosition > noteKillOffset + daNote.strumTime)
 					{
 						if (daNote.mustPress && !cpuControlled &&!daNote.ignoreNote && !endingSong && (daNote.tooLate || !daNote.wasGoodHit)) {
@@ -4429,6 +4510,18 @@ class PlayState extends MusicBeatState
 			}
 
 		callOnLuas('onUpdatePost', [elapsed]);
+		if (ClientPrefs.quantization)
+			noteQuantUpdatePost();
+	}
+
+	function noteQuantUpdatePost()
+	{
+		for (this2 in playerStrums){
+			if (this2.animation.curAnim.name == 'static'){
+				this2.rgbShader.r = 0xFF808080;
+				this2.rgbShader.b = 0xFFFFFFFF;
+			}
+		}
 	}
 
 	function openPauseMenu()
@@ -5134,24 +5227,25 @@ class PlayState extends MusicBeatState
 		camHUD.zoom = 1;
 		var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
 
+		resultScreen = new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses);
+		resultScreen.scrollFactor.set();
+		resultScreen.cameras = [camRate];
+		resultScreen.end = endSong;
+
+		add(resultScreen);
+
+		inResultsScreen = true;
+
 		#if desktop
 			DiscordClient.changePresence("Results - " + detailsText, SONG.song + " (" + storyDifficultyText +")" + "Score:" + Math.round(songScore), iconP2.getCharacter());
 		#end
-		reme = new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), sicks, goods, bads, shits, songMisses);
-		reme.scrollFactor.set();
-		reme.cameras = [camRate];
-		reme.end = endSong;
-
-		add(reme);
-
-		inResultsScreen = true;
 
 		var ret:Dynamic = callOnLuas('onRating', [], false);
 		if (ret != FunkinLua.Function_Stop){
 			#if PRELOAD_ALL	
 				sys.thread.Thread.create(() ->
 				{
-					reme.load();
+					resultScreen.load();
 					if (!practiceMode && notITGMod && SONG.validScore)
 					{
 						var percent:Float = ratingPercent;
@@ -5166,7 +5260,7 @@ class PlayState extends MusicBeatState
 					if(Math.isNaN(percent)) percent = 0;
 					Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
 				}
-				reme.load();
+				resultScreen.load();
 			#end
 		}
 	}
@@ -6082,6 +6176,8 @@ class PlayState extends MusicBeatState
 		note.hitByOpponent = true;
 
 		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
+		opponentStrums.members[note.noteData].rgbShader.r = note.rgbShader.r;
+		opponentStrums.members[note.noteData].rgbShader.b = note.rgbShader.b;
 
 		if (!note.isSustainNote)
 		{
@@ -6285,6 +6381,8 @@ class PlayState extends MusicBeatState
 			var leData:Int = Math.round(Math.abs(note.noteData));
 			var leType:String = note.noteType;
 			callOnLuas('goodNoteHit', [notes.members.indexOf(note), leData, leType, isSus]);
+			playerStrums.members[leData].rgbShader.r = note.rgbShader.r;
+			playerStrums.members[leData].rgbShader.b = note.rgbShader.b;
 
 			if (!note.isSustainNote)
 			{
@@ -6331,26 +6429,36 @@ class PlayState extends MusicBeatState
 		if (rat >= 0){
 			if (rat <= ClientPrefs.sickWindow / 2.5){
 				ratings.animation.play("fantastic");
+				fantastics += 1;
 			} else if (rat <= ClientPrefs.sickWindow){
 				ratings.animation.play("excellent Early");
+				excelents += 1;
 			}else if (rat >= ClientPrefs.sickWindow && rat <= ClientPrefs.goodWindow){
 				ratings.animation.play("great Early");
+				greats += 1;
 			}else if (rat >= ClientPrefs.goodWindow && rat <= ClientPrefs.badWindow){
 				ratings.animation.play("decent Early");
+				decents += 1;
 			}else if (rat >= ClientPrefs.badWindow){
 				ratings.animation.play("way Off Early");
+				wayoffs += 1;
 			}
 		} else {
 			if (rat >= ClientPrefs.sickWindow * -1 / 2.5){
 				ratings.animation.play("fantastic");
+				fantastics += 1;
 			} else if (rat >= ClientPrefs.sickWindow * -1){
 				ratings.animation.play("excellent Late");
+				excelents += 1;
 			}else if (rat <= ClientPrefs.sickWindow * -1 && rat >= ClientPrefs.goodWindow * -1){
 				ratings.animation.play("great Late");
+				greats += 1;
 			}else if (rat <= ClientPrefs.goodWindow * -1 && rat >= ClientPrefs.badWindow * -1){
 				ratings.animation.play("decent Late");
+				decents += 1;
 			}else if (rat <= ClientPrefs.badWindow * -1){
 				ratings.animation.play("way Off Late");
+				wayoffs += 1;
 			}
 		}
 	}
@@ -6802,10 +6910,10 @@ class PlayState extends MusicBeatState
 
 			// Rating FC
 			ratingFC = "";
-			if (sicks > 0) ratingFC = "HITMAN";
+			if (sicks > 0) ratingFC = "PFC";
 			if (goods > 0) ratingFC = "GFC";
 			if (bads > 0 || shits > 0) ratingFC = "FC";
-			if (songMisses > 0 && songMisses < 10) ratingFC = "GOOD";
+			if (songMisses > 0 && songMisses < 10) ratingFC = "GC";
 			else if (songMisses >= 10) ratingFC = "Clear";
 		}
 		updateScore(badHit); // score will only update after rating is calculated, if it's a badHit, it shouldn't bounce -Ghost
@@ -6886,4 +6994,9 @@ class PlayState extends MusicBeatState
 
 	var curLight:Int = -1;
 	var curLightEvent:Int = -1;
+
+	function roundQuantNote(num: Float, numDecimalPlaces: Int = 0): Float {
+		var mult: Float = Math.pow(10, numDecimalPlaces);
+		return Math.floor(num * mult + 0.5) / mult;
+	}
 }

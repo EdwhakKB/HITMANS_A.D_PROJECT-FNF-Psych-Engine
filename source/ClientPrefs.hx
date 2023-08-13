@@ -25,6 +25,7 @@ class ClientPrefs {
     public static var ratingStyle:Array<Dynamic> = ["", null];
     public static var memoryDisplay:Bool = true;
 	public static var noteSkin:String = 'HITMANS';
+	public static var quantization:Bool = false;
 	public static var goStyle:String = 'NEW';
 	public static var lowQuality:Bool = false;
 	public static var shaders:Bool = true;
@@ -44,6 +45,21 @@ class ClientPrefs {
 		[0xFF00FFFF, 0xFFFFFFFF, 0xFF1542B7],
 		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
 		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
+	];
+	public static var arrowRGBBackUp:Array<Array<FlxColor>> = [
+		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],
+		[0xFF00FFFF, 0xFFFFFFFF, 0xFF1542B7],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
+	];
+	public static var arrowRGBQuantize:Array<Array<FlxColor>> = [
+		[0xFFFF0000, 0xFF7F0000],
+		[0xFF800080, 0xFF400040],
+		[0xFF0000FF, 0xFF00007F],
+		[0xFF800080, 0xFF400040],
+		[0xFF00FF00, 0xFF007F00],
+		[0xFFFFC0CB, 0xFF7F6080],
+		[0xFFFFFF00, 0xFF7F7F00]
 	];
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';
@@ -136,6 +152,7 @@ class ClientPrefs {
         FlxG.save.data.countDownSounds = countDownSounds;
         FlxG.save.data.ratingStyle = ratingStyle;
 		FlxG.save.data.noteSkin = noteSkin;
+		FlxG.save.data.quantization = quantization;
 		FlxG.save.data.gameOverStyle = goStyle;
 		//FlxG.save.data.cursing = cursing;
 		//FlxG.save.data.violence = violence;
@@ -144,6 +161,7 @@ class ClientPrefs {
 		FlxG.save.data.hideHud = hideHud;
 		FlxG.save.data.arrowHSV = arrowHSV;
 		FlxG.save.data.arrowRGB = arrowRGB;
+		FlxG.save.data.arrowRGBQuantize = arrowRGBQuantize;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.timeBarType = timeBarType;
 		FlxG.save.data.scoreZoom = scoreZoom;
@@ -237,6 +255,9 @@ class ClientPrefs {
         }
 		if(FlxG.save.data.noteSkin != null) {
 			noteSkin = FlxG.save.data.noteSkin;
+		}
+		if(FlxG.save.data.quantization != null) {
+			quantization = FlxG.save.data.quantization;
 		}
 		if(FlxG.save.data.gameOverStyle != null) {
 			goStyle = FlxG.save.data.gameOverStyle;

@@ -144,17 +144,17 @@ class Note extends FlxSprite{
 		return value;
 	}
 
-	public function defaultRGB()
+	public function defaultRGB() {
+		var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+
+		if (noteData > -1 && noteData <= arr.length)
 		{
-			var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
-	
-			if (noteData > -1 && noteData <= arr.length)
-			{
-				rgbShader.r = arr[0];
-				rgbShader.g = arr[1];
-				rgbShader.b = arr[2];
-			}
+			rgbShader.r = arr[0];
+			rgbShader.g = arr[1];
+			rgbShader.b = arr[2];
 		}
+			
+	}
 
 	private function set_noteType(value:String):String {
 		defaultRGB();
@@ -195,6 +195,7 @@ class Note extends FlxSprite{
 					} else {
 						missHealth = 0.5;
 					}
+					hurtNote = true;
 					hitCausesMiss = true;
 				case 'Invisible Hurt Note':
 					usedDifferentWidth = true;
@@ -212,6 +213,7 @@ class Note extends FlxSprite{
 					} else {
 						missHealth = 0.15;
 					}
+					hurtNote = true;
 					specialHurt = true;
 					hitCausesMiss = true;
 				case 'Mimic Note':
@@ -404,6 +406,45 @@ class Note extends FlxSprite{
 
 		// trace(prevNote);
 
+		// if (ClientPrefs.quantization)
+		// {
+		// 	var quantcolord:Array<FlxColor> = [0xFFFF0000,0xFF800080,0xFF0000FF,0xFF800080,0xFF00FF00,0xFFFFC0CB,0xFFFFFF00];
+		// 	var quantcolord2:Array<FlxColor> = [0xFF7F0000,0xFF400040,0xFF00007F,0xFF400040,0xFF007F00,0xFF7F6080,0xFF7F7F00];
+
+		// 	var beat:Float = (PlayState.SONG.bpm * strumTime / 1000 / 60);
+		// 	var beatRow = round(beat * 48,0);
+		// 	if(!isSustainNote){
+		// 		if(beatRow%(192/4)==0){
+		// 			rgbShader.r = quantcolord[0];
+		// 			rgbShader.b = quantcolord2[0];
+		// 		}
+		// 		else if(beatRow%(192/8)==0){
+		// 			rgbShader.r = quantcolord[1];
+		// 			rgbShader.b = quantcolord2[1];
+		// 		}
+		// 		else if(beatRow%(192/12)==0){
+		// 			rgbShader.r = quantcolord[2];
+		// 			rgbShader.b = quantcolord2[2];
+		// 		}
+		// 		else if(beatRow%(192/16)==0){
+		// 			rgbShader.r = quantcolord[3];
+		// 			rgbShader.b = quantcolord2[3];
+		// 		}
+		// 		else if(beatRow%(192/24)==0){
+		// 			rgbShader.r = quantcolord[4];
+		// 			rgbShader.b = quantcolord2[4];
+		// 		}
+		// 		else if(beatRow%(192/32)==0){
+		// 			rgbShader.r = quantcolord[6];
+		// 			rgbShader.b = quantcolord2[6];
+		// 		}
+		// 	}else{
+		// 		rgbShader.r = prevNote.rgbShader.r;
+		// 		rgbShader.b = prevNote.rgbShader.b;  
+		// 	}
+		// }
+		// doNoteQuant(strumTime);
+
 		if(prevNote!=null)
 			prevNote.nextNote = this;
 
@@ -453,6 +494,50 @@ class Note extends FlxSprite{
 			earlyHitMult = 1;
 		}
 		x += offsetX;
+	}
+
+	// public function doNoteQuant(targetTime:Float){
+	// 	// var strumTimeCorrection:Float = strumTime-timeOffset - ClientPrefs.noteOffset; //stolen from inhuman LMAO
+	// 	// var beat:Float = (strumTimeCorrection % Conductor.crochet) / Conductor.crochet; //Quant goes BRRRR bro -Ed
+	// 	var quantcolord:Array<FlxColor> = [0xFFFF0000,0xFF800080,0xFF0000FF,0xFF800080,0xFF00FF00,0xFFFFC0CB,0xFFFFFF00];
+	// 	var quantcolord2:Array<FlxColor> = [0xFF7F0000,0xFF400040,0xFF00007F,0xFF400040,0xFF007F00,0xFF7F6080,0xFF7F7F00];
+
+	// 	var beat:Float = (PlayState.SONG.bpm * targetTime / 1000 / 60);
+	// 	var beatRow = round(beat * 48,0);
+	// 	if(!isSustainNote){
+	// 		if(beatRow%(192/4)==0){
+	// 			rgbShader.r = quantcolord[0];
+	// 			rgbShader.b = quantcolord2[0];
+	// 		}
+	// 		else if(beatRow%(192/8)==0){
+	// 			rgbShader.r = quantcolord[1];
+	// 			rgbShader.b = quantcolord2[1];
+	// 		}
+	// 		else if(beatRow%(192/12)==0){
+	// 			rgbShader.r = quantcolord[2];
+	// 			rgbShader.b = quantcolord2[2];
+	// 		}
+	// 		else if(beatRow%(192/16)==0){
+	// 			rgbShader.r = quantcolord[3];
+	// 			rgbShader.b = quantcolord2[3];
+	// 		}
+	// 		else if(beatRow%(192/24)==0){
+	// 			rgbShader.r = quantcolord[4];
+	// 			rgbShader.b = quantcolord2[4];
+	// 		}
+	// 		else if(beatRow%(192/32)==0){
+	// 			rgbShader.r = quantcolord[6];
+	// 			rgbShader.b = quantcolord2[6];
+	// 		}
+	// 	}else{
+	// 		rgbShader.r = prevNote.rgbShader.r;
+	// 		rgbShader.b = prevNote.rgbShader.b;  
+	// 	}
+	// }
+
+	function round(num: Float, numDecimalPlaces: Int = 0): Float {
+		var mult: Float = Math.pow(10, numDecimalPlaces);
+		return Math.floor(num * mult + 0.5) / mult;
 	}
 
 	public static function initializeGlobalRGBShader(noteData:Int)

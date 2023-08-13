@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <TextureAtlas imagePath="shit.png">
-<SubTexture name="blue0000" x="0" y="0" width="472" height="438" frameX="-3" frameY="-4" frameWidth="478" frameHeight="446" />
-<SubTexture name="green0000" x="0" y="0" width="472" height="438" frameX="-3" frameY="-4" frameWidth="478" frameHeight="446" />
-<SubTexture name="purple0000" x="0" y="0" width="472" height="438" frameX="-3" frameY="-4" frameWidth="478" frameHeight="446" />
-<SubTexture name="red0000" x="0" y="0" width="472" height="438" frameX="-3" frameY="-4" frameWidth="478" frameHeight="446" />
+<SubTexture name="blue0000" x="0" y="0" width="180" height="180" frameX="10" frameY="5" frameWidth="180" frameHeight="180" />
+<SubTexture name="green0000" x="0" y="0" width="180" height="180" frameX="10" frameY="5" frameWidth="180" frameHeight="180" />
+<SubTexture name="purple0000" x="0" y="0" width="180" height="180" frameX="10" frameY="5" frameWidth="180" frameHeight="180" />
+<SubTexture name="red0000" x="0" y="0" width="180" height="180" frameX="10" frameY="5" frameWidth="180" frameHeight="180" />
 </TextureAtlas>

@@ -12,29 +12,39 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+#if desktop
+import Discord.DiscordClient;
+#end
 
 using StringTools;
 
 class ResultScreen extends FlxSpriteGroup
 {
 	var bgFade:FlxSprite;
-	var background:FlxBackdrop;
+	// var background:FlxBackdrop;
+	var background:FlxSprite;
 	var topUp:FlxSprite;
 	var topDown:FlxSprite;
 	var numbers:FlxText;
+
 	var song:FlxText;
+
 	var newBest:FlxText;
 	var acctxt:FlxText;
 	var comtxt:FlxText;
-	var sicktxt:FlxText;
-	var goodtxt:FlxText;
-	var badtxt:FlxText;
-	var shittxt:FlxText;
+
+	var fantastictxt:FlxText;
+	var excelenttxt:FlxText;
+	var greattxt:FlxText;
+	var wayofftxt:FlxText;
+	var decenttxt:FlxText;
 	var misstxt:FlxText;
-	var wrongtxt:FlxText;
+
 	var rating:FlxSprite;
 
 	var ranking:FlxText;
+
+	var panel:FlxSprite;
 
 	var lerpscore:Int = 0;
 	var lerpacc:Float = 0;
@@ -56,7 +66,7 @@ class ResultScreen extends FlxSpriteGroup
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
-	public function new(score:Int, oldBest:Int, maxc:Int, acc:Float, sicks:Int, goods:Int, bads:Int, shits:Int, misses:Int)
+	public function new(score:Int, oldBest:Int, maxc:Int, acc:Float, fantastic:Int, excelent:Int, great:Int, decent:Int, wayoff:Int, miss:Int)
 	{
 		super();
 
@@ -65,40 +75,52 @@ class ResultScreen extends FlxSpriteGroup
 		dacom = maxc;
 		daBest = oldBest;
 
-		background = new FlxBackdrop(Paths.getPath('images/rating/background.png', IMAGE),XY, 0,0);
-		background.velocity.set(100, 50);
+		// background = new FlxBackdrop(Paths.getPath('images/rating/background.png', IMAGE),XY, 0,0);
+		// background.velocity.set(100, 50);
+		// background.alpha = 1;
+		// add(background);
+
+		background = new FlxSprite(0,0).loadGraphic(Paths.getPath('images/rating/wallPaper.png', IMAGE));
 		background.alpha = 1;
 		add(background);
+
+		panel = new FlxSprite(30, 160).loadGraphic(Paths.getPath('images/Edwhak/Hitmans/gameOver/DeathPanel.png', IMAGE));
+        panel.scale.y = 1;
+        panel.scale.x = 1;
+        panel.antialiasing = ClientPrefs.globalAntialiasing;
+        add(panel);
 
 		bgFade = new FlxSprite(-200, -200).makeGraphic(Std.int(FlxG.width * 1.3), Std.int(FlxG.height * 1.3), 0xFF000000);
 		bgFade.scrollFactor.set();
 		bgFade.alpha = 0.7;
 		add(bgFade);
 
-		topDown = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-down.png', IMAGE));
-		topDown.scrollFactor.set();
-		topDown.alpha = 1;
-		add(topDown);
+		// topDown = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-down.png', IMAGE));
+		// topDown.scrollFactor.set();
+		// topDown.alpha = 1;
+		// add(topDown);
 
-		topUp = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-up.png', IMAGE));
-		topUp.scrollFactor.set();
-		topUp.alpha = 1;
-		add(topUp);
+		// topUp = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-up.png', IMAGE));
+		// topUp.scrollFactor.set();
+		// topUp.alpha = 1;
+		// add(topUp);
 
-		numbers = new FlxText(850, 80, Std.int(FlxG.width * 0.6), "0", 120);
+		numbers = new FlxText(310, 210, Std.int(FlxG.width * 0.6), "0", 80);
 		numbers.font = "Assassin Nation Regular";
 		numbers.color = 0xffff0000;
 		numbers.alpha = 0;
 		add(numbers);
 
-		newBest = new FlxText(850, 195, Std.int(FlxG.width * 0.6), "0", 30);
+		newBest = new FlxText(340, 290, Std.int(FlxG.width * 0.6), "0", 30);
 		newBest.font = "Assassin Nation Regular";
 		newBest.color = 0xffff0000;
 		newBest.alpha = 0;
 		add(newBest);
 
-		song = new FlxText(50, 70, Std.int(FlxG.width * 0.6),PlayState.SONG.song, 88);
-		song.font = "Assassin Nation Regular";
+		song = new FlxText(0, 50, Std.int(FlxG.width * 0.6),"", 88);
+		song.setFormat(Paths.font("DEADLY KILLERS.ttf"), 88, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		song.screenCenter(X);
+        song.borderSize = 2;
 		song.alpha = 0;
 		add(song);
 
@@ -107,13 +129,13 @@ class ResultScreen extends FlxSpriteGroup
 		ranking.alpha = 0;
 		add(ranking);
 
-		acctxt = new FlxText(550, 225, Std.int(FlxG.width * 0.6), "Accuracy: 0%", 50);
+		acctxt = new FlxText(70, 500, Std.int(FlxG.width * 0.6), "Accuracy: 0%", 50);
 		acctxt.font = "Assassin Nation Regular";
 		
 		acctxt.alpha = 0;
 		add(acctxt);
 
-		comtxt = new FlxText(550, 315, Std.int(FlxG.width * 0.6), "Max Combo: 0", 60);
+		comtxt = new FlxText(70, 540, Std.int(FlxG.width * 0.6), "Max Combo: 0", 60);
 		comtxt.font = "Assassin Nation Regular";
 
 		comtxt.alpha = 0;
@@ -124,9 +146,9 @@ class ResultScreen extends FlxSpriteGroup
 		hasModchart.alpha = 0;
 		add(hasModchart);
 
-		rating = new FlxSprite(972.1,435.2);
+		rating = new FlxSprite(340,250);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
-		rating.animation.addByPrefix('PERFECT', 'Rating-H', 24, true);
+		rating.animation.addByPrefix('fantastic', 'Rating-H', 24, true);
 		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
 		rating.animation.addByPrefix('A', 'Rating-A', 24, true);
 		rating.animation.addByPrefix('B', 'Rating-B', 24, true);
@@ -139,24 +161,34 @@ class ResultScreen extends FlxSpriteGroup
 		rating.scrollFactor.set();
 		add(rating);
 
-		sicktxt = new FlxText(10, 220, Std.int(FlxG.width * 0.6), "PERFECTS AND EXELENTS: " + sicks, 30);
-		sicktxt.font = "Assassin Nation Regular";
-		sicktxt.autoSize = false;
-		sicktxt.alpha = 0;
-		add(sicktxt);
-		goodtxt = new FlxText(10, 260, Std.int(FlxG.width * 0.6), "GOODS: " + goods, 30);
-		goodtxt.font = "Assassin Nation Regular";
-		goodtxt.alpha = 0;
-		add(goodtxt);
-		badtxt = new FlxText(10, 300, Std.int(FlxG.width * 0.6), "DECENTS: " + bads, 30);
-		badtxt.font = "Assassin Nation Regular";
-		badtxt.alpha = 0;
-		add(badtxt);
-		shittxt = new FlxText(10, 370, Std.int(FlxG.width * 0.6), "WAYS OFFS: " + shits, 30);
-		shittxt.font = "Assassin Nation Regular";
-		shittxt.alpha = 0;
-		add(shittxt);
-		misstxt = new FlxText(10, 440, Std.int(FlxG.width * 0.6), "MISSES: " + misses, 30);
+		fantastictxt = new FlxText(70, 220, Std.int(FlxG.width * 0.6), "FANTASTIC: " + fantastic, 30);
+		fantastictxt.font = "Assassin Nation Regular";
+		fantastictxt.autoSize = false;
+		fantastictxt.alpha = 0;
+		add(fantastictxt);
+
+		excelenttxt = new FlxText(70, 260, Std.int(FlxG.width * 0.6), "EXCELENTS: " + excelent, 30);
+		excelenttxt.font = "Assassin Nation Regular";
+		excelenttxt.autoSize = false;
+		excelenttxt.alpha = 0;
+		add(excelenttxt);
+
+		greattxt = new FlxText(70, 300, Std.int(FlxG.width * 0.6), "GREATS: " + great, 30);
+		greattxt.font = "Assassin Nation Regular";
+		greattxt.alpha = 0;
+		add(greattxt);
+
+		wayofftxt = new FlxText(70, 340, Std.int(FlxG.width * 0.6), "DECENTS: " + decent, 30);
+		wayofftxt.font = "Assassin Nation Regular";
+		wayofftxt.alpha = 0;
+		add(wayofftxt);
+
+		decenttxt = new FlxText(70, 380, Std.int(FlxG.width * 0.6), "WAYS OFFS: " + wayoff, 30);
+		decenttxt.font = "Assassin Nation Regular";
+		decenttxt.alpha = 0;
+		add(decenttxt);
+
+		misstxt = new FlxText(70, 420, Std.int(FlxG.width * 0.6), "MISSES: " + miss, 30);
 		misstxt.font = "Assassin Nation Regular";
 		misstxt.alpha = 0;
 		add(misstxt);
@@ -169,9 +201,10 @@ class ResultScreen extends FlxSpriteGroup
 
 	override function update(elapsed:Float)
 	{
-		lerpscore = Math.round(FlxMath.lerp(lerpscore, dascore, 0.2));
-		lerpacc = Math.round(FlxMath.lerp(lerpacc, daacc, 0.2) * 100) / 100;
-		lerpcom = Math.round(FlxMath.lerp(lerpcom, Math.abs(dacom), 0.2));
+
+		lerpscore = Math.round(FlxMath.lerp(lerpscore, dascore, 0.5));
+		lerpacc = Math.round(FlxMath.lerp(lerpacc, daacc, 1) * 100) / 100;
+		lerpcom = Math.round(FlxMath.lerp(lerpcom, Math.abs(dacom), 1.5));
 		if (Math.abs(lerpscore - dascore) < 5)
 		{
 			lerpscore = dascore;
@@ -192,7 +225,7 @@ class ResultScreen extends FlxSpriteGroup
 			comtxt.text += "(FULL COMBO!)";
 			comtxt.color = 0xFFffff00;
 		}
-
+		song.text = PlayState.SONG.song;
 		numbers.alpha += 0.1;
 		acctxt.alpha += 0.1;
 		comtxt.alpha += 0.1;
@@ -206,7 +239,7 @@ class ResultScreen extends FlxSpriteGroup
 			if (rating.animation.curAnim == null)
 			{
 				if (daacc == 100)
-					rating.animation.play("PERFECT");
+					rating.animation.play("fantastic");
 				else if (daacc >= 95)
 					rating.animation.play("S");
 				else if (daacc >= 90)
@@ -244,10 +277,11 @@ class ResultScreen extends FlxSpriteGroup
 				else if (daacc <= 1)
 						ranking.text = "ranking: BOTPLAY";
 				
-			sicktxt.alpha += 0.05;
-			goodtxt.alpha += 0.05;
-			badtxt.alpha += 0.05;
-			shittxt.alpha += 0.05;
+			fantastictxt.alpha += 0.05;
+			excelenttxt.alpha += 0.05;
+			greattxt.alpha += 0.05;
+			wayofftxt.alpha += 0.05;
+			decenttxt.alpha += 0.05;
 			misstxt.alpha += 0.05;
 			if ((controls.ACCEPT || controls.BACK) && !ended)
 			{
