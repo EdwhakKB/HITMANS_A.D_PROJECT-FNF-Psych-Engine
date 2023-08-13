@@ -146,7 +146,7 @@ class ResultScreen extends FlxSpriteGroup
 		hasModchart.alpha = 0;
 		add(hasModchart);
 
-		rating = new FlxSprite(340,250);
+		rating = new FlxSprite(440,350);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
 		rating.animation.addByPrefix('fantastic', 'Rating-H', 24, true);
 		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
