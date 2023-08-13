@@ -295,7 +295,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
         // new FlxTimer().start(1, function(tmr:FlxTimer){
         //     FlxTween.tween(offEffect, {alpha: 0}, 1, {ease:FlxEase.smoothStepIn});
         // });
-		Conductor.changeBPM(115);
+		Conductor.bpm = 115.0;
 
 		new FlxTimer().start(3, function(tmr:FlxTimer)
 		{
