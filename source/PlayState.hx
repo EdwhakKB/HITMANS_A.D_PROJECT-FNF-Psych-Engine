@@ -539,8 +539,9 @@ class PlayState extends MusicBeatState
 
 	//quant stuff
 	var beat:Float = 0;
-	var quantcolord:Array<FlxColor> = [0xFFFF0000,0xFF0000FF,0xFF800080,0xFFFFFF00,0xFFFF00FF,0xFFFF7300,0xFF00FFDD,0xFF00FF00];
-	var quantcolord2:Array<FlxColor> = [0xFF7F0000,0xFF00007F,0xFF400040,0xFF7F7F00,0xFF8A018A,0xFF883D00,0xFF008573,0xFF007F00];
+	var dataStuff:Float = 0;
+	var quantcolord:Array<FlxColor> = ClientPrefs.arrowRQuantize;
+	var quantcolord2:Array<FlxColor> = ClientPrefs.arrowBQuantize;
 	var col:Int = 0xFFFFD700;
 	var col2:Int = 0xFFFFD700;
 
@@ -820,12 +821,12 @@ class PlayState extends MusicBeatState
 		if(stageData == null) { //Stage couldn't be found, create a dummy stage for preventing a crash
 			stageData = {
 				directory: "",
-				defaultZoom: 0.9,
+				defaultZoom: 0.8125,
 				isPixelStage: false,
 
-				boyfriend: [770, 100],
-				girlfriend: [400, 130],
-				opponent: [100, 100],
+				boyfriend: [875, 403],
+				girlfriend: [820, 355],
+				opponent: [628, 403],
 				hide_girlfriend: false,
 
 				camera_boyfriend: [0, 0],
@@ -833,6 +834,10 @@ class PlayState extends MusicBeatState
 				camera_girlfriend: [0, 0],
 				camera_speed: 1
 			};
+			var bg:BGSprite = new BGSprite('DefaultBackGround', -605, -150, 0.5, 0.5);
+			bg.scale.x = 0.7;
+			bg.scale.y = 0.7;
+			add(bg);
 		}
 
 		defaultCamZoom = stageData.defaultZoom;
@@ -1948,39 +1953,40 @@ class PlayState extends MusicBeatState
 	{
 		for (note in unspawnNotes) {
 			if (note.rgbShader.enabled && !note.hurtNote){
-			beat = roundQuantNote(SONG.bpm * note.strumTime / 1000 / 60 * 48,0);
+			dataStuff = (SONG.bpm * note.strumTime) / 1000 / 60;
+			beat = Math.round(dataStuff * 48);
 				if (!note.isSustainNote){
 				if(beat%(192/4)==0){
-					col = quantcolord[0];
-					col2 = quantcolord2[0];
+					col = ClientPrefs.arrowRQuantize[0];
+					col2 = ClientPrefs.arrowBQuantize[0];
 				}
 				else if(beat%(192/6)==0){
-					col = quantcolord[1];
-					col2 = quantcolord2[1];
+					col = ClientPrefs.arrowRQuantize[1];
+					col2 = ClientPrefs.arrowBQuantize[1];
 				}
 				else if(beat%(192/8)==0){
-					col = quantcolord[2];
-					col2 = quantcolord2[2];
+					col = ClientPrefs.arrowRQuantize[2];
+					col2 = ClientPrefs.arrowBQuantize[2];
 				}
 				else if(beat%(192/12)==0){
-					col = quantcolord[3];
-					col2 = quantcolord2[3];
+					col = ClientPrefs.arrowRQuantize[3];
+					col2 = ClientPrefs.arrowBQuantize[3];
 				}
 				else if(beat%(192/16)==0){
-					col = quantcolord[4];
-					col2 = quantcolord2[4];
+					col = ClientPrefs.arrowRQuantize[4];
+					col2 = ClientPrefs.arrowBQuantize[4];
 				}
 				else if(beat%(192/24)==0){
-					col = quantcolord[5];
-					col2 = quantcolord2[5];
+					col = ClientPrefs.arrowRQuantize[5];
+					col2 = ClientPrefs.arrowBQuantize[5];
 				}
 				else if(beat%(192/32)==0){
-					col = quantcolord[6];
-					col2 = quantcolord2[6];
+					col = ClientPrefs.arrowRQuantize[6];
+					col2 = ClientPrefs.arrowBQuantize[6];
 				}
 				else{
-					col = quantcolord[7];
-					col2 = quantcolord2[7];
+					col = ClientPrefs.arrowRQuantize[7];
+					col2 = ClientPrefs.arrowBQuantize[7];
 				}
 				note.rgbShader.r = col;
 				note.rgbShader.b = col2;

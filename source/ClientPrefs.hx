@@ -52,14 +52,25 @@ class ClientPrefs {
 		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
 		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
 	];
-	public static var arrowRGBQuantize:Array<Array<FlxColor>> = [
-		[0xFFFF0000, 0xFF7F0000],
-		[0xFF800080, 0xFF400040],
-		[0xFF0000FF, 0xFF00007F],
-		[0xFF800080, 0xFF400040],
-		[0xFF00FF00, 0xFF007F00],
-		[0xFFFFC0CB, 0xFF7F6080],
-		[0xFFFFFF00, 0xFF7F7F00]
+	public static var arrowRQuantize:Array<FlxColor> = [
+		0xFFFF0000,0xFF0000FF,0xFF800080,0xFFFFFF00,
+		0xFFFF00FF,0xFFFF7300,0xFF00FFDD,0xFF00FF00
+	];
+	public static var arrowBQuantize:Array<FlxColor> = [
+		0xFF7F0000,0xFF00007F,0xFF400040,0xFF7F7F00,
+		0xFF8A018A,0xFF883D00,0xFF008573,0xFF007F00
+	];
+	public static var hurtRGB:Array<Array<FlxColor>> = [
+		[0xFF101010, 0xFFFF0000, 0xFF990022],
+		[0xFF101010, 0xFFFF0000, 0xFF990022],
+		[0xFF101010, 0xFFFF0000, 0xFF990022],
+		[0xFF101010, 0xFFFF0000, 0xFF990022]
+	];
+	public static var hurtRGBBackUp:Array<Array<FlxColor>> = [
+		[0xFF101010, 0xFFFF0000, 0xFF990022],
+		[0xFF101010, 0xFFFF0000, 0xFF990022],
+		[0xFF101010, 0xFFFF0000, 0xFF990022],
+		[0xFF101010, 0xFFFF0000, 0xFF990022]
 	];
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';
@@ -161,7 +172,9 @@ class ClientPrefs {
 		FlxG.save.data.hideHud = hideHud;
 		FlxG.save.data.arrowHSV = arrowHSV;
 		FlxG.save.data.arrowRGB = arrowRGB;
-		FlxG.save.data.arrowRGBQuantize = arrowRGBQuantize;
+		FlxG.save.data.arrowRQuantize = arrowRQuantize;
+		FlxG.save.data.arrowBQuantize = arrowBQuantize;
+		FlxG.save.data.hurtRGB = hurtRGB;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.timeBarType = timeBarType;
 		FlxG.save.data.scoreZoom = scoreZoom;
@@ -280,8 +293,17 @@ class ClientPrefs {
 		if(FlxG.save.data.arrowHSV != null) {
 			arrowHSV = FlxG.save.data.arrowHSV;
 		}
-		if(FlxG.save.data.arrowHSV != null) {
+		if(FlxG.save.data.arrowRGB != null) {
 			arrowRGB = FlxG.save.data.arrowRGB;
+		}
+		if(FlxG.save.data.arrowRQuantize != null) {
+			arrowRQuantize = FlxG.save.data.arrowRQuantize;
+		}
+		if(FlxG.save.data.arrowBQuantize != null) {
+			arrowBQuantize = FlxG.save.data.arrowBQuantize;
+		}
+		if(FlxG.save.data.hurtRGB != null) {
+			hurtRGB = FlxG.save.data.hurtRGB;
 		}
 		if(FlxG.save.data.ghostTapping != null) {
 			ghostTapping = FlxG.save.data.ghostTapping;
@@ -352,7 +374,7 @@ class ClientPrefs {
 		{
 			comboStacking = FlxG.save.data.comboStacking;
 		}
-		if (FlxG.save.data.comboStacking != null)
+		if (FlxG.save.data.discordRPC != null)
 		{
 			discordRPC = FlxG.save.data.discordRPC;
 		}

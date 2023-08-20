@@ -54,8 +54,6 @@ class NotesSubState extends MusicBeatSubstate
 	var notesBG:FlxSprite;
 
 	// controller support
-	var controllerPointer:FlxSprite;
-	var _lastControllerMode:Bool = false;
 	var tipTxt:FlxText;
 
 	//skins stuff lol
@@ -66,6 +64,14 @@ class NotesSubState extends MusicBeatSubstate
 	var rightArrow:FlxSprite;
 
 	var noteSkinInt:Int = 0;
+
+	//Suport for HurtNote, Quant notes and others!
+	var quantcolord:Array<FlxColor> = [0xFFFF0000,0xFF0000FF,0xFF800080,0xFFFFFF00,0xFFFF00FF,0xFFFF7300,0xFF00FFDD,0xFF00FF00];
+	var quantcolord2:Array<FlxColor> = [0xFF7F0000,0xFF00007F,0xFF400040,0xFF7F7F00,0xFF8A018A,0xFF883D00,0xFF008573,0xFF007F00];
+	var currentMode:Array<String> = ['Notes', 'Quantize', 'Hurts', 'Misc']; //misc means more (basically mineNote skin, hurt mode [clone, skin], allow quantize)
+	var onHurtMode:Bool = false;
+	var modeNumberVal:Int = 0;
+	var isOnMode:Int = 0;
 
 	public function new() {
 		super();
@@ -222,16 +228,8 @@ class NotesSubState extends MusicBeatSubstate
 		tipTxt.borderSize = 2;
 		add(tipTxt);
 		updateTip();
-
-		controllerPointer = new FlxShapeCircle(0, 0, 20, {thickness: 0}, FlxColor.WHITE);
-		controllerPointer.offset.set(20, 20);
-		controllerPointer.screenCenter();
-		controllerPointer.alpha = 0.6;
-		add(controllerPointer);
 		
 		FlxG.mouse.visible = true;
-		controllerPointer.visible = true;
-		_lastControllerMode = false;
 	}
 
 	function updateTip()
@@ -320,6 +318,7 @@ class NotesSubState extends MusicBeatSubstate
 
 		if(FlxG.keys.justPressed.CONTROL)
 		{
+			onHurtMode = !onHurtMode;
 			spawnNotes();
 			updateNotes(true);
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -463,6 +462,7 @@ class NotesSubState extends MusicBeatSubstate
 			}
 			else if (pointerOverlaps(skinNote))
 			{
+				onHurtMode = !onHurtMode;
 				spawnNotes();
 				updateNotes(true);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -524,7 +524,8 @@ class NotesSubState extends MusicBeatSubstate
 				for (i in 0...3)
 				{
 					var strumRGB:RGBShaderReference = myNotes.members[curSelectedNote].rgbShader;
-					var color:FlxColor = ClientPrefs.arrowRGBBackUp[curSelectedNote][i];
+					var color:FlxColor = !onHurtMode ? ClientPrefs.arrowRGBBackUp[curSelectedNote][i] : 
+													   			ClientPrefs.hurtRGBBackUp[curSelectedNote][i];
 					switch(i)
 					{
 						case 0:
@@ -537,7 +538,7 @@ class NotesSubState extends MusicBeatSubstate
 					dataArray[curSelectedNote][i] = color;
 				}
 			}
-			setShaderColor(ClientPrefs.arrowRGB[curSelectedNote][curSelectedMode]);
+			setShaderColor(!onHurtMode? ClientPrefs.arrowRGB[curSelectedNote][curSelectedMode] : ClientPrefs.hurtRGB[curSelectedNote][curSelectedMode]);
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.6);
 			updateColors();
 		}
@@ -590,6 +591,7 @@ class NotesSubState extends MusicBeatSubstate
 		updateNotes();
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
+
 	function changeSelectionNote(change:Int = 0) {
 		curSelectedNote += change;
 		if (curSelectedNote < 0)
@@ -627,6 +629,16 @@ class NotesSubState extends MusicBeatSubstate
 		skinIndicator.text = skins[curNum];
 	}
 
+	function onChangeMode(?val:Int = 0){
+		modeNumberVal += val; //So it does a "change" lmao, i still need get some variables such as grab the current skin and load a number -Ed
+
+		if (modeNumberVal < 0)
+			modeNumberVal = currentMode.length - 1;
+		if (modeNumberVal >= currentMode.length)
+			modeNumberVal = 0;
+		isOnMode = modeNumberVal;
+	}
+	
 	// notes sprites functions
 	var skinNote:FlxSprite;
 	var modeNotes:FlxTypedGroup<FlxSprite>;
@@ -634,7 +646,7 @@ class NotesSubState extends MusicBeatSubstate
 	var bigNote:Note;
 	public function spawnNotes()
 	{
-		dataArray = ClientPrefs.arrowRGB;
+		dataArray = !onHurtMode ? ClientPrefs.arrowRGB : ClientPrefs.hurtRGB;
 
 		// clear groups
 		modeNotes.forEachAlive(function(note:FlxSprite) {
@@ -662,7 +674,7 @@ class NotesSubState extends MusicBeatSubstate
 		// respawn stuff
 
 		var res:Int = 160;
-		skinNote = new FlxSprite(48, 24).loadGraphic(Paths.image('noteColorMenu/' + 'note'), true, res, res);
+		skinNote = new FlxSprite(48, 24).loadGraphic(Paths.image('noteColorMenu/' + (!onHurtMode ? 'note' : 'hurtNote')), true, res, res);
 		skinNote.antialiasing = ClientPrefs.globalAntialiasing;
 		skinNote.setGraphicSize(68);
 		skinNote.updateHitbox();
@@ -674,7 +686,7 @@ class NotesSubState extends MusicBeatSubstate
 		var res:Int = 160;
 		for (i in 0...3)
 		{
-			var newNote:FlxSprite = new FlxSprite(230 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/' + 'note'), true, res, res);
+			var newNote:FlxSprite = new FlxSprite(230 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/' + (!onHurtMode ? 'note' : 'hurtNote')), true, res, res);
 			newNote.antialiasing = ClientPrefs.globalAntialiasing;
 			newNote.setGraphicSize(85);
 			newNote.updateHitbox();
@@ -704,7 +716,8 @@ class NotesSubState extends MusicBeatSubstate
 		bigNote.shader = Note.globalRgbShaders[curSelectedNote].shader;
 		for (i in 0...Note.colArray.length)
 		{
-			bigNote.animation.addByPrefix('note$i', Note.colArray[i] + '0', 24, true);
+			if(!onHurtMode) bigNote.animation.addByPrefix('note$i', Note.colArray[i] + '0', 24, true);
+			else bigNote.animation.addByPrefix('note$i', Note.colArray[i] + '0', 24, true);
 		}
 		insert(members.indexOf(myNotes) + 1, bigNote);
 		_storedColor = getShaderColor();

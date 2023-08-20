@@ -156,6 +156,18 @@ class Note extends FlxSprite{
 			
 	}
 
+	public function defaultRGBHurt() {
+		var arrHurt:Array<FlxColor> = ClientPrefs.hurtRGB[noteData];
+
+		if (noteData > -1 && noteData <= arrHurt.length)
+		{
+			rgbShader.r = arrHurt[0];
+			rgbShader.g = arrHurt[1];
+			rgbShader.b = arrHurt[2];
+		}
+			
+	}
+
 	private function set_noteType(value:String):String {
 		defaultRGB();
 
@@ -164,10 +176,7 @@ class Note extends FlxSprite{
 				case 'Hurt Note':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-
-					rgbShader.r = 0xFF101010;
-					rgbShader.g = 0xFFFF0000;
-					rgbShader.b = 0xFF990022;
+					defaultRGBHurt();
 
 					copyAlpha=false;
 					alpha=0.55; //not fully invisible but yeah
@@ -183,10 +192,7 @@ class Note extends FlxSprite{
 				case 'HurtAgressive':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-
-					rgbShader.r = 0xFF101010;
-					rgbShader.g = 0xFFA80000;
-					rgbShader.b = 0xFFFF0000;
+					defaultRGBHurt();
 
 					lowPriority = true;
 	

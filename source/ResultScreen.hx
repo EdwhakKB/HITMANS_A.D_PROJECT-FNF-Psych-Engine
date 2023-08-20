@@ -1,5 +1,6 @@
 package;
 
+import openfl.ui.Keyboard;
 import flixel.addons.display.FlxBackdrop;
 import flixel.util.FlxSave;
 import flixel.FlxG;
@@ -7,11 +8,15 @@ import flixel.FlxSprite;
 import flixel.addons.text.FlxTypeText;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxSpriteGroup;
+import flixel.FlxSubState;
 import flixel.input.FlxKeyManager;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import haxe.ds.StringMap;
+import flixel.system.FlxSound;
+import Controls.Control;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -21,7 +26,6 @@ using StringTools;
 class ResultScreen extends FlxSpriteGroup
 {
 	var bgFade:FlxSprite;
-	// var background:FlxBackdrop;
 	var background:FlxSprite;
 	var topUp:FlxSprite;
 	var topDown:FlxSprite;
@@ -29,9 +33,25 @@ class ResultScreen extends FlxSpriteGroup
 
 	var song:FlxText;
 
+	public static var rsNoteData = new StringMap();
+
+	var ratingColours = {
+		perfect: 0xFF00CCFF,
+		excelent: 0xFFFFE600,
+		great: 0xFF00B400,
+		decent: 0xFF8C00FF,
+		wayoff: 0xFFFF4800,
+		miss: 0xFFFF0000
+	}
+
+	public static var noteId:Int = -1;
+
 	var newBest:FlxText;
 	var acctxt:FlxText;
 	var comtxt:FlxText;
+
+	var hitGraphBG:FlxSprite;
+	var music:FlxSound;
 
 	var fantastictxt:FlxText;
 	var excelenttxt:FlxText;
@@ -55,16 +75,11 @@ class ResultScreen extends FlxSpriteGroup
 	var dacom:Int;
 	var daBest:Int;
 
-	var hasModchart:FlxText;
+	var noModchart:FlxSprite;
 
 	var ended:Bool = false;
 
 	public var end:Void->Void;
-
-	private var controls(get, never):Controls;
-
-	inline function get_controls():Controls
-		return PlayerSettings.player1.controls;
 
 	public function new(score:Int, oldBest:Int, maxc:Int, acc:Float, fantastic:Int, excelent:Int, great:Int, decent:Int, wayoff:Int, miss:Int)
 	{
@@ -74,11 +89,6 @@ class ResultScreen extends FlxSpriteGroup
 		daacc = acc;
 		dacom = maxc;
 		daBest = oldBest;
-
-		// background = new FlxBackdrop(Paths.getPath('images/rating/background.png', IMAGE),XY, 0,0);
-		// background.velocity.set(100, 50);
-		// background.alpha = 1;
-		// add(background);
 
 		background = new FlxSprite(0,0).loadGraphic(Paths.getPath('images/rating/wallPaper.png', IMAGE));
 		background.alpha = 1;
@@ -95,23 +105,13 @@ class ResultScreen extends FlxSpriteGroup
 		bgFade.alpha = 0.7;
 		add(bgFade);
 
-		// topDown = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-down.png', IMAGE));
-		// topDown.scrollFactor.set();
-		// topDown.alpha = 1;
-		// add(topDown);
-
-		// topUp = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/rating/results-up.png', IMAGE));
-		// topUp.scrollFactor.set();
-		// topUp.alpha = 1;
-		// add(topUp);
-
-		numbers = new FlxText(310, 210, Std.int(FlxG.width * 0.6), "0", 80);
+		numbers = new FlxText(390, 210, Std.int(FlxG.width * 0.6), "0", 80);
 		numbers.font = "Assassin Nation Regular";
 		numbers.color = 0xffff0000;
 		numbers.alpha = 0;
 		add(numbers);
 
-		newBest = new FlxText(340, 290, Std.int(FlxG.width * 0.6), "0", 30);
+		newBest = new FlxText(390, 290, Std.int(FlxG.width * 0.6), "0", 30);
 		newBest.font = "Assassin Nation Regular";
 		newBest.color = 0xffff0000;
 		newBest.alpha = 0;
@@ -120,16 +120,16 @@ class ResultScreen extends FlxSpriteGroup
 		song = new FlxText(0, 50, Std.int(FlxG.width * 0.6),"", 88);
 		song.setFormat(Paths.font("DEADLY KILLERS.ttf"), 88, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		song.screenCenter(X);
-        song.borderSize = 2;
+        song.borderSize = 4;
 		song.alpha = 0;
 		add(song);
 
-		ranking = new FlxText(20, FlxG.height - 90, Std.int(FlxG.width * 0.6),"Rank ", 40);
+		ranking = new FlxText(450, 550, Std.int(FlxG.width * 0.6),"Rank ", 40);
 		ranking.font = "Assassin Nation Regular";
 		ranking.alpha = 0;
 		add(ranking);
 
-		acctxt = new FlxText(70, 500, Std.int(FlxG.width * 0.6), "Accuracy: 0%", 50);
+		acctxt = new FlxText(70, 480, Std.int(FlxG.width * 0.6), "Accuracy: 0%", 50);
 		acctxt.font = "Assassin Nation Regular";
 		
 		acctxt.alpha = 0;
@@ -141,12 +141,14 @@ class ResultScreen extends FlxSpriteGroup
 		comtxt.alpha = 0;
 		add(comtxt);
 
-		hasModchart = new FlxText(772.1,435.2, Std.int(FlxG.width * 0.6),"MODCHART DISABLED", 34);
-		hasModchart.font = "Assassin Nation Regular";
-		hasModchart.alpha = 0;
-		add(hasModchart);
+		noModchart = new FlxText(650,330).loadGraphic(Paths.getPath('images/rating/noModchart.png', IMAGE));
+		noModchart.scale.x = 0.5;
+		noModchart.scale.y = 0.5;
+		noModchart.updateHitbox();
+		noModchart.alpha = 0;
+		add(noModchart);
 
-		rating = new FlxSprite(440,350);
+		rating = new FlxSprite(420,320);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
 		rating.animation.addByPrefix('fantastic', 'Rating-H', 24, true);
 		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
@@ -192,12 +194,72 @@ class ResultScreen extends FlxSpriteGroup
 		misstxt.font = "Assassin Nation Regular";
 		misstxt.alpha = 0;
 		add(misstxt);
-		FlxG.sound.playMusic(Paths.music('result'));
+
+		// hitGraphBG = new FlxSprite(30, 180).makeGraphic(507, 300, FlxColor.BLACK);
+		// hitGraphBG.alpha = 0;
+		// add(hitGraphBG);
+
+		// var zeroMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + (hitGraphBG.height / 2)) - 10, 100, '0ms', 16);
+		// zeroMs.font = "Assassin Nation Regular";
+		// zeroMs.borderStyle = OUTLINE;
+		// zeroMs.borderSize = 2;
+		// zeroMs.alignment = 'right';
+		// add(zeroMs);
+		// zeroMs.alpha = 0;
+
+		// var topMs = new FlxText(hitGraphBG.x - 100, hitGraphBG.y + 69, 100, (ClientPrefs.downScroll ? '-' : '') + CoolUtil.floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
+		// topMs.font = "Assassin Nation Regular";
+		// topMs.borderStyle = OUTLINE;
+		// topMs.borderSize = 2;
+		// topMs.alignment = 'right';
+		// add(topMs);
+		// topMs.alpha = 0;
+
+		// var bottomMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + hitGraphBG.height) - 87, 100, (ClientPrefs.data.downScroll ? '' : '-') + CoolUtil.floorDecimal((ClientPrefs.data.safeFrames / 60) * 1000, 2) + 'ms', 16);
+		// bottomMs.font = "Assassin Nation Regular";
+		// bottomMs.borderStyle = OUTLINE;
+		// bottomMs.borderSize = 2;
+		// bottomMs.alignment = 'right';
+		// add(bottomMs);
+		// bottomMs.alpha = 0;
+
+		// for (i in 0...noteId) makeNote(i);
+
+		if (FlxG.sound.music != null) FlxG.sound.music.stop();
+
+		if(ClientPrefs.pauseMusic != 'None') music = new FlxSound().loadEmbedded(Paths.music(convertPauseMenuSong(ClientPrefs.pauseMusic)), true);
+		music.volume = 0.5;
+		FlxG.sound.list.add(music);
+		music.play();
+
+		// FlxG.sound.playMusic(Paths.music('result'));
 	}
 
 	public function load()
 	{
 	}
+
+	public function convertPauseMenuSong(name:String) {
+		name = name.toLowerCase();
+		name = StringTools.replace(name, ' ', '-');
+		return name;
+	}
+
+	// public function makeNote(id) { // i tried stamp but it didn't work so this'll do for now
+	// 	var note = new FlxSprite((hitGraphBG.x + 5) + (rsNoteData.get('note' + id).strumTime / (FlxG.sound.music.length / hitGraphBG.width)),
+	// 	ClientPrefs.downScroll ? (hitGraphBG.y + (hitGraphBG.height / 2)) - (rsNoteData.get('note' + id).diff / 2) - 10: (hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note' + id).diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note' + id).miss ? switch(rsNoteData.get('note' + id).rating) {
+	// 		case 'sick': ratingColours.sick;
+	// 		case 'good': ratingColours.good;
+	// 		case 'bad': ratingColours.bad;
+	// 		case 'shit': ratingColours.shit;
+	// 	} : ratingColours.miss);
+
+	// 	Substate.instance.add(note);
+	// 	note.camera = game.camOther;
+
+	// 	note.active = false;
+	// 	note.alive = false;
+	// }
 
 	override function update(elapsed:Float)
 	{
@@ -232,7 +294,7 @@ class ResultScreen extends FlxSpriteGroup
 		ranking.alpha += 0.1;
 		song.alpha += 0.1;
 		if (!PlayState.instance.notITGMod){
-			hasModchart.alpha += 0.1;
+			noModchart.alpha += 0.1;
 		}
 		if (lerpscore == dascore)
 		{
@@ -283,7 +345,7 @@ class ResultScreen extends FlxSpriteGroup
 			wayofftxt.alpha += 0.05;
 			decenttxt.alpha += 0.05;
 			misstxt.alpha += 0.05;
-			if ((controls.ACCEPT || controls.BACK) && !ended)
+			if ((FlxG.keys.justPressed.ENTER || FlxG.mouse.justPressed) && !ended)
 			{
 				end();
 				ended = true;

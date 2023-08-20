@@ -136,6 +136,7 @@ class Conductor
 			var deltaSteps:Int = Math.round(getSectionBeats(song, i) * 4);
 			totalSteps += deltaSteps;
 			totalPos += ((60 / curBPM) * 1000 / 4) * deltaSteps;
+			// PlayState.doNoteQuant(); this was supposed to fix the quant stuff when change bpm, sadly it don't allow me to do this shit -Ed
 		}
 		trace("new BPM map BUDDY " + bpmChangeMap);
 	}
