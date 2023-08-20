@@ -17,7 +17,7 @@ typedef BPMChangeEvent =
 
 class Conductor
 {
-	public static var bpm:Float = 100;
+	public static var bpm(default, set):Float = 100;
 	public static var crochet:Float = ((60 / bpm) * 1000); // beats in milliseconds
 	public static var stepCrochet:Float = crochet / 4; // steps in milliseconds
 	public static var songPosition:Float=0;
@@ -67,11 +67,6 @@ class Conductor
 		return lastChange;
 	}
 
-	public static function stepToSeconds(step:Float){
-		var lastChange = getBPMFromStep(step);
-		return step * lastChange.stepCrochet; // TODO: make less shit and take BPM into account PROPERLY
-	}
-
 	public static function getBPMFromStep(step:Float){
 		var lastChange:BPMChangeEvent = {
 			stepTime: 0,
@@ -97,6 +92,11 @@ class Conductor
 	public static function getStep(time:Float){
 		var lastChange = getBPMFromSeconds(time);
 		return lastChange.stepTime + (time - lastChange.songTime) / lastChange.stepCrochet;
+	}
+
+	public static function stepToSeconds(step:Float){
+		var lastChange = getBPMFromStep(step);
+		return step * lastChange.stepCrochet; // TODO: make less shit and take BPM into account PROPERLY
 	}
 
 	public static function getStepRounded(time:Float){
@@ -152,12 +152,10 @@ class Conductor
 		return (60/bpm)*1000;
 	}
 
-	public static function changeBPM(newBpm:Float)
-	{
-		bpm = newBpm;
-
-		crochet = calculateCrochet(bpm);
+	public static function set_bpm(newBpm:Float):Float {
+		crochet = calculateCrochet(newBPM);
 		stepCrochet = crochet / 4;
+		return bpm = newBPM;
 	}
 }
 

@@ -328,7 +328,7 @@ class ModchartEditorState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson('tutorial');
 
 		Conductor.mapBPMChanges(PlayState.SONG);
-		Conductor.changeBPM(PlayState.SONG.bpm);
+		Conductor.bpm = PlayState.SONG.bpm;
 
         FlxG.mouse.visible = true;
 
@@ -801,7 +801,7 @@ class ModchartEditorState extends MusicBeatState
         if (curBpmChange.bpm != Conductor.bpm)
         {
             //trace('changed bpm to ' + curBpmChange.bpm);
-            Conductor.changeBPM(curBpmChange.bpm);
+            Conductor.bpm = curBpmChange.bpm;
         }
 
 
@@ -976,7 +976,7 @@ class ModchartEditorState extends MusicBeatState
     {
 
         var songData = PlayState.SONG;
-        Conductor.changeBPM(songData.bpm);
+        Conductor.bpm = songData.bpm;
 
         if (PlayState.SONG.needsVoices)
         {
