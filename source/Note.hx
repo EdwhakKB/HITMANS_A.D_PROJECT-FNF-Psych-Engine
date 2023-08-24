@@ -234,7 +234,7 @@ class Note extends FlxSprite{
 					} else {
 						missHealth = 0.3;
 					}
-					// hurtNote = true;
+					mimicNote = true;
 					hitCausesMiss = true;
 				case 'Instakill Note':
 					usedDifferentWidth = true;
