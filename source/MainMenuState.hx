@@ -18,6 +18,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
+import flixel.FlxSubState;
 import Achievements;
 import editors.MasterEditorMenu;
 import flixel.input.keyboard.FlxKey;
@@ -30,7 +31,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.3.0 (DEMO V1)'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.3.5'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 	public static var enable:Bool = false;
 
@@ -67,22 +68,12 @@ class MainMenuState extends MusicBeatState
 	var credits:FlxSprite;
 	var settings:FlxSprite;
 	public var folder:FlxSprite;
-	// prompt shit
-	var prompt:FlxSprite;
-	var allowedKeys:String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var allowedNums:Array<String> = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'ZERO', 'SPACE']; //mhm
-    var allowedSpecials:Array<String> = ['.', ',', '(', ')', '-', '_', '*', '=', '+', '/']; //hitmans will need this so, lmao
 
-	var helpText:FlxText;
-	var wordText:FlxText;
-	var wordCode:Int = 0;
-	var infoText:FlxText;
 	var versionShit1:FlxText;
-
-	var promptText:FlxText;
 
 	//made this for the variables for "folders" (won't be used once i make the fix for mouse and things) -Ed
 	var inFolder:Bool = false;
+	var inCMD:Bool = false;
 
 	override function create()
 	{
@@ -185,58 +176,6 @@ class MainMenuState extends MusicBeatState
 		add(camFollow);
 		add(camFollowPos);
 
-		prompt = new FlxSprite().loadGraphic(Paths.image('MenuShit/CMD'));
-		prompt.scrollFactor.set(0);
-		prompt.screenCenter();
-		prompt.antialiasing = ClientPrefs.globalAntialiasing;
-		add(prompt);
-		prompt.alpha = 0;
-
-		helpText = new FlxText(0, 0, FlxG.width, 
-		    "'DEBUG'      - Watch last debug\n
-			'OPTIONS'    - Launch Options.exe\n
-			'RESTART'   - Restart the whole system (unestable)\n
-			'RESETDATA' - Reset your Data\n
-			'LOGIN'     - Login into your corporation profile\n
-			'TEST'      - Load THE TUTORIAL Song\n
-			'LOAD'   	- Loads a song\n
-			'EXIT'      - Exit the system", 12);
-		helpText.setFormat(Paths.font("pixel.otf"), 12, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		helpText.scrollFactor.set();
-		helpText.screenCenter();
-		helpText.x += 185;
-		helpText.y += 85;
-		helpText.borderSize = 2.5;
-		helpText.alpha = 0;
-		add(helpText);	
-
-		wordText = new FlxText(0, 0, FlxG.width, "", 32);
-		wordText.setFormat(Paths.font("pixel.otf"), 32, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		wordText.scrollFactor.set();
-		wordText.screenCenter();
-		wordText.x += 175;
-		wordText.y += 240;
-		wordText.borderSize = 2.5;
-		add(wordText);	
-
-		infoText = new FlxText(0, 0, FlxG.width, "", 16);
-		infoText.setFormat(Paths.font("pixel.otf"), 16, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		infoText.scrollFactor.set();
-		infoText.screenCenter();
-		infoText.x += 175;
-		infoText.y -= 100;
-		infoText.borderSize = 2.5;
-		add(infoText);	
-
-		promptText = new FlxText(0, 0, FlxG.width, "Hitmans Corporation [C.D.B]\nWarning: Modifying anything can be very unstable, continue at your own risk", 16);
-		promptText.setFormat(Paths.font("pixel.otf"), 16, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		promptText.scrollFactor.set();
-		promptText.screenCenter();
-		promptText.x += 175;
-		promptText.y -= 165;
-		promptText.borderSize = 2.5;
-		add(promptText);
-
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
 
@@ -319,9 +258,6 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		wordText.alpha = prompt.alpha;
-		infoText.alpha = prompt.alpha;
-		promptText.alpha = prompt.alpha;
 
 		if (FlxG.sound.music.volume < 0.8)
 		{
@@ -334,12 +270,10 @@ class MainMenuState extends MusicBeatState
 
 		dateThings = DateTools.format(Date.now(), "%Y-%m-%d | %H:%M");
 
-		if (prompt.alpha == 0){
-
-			#if desktop
-			// Updating Discord Rich Presence
-			DiscordClient.changePresence("USER MENU", null);
-			#end
+		#if desktop
+		// Updating Discord Rich Presence
+		DiscordClient.changePresence("USER MENU", null);
+		#end
 
 		if (!selectedSomethin)
 		{
@@ -355,7 +289,7 @@ class MainMenuState extends MusicBeatState
 				changeItem(1);
 			}
 
-			if (controls.BACK)
+			if (controls.BACK && !inCMD)
 			{
 				if (!inFolder){
 					selectedSomethin = true;
@@ -449,7 +383,7 @@ class MainMenuState extends MusicBeatState
 				}
 			}
 
-			if (controls.ACCEPT)
+			if (controls.ACCEPT && !inCMD)
 			{
 				if (optionShit[curSelected] == 'donate')
 				{
@@ -501,10 +435,14 @@ class MainMenuState extends MusicBeatState
 					});
 				}
 			}
-			if (FlxG.keys.justPressed.CONTROL && !selectedSomethin)
+			if (FlxG.keys.justPressed.CONTROL && !selectedSomethin && !inCMD)
 				{
-					FlxTween.tween(prompt, {alpha: 1}, 0.25, {ease: FlxEase.circOut});
-					FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+					inCMD = true;
+					openSubState(new CommandPromptSubstate());
+				}
+			if (FlxG.keys.justPressed.ESCAPE && inCMD)
+				{
+					inCMD = false;
 				}
 			#if desktop
 			else if (FlxG.keys.anyJustPressed(debugKeys))
@@ -515,541 +453,6 @@ class MainMenuState extends MusicBeatState
 			#end
 
 		}
-		}
-
-		var resetting:Bool = false;
-		if(prompt.alpha == 1)
-			{
-
-				#if desktop
-				// Updating Discord Rich Presence
-				DiscordClient.changePresence("COMMAND PROMPT", null);
-				#end
-
-				if (FlxG.keys.firstJustPressed() != FlxKey.NONE)
-					{
-						var keyPressed:FlxKey = FlxG.keys.firstJustPressed();
-						var keyName:String = Std.string(keyPressed);
-						if(allowedKeys.contains(keyName) || allowedNums.contains(keyName)) {
-							if(wordText.text.length < 24)
-								{
-									//Optimized this thing LMAO -Ed
-                                    switch (keyName)
-                                    {
-                                        case 'ONE':
-                                            keyName = '1';
-                                        case 'TWO':
-                                            keyName = '2';
-                                        case 'THREE':
-                                            keyName = '3';
-                                        case 'FOUR':
-                                            keyName = '4';
-                                        case 'FIVE':
-                                            keyName = '5';
-                                        case 'SIX':
-                                            keyName = '6';
-                                        case 'SEVEN':
-                                            keyName = '7';
-                                        case 'EIGHT':
-                                            keyName = '8';
-                                        case 'NINE':
-                                            keyName = '9';
-                                        case 'ZERO':
-                                            keyName = '0';
-                                        case 'SPACE':
-                                            keyName = ' ';
-
-                                        //This ones are to make sure it works lmao
-                                        case '.':
-                                            keyName = '.';
-                                        case ',':
-                                            keyName = ',';
-                                        case '(':
-                                            keyName = '(';
-                                        case ')':
-                                            keyName = ')';
-                                        case '-':
-                                            keyName = '-';
-                                        case '_':
-                                            keyName = '_';
-                                        case '*':
-                                            keyName = '*';
-                                        case '=':
-                                            keyName = '=';
-                                        case '+':
-                                            keyName = '+';
-                                        case '/':
-                                            keyName = '/';
-                                    }
-									wordText.text += keyName;
-									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								}
-						}
-					}
-
-				if (FlxG.keys.justPressed.BACKSPACE)
-					{
-						if(wordText.text != '')
-							{
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								wordText.text = '';
-							}
-					}
-
-				if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.CONTROL)
-					{
-						FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-						FlxTween.tween(prompt, {alpha: 0}, 0.25, {ease: FlxEase.circOut});
-						wordText.text = '';
-						infoText.text = '';
-						helpText.alpha = 0;
-					}
-
-				else if (FlxG.keys.justPressed.ENTER)
-					{
-						if(wordText.text == 'HELP')
-							{
-								if(helpText.alpha == 0)
-									{
-										helpText.alpha = 1;
-										infoText.text = 'This is the list of common commands.\nType \'HELP\' to hide the list.';
-										wordText.text = '';
-										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-									}
-								else if(helpText.alpha == 1)
-									{
-										infoText.text = 'Hid the list of commands.\nType \'HELP\' to show the list.';
-										helpText.alpha = 0;
-										wordText.text = '';
-										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-									}
-							}
-
-						else if(wordText.text == 'DEBUG')
-							{
-								infoText.text = 'PLEASE WAIT...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = 
-										"HITMANS A.D PROJECT V1\nThis update adds\n
-                                        -Modcharted songs with own bgs\n
-                                        -An amount of 7 songs\n
-                                        -Command Prompt with more variables\n
-                                        -Multikeys\n
-                                        ENJOY!";
-									});
-							}
-							
-						else if(wordText.text == 'OPTIONS')
-							{
-								infoText.text = 'EXECUTING...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										LoadingState.loadAndSwitchState(new options.OptionsState());
-									});
-							}
-						else if(wordText.text == 'FREEPLAY'){
-							infoText.text = 'EXECUTING...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										MusicBeatState.switchState(new FreeplayState());
-									});
-						}
-						else if(wordText.text == 'STORYMODE'){
-							infoText.text = 'EXECUTING...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										MusicBeatState.switchState(new StoryMenuState());
-									});
-						}
-						else if(wordText.text == 'CREDITS'){
-							infoText.text = 'EXECUTING...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										MusicBeatState.switchState(new CreditsState());
-									});
-						}
-						else if(wordText.text == 'MODS'){
-							infoText.text = 'EXECUTING...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										#if MODS_ALLOWED
-										infoText.text = " ";
-										MusicBeatState.switchState(new ModsMenuState());
-										#else
-										infoText.text = "SYSTEM DON'T SUPPORT ANY MODIFICATION";
-										#end
-									});
-						}
-						else if(wordText.text == 'AWARDS'){
-							infoText.text = 'NOT IN DEMO';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								// new FlxTimer().start(1, function(tmr:FlxTimer) 
-								// 	{
-								// 		infoText.text = " ";
-								// 		MusicBeatState.switchState(new StoryMenuState());
-								// 	});
-						}
-						else if(wordText.text == 'LOGIN')
-							{
-								infoText.text = 'PLEASE WAIT...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = "THIS IS STILL UNDER DEVELOPMENT\nCOME BACK LATER";
-									});
-							}
-
-					    else if(wordText.text == 'RESETDATA')
-							{
-								infoText.text = 'Your Settings and Controls were reset.';
-								wordText.text = '';
-								resetting = true;
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-					    else if(wordText.text == 'RESTART')
-							{
-								infoText.text = 'Restarting...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										//MusicBeatState.switchState(new TitleState());
-										TitleState.initialized = false;
-										TitleState.closedState = false;
-										FlxG.sound.music.fadeOut(0.3);
-										if(FreeplayState.vocals != null)
-										{
-											FreeplayState.vocals.fadeOut(0.3);
-											FreeplayState.vocals = null;
-										}
-										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
-									});
-							}
-
-						else if(wordText.text == 'EXIT')
-							{
-								infoText.text = 'Exitting...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							    new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										//MusicBeatState.switchState(new TitleState());
-										TitleState.initialized = false;
-										TitleState.closedState = false;
-										FlxG.sound.music.fadeOut(0.3);
-										if(FreeplayState.vocals != null)
-										{
-											FreeplayState.vocals.fadeOut(0.3);
-											FreeplayState.vocals = null;
-										}
-										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, function(){System.exit(0);}, false);
-									});
-							}
-
-					    else if(wordText.text == 'HELLO')
-							{
-								infoText.text = 'Oh, hello there!\nI hope you like this mod!\nTrying to find all commands, aren\'t you?\nHa-ha, anyway, have fun!';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-					    else if(wordText.text == 'EDWHAK')
-							{
-								infoText.text = 'So...\nYou wanted talk with me?\nNah go ahead and pick something else';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-						else if(wordText.text == 'FUCK YOU')
-							{
-								infoText.text = 'Rude! >:\'<';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-										FlxTween.tween(prompt, {alpha: 0}, 0.25, {ease: FlxEase.circOut});
-										wordText.text = '';
-										infoText.text = '';
-										helpText.alpha = 0;
-										new FlxTimer().start(0.25, function(tmr:FlxTimer) 
-											{
-												infoText.text = 'Don\'t do that again. :\'<';
-											});
-									});
-							}
-
-						else if(wordText.text == 'SORRY' && infoText.text == 'Don\'t do that again. :\'<')
-							{
-								infoText.text = 'Aww, okay!\nApologies are accepted :3';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-						else if(wordText.text == 'BALLS')
-							{
-								infoText.text = 'Balls everywhere!';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-						else if(wordText.text == 'LOG24')
-							{
-								infoText.text = 'Loading "Forgotten" project...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										persistentUpdate = false;
-										PlayState.SONG = Song.loadFromJson('forgotten-oni', 'forgotten');
-								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = 1;
-
-										if(FreeplayState.vocals != null)
-											{
-												FreeplayState.vocals.fadeOut(0.3);
-												FreeplayState.vocals = null;
-											}
-
-									        LoadingState.loadAndSwitchState(new PlayState());
-								            
-					
-								        FlxG.sound.music.volume = 0;
-									}
-									);
-							}
-						else if(wordText.text == 'MERCYLESS')
-							{
-								infoText.text = 'Wait a few seconds...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-								{
-									infoText.text = 'Please, put the Password';
-								});
-							}
-						else if(wordText.text == 'CAPSAICIN' && infoText.text == 'Please, put the Password')
-							{
-								infoText.text = 'EXECUTING...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										persistentUpdate = false;
-										PlayState.SONG = Song.loadFromJson('c18h27no3-demo-heavy', 'c18h27no3-demo');
-								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = 1;
-
-										if(FreeplayState.vocals != null)
-											{
-												FreeplayState.vocals.fadeOut(0.3);
-												FreeplayState.vocals = null;
-											}
-
-									        LoadingState.loadAndSwitchState(new PlayState());
-								            
-					
-								        FlxG.sound.music.volume = 0;
-									}
-									);
-							}
-						else if(wordText.text == 'EXPERIMENT1213')
-							{
-								infoText.text = 'REDACTED';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-					    else if(wordText.text == 'TEST')
-							{
-								infoText.text = 'Loading Testing Song...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										persistentUpdate = false;
-										PlayState.SONG = Song.loadFromJson('operating-heavy', 'c18h27no3');
-								        PlayState.isStoryMode = false;
-								        PlayState.storyDifficulty = 1;
-
-										if(FreeplayState.vocals != null)
-											{
-												FreeplayState.vocals.fadeOut(0.3);
-												FreeplayState.vocals = null;
-											}
-
-									        LoadingState.loadAndSwitchState(new PlayState());
-
-					
-								        FlxG.sound.music.volume = 0;
-									}
-									);
-							}
-
-						else if(wordText.text == 'BEATMOD')
-							{
-								infoText.text = '';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								if (FlxG.sound.music.playing)
-									{
-										if(FreeplayState.vocals != null)
-											{
-												FreeplayState.vocals.fadeOut(0.3);
-												FreeplayState.vocals = null;
-											}
-										FlxG.sound.music.pause();
-									}
-									
-									var edwhakBlack:BGSprite = new BGSprite(null, -FlxG.width, -FlxG.height, 0, 0);
-									edwhakBlack.makeGraphic(Std.int(FlxG.width * 3), Std.int(FlxG.height * 3), FlxColor.BLACK);
-									edwhakBlack.scrollFactor.set(1);
-						
-									var edwhakBG:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat-bg');
-									edwhakBG.setGraphicSize(FlxG.width, FlxG.height);
-									//edwhakBG.x += (FlxG.width/2); //Mmmmmm scuffed positioning, my favourite!
-									//edwhakBG.y += (FlxG.height/2) - 20;
-									edwhakBG.updateHitbox();
-									edwhakBG.scrollFactor.set(1);
-									edwhakBG.screenCenter();
-									edwhakBG.x=0;
-						
-									var cheater:BGSprite = new BGSprite('Edwhak/Hitmans/unused/cheat', -600, -480, 0.5, 0.5);
-									cheater.setGraphicSize(Std.int(cheater.width * 1.5));
-									cheater.updateHitbox();
-									cheater.scrollFactor.set(1);
-									cheater.screenCenter();	
-									cheater.x+=50;
-						
-									add(edwhakBlack);
-									add(edwhakBG);
-									add(cheater);
-									FlxG.camera.shake(0.05,5);
-									FlxG.sound.play(Paths.sound('Edwhak/cheatercheatercheater'), 1, true);
-									#if desktop
-									// Updating Discord Rich Presence
-									DiscordClient.changePresence("CHEATER CHEATER CHEATER CHEATER CHEATER CHEATER ", null);
-									#end
-						
-									//Stolen from the bob mod LMAO
-									new FlxTimer().start(0.01, function(tmr:FlxTimer)
-										{
-											Lib.application.window.move(Lib.application.window.x + FlxG.random.int( -10, 10),Lib.application.window.y + FlxG.random.int( -8, 8));
-										}, 0);
-						
-									new FlxTimer().start(1.5, function(tmr:FlxTimer) 
-									{
-										//trace("Quit");
-										System.exit(0);
-									});
-							}
-						else
-							{
-								if(wordText.text != '')
-									{
-										infoText.text = 'Invalid command.\nTry to type again.';
-										wordText.text = '';
-										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-									}
-							}
-					}
-			}
-
-			if(resetting == true)
-				{
-					ClientPrefs.noteSkin = 'HITMANS';
-					ClientPrefs.hudStyle = 'HITMANS';
-					ClientPrefs.downScroll = false;
-					ClientPrefs.middleScroll = true;
-					ClientPrefs.opponentStrums = false;
-					//ClientPrefs.showFPS = true; -- does not work for some reason
-					ClientPrefs.flashing = true;
-					ClientPrefs.globalAntialiasing = true;
-					ClientPrefs.lowQuality = false;
-					ClientPrefs.shaders = true;
-					ClientPrefs.framerate = 60;
-					ClientPrefs.cursing = true;
-					ClientPrefs.violence = true;
-					ClientPrefs.camZooms = true;
-					ClientPrefs.hideHud = false;
-					ClientPrefs.noteOffset = 0;
-					ClientPrefs.arrowHSV = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
-					ClientPrefs.ghostTapping = true;
-					ClientPrefs.timeBarType = 'Time Left';
-					ClientPrefs.scoreZoom = true;
-					ClientPrefs.noReset = false;
-					ClientPrefs.healthBarAlpha = 1;
-					ClientPrefs.controllerMode = false;
-					ClientPrefs.hitsoundVolume = 0;
-					ClientPrefs.pauseMusic = 'Tea Time';
-					ClientPrefs.checkForUpdates = true;
-					ClientPrefs.comboStacking = false;
-					ClientPrefs.gameplaySettings = [
-						'scrollspeed' => 1.0,
-						'scrolltype' => 'multiplicative', 
-						'songspeed' => 1.0,
-						'healthgain' => 1.0,
-						'healthloss' => 1.0,
-						'instakill' => false,
-						'practice' => false,
-                        'modchart' => true,
-						'botplay' => false,
-						'opponentplay' => false
-					];
-					ClientPrefs.comboOffset = [100, 75, 205, 140];
-					ClientPrefs.ratingOffset = 0;
-					ClientPrefs.sickWindow = 45;
-					ClientPrefs.goodWindow = 90;
-					ClientPrefs.badWindow = 135;
-					ClientPrefs.safeFrames = 10;
-					ClientPrefs.keyBinds = [
-						//Key Bind, Name for ControlsSubState
-						'note_left'		=> [A, LEFT],
-						'note_down'		=> [S, DOWN],
-						'note_up'		=> [W, UP],
-						'note_right'	=> [D, RIGHT],
-						
-						'ui_left'		=> [A, LEFT],
-						'ui_down'		=> [S, DOWN],
-						'ui_up'			=> [W, UP],
-						'ui_right'		=> [D, RIGHT],
-						
-						'accept'		=> [SPACE, ENTER],
-						'back'			=> [BACKSPACE, ESCAPE],
-						'pause'			=> [ENTER, ESCAPE],
-						'reset'			=> [R, NONE],
-						
-						'volume_mute'	=> [ZERO, NONE],
-						'volume_up'		=> [NUMPADPLUS, PLUS],
-						'volume_down'	=> [NUMPADMINUS, MINUS],
-						
-						'debug_1'		=> [SEVEN, NONE],
-						'debug_2'		=> [EIGHT, NONE],
-                        'debug_3'		=> [SIX, NONE]
-					];
-					ClientPrefs.defaultKeys = null;
-					ClientPrefs.defaultKeys = ClientPrefs.keyBinds.copy();
-				}
 		super.update(elapsed);
 
 		menuItems.forEach(function(spr:FlxSprite)

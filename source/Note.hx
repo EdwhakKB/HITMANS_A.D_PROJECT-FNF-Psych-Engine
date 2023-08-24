@@ -109,6 +109,7 @@ class Note extends FlxSprite{
 	public static var fire:Bool = false;
 	public var specialHurt:Bool  = false;
 	public var hurtNote:Bool  = false;
+	public var mimicNote:Bool  = false;
 	public static var isRoll:Bool = false;
 
 	public var usedDifferentWidth:Bool = false; //to fix some issues LMAO
@@ -233,7 +234,7 @@ class Note extends FlxSprite{
 					} else {
 						missHealth = 0.3;
 					}
-					hurtNote = true;
+					// hurtNote = true;
 					hitCausesMiss = true;
 				case 'Instakill Note':
 					usedDifferentWidth = true;

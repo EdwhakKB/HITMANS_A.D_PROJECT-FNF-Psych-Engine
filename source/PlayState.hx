@@ -99,8 +99,6 @@ using StringTools;
 class PlayState extends MusicBeatState
 {
 	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
-	var camShaders:Array<String> = ['camhud', 'noteCameras0', 'noteCameras1', 'noteCameras2', 'noteCameras3', 'noteCameras4', 'noteCameras5', 'noteCameras6', 'noteCameras7', 'noteCameras8', 'noteCameras9', 'noteCameras10', 
-	'noteCameras11', 'noteCameras12', 'noteCameras13', 'noteCameras14', 'noteCameras15', 'noteCameras16', 'noteCameras17', 'noteCameras18', 'noteCameras19', 'noteCameras20', 'noteCameras21', 'noteCameras22']; // MISHADER
 	// var modchartedSongs:Array<String> = []; PUT THE SONG NAME HERE IF YOU WANT TO USE THE ANDROMEDA MODIFIER SYSTEM!!
 
 	// // THEN GOTO MODCHARTSHIT.HX TO DEFINE MODIFIERS ETC
@@ -479,6 +477,7 @@ class PlayState extends MusicBeatState
 	// stores the last combo score objects in an array
 	public static var lastScore:Array<FlxSprite> = [];
 
+	//made these 2 for Player and Enemy (usually both plays at the same time but when its vs Ed he usually play enemy so...)
 	public var ratings:FlxSprite;
 	var ratingsBumpTween:FlxTween;
 	var ratingsBumpTween2:FlxTween;
@@ -488,30 +487,39 @@ class PlayState extends MusicBeatState
 	public var inX2:FlxTween;
 	public var inY2:FlxTween;
 
+	public var ratingsOP:FlxSprite;
+	var ratingsOPBumpTween:FlxTween;
+	var ratingsOPBumpTween2:FlxTween;
+	var ratingsOPBumpTimer:FlxTimer;
+	public var inXOP:FlxTween;
+	public var inYOP:FlxTween;
+	public var inXOP2:FlxTween;
+	public var inYOP2:FlxTween;
+
 	//the 21 cameras
 	public var noteCameras0:FlxCamera;
 	public var noteCameras1:FlxCamera;
-	public var noteCameras2:FlxCamera;
-	public var noteCameras3:FlxCamera;
-	public var noteCameras4:FlxCamera;
-	public var noteCameras5:FlxCamera;
-	public var noteCameras6:FlxCamera;
-	public var noteCameras7:FlxCamera;
-	public var noteCameras8:FlxCamera;
-	public var noteCameras9:FlxCamera;
-	public var noteCameras10:FlxCamera;
-	public var noteCameras11:FlxCamera;
-	public var noteCameras12:FlxCamera;
-	public var noteCameras13:FlxCamera;
-	public var noteCameras14:FlxCamera;
-	public var noteCameras15:FlxCamera;
-	public var noteCameras16:FlxCamera;
-	public var noteCameras17:FlxCamera;
-	public var noteCameras18:FlxCamera;
-	public var noteCameras19:FlxCamera;
-	public var noteCameras20:FlxCamera;
-	public var noteCameras21:FlxCamera;
-	public var noteCameras22:FlxCamera;
+	// public var noteCameras2:FlxCamera;
+	// public var noteCameras3:FlxCamera;
+	// public var noteCameras4:FlxCamera;
+	// public var noteCameras5:FlxCamera;
+	// public var noteCameras6:FlxCamera;
+	// public var noteCameras7:FlxCamera;
+	// public var noteCameras8:FlxCamera;
+	// public var noteCameras9:FlxCamera;
+	// public var noteCameras10:FlxCamera;
+	// public var noteCameras11:FlxCamera;
+	// public var noteCameras12:FlxCamera;
+	// public var noteCameras13:FlxCamera;
+	// public var noteCameras14:FlxCamera;
+	// public var noteCameras15:FlxCamera;
+	// public var noteCameras16:FlxCamera;
+	// public var noteCameras17:FlxCamera;
+	// public var noteCameras18:FlxCamera;
+	// public var noteCameras19:FlxCamera;
+	// public var noteCameras20:FlxCamera;
+	// public var noteCameras21:FlxCamera;
+	// public var noteCameras22:FlxCamera;
 
 	public var tweenManager:FlxTweenManager = null;
 	public var timerManager:FlxTimerManager = null;
@@ -595,7 +603,7 @@ class PlayState extends MusicBeatState
 		rating.score = 50;
 		ratingsData.push(rating);
 
-		//Hitmans Ratings (Kinda Better LOL)
+		//Hitmans Ratings (Kinda Better LOL, sorry if separated i can't use array due keyboard bug)
 		//570 x and 200 y (just in case)
 		ratings = new FlxSprite(900, 230);
 		ratings.frames = Paths.getSparrowAtlas('judgements');
@@ -609,15 +617,29 @@ class PlayState extends MusicBeatState
         ratings.animation.addByPrefix('way Off Early', 'Way off early', 1, true);
         ratings.animation.addByPrefix('way Off Late', 'Way off late', 1, true);
 		ratings.animation.addByPrefix('miss', 'Miss', 1, true);
-		// FlxTween.tween(ratings.scale, {x: 0}, 0.1, {ease:FlxEase.elasticOut});
-        // FlxTween.tween(ratings.scale, {y: 0}, 0.1, {ease:FlxEase.elasticOut});
 		ratings.antialiasing = true;
 		ratings.updateHitbox();
-		// ratings.x += ClientPrefs.comboOffset[0];
-		// ratings.y -= ClientPrefs.comboOffset[1];
 		ratings.scrollFactor.set();
 		ratings.visible = false;
 		add(ratings);
+
+		ratingsOP = new FlxSprite(180, 230);
+		ratingsOP.frames = Paths.getSparrowAtlas('judgements');
+		ratingsOP.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
+		ratingsOP.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
+		ratingsOP.animation.addByPrefix('excellent Early', 'Excellent early', 1, true);
+		ratingsOP.animation.addByPrefix('great Early', 'Great early', 1, true);
+		ratingsOP.animation.addByPrefix('great Late', 'Great late', 1, true);
+		ratingsOP.animation.addByPrefix('decent Early', 'Decent early', 1, true);
+        ratingsOP.animation.addByPrefix('decent Late', 'Decent late', 1, true);
+        ratingsOP.animation.addByPrefix('way Off Early', 'Way off early', 1, true);
+        ratingsOP.animation.addByPrefix('way Off Late', 'Way off late', 1, true);
+		ratingsOP.animation.addByPrefix('miss', 'Miss', 1, true);
+		ratingsOP.antialiasing = true;
+		ratingsOP.updateHitbox();
+		ratingsOP.scrollFactor.set();
+		ratingsOP.visible = false;
+		add(ratingsOP);
 
 		// For the "Just the Two of Us" achievement
 		for (i in 0...keysArray.length)
@@ -651,70 +673,70 @@ class PlayState extends MusicBeatState
 		noteCameras0.visible = false;
 		noteCameras1 = new FlxCamera();
 		noteCameras1.bgColor.alpha = 0;
-		noteCameras1.visible = false;
-		noteCameras2 = new FlxCamera();
-		noteCameras2.bgColor.alpha = 0;
-		noteCameras2.visible = false;
-		noteCameras3 = new FlxCamera();
-		noteCameras3.bgColor.alpha = 0;
-		noteCameras3.visible = false;
-		noteCameras4 = new FlxCamera();
-		noteCameras4.bgColor.alpha = 0;
-		noteCameras4.visible = false;
-		noteCameras5 = new FlxCamera();
-		noteCameras5.bgColor.alpha = 0;
-		noteCameras5.visible = false;
-		noteCameras6 = new FlxCamera();
-		noteCameras6.bgColor.alpha = 0;
-		noteCameras6.visible = false;
-		noteCameras7 = new FlxCamera();
-		noteCameras7.bgColor.alpha = 0;
-		noteCameras7.visible = false;
-		noteCameras8 = new FlxCamera();
-		noteCameras8.bgColor.alpha = 0;
-		noteCameras8.visible = false;
-		noteCameras9 = new FlxCamera();
-		noteCameras9.bgColor.alpha = 0;
-		noteCameras9.visible = false;
-		noteCameras10 = new FlxCamera();
-		noteCameras10.bgColor.alpha = 0;
-		noteCameras10.visible = false;
-		noteCameras11 = new FlxCamera();
-		noteCameras11.bgColor.alpha = 0;
-		noteCameras11.visible = false;
-		noteCameras12 = new FlxCamera();
-		noteCameras12.bgColor.alpha = 0;
-		noteCameras12.visible = false;
-		noteCameras13 = new FlxCamera();
-		noteCameras13.bgColor.alpha = 0;
-		noteCameras13.visible = false;
-		noteCameras14 = new FlxCamera();
-		noteCameras14.bgColor.alpha = 0;
-		noteCameras14.visible = false;
-		noteCameras15 = new FlxCamera();
-		noteCameras15.bgColor.alpha = 0;
-		noteCameras15.visible = false;
-		noteCameras16 = new FlxCamera();
-		noteCameras16.bgColor.alpha = 0;
-		noteCameras16.visible = false;
-		noteCameras17 = new FlxCamera();
-		noteCameras17.bgColor.alpha = 0;
-		noteCameras17.visible = false;
-		noteCameras18 = new FlxCamera();
-		noteCameras18.bgColor.alpha = 0;
-		noteCameras18.visible = false;
-		noteCameras19 = new FlxCamera();
-		noteCameras19.bgColor.alpha = 0;
-		noteCameras19.visible = false;
-		noteCameras20 = new FlxCamera();
-		noteCameras20.bgColor.alpha = 0;
-		noteCameras20.visible = false;
-		noteCameras21 = new FlxCamera();
-		noteCameras21.visible = false;
-		noteCameras21.bgColor.alpha = 0;
-		noteCameras22 = new FlxCamera();
-		noteCameras22.bgColor.alpha = 0;
-		noteCameras22.visible = false;
+		// noteCameras1.visible = false;
+		// noteCameras2 = new FlxCamera();
+		// noteCameras2.bgColor.alpha = 0;
+		// noteCameras2.visible = false;
+		// noteCameras3 = new FlxCamera();
+		// noteCameras3.bgColor.alpha = 0;
+		// noteCameras3.visible = false;
+		// noteCameras4 = new FlxCamera();
+		// noteCameras4.bgColor.alpha = 0;
+		// noteCameras4.visible = false;
+		// noteCameras5 = new FlxCamera();
+		// noteCameras5.bgColor.alpha = 0;
+		// noteCameras5.visible = false;
+		// noteCameras6 = new FlxCamera();
+		// noteCameras6.bgColor.alpha = 0;
+		// noteCameras6.visible = false;
+		// noteCameras7 = new FlxCamera();
+		// noteCameras7.bgColor.alpha = 0;
+		// noteCameras7.visible = false;
+		// noteCameras8 = new FlxCamera();
+		// noteCameras8.bgColor.alpha = 0;
+		// noteCameras8.visible = false;
+		// noteCameras9 = new FlxCamera();
+		// noteCameras9.bgColor.alpha = 0;
+		// noteCameras9.visible = false;
+		// noteCameras10 = new FlxCamera();
+		// noteCameras10.bgColor.alpha = 0;
+		// noteCameras10.visible = false;
+		// noteCameras11 = new FlxCamera();
+		// noteCameras11.bgColor.alpha = 0;
+		// noteCameras11.visible = false;
+		// noteCameras12 = new FlxCamera();
+		// noteCameras12.bgColor.alpha = 0;
+		// noteCameras12.visible = false;
+		// noteCameras13 = new FlxCamera();
+		// noteCameras13.bgColor.alpha = 0;
+		// noteCameras13.visible = false;
+		// noteCameras14 = new FlxCamera();
+		// noteCameras14.bgColor.alpha = 0;
+		// noteCameras14.visible = false;
+		// noteCameras15 = new FlxCamera();
+		// noteCameras15.bgColor.alpha = 0;
+		// noteCameras15.visible = false;
+		// noteCameras16 = new FlxCamera();
+		// noteCameras16.bgColor.alpha = 0;
+		// noteCameras16.visible = false;
+		// noteCameras17 = new FlxCamera();
+		// noteCameras17.bgColor.alpha = 0;
+		// noteCameras17.visible = false;
+		// noteCameras18 = new FlxCamera();
+		// noteCameras18.bgColor.alpha = 0;
+		// noteCameras18.visible = false;
+		// noteCameras19 = new FlxCamera();
+		// noteCameras19.bgColor.alpha = 0;
+		// noteCameras19.visible = false;
+		// noteCameras20 = new FlxCamera();
+		// noteCameras20.bgColor.alpha = 0;
+		// noteCameras20.visible = false;
+		// noteCameras21 = new FlxCamera();
+		// noteCameras21.visible = false;
+		// noteCameras21.bgColor.alpha = 0;
+		// noteCameras22 = new FlxCamera();
+		// noteCameras22.bgColor.alpha = 0;
+		// noteCameras22.visible = false;
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camInterfaz, false);
@@ -722,27 +744,27 @@ class PlayState extends MusicBeatState
 
 		FlxG.cameras.add(noteCameras0, false);
 		FlxG.cameras.add(noteCameras1, false);
-		FlxG.cameras.add(noteCameras2, false);
-		FlxG.cameras.add(noteCameras3, false);
-		FlxG.cameras.add(noteCameras4, false);
-		FlxG.cameras.add(noteCameras5, false);
-		FlxG.cameras.add(noteCameras6, false);
-		FlxG.cameras.add(noteCameras7, false);
-		FlxG.cameras.add(noteCameras8, false);
-		FlxG.cameras.add(noteCameras9, false);
-		FlxG.cameras.add(noteCameras10, false);
-		FlxG.cameras.add(noteCameras11, false);
-		FlxG.cameras.add(noteCameras12, false);
-		FlxG.cameras.add(noteCameras13, false);
-		FlxG.cameras.add(noteCameras14, false);
-		FlxG.cameras.add(noteCameras15, false);
-		FlxG.cameras.add(noteCameras16, false);
-		FlxG.cameras.add(noteCameras17, false);
-		FlxG.cameras.add(noteCameras18, false);
-		FlxG.cameras.add(noteCameras19, false);
-		FlxG.cameras.add(noteCameras20, false);
-		FlxG.cameras.add(noteCameras21, false);
-		FlxG.cameras.add(noteCameras22, false);
+		// FlxG.cameras.add(noteCameras2, false);
+		// FlxG.cameras.add(noteCameras3, false);
+		// FlxG.cameras.add(noteCameras4, false);
+		// FlxG.cameras.add(noteCameras5, false);
+		// FlxG.cameras.add(noteCameras6, false);
+		// FlxG.cameras.add(noteCameras7, false);
+		// FlxG.cameras.add(noteCameras8, false);
+		// FlxG.cameras.add(noteCameras9, false);
+		// FlxG.cameras.add(noteCameras10, false);
+		// FlxG.cameras.add(noteCameras11, false);
+		// FlxG.cameras.add(noteCameras12, false);
+		// FlxG.cameras.add(noteCameras13, false);
+		// FlxG.cameras.add(noteCameras14, false);
+		// FlxG.cameras.add(noteCameras15, false);
+		// FlxG.cameras.add(noteCameras16, false);
+		// FlxG.cameras.add(noteCameras17, false);
+		// FlxG.cameras.add(noteCameras18, false);
+		// FlxG.cameras.add(noteCameras19, false);
+		// FlxG.cameras.add(noteCameras20, false);
+		// FlxG.cameras.add(noteCameras21, false);
+		// FlxG.cameras.add(noteCameras22, false);
 		FlxG.cameras.add(camOther, false);
 		FlxG.cameras.add(camRate, false);
 
@@ -1577,9 +1599,9 @@ class PlayState extends MusicBeatState
 		// add(strumLine);
 		if (SONG.notITG && notITGMod){
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
-			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
+			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1/*, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
 				noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
-				noteCameras20, noteCameras21, noteCameras22];
+			noteCameras20, noteCameras21, noteCameras22*/];
 			add(playfieldRenderer);
 		}
 		threeDShader = new ThreeDEffect(0,0,0); //added this since well its cool have this ig (as a secret at least)
@@ -1700,20 +1722,21 @@ class PlayState extends MusicBeatState
 		}
 
 		strumLineNotes.cameras = [
-			camHUD, noteCameras0, noteCameras1, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
+			camHUD, noteCameras0, noteCameras1/*, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
 			noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
-			noteCameras20, noteCameras21, noteCameras22
+		noteCameras20, noteCameras21, noteCameras22*/
 		];
 		notes.cameras = [
-			camHUD, noteCameras0, noteCameras1, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
+			camHUD, noteCameras0, noteCameras1/*, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
 			noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
-			noteCameras20, noteCameras21, noteCameras22
+		noteCameras20, noteCameras21, noteCameras22*/
 		];
 		healthBar.cameras = [camInterfaz];
 		healthBarBG.cameras = [camInterfaz];
 		healthBarHit.cameras = [camOther];
 		healthHitBar.cameras = [camOther];
 		ratings.cameras = [camOther];
+		ratingsOP.cameras = [camOther];
 		if (ClientPrefs.hudStyle == 'HITMANS'){
 			iconP1.cameras = [camOther];
 			iconP2.cameras = [camOther];	
@@ -2111,33 +2134,28 @@ class PlayState extends MusicBeatState
 		return value;
 	}
 
-	public function removeCameras(MIERDA:Array<Dynamic>){
-		remove(noteCameras0);
-		remove(noteCameras1);
-		remove(noteCameras2);
-		remove(noteCameras3);
-		remove(noteCameras4);
-		remove(noteCameras5);
-		remove(noteCameras6);
-		remove(noteCameras7);
-		remove(noteCameras8);
-		remove(noteCameras9);
-		remove(noteCameras10);
-		remove(noteCameras11);
-		remove(noteCameras12);
-		remove(noteCameras13);
-		remove(noteCameras14);
-		remove(noteCameras15);
-		remove(noteCameras16);
-		remove(noteCameras17);
-		remove(noteCameras18);
-		remove(noteCameras19);
-		remove(noteCameras20);
-		remove(noteCameras21);
-		remove(noteCameras22);
+	// public function addCameras(from:Dynamic,to:Dynamic){
+	// 	var min:Int = 1;
+	// 	var max:Int = 22;
+	// 	if (from >= 1){
+	// 		min = from;
+	// 	}
+	// 	if (to <= 22){
+	// 		max = to;
+	// 	}
+	// 	for (i in min...max){
+	// 		FlxG.cameras.add(noteCameras0, false);
+	// 		FlxG.cameras.add(noteCameras+i, false);
+	// 	}
 
-		callOnLuas('RemoveCameras', MIERDA);
-	}
+	// 	callOnLuas('addCameras', from, to);
+	// }
+	// public function removeCameras(valorMin:Dynamic, valorMax:Dynamic){
+	// 	for (i in valorMin...valorMax)
+	// 		FlxG.cameras.remove(noteCameras+i);
+
+	// 	callOnLuas('RemoveCameras', valorMin, valorMax);
+	// }
 
 
 	public function addTextToDebug(text:String, color:FlxColor) {
@@ -4158,7 +4176,7 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
 		{
-			if (hitmansSongs.contains(SONG.song.toLowerCase())){
+			if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
 				antiCheat();
 				// openChartEditor();
 			}else{
@@ -4168,7 +4186,7 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.anyJustPressed(debugKeysModchart) && !endingSong && !inCutscene)
 		{
-			if (hitmansSongs.contains(SONG.song.toLowerCase())){
+			if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
 				antiCheat();
 				// openModchartEditor();
 			}else{
@@ -5979,6 +5997,10 @@ class PlayState extends MusicBeatState
 		if (!daNote.isSustainNote){
 			ratingsBumpScale();
 			ratings.animation.play("miss");
+			if (!edwhakIsEnemy){
+				ratingsBumpScaleOP();
+				ratingsOP.animation.play("miss");
+			}
 			songMisses++;
 		}
 		vocals.volume = 0;
@@ -6012,6 +6034,10 @@ class PlayState extends MusicBeatState
 				health -= 0.03 * healthLoss;
 			}else if (!ClientPrefs.casualMode){
 				health -= 0.06 * healthLoss;
+			}
+			if (!edwhakIsEnemy){
+				ratingsBumpScaleOP();
+				ratingsOP.animation.play("miss");
 			}
 			ratings.animation.play("miss");
 			ratingsBumpScale();
@@ -6062,6 +6088,10 @@ class PlayState extends MusicBeatState
 		//Edwhak HealthDrain but in source so people can't nerf how his songs works!
 		//I know there is a best way to do this but if it works then i don't fucking care -Ed
 		if (edwhakIsEnemy){
+			if (!note.isSustainNote){
+				ratingsBumpScaleOP();
+				setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+			}
 			if (!ClientPrefs.casualMode){
 				if(health - edwhakDrain - 0.17 > maxHealth){
 					//Health drain
@@ -6271,6 +6301,10 @@ class PlayState extends MusicBeatState
 							deathVariableTXT = 'Mine';
 							FlxG.sound.play(Paths.sound('Edwhak/Mine'));
 							ratingsBumpScale();
+							if (!edwhakIsEnemy){
+								ratingsBumpScaleOP();
+								ratingsOP.animation.play("miss");
+							}
 							ratings.animation.play("miss");
 							songMisses++;
 							vocals.volume = 0;
@@ -6316,6 +6350,10 @@ class PlayState extends MusicBeatState
 			{
 				ratingsBumpScale();
 				setRatingImage(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+				if (!edwhakIsEnemy){
+					ratingsBumpScaleOP();
+					setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+				}
 				combo += 1;
 				if(combo > 9999) combo = 9999;
 				if (combo > maxCombo) maxCombo = combo;
@@ -6431,6 +6469,38 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	public function ratingsBumpScaleOP() {
+
+		if(ratingsOPBumpTween != null) {
+			ratingsOPBumpTween.cancel();
+		}
+		if(ratingsOPBumpTween2 != null) {
+			ratingsOPBumpTween2.cancel();
+		}
+		if(ratingsOPBumpTimer != null) {
+			ratingsOPBumpTimer.cancel();
+		}
+		ratingsOP.scale.x = 1.5;
+		ratingsOP.scale.y = 1.5;
+		ratingsOPBumpTween = FlxTween.tween(ratingsOP.scale, {x: 1.3, y: 1.3}, 0.1, {ease:FlxEase.circOut,
+			onComplete: function(twn:FlxTween) {
+				ratingsOPBumpTween = null;
+				ratingsOPBumpTimer = new FlxTimer().start(1, function(flxTimer:FlxTimer){
+						ratingsOPBumpTween2 = FlxTween.tween(ratingsOP.scale, {x: 0, y: 0}, 0.1, {ease:FlxEase.circIn,
+						onComplete: function(twn:FlxTween) {
+							ratingsOPBumpTimer = null;
+							ratingsOPBumpTween2 = null;
+						}
+					});			
+				
+				});
+			}
+		});
+		if (ClientPrefs.hudStyle == 'HITMANS'){
+			ratingsOP.visible = true;
+		}
+	}
+
 	public function setRatingImage(rat:Float){
 		if (rat >= 0){
 			if (rat <= ClientPrefs.sickWindow / 2.5){
@@ -6465,6 +6535,34 @@ class PlayState extends MusicBeatState
 			}else if (rat <= ClientPrefs.badWindow * -1){
 				ratings.animation.play("way Off Late");
 				wayoffs += 1;
+			}
+		}
+	}
+
+	public function setRatingImageOP(rat:Float){
+		if (rat >= 0){
+			if (rat <= ClientPrefs.sickWindow / 2.5){
+				ratingsOP.animation.play("fantastic");
+			} else if (rat <= ClientPrefs.sickWindow){
+				ratingsOP.animation.play("excellent Early");
+			}else if (rat >= ClientPrefs.sickWindow && rat <= ClientPrefs.goodWindow){
+				ratingsOP.animation.play("great Early");
+			}else if (rat >= ClientPrefs.goodWindow && rat <= ClientPrefs.badWindow){
+				ratingsOP.animation.play("decent Early");
+			}else if (rat >= ClientPrefs.badWindow){
+				ratingsOP.animation.play("way Off Early");
+			}
+		} else {
+			if (rat >= ClientPrefs.sickWindow * -1 / 2.5){
+				ratingsOP.animation.play("fantastic");
+			} else if (rat >= ClientPrefs.sickWindow * -1){
+				ratingsOP.animation.play("excellent Late");
+			}else if (rat <= ClientPrefs.sickWindow * -1 && rat >= ClientPrefs.goodWindow * -1){
+				ratingsOP.animation.play("great Late");
+			}else if (rat <= ClientPrefs.goodWindow * -1 && rat >= ClientPrefs.badWindow * -1){
+				ratingsOP.animation.play("decent Late");
+			}else if (rat <= ClientPrefs.badWindow * -1){
+				ratingsOP.animation.play("way Off Late");
 			}
 		}
 	}

@@ -117,7 +117,7 @@ class ResultScreen extends FlxSpriteGroup
 		newBest.alpha = 0;
 		add(newBest);
 
-		song = new FlxText(0, 50, Std.int(FlxG.width * 0.6),"", 88);
+		song = new FlxText(0, 50, FlxG.width,"", 88);
 		song.setFormat(Paths.font("DEADLY KILLERS.ttf"), 88, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		song.screenCenter(X);
         song.borderSize = 4;

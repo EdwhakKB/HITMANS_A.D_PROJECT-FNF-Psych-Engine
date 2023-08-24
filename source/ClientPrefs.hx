@@ -25,6 +25,7 @@ class ClientPrefs {
     public static var ratingStyle:Array<Dynamic> = ["", null];
     public static var memoryDisplay:Bool = true;
 	public static var noteSkin:String = 'HITMANS';
+	public static var userName:String = 'Guess';
 	public static var quantization:Bool = false;
 	public static var goStyle:String = 'NEW';
 	public static var lowQuality:Bool = false;
@@ -137,6 +138,10 @@ class ClientPrefs {
 		'debug_2'		=> [EIGHT, NONE],
 		'debug_3'		=> [SIX, NONE]
 	];
+
+	public static var developerMode:Bool = false; // so they can have access to a lot of stuff (such as chart editor, modchart editor, blocked stuff and etc)
+	public static var edwhakMode:Bool = false; //so i have way more stuff than devs lol (includes god mode, autoComplete and others that i'll don't say im not dumb LOL)
+
 	public static var defaultKeys:Map<String, Array<FlxKey>> = keyBinds;
 
 	public static function loadDefaultKeys() {
@@ -163,6 +168,7 @@ class ClientPrefs {
         FlxG.save.data.countDownSounds = countDownSounds;
         FlxG.save.data.ratingStyle = ratingStyle;
 		FlxG.save.data.noteSkin = noteSkin;
+		FlxG.save.data.userName = userName;
 		FlxG.save.data.quantization = quantization;
 		FlxG.save.data.gameOverStyle = goStyle;
 		//FlxG.save.data.cursing = cursing;
@@ -196,6 +202,9 @@ class ClientPrefs {
 		FlxG.save.data.checkForUpdates = checkForUpdates;
 		FlxG.save.data.comboStacking = comboStacking;
 		FlxG.save.data.discordRPC = discordRPC;
+
+		FlxG.save.data.developerMode = developerMode;
+		FlxG.save.data.edwhakMode = edwhakMode;
 	
 		FlxG.save.flush();
 
@@ -268,6 +277,9 @@ class ClientPrefs {
         }
 		if(FlxG.save.data.noteSkin != null) {
 			noteSkin = FlxG.save.data.noteSkin;
+		}
+		if(FlxG.save.data.userName != null) {
+			userName = FlxG.save.data.userName;
 		}
 		if(FlxG.save.data.quantization != null) {
 			quantization = FlxG.save.data.quantization;
@@ -379,6 +391,12 @@ class ClientPrefs {
 			discordRPC = FlxG.save.data.discordRPC;
 		}
 	
+		if(FlxG.save.data.developerMode != null) {
+			developerMode = FlxG.save.data.developerMode;
+		}
+		if(FlxG.save.data.edwhakMode != null) {
+			edwhakMode = FlxG.save.data.edwhakMode;
+		}
 		#if desktop
 		DiscordClient.check();
 		#end
