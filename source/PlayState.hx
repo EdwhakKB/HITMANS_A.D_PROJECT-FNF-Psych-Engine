@@ -673,7 +673,7 @@ class PlayState extends MusicBeatState
 		noteCameras0.visible = false;
 		noteCameras1 = new FlxCamera();
 		noteCameras1.bgColor.alpha = 0;
-		// noteCameras1.visible = false;
+		noteCameras1.visible = false;
 		// noteCameras2 = new FlxCamera();
 		// noteCameras2.bgColor.alpha = 0;
 		// noteCameras2.visible = false;

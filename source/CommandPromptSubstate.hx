@@ -49,6 +49,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 	private var devNameEnabled:Bool = false; //so if you add one of those developer mode will be enabled if password match
 	private var currentDEVName:String = '';
 	private var developerImage:FlxSprite;
+	private var tryingLogOut:Bool = false; //so they must make sure they will logout before it just log them out (just a dynamic visual LOL)
 
 	var currentName:String = '';
 	var helpText:FlxText;
@@ -421,12 +422,52 @@ class CommandPromptSubstate extends MusicBeatSubstate
 						}
 						else if(wordText.text.toLowerCase() == 'login' && !changingUserName)
 							{
-								changingUserName = true;
-								infoText.text = "Please introduce your username";
+								if (ClientPrefs.userName == 'Guess'){
+									changingUserName = true;
+									infoText.text = "Please introduce your username";
+									wordText.text = '';
+									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								}else{
+									infoText.text = 'You are already logged in as '+ ClientPrefs.userName +' try "Logout" to change userName';
+									wordText.text = '';
+									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								}
+							}
+						else if(wordText.text.toLowerCase() == 'logout' && !changingUserName)
+							{
+								if (ClientPrefs.userName != 'Guess' && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+									infoText.text = "You was successfully logged out";
+									wordText.text = '';
+									ClientPrefs.userName = 'Guess';
+									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								}else if (ClientPrefs.userName != 'Guess' && ClientPrefs.edwhakMode || ClientPrefs.developerMode){
+									infoText.text = "Are you sure you want to logout? "+ ClientPrefs.userName + " You must login again";
+									tryingLogOut = true;
+									wordText.text = '';
+									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								}else if (ClientPrefs.userName == 'Guess'){
+									infoText.text = "You can't logout on a Guess account";
+									wordText.text = '';
+									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+								}
+							}
+						else if(wordText.text.toLowerCase() == 'yes' && tryingLogOut)
+							{
+								infoText.text = "You was successfully logged out";
 								wordText.text = '';
+								tryingLogOut = false;
+								ClientPrefs.edwhakMode = false;
+								ClientPrefs.developerMode = false;
+								ClientPrefs.userName = 'Guess';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
-
+						else if(wordText.text.toLowerCase() == 'no' && tryingLogOut)
+							{
+								infoText.text = "Ok "+ ClientPrefs.userName +" enjoy your stay";
+								wordText.text = '';
+								tryingLogOut = false;
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+							}
 					    else if(wordText.text.toLowerCase() == 'reset data')
 							{
 								infoText.text = 'Reseting...';
@@ -634,7 +675,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-										PlayState.SONG = Song.loadFromJson('operating-begginer', 'operating');
+										PlayState.SONG = Song.loadFromJson('test', 'test');
 								        PlayState.isStoryMode = false;
 								        PlayState.storyDifficulty = 1;
 

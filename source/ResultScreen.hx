@@ -148,7 +148,7 @@ class ResultScreen extends FlxSpriteGroup
 		noModchart.alpha = 0;
 		add(noModchart);
 
-		rating = new FlxSprite(420,320);
+		rating = new FlxSprite(440,330);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
 		rating.animation.addByPrefix('fantastic', 'Rating-H', 24, true);
 		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
@@ -158,6 +158,8 @@ class ResultScreen extends FlxSpriteGroup
 		rating.animation.addByPrefix('D', 'Rating-D', 24, true);
         rating.animation.addByPrefix('E', 'Rating-E', 24, true);
         rating.animation.addByPrefix('F', 'Rating-F', 24, true);
+		rating.scale.x = 0.9;
+		rating.scale.y = 0.9;
 		rating.antialiasing = true;
 		rating.updateHitbox();
 		rating.scrollFactor.set();
