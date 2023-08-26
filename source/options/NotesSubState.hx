@@ -72,6 +72,7 @@ class NotesSubState extends MusicBeatSubstate
 	var onHurtMode:Bool = false;
 	var modeNumberVal:Int = 0;
 	var isOnMode:Int = 0;
+	var reloadedNotes = false;
 
 	public function new() {
 		super();
@@ -319,6 +320,7 @@ class NotesSubState extends MusicBeatSubstate
 		if(FlxG.keys.justPressed.CONTROL)
 		{
 			onHurtMode = !onHurtMode;
+			reloadedNotes = true;
 			spawnNotes();
 			updateNotes(true);
 			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -519,13 +521,12 @@ class NotesSubState extends MusicBeatSubstate
 		}
 		else if(controls.RESET && hexTypeNum < 0)
 		{
-			if(FlxG.keys.pressed.SHIFT)
+			if(FlxG.keys.pressed.SHIFT || reloadedNotes)
 			{
 				for (i in 0...3)
 				{
 					var strumRGB:RGBShaderReference = myNotes.members[curSelectedNote].rgbShader;
-					var color:FlxColor = !onHurtMode ? ClientPrefs.arrowRGBBackUp[curSelectedNote][i] : 
-													   			ClientPrefs.hurtRGBBackUp[curSelectedNote][i];
+					var color:FlxColor = (!onHurtMode ? ClientPrefs.arrowRGBBackUp[curSelectedNote][i] : ClientPrefs.hurtRGBBackUp[curSelectedNote][i]);
 					switch(i)
 					{
 						case 0:
@@ -541,6 +542,7 @@ class NotesSubState extends MusicBeatSubstate
 			setShaderColor(!onHurtMode? ClientPrefs.arrowRGB[curSelectedNote][curSelectedMode] : ClientPrefs.hurtRGB[curSelectedNote][curSelectedMode]);
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.6);
 			updateColors();
+			reloadedNotes = false;
 		}
 	}
 
@@ -721,7 +723,7 @@ class NotesSubState extends MusicBeatSubstate
 		}
 		insert(members.indexOf(myNotes) + 1, bigNote);
 		_storedColor = getShaderColor();
-		!PlayState.isPixelStage;
+		PlayState.isPixelStage = false;
 	}
 
 	function updateNotes(?instant:Bool = false)
