@@ -1066,7 +1066,7 @@ class SkewModifier extends Modifier
 {
     override function setupSubValues()
     {
-        baseValue = 1.0;
+        currentValue = 1.0;
         subValues.set('x', new ModifierSubValue(0.0));
         subValues.set('y', new ModifierSubValue(0.0));
     }
@@ -1085,7 +1085,7 @@ class SkewXModifier extends Modifier
 {
     override function setupSubValues()
     {
-        baseValue = 1.0;
+        baseValue = 0.0;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
@@ -1101,7 +1101,7 @@ class SkewYModifier extends Modifier
 {
     override function setupSubValues()
     {
-        baseValue = 1.0;
+        baseValue = 0.0;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
