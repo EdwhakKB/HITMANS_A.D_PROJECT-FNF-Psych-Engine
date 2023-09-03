@@ -44,6 +44,7 @@ class ResultScreen extends FlxSpriteGroup
 		miss: 0xFFFF0000
 	}
 
+	var isOnGraphMode:Bool = false;
 	public static var noteId:Int = -1;
 
 	var newBest:FlxText;
@@ -51,6 +52,10 @@ class ResultScreen extends FlxSpriteGroup
 	var comtxt:FlxText;
 
 	var hitGraphBG:FlxSprite;
+	var zeroMs:FlxText;
+	var topMs:FlxText;
+	var bottomMs:FlxText;
+
 	var music:FlxSound;
 
 	var fantastictxt:FlxText;
@@ -197,33 +202,37 @@ class ResultScreen extends FlxSpriteGroup
 		misstxt.alpha = 0;
 		add(misstxt);
 
-		// hitGraphBG = new FlxSprite(30, 180).makeGraphic(507, 300, FlxColor.BLACK);
-		// hitGraphBG.alpha = 0;
-		// add(hitGraphBG);
+		hitGraphBG = new FlxSprite(140, 210).makeGraphic(507, 300, FlxColor.BLACK);
+		hitGraphBG.alpha = 0;
+		hitGraphBG.visible = false;
+		add(hitGraphBG);
 
-		// var zeroMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + (hitGraphBG.height / 2)) - 10, 100, '0ms', 16);
-		// zeroMs.font = "Assassin Nation Regular";
-		// zeroMs.borderStyle = OUTLINE;
-		// zeroMs.borderSize = 2;
-		// zeroMs.alignment = 'right';
-		// add(zeroMs);
-		// zeroMs.alpha = 0;
+		zeroMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + (hitGraphBG.height / 2)) - 10, 100, '0ms', 16);
+		zeroMs.font = "Assassin Nation Regular";
+		zeroMs.borderStyle = OUTLINE;
+		zeroMs.borderSize = 2;
+		zeroMs.alignment = 'right';
+		zeroMs.visible = false;
+		add(zeroMs);
+		zeroMs.alpha = 0;
 
-		// var topMs = new FlxText(hitGraphBG.x - 100, hitGraphBG.y + 69, 100, (ClientPrefs.downScroll ? '-' : '') + CoolUtil.floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
-		// topMs.font = "Assassin Nation Regular";
-		// topMs.borderStyle = OUTLINE;
-		// topMs.borderSize = 2;
-		// topMs.alignment = 'right';
-		// add(topMs);
-		// topMs.alpha = 0;
+		topMs = new FlxText(hitGraphBG.x - 100, hitGraphBG.y + 69, 100, (ClientPrefs.downScroll ? '-' : '') + floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
+		topMs.font = "Assassin Nation Regular";
+		topMs.borderStyle = OUTLINE;
+		topMs.borderSize = 2;
+		topMs.alignment = 'right';
+		topMs.visible = false;
+		add(topMs);
+		topMs.alpha = 0;
 
-		// var bottomMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + hitGraphBG.height) - 87, 100, (ClientPrefs.data.downScroll ? '' : '-') + CoolUtil.floorDecimal((ClientPrefs.data.safeFrames / 60) * 1000, 2) + 'ms', 16);
-		// bottomMs.font = "Assassin Nation Regular";
-		// bottomMs.borderStyle = OUTLINE;
-		// bottomMs.borderSize = 2;
-		// bottomMs.alignment = 'right';
-		// add(bottomMs);
-		// bottomMs.alpha = 0;
+		bottomMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + hitGraphBG.height) - 87, 100, (ClientPrefs.downScroll ? '' : '-') + floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
+		bottomMs.font = "Assassin Nation Regular";
+		bottomMs.borderStyle = OUTLINE;
+		bottomMs.borderSize = 2;
+		bottomMs.alignment = 'right';
+		bottomMs.visible = false;
+		add(bottomMs);
+		bottomMs.alpha = 0;
 
 		// for (i in 0...noteId) makeNote(i);
 
@@ -237,8 +246,64 @@ class ResultScreen extends FlxSpriteGroup
 		// FlxG.sound.playMusic(Paths.music('result'));
 	}
 
-	public function load()
+	public function switchResult(hitGraph:Bool)
 	{
+		if (!hitGraph){
+			numbers.visible = true;
+			newBest.visible = true;
+			ranking.visible = true;
+
+			rating.visible = true;
+			acctxt.visible = true;
+			comtxt.visible = true;
+			noModchart.visible = true;
+
+			fantastictxt.visible = true;
+			excelenttxt.visible = true;
+			greattxt.visible = true;
+			wayofftxt.visible = true;
+			decenttxt.visible = true;
+			misstxt.visible = true;
+
+			hitGraphBG.visible = false;
+			zeroMs.visible = false;
+			topMs.visible = false;
+			bottomMs.visible = false;
+		}else{
+			numbers.visible = false;
+			newBest.visible = false;
+			ranking.visible = false;
+
+			rating.visible = false;
+			acctxt.visible = false;
+			comtxt.visible = false;
+			noModchart.visible = false;
+
+			fantastictxt.visible = false;
+			excelenttxt.visible = false;
+			greattxt.visible = false;
+			wayofftxt.visible = false;
+			decenttxt.visible = false;
+			misstxt.visible = false;
+
+			hitGraphBG.visible = true;
+			zeroMs.visible = true;
+			topMs.visible = true;
+			bottomMs.visible = true;
+		}
+	}
+
+	public function floorDecimal(value:Float, decimals:Int):Float
+	{
+		if(decimals < 1)
+			return Math.floor(value);
+
+		var tempMult:Float = 1;
+		for (i in 0...decimals)
+			tempMult *= 10;
+
+		var newValue:Float = Math.floor(value * tempMult);
+		return newValue / tempMult;
 	}
 
 	public function convertPauseMenuSong(name:String) {
@@ -347,6 +412,17 @@ class ResultScreen extends FlxSpriteGroup
 			wayofftxt.alpha += 0.05;
 			decenttxt.alpha += 0.05;
 			misstxt.alpha += 0.05;
+
+			hitGraphBG.alpha = 0.7;
+			zeroMs.alpha += 0.05;
+			topMs.alpha += 0.05;
+			bottomMs.alpha += 0.05;
+
+			if ((FlxG.keys.justPressed.CONTROL) && !ended)
+			{
+				isOnGraphMode = !isOnGraphMode;
+				switchResult(isOnGraphMode);
+			}
 			if ((FlxG.keys.justPressed.ENTER || FlxG.mouse.justPressed) && !ended)
 			{
 				end();

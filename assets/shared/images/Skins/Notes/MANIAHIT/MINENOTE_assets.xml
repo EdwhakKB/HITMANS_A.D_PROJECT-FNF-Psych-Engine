@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="MINENOTE_assets.png">
+<SubTexture name="purple0000" x="0" y="301" width="150" height="149" frameX="-10" frameY="-10" frameWidth="158" frameHeight="158" />
+<SubTexture name="purple0001" x="0" y="0" width="150" height="151" frameX="-6" frameY="-9" frameWidth="158" frameHeight="158" />
+<SubTexture name="purple0002" x="300" y="0" width="150" height="150" frameX="-6" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="purple0003" x="0" y="151" width="152" height="150" frameX="-8" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="purple0004" x="152" y="151" width="151" height="150" frameX="-13" frameY="-14" frameWidth="158" frameHeight="158" />
+<SubTexture name="purple0005" x="150" y="0" width="150" height="151" frameX="-14" frameY="-9" frameWidth="158" frameHeight="158" />
+<SubTexture name="blue0000" x="0" y="301" width="150" height="149" frameX="-10" frameY="-10" frameWidth="158" frameHeight="158" />
+<SubTexture name="blue0001" x="0" y="0" width="150" height="151" frameX="-6" frameY="-9" frameWidth="158" frameHeight="158" />
+<SubTexture name="blue0002" x="300" y="0" width="150" height="150" frameX="-6" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="blue0003" x="0" y="151" width="152" height="150" frameX="-8" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="blue0004" x="152" y="151" width="151" height="150" frameX="-13" frameY="-14" frameWidth="158" frameHeight="158" />
+<SubTexture name="blue0005" x="150" y="0" width="150" height="151" frameX="-14" frameY="-9" frameWidth="158" frameHeight="158" />
+<SubTexture name="green0000" x="0" y="301" width="150" height="149" frameX="-10" frameY="-10" frameWidth="158" frameHeight="158" />
+<SubTexture name="green0001" x="0" y="0" width="150" height="151" frameX="-6" frameY="-9" frameWidth="158" frameHeight="158" />
+<SubTexture name="green0002" x="300" y="0" width="150" height="150" frameX="-6" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="green0003" x="0" y="151" width="152" height="150" frameX="-8" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="green0004" x="152" y="151" width="151" height="150" frameX="-13" frameY="-14" frameWidth="158" frameHeight="158" />
+<SubTexture name="green0005" x="150" y="0" width="150" height="151" frameX="-14" frameY="-9" frameWidth="158" frameHeight="158" />
+<SubTexture name="red0000" x="0" y="301" width="150" height="149" frameX="-10" frameY="-10" frameWidth="158" frameHeight="158" />
+<SubTexture name="red0001" x="0" y="0" width="150" height="151" frameX="-6" frameY="-9" frameWidth="158" frameHeight="158" />
+<SubTexture name="red0002" x="300" y="0" width="150" height="150" frameX="-6" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="red0003" x="0" y="151" width="152" height="150" frameX="-8" frameY="-16" frameWidth="158" frameHeight="158" />
+<SubTexture name="red0004" x="152" y="151" width="151" height="150" frameX="-13" frameY="-14" frameWidth="158" frameHeight="158" />
+<SubTexture name="red0005" x="150" y="0" width="150" height="151" frameX="-14" frameY="-9" frameWidth="158" frameHeight="158" />
+</TextureAtlas>

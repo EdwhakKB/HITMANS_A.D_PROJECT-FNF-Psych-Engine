@@ -125,7 +125,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     }
 
 
-    private function addDataToStrum(strumData:NotePositionData, strum:FlxSprite)
+    private function addDataToStrum(strumData:NotePositionData, strum:StrumNote)
     {
         strum.x = strumData.x;
         strum.y = strumData.y;
@@ -134,6 +134,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         strum.alpha = strumData.alpha;
         strum.scale.x = strumData.scaleX;
         strum.scale.y = strumData.scaleY;
+        strum.skew.x = strumData.skewX;
+        strum.skew.y = strumData.skewY;
     }
 
     private function getDataForStrum(i:Int, pf:Int)
@@ -143,6 +145,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var strumZ = 0;
         var strumScaleX = NoteMovement.defaultScale[i];
         var strumScaleY = NoteMovement.defaultScale[i];
+        var strumSkewX = NoteMovement.defaultSkewX[i];
+        var strumSkewY = NoteMovement.defaultSkewY[i];
         if (ModchartUtil.getIsPixelStage(instance))
         {
             //work on pixel stages
@@ -150,7 +154,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             strumScaleY = 1*PlayState.daPixelZoom;
         }
         var strumData:NotePositionData = NotePositionData.get();
-        strumData.setupStrum(strumX, strumY, strumZ, i, strumScaleX, strumScaleY, pf);
+        strumData.setupStrum(strumX, strumY, strumZ, i, strumScaleX, strumScaleY, strumSkewX, strumSkewY, pf);
         playfields[pf].applyOffsets(strumData);
         modifierTable.applyStrumMods(strumData, i, pf);
         return strumData;
@@ -167,6 +171,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         daNote.alpha = noteData.alpha;
         daNote.scale.x = noteData.scaleX;
         daNote.scale.y = noteData.scaleY;
+        daNote.skew.x = noteData.skewX;
+        daNote.skew.y = noteData.skewY;
     }
     private function createDataFromNote(noteIndex:Int, playfieldIndex:Int, curPos:Float, noteDist:Float, incomingAngle:Array<Float>)
     {
@@ -176,6 +182,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var lane = getLane(noteIndex);
         var noteScaleX = NoteMovement.defaultScale[lane];
         var noteScaleY = NoteMovement.defaultScale[lane];
+        var noteSkewX = notes.members[noteIndex].skew.x;
+        var noteSkewY = notes.members[noteIndex].skew.y;
 
         var noteAlpha:Float = 1;
         #if PSYCH
@@ -203,7 +211,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         }
 
         var noteData:NotePositionData = NotePositionData.get();
-        noteData.setupNote(noteX, noteY, noteZ, lane, noteScaleX, noteScaleY, playfieldIndex, noteAlpha, 
+        noteData.setupNote(noteX, noteY, noteZ, lane, noteScaleX, noteScaleY, noteSkewX, noteSkewY, playfieldIndex, noteAlpha, 
             curPos, noteDist, incomingAngle[0], incomingAngle[1], notes.members[noteIndex].strumTime, noteIndex);
         playfields[playfieldIndex].applyOffsets(noteData);
         return noteData;
@@ -252,7 +260,6 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
                 var noteDist = getNoteDist(i);
                 noteDist = modifierTable.applyNoteDistMods(noteDist, lane, pf);
-                
 
                 var sustainTimeThingy:Float = 0;
 
@@ -308,10 +315,14 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(strumNote.width/2), noteData.y+(strumNote.height/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(strumNote.width/2), -(strumNote.height/2));
 
+        var skewX = ModchartUtil.getStrumSkew(strumNote, false);
+        var skewY = ModchartUtil.getStrumSkew(strumNote, true);
         noteData.x = thisNotePos.x;
         noteData.y = thisNotePos.y;
         noteData.scaleX *= (1/-thisNotePos.z);
         noteData.scaleY *= (1/-thisNotePos.z);
+        // noteData.skewX = skewX + noteData.skewX;
+        // noteData.skewY = skewY + noteData.skewY;
 
         addDataToStrum(noteData, strumGroup.members[noteData.index]); //set position and stuff before drawing
         strumGroup.members[noteData.index].cameras = this.cameras;
@@ -326,10 +337,14 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(daNote.height/2), noteData.z*0.001), 
         ModchartUtil.defaultFOV*(Math.PI/180), -(daNote.width/2), -(daNote.height/2));
 
+        var skewX = ModchartUtil.getNoteSkew(daNote, false);
+        var skewY = ModchartUtil.getNoteSkew(daNote, true);
         noteData.x = thisNotePos.x;
         noteData.y = thisNotePos.y;
         noteData.scaleX *= (1/-thisNotePos.z);
         noteData.scaleY *= (1/-thisNotePos.z);
+        // noteData.skewX = skewX + noteData.skewX;
+        // noteData.skewY = skewY + noteData.skewY;
         //set note position using the position data
         addDataToNote(noteData, notes.members[noteData.index]); 
         //make sure it draws on the correct camera

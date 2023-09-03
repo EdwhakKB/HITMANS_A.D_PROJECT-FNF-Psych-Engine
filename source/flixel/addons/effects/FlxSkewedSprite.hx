@@ -20,8 +20,6 @@ class FlxSkewedSprite extends FlxSprite
 	public var skewOffset:Bool = false;
 	public var flipSkew:Bool = false;
 
-	public var useTan:Bool = true; //I don't know why it uses TAN by default, but I added this so extreme values don't ruin everything.
-
 	/**
 	 * Tranformation matrix for this sprite.
 	 * Used only when matrixExposed is set to true
@@ -77,35 +75,23 @@ class FlxSkewedSprite extends FlxSprite
 			_matrix.concat(_skewMatrix);
 		}
 
+		getScreenPosition(_point, camera).subtractPoint(offset);
 		_point.addPoint(origin);
 		if (isPixelPerfectRender(camera))
 			_point.floor();
 
-		var skewOffsetX:Float = 0;
-		if(skewOffset){
-			skewOffsetX = (skew.x * FlxAngle.TO_RAD * (height/2));
-			skewOffsetX *= (flipSkew ? -1 : 1);
-		}
-		_matrix.translate(_point.x + skewOffsetX, _point.y);
-		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing,shader);
+		_matrix.translate(_point.x, _point.y);
+		camera.drawPixels(_frame, framePixels, _matrix, colorTransform, blend, antialiasing, shader);
 	}
 
 	function updateSkewMatrix():Void
 	{
 		_skewMatrix.identity();
 
-		if(useTan){
-			if (skew.x != 0 || skew.y != 0)
-			{
-				_skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
-				_skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-			}
-		}else{
-			if (skew.x != 0 || skew.y != 0)
-			{
-				_skewMatrix.b = skew.y * FlxAngle.TO_RAD;
-				_skewMatrix.c = skew.x * FlxAngle.TO_RAD;
-			}
+		if (skew.x != 0 || skew.y != 0)
+		{
+			_skewMatrix.b = skew.y * FlxAngle.TO_RAD;
+			_skewMatrix.c = skew.x * FlxAngle.TO_RAD;
 		}
 		
 	}

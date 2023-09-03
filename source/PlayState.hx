@@ -1936,7 +1936,9 @@ class PlayState extends MusicBeatState
 	
 		#if desktop
 		// Updating Discord Rich Presence.
-		DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		if (!inResultsScreen){
+			DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		}
 		#end
 
 		if(!ClientPrefs.controllerMode)
@@ -2975,7 +2977,7 @@ class PlayState extends MusicBeatState
 				{
 					case 0:
 						countdownGet = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
-						countdownGet.cameras = [camHUD];
+						countdownGet.cameras = [camOther];
 						countdownGet.scrollFactor.set();
 						countdownGet.updateHitbox();
 
@@ -2996,7 +2998,7 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 1);
 					case 1:
 						countdownReady = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-						countdownReady.cameras = [camHUD];
+						countdownReady.cameras = [camOther];
 						countdownReady.scrollFactor.set();
 						countdownReady.updateHitbox();
 
@@ -3017,7 +3019,7 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 1);
 					case 2:
 						countdownSet = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
-						countdownSet.cameras = [camHUD];
+						countdownSet.cameras = [camOther];
 						countdownSet.scrollFactor.set();
 
 						if (PlayState.isPixelStage)
@@ -3037,7 +3039,7 @@ class PlayState extends MusicBeatState
 						FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 1);
 					case 3:
 						countdownGo = new FlxSprite().loadGraphic(Paths.image(introAlts[3]));
-						countdownGo.cameras = [camHUD];
+						countdownGo.cameras = [camOther];
 						countdownGo.scrollFactor.set();
 
 						if (PlayState.isPixelStage)
@@ -3723,13 +3725,15 @@ class PlayState extends MusicBeatState
 			callOnLuas('onResume', []);
 
 			#if desktop
-			if (startTimer != null && startTimer.finished)
-			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
-			}
-			else
-			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			if (!inResultsScreen){
+				if (startTimer != null && startTimer.finished)
+				{
+					DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
+				}
+				else
+				{
+					DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				}
 			}
 			#end
 		}
@@ -3742,13 +3746,15 @@ class PlayState extends MusicBeatState
 		#if desktop
 		if (health > 0 && !paused)
 		{
-			if (Conductor.songPosition > 0.0)
-			{
-				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
-			}
-			else
-			{
+			if (!inResultsScreen){
+				if (Conductor.songPosition > 0.0)
+				{
+					DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
+				}
+				else
+				{
 				DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				}
 			}
 		}
 		#end
@@ -3761,7 +3767,9 @@ class PlayState extends MusicBeatState
 		#if desktop
 		if (health > 0 && !paused)
 		{
-			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			if (!inResultsScreen){
+				DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			}
 		}
 		#end
 
@@ -4145,7 +4153,7 @@ class PlayState extends MusicBeatState
 			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
 		}
 
-		if (controls.PAUSE && startedCountdown && canPause)
+		if (controls.PAUSE || !Main.focused && startedCountdown && canPause)
 		{
 			var ret:Dynamic = callOnLuas('onPause', [], false);
 			if(ret != FunkinLua.Function_Stop) {
@@ -4169,7 +4177,9 @@ class PlayState extends MusicBeatState
 				//}
 		
 				#if desktop
-				DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				if (!inResultsScreen){
+					DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				}
 				#end
 			}
 		}
@@ -4570,7 +4580,9 @@ class PlayState extends MusicBeatState
 		//}
 
 		#if desktop
-		DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		if (!inResultsScreen){
+			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		}
 		#end
 	}
 
@@ -5269,7 +5281,6 @@ class PlayState extends MusicBeatState
 			#if PRELOAD_ALL	
 				sys.thread.Thread.create(() ->
 				{
-					resultScreen.load();
 					if (!practiceMode && notITGMod && SONG.validScore)
 					{
 						var percent:Float = ratingPercent;
@@ -6794,6 +6805,37 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
+		if (curStep % 4 == 0){
+			for (this2 in opponentStrums)
+			{
+				if (this2.animation.curAnim.name == 'static'){
+					this2.rgbShader.r = 0xFF808080;
+					this2.rgbShader.b = 0xFF474747;
+					this2.rgbShader.enabled = true;
+				}
+			}
+			for (this2 in playerStrums)
+			{
+				if (this2.animation.curAnim.name == 'static'){
+					this2.rgbShader.r = 0xFF808080;
+					this2.rgbShader.b = 0xFF474747;
+					this2.rgbShader.enabled = true;
+				}
+			}
+		}else if (curStep % 4 == 1){
+			for (this2 in opponentStrums)
+			{
+				if (this2.animation.curAnim.name == 'static'){ 
+					this2.rgbShader.enabled = false;
+				}
+			}
+			for (this2 in playerStrums)
+			{
+				if (this2.animation.curAnim.name == 'static'){
+					this2.rgbShader.enabled = false;
+				}
+			}
+		}
 		lastStepHit = curStep;
 		setOnLuas('curStep', curStep);
 		callOnLuas('onStepHit', []);

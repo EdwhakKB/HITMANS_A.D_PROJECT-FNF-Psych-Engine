@@ -5,11 +5,12 @@ import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import RGBPalette;
 import RGBPalette.RGBShaderReference;
+import flixel.addons.effects.FlxSkewedSprite;
 import flixel.util.FlxColor;
 
 using StringTools;
 
-class StrumNote extends FlxSprite
+class StrumNote extends FlxSkewedSprite
 {
 	public var rgbShader:RGBShaderReference;
 	private var colorSwap:ColorSwap;

@@ -120,6 +120,23 @@ class ModchartUtil
         #end
     }
     
+    public static function getNoteSkew(daNote:Note, isSkewY:Bool)
+    {
+        if (!isSkewY){
+            return daNote.skew.x;
+        }else{
+            return daNote.skew.y;  
+        }
+    }
+
+    public static function getStrumSkew(daNote:StrumNote, isSkewY:Bool)
+    {
+        if (!isSkewY){
+            return daNote.skew.x;
+        }else{
+            return daNote.skew.y;  
+        }
+    }
 
     static var currentFakeCrochet:Float = -1;
     static var lastBpm:Float = -1;

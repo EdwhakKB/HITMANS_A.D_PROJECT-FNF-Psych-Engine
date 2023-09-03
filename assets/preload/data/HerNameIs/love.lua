@@ -15,7 +15,7 @@ function onCreate()
     setProperty('flash.alpha',0)
     for i = 0,4 do
         makeLuaSprite('X'..i, 'hitmans/Visuals/iLoveYou/X', 300, 200)
-        setObjectCamera('X'..i, 'camHUD')
+        setObjectCamera('X'..i, 'camInterfaz')
         scaleObject('X'..i, 0.5, 0.5)
         scaleObject('X'..i, 0.5, 0.5)
         addLuaSprite('X'..i, false)
@@ -46,7 +46,8 @@ function onCreate()
     end
     for i = 0,1 do
         makeLuaSprite('heart'..i, 'hitmans/Visuals/iLoveYou/A-Heart', 300, 200)
-        setObjectCamera('heart'..i, 'camHUD')
+        setObjectCamera('heart'..i, 'camInterfaz')
+        setObjectOrder('heart'..i, getObjectOrder('ratings') - 1)
         scaleObject('heart0', 0.5, 0.5)
         scaleObject('heart1', 0.5, 0.5)
         addLuaSprite('heart'..i, false)
@@ -129,35 +130,6 @@ function onSongStart()
 end
 
 function onStepHit()
-    -----THE START PART (NA x8 + lady and show me your heart)-----
-    if curStep == 5 or curStep == 69 or curStep == 134 or curStep == 196 or curStep == 260 or curStep == 324 or curStep == 388 or curStep == 452 then
-        vocalsAlpha('coroStart', 0.5, 0, 0.3, 'smoothStepOut')
-    elseif curStep == 9 or curStep == 73 or curStep == 137 or curStep == 200 or curStep == 264 or curStep == 328 or curStep == 392 or curStep == 456 then
-        vocalsAlpha('coroStart', 0.5, 1, 0.3, 'smoothStepOut')
-    elseif curStep == 13 or curStep == 77 or curStep == 140 or curStep == 203 or curStep == 268 or curStep == 332 or curStep == 396 or curStep == 460 then
-        vocalsAlpha('coroStart', 0.5, 2, 0.3, 'smoothStepOut')
-    elseif curStep == 18 or curStep == 81 or curStep == 145 or curStep == 209 or curStep == 272 or curStep == 336 or curStep == 400 or curStep == 464 then
-        vocalsAlpha('coroStart', 0.5, 3, 0.3, 'smoothStepOut') 
-    elseif curStep == 20 or curStep == 83 or curStep == 147 or curStep == 211 or curStep == 274 or curStep == 338 or curStep == 402 or curStep == 466 then
-        vocalsAlpha('coroStart', 0.5, 4, 0.3, 'smoothStepOut') 
-    elseif curStep == 22 or curStep == 85 or curStep == 149 or curStep == 213 or curStep == 276 or curStep == 340 or curStep == 404 or curStep == 468 then
-        vocalsAlpha('coroStart', 0.5, 5, 0.3, 'smoothStepOut')
-    elseif curStep == 24 or curStep == 87 or curStep == 151 or curStep == 215 or curStep == 278 or curStep == 342 or curStep == 406 or curStep == 470 then
-        vocalsAlpha('coroStart', 0.5, 6, 0.3, 'smoothStepOut')
-    elseif curStep == 27 or curStep == 90 or curStep == 153 or curStep == 217 or curStep == 280 or curStep == 344 or curStep == 408 or curStep == 472 then
-        vocalsAlpha('coroStart', 0.5, 7, 0.3, 'smoothStepOut')
-    elseif curStep == 37 or curStep == 164 or curStep == 292 or curStep == 420 then
-        vocalsAlpha('coroStart', 0.5, 0, 0.3, 'smoothStepOut')
-    elseif curStep == 41 or curStep == 169 or curStep == 296 or curStep == 424 then
-        vocalsAlpha('coroStart', 0.5, 1, 0.3, 'smoothStepOut')
-    elseif curStep == 45 or curStep == 172 or curStep == 300 or curStep == 428  then
-        vocalsAlpha('coroStart', 0.5, 2, 0.3, 'smoothStepOut')
-    elseif curStep == 50 or curStep == 177 or curStep == 304 or curStep == 432 then
-        vocalsAlpha('coroDrop', 0.5, 2, 0.8, 'smoothStepOut')
-    elseif curStep == 93 or curStep == 220 or curStep == 348 or curStep == 476 then
-        vocalsAlpha('coroDrop', 0.5, 1, 2, 'smoothStepOut')
-    end
-
     -----VOCALS PART 1 (she gives you a chance)-----
     if curStep == 512 then
         vocalsVariable('part2')
@@ -338,11 +310,11 @@ function onStepHit()
 
 
     -----SHITS FOR THE X THINGS-----
-    if curStep == 248 then
+    if curStep == 128 then
         for i = 0,4 do
             setProperty('X'..i..'.visible', true)
         end
-        angle = 4
+        angle = 2
     end
     if curStep == 252 then
         angle = 2
@@ -536,7 +508,7 @@ function onStepHit()
 end
 
 function onBeatHit()
-    if curBeat == 62 then
+    if curBeat == 32 then
         changeScreen('normal', 0.01, 'linear')
     end
     if curBeat == 76 or curBeat == 108 then
@@ -628,9 +600,9 @@ function onBeatHit()
             setProperty('X'..i..'.visible', false)
         end
     end
-    if curBeat %4 == 0 then
+    if curBeat %2 == 0 then
         heartBump('heart0', 0.7, 'smoothStepOut', 0.5, 0.5)
-    elseif curBeat %4 == 2 then
+    elseif curBeat %2 == 1 then
         heartBump('heart1', 0.7, 'smoothStepOut', 0.5, 0.5)
     end
 end
@@ -673,17 +645,14 @@ function vocalsAlpha(style, mainAlpha, num, time, ease)
         theVariableTxt = 'textC-'
         setProperty('textC-'..num..'.alpha', mainAlpha)
     end
-    if allowColorChange then
-        if colorType == 'normal' then
-            doTweenColor('changesIn'..theVariableTxt..num, theVariableTxt..num, '000000', datime, daease)
-        elseif colorType == 'invert' then
-            doTweenColor('changesIn'..theVariableTxt..num, theVariableTxt..num, 'ffffff', datime, daease)
-        elseif colorType == 'invertWhite' then
-            doTweenColor('changesIn'..theVariableTxt..num, theVariableTxt..num, 'ffffff', datime, daease)
-        end
+    if colorType == 'normal' then
+        doTweenColor('changesIn'..theVariableTxt..num, theVariableTxt..num, '000000', datime, daease)
+    elseif colorType == 'invert' then
+        doTweenColor('changesIn'..theVariableTxt..num, theVariableTxt..num, 'ffffff', datime, daease)
+    elseif colorType == 'invertWhite' then
+         doTweenColor('changesIn'..theVariableTxt..num, theVariableTxt..num, 'ffffff', datime, daease)
     end
     doTweenAlpha('AlphaIn'..style..num, theVariableTxt..num, 0, time, ease)
-    -- runTimer('vocalsAlpha'..i, time)
 end
 
 function heartBump(heart, bumbValue, ease, time, endBumpValue)
@@ -699,7 +668,7 @@ function changeScreen(newScreen, time, ease)
     colorType = newScreen
     if newScreen == 'normal' then
         doTweenColor('newScreenBG', 'bg', 'ffffff', time, ease)
-        triggerEvent('pink toggle', 'true');
+        triggerEvent('pink toggle', 'true', nil);
         for i = 0,1 do
             doTweenColor('newHearts'..i, 'heart'..i, '000000', time, ease)
         end
@@ -709,27 +678,9 @@ function changeScreen(newScreen, time, ease)
         allowColorChange = true
         setProperty('flash.alpha', 0)
         setProperty('flashGlow.alpha', 0)
-        -- for i = 0,7 do
-        --     doTweenColor('newNa'..i, 'na'..i, '000000', time, ease)
-        -- end
-        -- for i = 1,#baseTextCoroMain do
-        --     doTweenColor('newBaseCoro'..i, 'coroMain'..i, '000000', time, ease)
-        -- end
-        -- for i = 1,#texts do
-        --     doTweenColor('newVocals'..i, 'textA-'..i, '000000', time, ease)
-        -- end
-        -- for i = 1,#texts2 do
-        --     doTweenColor('newVocals2'..i, 'textB-'..i, '000000', time, ease)
-        -- end
-        -- for i = 1,#coro do
-        --     doTweenColor('newCoro'..i, 'coro'..i, '000000', time, ease)
-        -- end
-        -- for i = 1,#lastTexts do
-        --     doTweenColor('newLastTexts'..i, 'textC-'..i, '000000', time, ease)
-        -- end
     elseif newScreen == 'invert' then
         doTweenColor('newScreenBG', 'bg', '000000', time, ease)
-        triggerEvent('pink toggle', 'false');
+        triggerEvent('pink toggle', 'false', nil);
         for i = 0,6 do
             doTweenColor('newHearts'..i, 'heart'..i, 'fa89de', time, ease)
         end
@@ -739,27 +690,9 @@ function changeScreen(newScreen, time, ease)
         allowColorChange = true
         setProperty('flash.alpha', 0)
         setProperty('flashGlow.alpha', 0)
-        -- for i = 0,7 do
-        --     doTweenColor('newNa'..i, 'na'..i, 'fa89de', time, ease)
-        -- end
-        -- for i = 1,#baseTextCoroMain do
-        --     doTweenColor('newBaseCoro'..i, 'coroMain'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#texts do
-        --     doTweenColor('newVocals'..i, 'textA-'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#texts2 do
-        --     doTweenColor('newVocals2'..i, 'textB-'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#coro do
-        --     doTweenColor('newCoro'..i, 'coro'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#lastTexts do
-        --     doTweenColor('newLastTexts'..i, 'textC-'..i, 'ffffff', time, ease)
-        -- end
     elseif newScreen == 'invertWhite' then
         doTweenColor('newScreenBG', 'bg', '000000', time, ease)
-        triggerEvent('pink toggle', 'false');
+        triggerEvent('pink toggle', 'false', nil);
         for i = 0,6 do
             doTweenColor('newHearts'..i, 'heart'..i, 'ffffff', time, ease)
         end
@@ -769,24 +702,6 @@ function changeScreen(newScreen, time, ease)
         allowColorChange = true
         setProperty('flash.alpha', 0)
         setProperty('flashGlow.alpha', 0)
-        -- for i = 0,7 do
-        --     doTweenColor('newNa'..i, 'na'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#baseTextCoroMain do
-        --     doTweenColor('newBaseCoro'..i, 'coroMain'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#texts do
-        --     doTweenColor('newVocals'..i, 'textA-'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#texts2 do
-        --     doTweenColor('newVocals2'..i, 'textB-'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#coro do
-        --     doTweenColor('newCoro'..i, 'coro'..i, 'ffffff', time, ease)
-        -- end
-        -- for i = 1,#lastTexts do
-        --     doTweenColor('newLastTexts'..i, 'textC-'..i, 'ffffff', time, ease)
-        -- end
     elseif newScreen == 'invertEX' then
         doTweenAlpha('flash', 'flash', 1, time, ease)
         doTweenAlpha('flashG', 'flashGlow', 1, time, ease)
@@ -887,9 +802,6 @@ function onTimerComplete(t)
     if t == 'togglePink' then
         triggerEvent('pink toggle', 'true');
     end
-    -- if t == 'vocalsAlpha' then
-    --     doTweenAlpha('AlphaIn'..theVariableTxt..numberVar, theVariableTxt..num, 0, 0.2, theAlphaEase)
-    -- end
 end
 
 function onUpdate(elapsed)

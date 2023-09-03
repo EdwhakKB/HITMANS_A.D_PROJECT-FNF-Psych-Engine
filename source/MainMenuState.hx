@@ -272,7 +272,9 @@ class MainMenuState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence
-		DiscordClient.changePresence("USER MENU", null);
+		if (!inCMD){
+			DiscordClient.changePresence("USER MENU", null);
+		}
 		#end
 
 		if (!selectedSomethin)

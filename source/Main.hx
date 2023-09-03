@@ -10,6 +10,8 @@ import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 
 //crash handler stuff
 #if CRASH_HANDLER
@@ -35,6 +37,8 @@ class Main extends Sprite
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
 	public static var fpsVar:FPS;
+
+	public static var focused:Bool = true; //pause stuff
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
@@ -97,9 +101,23 @@ class Main extends Sprite
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;
 		#end
-		#if !html
-        @:privateAccess FlxG.initRenderMethod();
-        #end
+
+		FlxG.signals.focusGained.add(function()
+		{
+			var volumeTo:Float = 1;
+			focused = true;
+			FlxTween.num(FlxG.sound.volume, volumeTo, 1, {ease: FlxEase.linear, onComplete: function(twn:FlxTween){
+				FlxG.sound.volume = volumeTo;
+			}});
+		});
+		FlxG.signals.focusLost.add(function()
+		{
+			var volumeTo:Float = 0.2;
+			focused = false;
+			FlxTween.num(FlxG.sound.volume, volumeTo, 1, {ease: FlxEase.linear, onComplete: function(twn:FlxTween){
+				FlxG.sound.volume = volumeTo;
+			}});
+		});
 		
 		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);

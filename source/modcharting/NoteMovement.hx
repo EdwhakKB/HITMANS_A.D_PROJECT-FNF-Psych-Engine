@@ -25,6 +25,8 @@ class NoteMovement
     public static var arrowSize:Float = 112;
     public static var defaultStrumX:Array<Float> = [];
     public static var defaultStrumY:Array<Float> = [];
+    public static var defaultSkewX:Array<Float> = [];
+    public static var defaultSkewY:Array<Float> = [];
     public static var defaultScale:Array<Float> = [];
     public static var arrowSizes:Array<Float> = [];
     #if LEATHER
@@ -34,6 +36,8 @@ class NoteMovement
     {
         defaultStrumX = []; //reset
         defaultStrumY = []; 
+        defaultSkewX = [];
+        defaultSkewY = []; 
         defaultScale = [];
         arrowSizes = [];
         keyCount = #if (LEATHER || KADE) PlayState.strumLineNotes.length-PlayState.playerStrums.length #else game.strumLineNotes.length-game.playerStrums.length #end; //base game doesnt have opponent strums as group
@@ -46,6 +50,8 @@ class NoteMovement
             #else 
             var strum = game.strumLineNotes.members[i];
             #end
+            defaultSkewX.push(strum.skew.x);
+            defaultSkewY.push(strum.skew.y);
             defaultStrumX.push(strum.x);
             defaultStrumY.push(strum.y);
             #if LEATHER
@@ -68,6 +74,8 @@ class NoteMovement
         #if ((PSYCH || LEATHER) && !DISABLE_MODCHART_EDITOR)
         defaultStrumX = []; //reset
         defaultStrumY = []; 
+        defaultSkewX = [];
+        defaultSkewY = [];
         defaultScale = [];
         arrowSizes = [];
         keyCount = game.strumLineNotes.length-game.playerStrums.length; //base game doesnt have opponent strums as group
@@ -76,6 +84,8 @@ class NoteMovement
         for (i in 0...game.strumLineNotes.members.length)
         {
             var strum = game.strumLineNotes.members[i];
+            defaultSkewX.push(strum.skew.x);
+            defaultSkewY.push(strum.skew.y);
             defaultStrumX.push(strum.x);
             defaultStrumY.push(strum.y);
             #if LEATHER
@@ -103,6 +113,9 @@ class NoteMovement
         daNote.y += pos.y;
         daNote.x += pos.x;
         daNote.z += pos.z;
+
+        daNote.skew.x = defaultSkewX[lane];
+        daNote.skew.y = defaultSkewY[lane];
     }
 
     public static function getLaneDiffFromCenter(lane:Int)

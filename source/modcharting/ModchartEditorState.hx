@@ -203,7 +203,7 @@ class ModchartEditorState extends MusicBeatState
         ReverseModifier, IncomingAngleModifier, RotateModifier, StrumLineRotateModifier,
         BumpyModifier,
         XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier, 
-        ScaleModifier, ScaleXModifier, ScaleYModifier, SpeedModifier, 
+        ScaleModifier, ScaleXModifier, ScaleYModifier, SkewModifier, SkewXModifier, SkewYModifier, SpeedModifier, 
         StealthModifier, NoteStealthModifier, LaneStealthModifier, InvertModifier, FlipModifier, 
         MiniModifier, ShrinkModifier, BeatXModifier, BeatYModifier, BeatZModifier, 
         BounceXModifier, BounceYModifier, BounceZModifier, 
