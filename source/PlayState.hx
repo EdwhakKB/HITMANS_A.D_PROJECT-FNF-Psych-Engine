@@ -1949,6 +1949,8 @@ class PlayState extends MusicBeatState
 		ModchartFuncs.loadLuaFunctions();
 		callOnLuas('onCreatePost', []);
 
+		// camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
+
 		if (ClientPrefs.quantization)
 			doNoteQuant();
 
@@ -2877,26 +2879,26 @@ class PlayState extends MusicBeatState
 		Paths.sound('introGo' + introSoundsSuffix);
 	}
 
-	public function updateLuaDefaultPos() {
-		for (i in 0...playerStrums.length) {
-			setOnLuas('defaultPlayerStrumX' + i, playerStrums.members[i].x);
-			setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y);
-		}
-		for (i in 0...opponentStrums.length) {
-			setOnLuas('defaultOpponentStrumX' + i, opponentStrums.members[i].x);
-			setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
-			//if(ClientPrefs.middleScroll) opponentStrums.members[i].visible = false;
-		}
+	// public function updateLuaDefaultPos() {
+	// 	for (i in 0...playerStrums.length) {
+	// 		setOnLuas('defaultPlayerStrumX' + i, playerStrums.members[i].x);
+	// 		setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y);
+	// 	}
+	// 	for (i in 0...opponentStrums.length) {
+	// 		setOnLuas('defaultOpponentStrumX' + i, opponentStrums.members[i].x);
+	// 		setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
+	// 		//if(ClientPrefs.middleScroll) opponentStrums.members[i].visible = false;
+	// 	}
 
-		for (i in 0...strumLineNotes.length)
-		{
-			var member = PlayState.instance.strumLineNotes.members[i];
-			setOnLuas("defaultStrum" + i + "X", Math.floor(member.x));
-			setOnLuas("defaultStrum" + i + "Y", Math.floor(member.y));
-			setOnLuas("defaultStrum" + i + "Angle", Math.floor(member.angle));
-			setOnLuas("defaultStrum" + i + "Alpha", Math.floor(member.alpha));
-		}
-	}
+	// 	for (i in 0...strumLineNotes.length)
+	// 	{
+	// 		var member = PlayState.instance.strumLineNotes.members[i];
+	// 		setOnLuas("defaultStrum" + i + "X", Math.floor(member.x));
+	// 		setOnLuas("defaultStrum" + i + "Y", Math.floor(member.y));
+	// 		setOnLuas("defaultStrum" + i + "Angle", Math.floor(member.angle));
+	// 		setOnLuas("defaultStrum" + i + "Alpha", Math.floor(member.alpha));
+	// 	}
+	// }
 
 	public function startCountdown():Void
 	{
@@ -2913,10 +2915,28 @@ class PlayState extends MusicBeatState
 			generateStaticArrows(0);
 			generateStaticArrows(1);
 			
+			for (i in 0...playerStrums.length) {
+				setOnLuas('defaultPlayerStrumX' + i, playerStrums.members[i].x);
+				setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y);
+			}
+			for (i in 0...opponentStrums.length) {
+				setOnLuas('defaultOpponentStrumX' + i, opponentStrums.members[i].x);
+				setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
+				//if(ClientPrefs.middleScroll) opponentStrums.members[i].visible = false;
+			}
+
+			for (i in 0...strumLineNotes.length)
+			{
+				var member = PlayState.instance.strumLineNotes.members[i];
+				setOnLuas("defaultStrum" + i + "X", Math.floor(member.x));
+				setOnLuas("defaultStrum" + i + "Y", Math.floor(member.y));
+				setOnLuas("defaultStrum" + i + "Angle", Math.floor(member.angle));
+				setOnLuas("defaultStrum" + i + "Alpha", Math.floor(member.alpha));
+			}
 			//add after generating strums
 			NoteMovement.getDefaultStrumPos(this);
 			
-			updateLuaDefaultPos();
+			// updateLuaDefaultPos();
 
 			startedCountdown = true;
 			Conductor.songPosition = -Conductor.crochet * 5;
@@ -4153,7 +4173,7 @@ class PlayState extends MusicBeatState
 			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
 		}
 
-		if (controls.PAUSE || !Main.focused && startedCountdown && canPause)
+		if (controls.PAUSE || !Main.focused && startedCountdown && canPause && !inResultsScreen)
 		{
 			var ret:Dynamic = callOnLuas('onPause', [], false);
 			if(ret != FunkinLua.Function_Stop) {

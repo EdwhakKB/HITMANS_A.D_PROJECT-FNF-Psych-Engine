@@ -1030,36 +1030,44 @@ class YDModifier extends Modifier
 
 class StealthBoostModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        currentValue = 1.0;
+        subValues.set('offset', new ModifierSubValue(0.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        if (curPos <= (subValues.get('offset').value*100) && curPos >= ((subValues.get('offset').value*100)-200))
         {
-            if (curPos <= -200)
-            {
-                var a = (200-Math.abs(curPos))/(200-1250); //lerp out the desat
-                noteData.alpha = 0+a;
-            }else{
-                noteData.alpha = 0;
-            }
+            var hmult = -(curPos-(subValues.get('offset').value*100))/200;
+            noteData.alpha *=(0+hmult)*-currentValue;
+        } 
+        else if (curPos < ((subValues.get('offset').value*100)-100))
+        {
+            noteData.alpha *= 0;
         }
+    }
 }
 
 class StealthBrakeModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        currentValue = 1.0;
+        subValues.set('offset', new ModifierSubValue(0.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        if (curPos <= (subValues.get('offset').value*100) && curPos >= ((subValues.get('offset').value*100)-200))
         {
-            if (curPos <= -800)
-            {
-                noteData.alpha = 0;
-            } 
-            else if (curPos <= -500)
-            {
-                var a = (500-Math.abs(curPos))/(500-1250); //lerp out the desat
-                noteData.alpha = 1*a;
-            }
-            else 
-            {
-                noteData.alpha = 1;
-            }
+            var hmult = -(curPos-(subValues.get('offset').value*100))/200;
+            noteData.alpha *=(1-hmult)*currentValue;
+        } 
+        else if (curPos < ((subValues.get('offset').value*100)-100))
+        {
+            noteData.alpha *=(1-currentValue);
         }
+    }
 }
 
 class SkewModifier extends Modifier
@@ -1112,3 +1120,28 @@ class SkewYModifier extends Modifier
         noteMath(noteData, lane, 0, pf);
     }
 }
+
+class DizzyModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.angle += currentValue*curPos;
+    }
+}
+
+//this one makes camera stuff so basically it will be experimental until we got something better!
+// class CamRotateModifier extends Modifier
+// {
+//     override function setupSubValues()
+//     {
+//         subValues.set('x', new ModifierSubValue(0.0));
+//         subValues.set('y', new ModifierSubValue(0.0));
+//         subValues.set('angle', new ModifierSubValue(0.0));
+//     }
+//     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+//     {
+//         PlayState.instance.camHUD.angle = subValues.get('angle').value;
+//         PlayState.instance.camHUD.x = subValues.get('x').value;
+//         PlayState.instance.camHUD.y = subValues.get('y').value;
+//     }
+// }

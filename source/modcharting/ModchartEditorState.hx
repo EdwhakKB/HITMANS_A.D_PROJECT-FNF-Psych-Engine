@@ -202,7 +202,7 @@ class ModchartEditorState extends MusicBeatState
         TipsyXModifier, TipsyYModifier, TipsyZModifier,
         ReverseModifier, IncomingAngleModifier, RotateModifier, StrumLineRotateModifier,
         BumpyModifier,
-        XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier, 
+        XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier, DizzyModifier, 
         ScaleModifier, ScaleXModifier, ScaleYModifier, SkewModifier, SkewXModifier, SkewYModifier, SpeedModifier, 
         StealthModifier, NoteStealthModifier, LaneStealthModifier, InvertModifier, FlipModifier, 
         MiniModifier, ShrinkModifier, BeatXModifier, BeatYModifier, BeatZModifier, 
@@ -210,7 +210,7 @@ class ModchartEditorState extends MusicBeatState
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
         InvertSineModifier, BoostModifier, BrakeModifier, JumpModifier, WaveXModifier, WaveYModifier,
         WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier, EaseXModifier,
-        StealthBoostModifier, StealthBrakeModifier
+        StealthBoostModifier, StealthBrakeModifier/*, CamRotateModifier*/
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -486,7 +486,7 @@ class ModchartEditorState extends MusicBeatState
         hideUI.x -= hideUI.width;
         add(hideUI);
 
-
+        // camHUD.height = 1300; //some modchart compatibility (rotationPerspectiveMod)
         
     }
     var dirtyUpdateNotes:Bool = false;
