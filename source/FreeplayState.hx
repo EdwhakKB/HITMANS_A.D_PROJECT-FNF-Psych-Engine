@@ -443,6 +443,11 @@ class FreeplayState extends MusicBeatState
 					PlayState.storyDifficulty = curDifficulty;
 	
 					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+					LoadingState.loadAndSwitchState(new PlayState());
+
+					FlxG.sound.music.volume = 0;
+	
+					destroyFreeplayVocals();
 				}
 				catch(e:Dynamic)
 				{
@@ -454,17 +459,21 @@ class FreeplayState extends MusicBeatState
 					missingText.screenCenter(Y);
 					missingText.visible = true;
 					missingTextBG.visible = true;
+
+					FlxTween.tween(missingText, {alpha: 0}, 1, {onComplete: function(twn:FlxTween)
+						{
+							missingText.visible = false;
+							missingText.alpha = 0.6;
+						}});
+					FlxTween.tween(missingTextBG, {alpha: 0}, 1, {onComplete: function(twn:FlxTween)
+						{
+							missingTextBG.visible = false;
+							missingTextBG.alpha = 0.6;
+						}}); //please work :3!
 					FlxG.sound.play(Paths.sound('cancelMenu'));
 	
 					super.update(elapsed);
-					return;
 				}
-
-				LoadingState.loadAndSwitchState(new PlayState());
-
-				FlxG.sound.music.volume = 0;
-
-				destroyFreeplayVocals();
 			}
 		}
 		else if (controls.RESET && weekOn)
@@ -531,9 +540,6 @@ class FreeplayState extends MusicBeatState
 		intendedScore = Highscore.getScore(songs[curSelected].songName[curSong], curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName[curSong], curDifficulty);
 		#end
-
-		missingText.visible = false;
-		missingTextBG.visible = false;
 
 		PlayState.storyDifficulty = curDifficulty;
 		diffText.text = 'Difficulty  ' + CoolUtil.difficultyString();

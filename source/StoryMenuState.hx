@@ -56,6 +56,9 @@ class StoryMenuState extends MusicBeatState {
 
 	var WMText:FlxText;
 
+	var missingTextBG:FlxSprite;
+	var missingText:FlxText;
+
 	override function create() {
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
@@ -209,6 +212,17 @@ class StoryMenuState extends MusicBeatState {
 		add(scoreText);
 		add(txtWeekTitle);
 
+		missingTextBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		missingTextBG.alpha = 0.6;
+		missingTextBG.visible = false;
+		add(missingTextBG);
+
+		missingText = new FlxText(50, 0, FlxG.width - 100, '', 24);
+		missingText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		missingText.scrollFactor.set();
+		missingText.visible = false;
+		add(missingText);
+
 		changeWeek();
 		changeDifficulty();
 
@@ -352,44 +366,70 @@ class StoryMenuState extends MusicBeatState {
 
 	function selectWeek() {
 		if (!weekIsLocked(loadedWeeks[curWeek].fileName)) {
-			if (stopspamming == false) {
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-
-				grpWeekText.members[curWeek].startFlashing();
-
-				for (char in grpWeekCharacters.members) {
-					if (char.character != '' && char.hasConfirmAnimation) {
-						char.animation.play('confirm');
+			try
+			{
+				if (stopspamming == false) {
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+	
+					grpWeekText.members[curWeek].startFlashing();
+	
+					for (char in grpWeekCharacters.members) {
+						if (char.character != '' && char.hasConfirmAnimation) {
+							char.animation.play('confirm');
+						}
 					}
+					stopspamming = true;
 				}
-				stopspamming = true;
+	
+				// We can't use Dynamic Array .copy() because that crashes HTML5, here's a workaround.
+				var songArray:Array<String> = [];
+				var leWeek:Array<Dynamic> = loadedWeeks[curWeek].songs;
+				for (i in 0...leWeek.length) {
+					songArray.push(leWeek[i][0]);
+				}
+	
+				// Nevermind that's stupid lmao
+				PlayState.storyPlaylist = songArray;
+				PlayState.isStoryMode = true;
+				selectedWeek = true;
+	
+				var diffic = CoolUtil.getDifficultyFilePath(curDifficulty);
+				if (diffic == null)
+					diffic = '';
+	
+				PlayState.storyDifficulty = curDifficulty;
+
+				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
+				PlayState.campaignScore = 0;
+				PlayState.campaignMisses = 0;
+				new FlxTimer().start(1, function(tmr:FlxTimer) {
+					LoadingState.loadAndSwitchState(new PlayState(), true);
+					FreeplayState.destroyFreeplayVocals();
+				});
 			}
+			catch(e:Dynamic)
+			{
+				trace('ERROR! $e');
 
-			// We can't use Dynamic Array .copy() because that crashes HTML5, here's a workaround.
-			var songArray:Array<String> = [];
-			var leWeek:Array<Dynamic> = loadedWeeks[curWeek].songs;
-			for (i in 0...leWeek.length) {
-				songArray.push(leWeek[i][0]);
+				var errorStr:String = e.toString();
+				if(errorStr.startsWith('[file_contents,assets/data/')) errorStr = 'Missing file: ' + errorStr.substring(27, errorStr.length-1); //Missing chart
+				missingText.text = 'ERROR WHILE LOADING CHART:\n$errorStr';
+				missingText.screenCenter(Y);
+				missingText.visible = true;
+				missingTextBG.visible = true;
+			
+				FlxTween.tween(missingText, {alpha: 0}, 1, {onComplete: function(twn:FlxTween)
+					{
+						missingText.visible = false;
+						missingText.alpha = 0.6;
+					}});
+				FlxTween.tween(missingTextBG, {alpha: 0}, 1, {onComplete: function(twn:FlxTween)
+					{
+						missingTextBG.visible = false;
+						missingTextBG.alpha = 0.6;
+					}}); //please work :3!
+				FlxG.sound.play(Paths.sound('cancelMenu'));
 			}
-
-			// Nevermind that's stupid lmao
-			PlayState.storyPlaylist = songArray;
-			PlayState.isStoryMode = true;
-			selectedWeek = true;
-
-			var diffic = CoolUtil.getDifficultyFilePath(curDifficulty);
-			if (diffic == null)
-				diffic = '';
-
-			PlayState.storyDifficulty = curDifficulty;
-
-			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
-			PlayState.campaignScore = 0;
-			PlayState.campaignMisses = 0;
-			new FlxTimer().start(1, function(tmr:FlxTimer) {
-				LoadingState.loadAndSwitchState(new PlayState(), true);
-				FreeplayState.destroyFreeplayVocals();
-			});
 		} else {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
