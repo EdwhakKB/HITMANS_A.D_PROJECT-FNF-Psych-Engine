@@ -1032,19 +1032,18 @@ class StealthBoostModifier extends Modifier
 {
     override function setupSubValues()
     {
-        currentValue = 1.0;
         subValues.set('offset', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        if (curPos <= (subValues.get('offset').value*100) && curPos >= ((subValues.get('offset').value*100)-200))
+        if (curPos <= (subValues.get('offset').value*-100) && curPos >= ((subValues.get('offset').value*-100)-200))
         {
-            var hmult = -(curPos-(subValues.get('offset').value*100))/200;
-            noteData.alpha *=(0+hmult)*-currentValue;
+            var hmult = -(curPos-(subValues.get('offset').value*-100))/200;
+            noteData.alpha *=(1-hmult)*currentValue;
         } 
-        else if (curPos < ((subValues.get('offset').value*100)-100))
+        else if (curPos < ((subValues.get('offset').value*-100)-100))
         {
-            noteData.alpha *= 0;
+            noteData.alpha *=(1-currentValue);
         }
     }
 }
@@ -1053,19 +1052,18 @@ class StealthBrakeModifier extends Modifier
 {
     override function setupSubValues()
     {
-        currentValue = 1.0;
         subValues.set('offset', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        if (curPos <= (subValues.get('offset').value*100) && curPos >= ((subValues.get('offset').value*100)-200))
+        if (curPos >= (subValues.get('offset').value*-100) && curPos <= ((subValues.get('offset').value*-100)-200))
         {
-            var hmult = -(curPos-(subValues.get('offset').value*100))/200;
-            noteData.alpha *=(1-hmult)*currentValue;
+            noteData.alpha *=(0+currentValue);
         } 
-        else if (curPos < ((subValues.get('offset').value*100)-100))
+        else if (curPos > ((subValues.get('offset').value*-100)-100))
         {
-            noteData.alpha *=(1-currentValue);
+            var hmult = (curPos-(subValues.get('offset').value*-100))/200;
+            noteData.alpha *=(1-hmult);
         }
     }
 }
