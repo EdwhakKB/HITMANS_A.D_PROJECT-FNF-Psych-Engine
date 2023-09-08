@@ -93,6 +93,7 @@ class Note extends FlxSkewedSprite{
 	public var ratingDisabled:Bool = false;
 	public static var canDamagePlayer:Bool = true; //for edwhak Instakill Notes and others :3 -Ed
 	public static var edwhakIsPlayer:Bool = false; //made to make Ed special Mechanics lmao
+	public static var sustainRGB:Bool = true; //so if it have only 1 sustain and colored it loads this LOL
 
 	public var texture(default, set):String = null;
 
@@ -399,6 +400,12 @@ class Note extends FlxSkewedSprite{
 
 		this.noteData = noteData;
 
+		if (ClientPrefs.noteSkin == 'NOTITG'){
+			sustainRGB = false;
+		}else{
+			sustainRGB = true;
+		}
+
 		if(noteData > -1) {
 			texture = '';
 			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
@@ -409,6 +416,11 @@ class Note extends FlxSkewedSprite{
 				var animToPlay:String = '';
 				animToPlay = colArray[noteData % 4];
 				animation.play(animToPlay + 'Scroll');
+			}
+			if(!sustainRGB && isSustainNote){
+				rgbShader.enabled = false;
+			}else if(sustainRGB && isSustainNote){
+				rgbShader.enabled = true;
 			}
 		}
 

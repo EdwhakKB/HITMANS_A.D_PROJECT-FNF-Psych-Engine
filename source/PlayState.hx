@@ -1981,7 +1981,7 @@ class PlayState extends MusicBeatState
 		for (note in unspawnNotes) {
 			if (note.rgbShader.enabled && !note.hurtNote){
 			dataStuff = (SONG.bpm * note.strumTime) / 1000 / 60;
-			beat = Math.round(dataStuff * 48);
+			beat = CoolUtil.quantize(dataStuff * 48, 4);
 				if (!note.isSustainNote){
 				if(beat%(192/4)==0){
 					col = ClientPrefs.arrowRQuantize[0];
