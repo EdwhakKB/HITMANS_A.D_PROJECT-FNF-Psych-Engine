@@ -253,6 +253,18 @@ class Paths
 		return returnAsset;
 	}
 
+	static public function songEvents(song:String)
+	{
+		#if !mobile 
+		song = song.toLowerCase();
+		#end
+		if(Assets.exists(Paths.json(song + '/events')))
+			return Paths.json(song + '/events');
+		
+
+		return Paths.json(song + "/events");
+	}
+
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
 		#if sys

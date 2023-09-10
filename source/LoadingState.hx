@@ -5,9 +5,13 @@ import lime.app.Future;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSprite;
+import flixel.ui.FlxBar;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxTimer;
 import flixel.math.FlxMath;
+import flixel.system.FlxSound;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
@@ -15,6 +19,134 @@ import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 
 import haxe.io.Path;
+
+using StringTools;
+
+class AsyncAssetPreloader
+{
+	var uiSkins:Array<String> = [];
+	var characters:Array<String> = [];
+	var stages:Array<String> = [];
+	var audio:Array<String> = [];
+
+	var onComplete:Void->Void = null;
+
+	public var percent(get, default):Float = 0;
+	private function get_percent()
+	{
+		if (totalLoadCount > 0)
+		{
+			percent = loadedCount/totalLoadCount;
+		}
+
+		return percent;
+	}
+	public var totalLoadCount:Int = 0;
+	public var loadedCount:Int = 0;
+
+	public function new(onComplete:Void->Void)
+	{
+		this.onComplete = onComplete;
+		generatePreloadList();
+	}
+
+	private function generatePreloadList()
+	{
+		characters.push(PlayState.SONG.player1);
+		characters.push(PlayState.SONG.player2);
+		characters.push(PlayState.SONG.gfVersion);
+
+		audio.push(Paths.inst(PlayState.SONG.song));
+		audio.push(Paths.voices(PlayState.SONG.song));
+
+		totalLoadCount = audio.length + characters.length; //do -1 because it will be behind at the end when theres a small freeze
+	}
+
+	public function load(async:Bool = true)
+	{
+		if (async)
+		{
+			trace('loading async');
+
+		
+			var multi:Bool = false;
+
+			if (multi) //sometimes faster, sometimes slower, wont bother using it
+			{
+				setupFuture(function()
+				{
+					loadAudio();
+					return true;
+				});
+				setupFuture(function()
+				{
+					loadCharacters();
+					return true;
+				});
+			}
+			else 
+			{
+				setupFuture(function()
+				{
+					loadAudio();
+					loadCharacters();	
+					return true;
+				});
+			}
+
+
+		}
+		else 
+		{
+			loadAudio();
+			loadCharacters();
+			finish();
+		}
+	}
+	function setupFuture(func:Void->Bool)
+	{
+		var fut:Future<Bool> = new Future(func, true);
+		fut.onComplete(function(ashgfjkasdfhkjl) {
+			finish();
+		});
+		fut.onError(function(_) {
+			finish(); //just continue anyway who cares
+		});
+		totalFinishes++;
+	}
+	var totalFinishes:Int = 0;
+	var finshCount:Int = 0;
+	private function finish()
+	{
+		finshCount++;
+		if (finshCount < totalFinishes)
+			return;
+
+		if (onComplete != null)
+			onComplete();
+	}
+	public function loadAudio()
+	{
+		for (i in audio)
+		{
+			loadedCount++;
+			new FlxSound().loadEmbedded(i);
+		}
+		trace('loaded audio');
+	}
+	public function loadCharacters()
+	{
+		for (i in characters)
+		{
+			loadedCount++;
+			new Character(0,0, i);
+		}
+		trace('loaded characters');
+	}
+
+
+
+}
 
 class LoadingState extends MusicBeatState
 {
@@ -30,9 +162,15 @@ class LoadingState extends MusicBeatState
 	var stopMusic = false;
 	var directory:String;
 	var callbacks:MultiCallback;
+
+	var loader:AsyncAssetPreloader = null;
+	var lerpedPercent:Float = 0;
+	var loadTime:Float = 0;
+	var loadingText:FlxText;
+
 	var targetShit:Float = 0;
 
-	function new(target:FlxState, stopMusic:Bool, directory:String)
+	public function new(target:FlxState, stopMusic:Bool, directory:String)
 	{
 		super();
 		this.target = target;
@@ -41,8 +179,8 @@ class LoadingState extends MusicBeatState
 	}
 
 	var funkay:FlxSprite;
-	var loadBar:FlxSprite;
-	override function create()
+	var loadingBar:FlxBar;
+	override public function create()
 	{
 		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0x00caff4d);
 		add(bg);
@@ -54,10 +192,21 @@ class LoadingState extends MusicBeatState
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
 
-		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width + 20, 10, 0xffff16d2);
-		loadBar.screenCenter(X);
-		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
-		add(loadBar);
+		loader = new AsyncAssetPreloader(function()
+		{
+			trace("Load time: " + loadTime);
+			onLoad();
+		});
+		loader.load(true);
+
+		loadingBar = new FlxBar(0, FlxG.height-25, LEFT_TO_RIGHT, FlxG.width, 25, this, 'lerpedPercent', 0, 1);
+		loadingBar.scrollFactor.set();
+		loadingBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
+		add(loadingBar);
+
+		loadingText = new FlxText(2, FlxG.height-25-26, 0, "Loading...");
+		loadingText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(loadingText);
 		
 		initSongsManifest().onComplete
 		(
@@ -113,10 +262,11 @@ class LoadingState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		if(callbacks != null) {
-			targetShit = FlxMath.remapToRange(callbacks.numRemaining / callbacks.length, 1, 0, 0, 1);
-			loadBar.scale.x += 0.5 * (targetShit - loadBar.scale.x);
+		if (loader != null)
+		{
+			loadTime += elapsed;
+			lerpedPercent = FlxMath.lerp(lerpedPercent, loader.percent, elapsed*8);
+			loadingText.text = "Loading... (" + loader.loadedCount + "/" + (loader.totalLoadCount+1) + ")";
 		}
 	}
 	
