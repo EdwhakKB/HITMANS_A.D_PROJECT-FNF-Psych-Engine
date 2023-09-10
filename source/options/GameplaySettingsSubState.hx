@@ -100,7 +100,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Rating Offset',
 			'Changes how late/early you have to hit for a "Sick!"\nHigher values mean you have to hit later.',
 			'ratingOffset',
-			'int',
+			'float',
 			0);
 		option.displayFormat = '%vms';
 		option.scrollSpeed = 20;
@@ -108,10 +108,22 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.maxValue = 30;
 		addOption(option);
 
+		var option:Option = new Option('Marvelous!! Hit Window',
+			'Changes the amount of time you have\nfor hitting a "Marvelous!!" in milliseconds.',
+			'marvelousWindow',
+			'float',
+			22.5);
+		option.displayFormat = '%vms';
+		option.scrollSpeed = 8;
+		option.minValue = 5;
+		option.maxValue = 22.5;
+		option.changeValue = 0.1;
+		addOption(option);
+
 		var option:Option = new Option('Sick! Hit Window',
 			'Changes the amount of time you have\nfor hitting a "Sick!" in milliseconds.',
 			'sickWindow',
-			'int',
+			'float',
 			45);
 		option.displayFormat = '%vms';
 		option.scrollSpeed = 15;
@@ -122,7 +134,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Good Hit Window',
 			'Changes the amount of time you have\nfor hitting a "Good" in milliseconds.',
 			'goodWindow',
-			'int',
+			'float',
 			90);
 		option.displayFormat = '%vms';
 		option.scrollSpeed = 30;
@@ -133,7 +145,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Bad Hit Window',
 			'Changes the amount of time you have\nfor hitting a "Bad" in milliseconds.',
 			'badWindow',
-			'int',
+			'float',
 			135);
 		option.displayFormat = '%vms';
 		option.scrollSpeed = 60;

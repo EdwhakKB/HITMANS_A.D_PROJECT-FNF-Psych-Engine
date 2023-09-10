@@ -24,9 +24,7 @@ using StringTools;
 
 class AsyncAssetPreloader
 {
-	var uiSkins:Array<String> = [];
 	var characters:Array<String> = [];
-	var stages:Array<String> = [];
 	var audio:Array<String> = [];
 
 	var onComplete:Void->Void = null;
@@ -52,14 +50,16 @@ class AsyncAssetPreloader
 
 	private function generatePreloadList()
 	{
-		characters.push(PlayState.SONG.player1);
-		characters.push(PlayState.SONG.player2);
-		characters.push(PlayState.SONG.gfVersion);
+		if (PlayState.SONG.song != null){
+			characters.push(PlayState.SONG.player1);
+			characters.push(PlayState.SONG.player2);
+			characters.push(PlayState.SONG.gfVersion);
 
-		audio.push(Paths.inst(PlayState.SONG.song));
-		audio.push(Paths.voices(PlayState.SONG.song));
+			audio.push(Paths.inst(PlayState.SONG.song));
+			audio.push(Paths.voices(PlayState.SONG.song));
 
-		totalLoadCount = audio.length + characters.length; //do -1 because it will be behind at the end when theres a small freeze
+			totalLoadCount = audio.length + characters.length; //do -1 because it will be behind at the end when theres a small freeze
+		}
 	}
 
 	public function load(async:Bool = true)
