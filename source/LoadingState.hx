@@ -58,7 +58,59 @@ class AsyncAssetPreloader
 			audio.push(Paths.inst(PlayState.SONG.song));
 			audio.push(Paths.voices(PlayState.SONG.song));
 
-			totalLoadCount = audio.length + characters.length; //do -1 because it will be behind at the end when theres a small freeze
+			var events:Array<Dynamic> = [];
+            var eventStr:String = '';
+            var eventNoticed:String = '';
+
+            if(PlayState.SONG.events.length > 0)
+            {
+                for(event in PlayState.SONG.events)
+                {
+                    for (i in 0...event[1].length)
+                        {
+                            eventStr = event[1][i][0].toLowerCase();
+                            eventNoticed = event[1][i][2];
+                        }
+                    events.push(event);
+                }
+            }
+
+            if(Assets.exists(Paths.songEvents(PlayState.SONG.song.toLowerCase())))
+            {
+                var eventFunnies:Array<Dynamic> = Song.parseJSONshit(Assets.getText(Paths.songEvents(PlayState.SONG.song.toLowerCase()))).events;
+
+                for(event in eventFunnies)
+                {
+                    for (i in 0...event[1].length)
+                        {
+                            eventStr = event[1][i][0].toLowerCase();
+                            eventNoticed = event[1][i][2];
+                        }
+                    events.push(event);
+                }
+            }
+            if (events.length > 0)
+            {
+                events.sort(function(a, b){
+                    if (a[1] < b[1])
+                        return -1;
+                    else if (a[1] > b[1])
+                        return 1;
+                    else
+                        return 0;
+                });
+            }
+            for(event in events)
+            {
+                switch(eventStr)
+                {
+                    case "change character": 
+                        if (!characters.contains(eventNoticed))
+                            characters.push(eventNoticed);
+                }
+            }
+
+			totalLoadCount = audio.length + characters.length + events.length-1; //do -1 because it will be behind at the end when theres a small freeze
 		}
 	}
 

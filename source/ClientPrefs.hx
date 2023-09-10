@@ -111,6 +111,7 @@ class ClientPrefs {
 	public static var sickWindow:Float = 45;
 	public static var goodWindow:Float = 90;
 	public static var badWindow:Float = 135;
+	public static var shitWindow:Float = 180;
 	public static var safeFrames:Float = 10;
 	public static var discordRPC:Bool = true;
 
@@ -196,6 +197,7 @@ class ClientPrefs {
 		FlxG.save.data.sickWindow = sickWindow;
 		FlxG.save.data.goodWindow = goodWindow;
 		FlxG.save.data.badWindow = badWindow;
+		FlxG.save.data.shitWindow = shitWindow;
 		FlxG.save.data.safeFrames = safeFrames;
 		FlxG.save.data.gameplaySettings = gameplaySettings;
 		FlxG.save.data.controllerMode = controllerMode;
@@ -352,6 +354,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.badWindow != null) {
 			badWindow = FlxG.save.data.badWindow;
+		}
+		if(FlxG.save.data.shitWindow != null) {
+			shitWindow = FlxG.save.data.shitWindow;
 		}
 		if(FlxG.save.data.safeFrames != null) {
 			safeFrames = FlxG.save.data.safeFrames;

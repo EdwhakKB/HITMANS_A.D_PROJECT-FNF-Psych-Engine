@@ -306,6 +306,7 @@ class PlayState extends MusicBeatState
 	public var timeBar:FlxBar;
 
 	public var ratingsData:Array<Rating> = [];
+	public var marvelouss:Int = 0;
 	public var sicks:Int = 0;
 	public var goods:Int = 0;
 	public var bads:Int = 0;
@@ -586,7 +587,12 @@ class PlayState extends MusicBeatState
 		];
 
 		//Ratings
-		ratingsData.push(new Rating('sick')); //default rating
+		ratingsData.push(new Rating('marvelous')); //default rating
+
+		var rating:Rating = new Rating('sick');
+		rating.ratingMod = 1;
+		rating.score = 350;
+		ratingsData.push(rating);
 
 		var rating:Rating = new Rating('good');
 		rating.ratingMod = 0.7;
@@ -5539,6 +5545,7 @@ class PlayState extends MusicBeatState
 			pixelShitPart2 = '-pixel';
 		}
 
+		Paths.image(pixelShitPart1 + "marvelous" + pixelShitPart2);
 		Paths.image(pixelShitPart1 + "sick" + pixelShitPart2);
 		Paths.image(pixelShitPart1 + "good" + pixelShitPart2);
 		Paths.image(pixelShitPart1 + "bad" + pixelShitPart2);
@@ -5566,7 +5573,7 @@ class PlayState extends MusicBeatState
 		//
 
 		var rating:FlxSprite = new FlxSprite();
-		var score:Int = 350;
+		var score:Int = 450;
 
 		//tryna do MS based judgment due to popular demand
 		var daRating:Rating = Conductor.judgeNote(note, noteDiff / playbackRate);
@@ -6534,7 +6541,7 @@ class PlayState extends MusicBeatState
 
 	public function setRatingImage(rat:Float){
 		if (rat >= 0){
-			if (rat <= ClientPrefs.sickWindow / 2.5){
+			if (rat <= ClientPrefs.marvelousWindow){
 				ratings.animation.play("fantastic");
 				fantastics += 1;
 			} else if (rat <= ClientPrefs.sickWindow){
@@ -6551,7 +6558,7 @@ class PlayState extends MusicBeatState
 				wayoffs += 1;
 			}
 		} else {
-			if (rat >= ClientPrefs.sickWindow * -1 / 2.5){
+			if (rat >= ClientPrefs.marvelousWindow * -1){
 				ratings.animation.play("fantastic");
 				fantastics += 1;
 			} else if (rat >= ClientPrefs.sickWindow * -1){
@@ -6572,7 +6579,7 @@ class PlayState extends MusicBeatState
 
 	public function setRatingImageOP(rat:Float){
 		if (rat >= 0){
-			if (rat <= ClientPrefs.sickWindow / 2.5){
+			if (rat <= ClientPrefs.marvelousWindow){
 				ratingsOP.animation.play("fantastic");
 			} else if (rat <= ClientPrefs.sickWindow){
 				ratingsOP.animation.play("excellent Early");
@@ -6584,7 +6591,7 @@ class PlayState extends MusicBeatState
 				ratingsOP.animation.play("way Off Early");
 			}
 		} else {
-			if (rat >= ClientPrefs.sickWindow * -1 / 2.5){
+			if (rat >= ClientPrefs.marvelousWindow * -1){
 				ratingsOP.animation.play("fantastic");
 			} else if (rat >= ClientPrefs.sickWindow * -1){
 				ratingsOP.animation.play("excellent Late");
@@ -7076,6 +7083,7 @@ class PlayState extends MusicBeatState
 
 			// Rating FC
 			ratingFC = "";
+			if (marvelouss > 0) ratingFC = "MFC";
 			if (sicks > 0) ratingFC = "PFC";
 			if (goods > 0) ratingFC = "GFC";
 			if (bads > 0 || shits > 0) ratingFC = "FC";

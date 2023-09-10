@@ -321,8 +321,7 @@ class ResultScreen extends FlxSpriteGroup
 	// 		case 'shit': ratingColours.shit;
 	// 	} : ratingColours.miss);
 
-	// 	Substate.instance.add(note);
-	// 	note.camera = game.camOther;
+	// 	add(note);
 
 	// 	note.active = false;
 	// 	note.alive = false;

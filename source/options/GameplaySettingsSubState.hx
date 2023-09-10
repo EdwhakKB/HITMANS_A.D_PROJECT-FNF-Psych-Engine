@@ -153,6 +153,17 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.maxValue = 135;
 		addOption(option);
 
+		var option:Option = new Option('Shit Hit Window',
+			'Changes the amount of time you have\nfor hitting a "Shit" in milliseconds.',
+			'shitWindow',
+			'float');
+		option.displayFormat = '%vms';
+		option.scrollSpeed = 60;
+		option.minValue = 15;
+		option.maxValue = 180;
+		option.changeValue = 0.1;
+		addOption(option);
+
 		var option:Option = new Option('Safe Frames',
 			'Changes how many frames you have for\nhitting a note earlier or late.',
 			'safeFrames',
