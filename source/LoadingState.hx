@@ -50,7 +50,7 @@ class AsyncAssetPreloader
 
 	private function generatePreloadList()
 	{
-		if (PlayState.SONG.song != null){
+		if (PlayState.SONG != null){
 			characters.push(PlayState.SONG.player1);
 			characters.push(PlayState.SONG.player2);
 			characters.push(PlayState.SONG.gfVersion);
