@@ -6384,7 +6384,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			//IT WILL WORK FINALLY!?
-			if (!note.isSustainNote)
+			if (!note.isSustainNote && !note.isHoldEnd)
 			{
 				ratingsBumpScale();
 				setRatingImage(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
@@ -6396,6 +6396,9 @@ class PlayState extends MusicBeatState
 				if(combo > 9999) combo = 9999;
 				if (combo > maxCombo) maxCombo = combo;
 				popUpScore(note);
+			}
+			if (!note.isSustainNote && note.isHoldEnd){
+				
 			}
 			if (!ClientPrefs.casualMode){
 				if (!Note.edwhakIsPlayer){

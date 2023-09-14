@@ -49,6 +49,7 @@ class Note extends FlxSkewedSprite{
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
+	public var isHoldEnd:Bool = false;
 	public var noteType(default, set):String = null;
 
 	public var eventName:String = '';
@@ -132,7 +133,7 @@ class Note extends FlxSkewedSprite{
 
 	public function resizeByRatio(ratio:Float) //haha funny twitter shit
 	{
-		if(isSustainNote && !animation.curAnim.name.endsWith('end'))
+		if(isSustainNote && !isHoldEnd)
 		{
 			scale.y *= ratio;
 			updateHitbox();
@@ -479,6 +480,7 @@ class Note extends FlxSkewedSprite{
 			copyAngle = false;
 
 			animation.play(colArray[noteData % 4] + 'holdend');
+			isHoldEnd = true;
 
 			updateHitbox();
 
@@ -490,7 +492,7 @@ class Note extends FlxSkewedSprite{
 			if (prevNote.isSustainNote)
 			{
 				prevNote.animation.play(colArray[prevNote.noteData % 4] + 'hold');
-
+				isHoldEnd = false;
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
 				if(PlayState.instance != null)
 				{
