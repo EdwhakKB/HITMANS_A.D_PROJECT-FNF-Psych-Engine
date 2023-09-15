@@ -1438,6 +1438,8 @@ class ModchartEditorState extends MusicBeatState
 		explainString = "Moves notes and targets Z (Far, Close)";
             case 'ConfusionModifier':
 		explainString = "Changes notes and targets angle";
+            case 'DizzyModifier':
+        explainString = "Changes notes angle making a visual on them";
             case 'ScaleModifier':
 		explainString = "Modifier used to make notes and targets bigger or smaller";
             case 'ScaleXModifier':
