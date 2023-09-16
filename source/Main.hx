@@ -101,28 +101,138 @@ class Main extends Sprite
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;
 		#end
+			
+		FlxGraphic.defaultPersist = false;
+	        FlxG.signals.preStateSwitch.add(function()
+	        {
+	
+	            //i tihnk i finally fixed it
+	
+	            @:privateAccess
+	            for (key in FlxG.bitmap._cache.keys())
+	            {
+	                var obj = FlxG.bitmap._cache.get(key);
+	                if (obj != null)
+	                {
+	                    lime.utils.Assets.cache.image.remove(key);
+	                    openfl.Assets.cache.removeBitmapData(key);
+	                    FlxG.bitmap._cache.remove(key);
+	                    //obj.destroy(); //breaks the game lol
+	                }
+	            }
+	
+	            //idk if this helps because it looks like just clearing it does the same thing
+	            for (k => f in lime.utils.Assets.cache.font)
+	                lime.utils.Assets.cache.font.remove(k);
+	            for (k => s in lime.utils.Assets.cache.audio)
+	                lime.utils.Assets.cache.audio.remove(k);
+	
+	            lime.utils.Assets.cache.clear();
+	
+	            openfl.Assets.cache.clear();
+	
+	            FlxG.bitmap.dumpCache();
+	
+	            #if polymod
+	            polymod.Polymod.clearCache();
+	
+	            #end
+	
+	            #if cpp
+	            cpp.vm.Gc.enable(true);
+	            #end
+	
+	            #if sys
+	            openfl.system.System.gc();
+	            #end
+	        });
+	
+	        FlxG.signals.postStateSwitch.add(function()
+	        {
+	            #if cpp
+	            cpp.vm.Gc.enable(true);
+	            #end
+	
+	            #if sys
+	            openfl.system.System.gc();
+	            #end
+	        });
 
-		FlxG.signals.focusGained.add(function()
-		{
-			var volumeTo:Float = 1;
-			focused = true;
-			FlxTween.num(FlxG.sound.volume, volumeTo, 1, {ease: FlxEase.linear, onComplete: function(twn:FlxTween){
-				FlxG.sound.volume = volumeTo;
-			}});
-		});
-		FlxG.signals.focusLost.add(function()
-		{
-			var volumeTo:Float = 0.2;
-			focused = false;
-			FlxTween.num(FlxG.sound.volume, volumeTo, 1, {ease: FlxEase.linear, onComplete: function(twn:FlxTween){
-				FlxG.sound.volume = volumeTo;
-			}});
-		});
+		// shader coords fix
+        	FlxG.signals.gameResized.add(fixCameraShaders);
 		
 		#if CRASH_HANDLER
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+		Application.current.window.onFocusIn.add(onWindowFocusIn);
+		Application.current.window.onFocusOut.add(onWindowFocusOut);
 		#end
 	}
+
+	public static function fixCameraShaders(w:Int, h:Int) //fixes shaders after resizing the window / fullscreening
+	{
+		if (FlxG.cameras.list.length > 0)
+	        {
+	            for (cam in FlxG.cameras.list)
+	            {
+	                if (cam.flashSprite != null)
+	                {
+	                    @:privateAccess 
+	                    {
+	                        cam.flashSprite.cacheBitmap = null;
+	                        cam.flashSprite.cacheBitmapData = null;
+	                        cam.flashSprite.cacheBitmapData2 = null;
+	                        cam.flashSprite.cacheBitmapData3 = null;
+	                        cam.flashSprite.__cacheBitmapColorTransform = null;
+	                    }
+	                }
+	            }
+	        }
+	}
+
+	function onWindowFocusOut(){
+		focused = false;
+
+		if (Type.getClass(FlxG.state) != PlayState)
+		{
+			oldVol = FlxG.sound.volume;
+			if (oldVol > 0.3)
+			{
+				newVol = 0.3;
+			}
+			else
+			{
+				if (oldVol > 0.1)
+				{
+					newVol = 0.1;
+				}
+				else
+				{
+					newVol = 0;
+				}
+			}
+	
+			if (focusMusicTween != null)
+				focusMusicTween.cancel();
+			focusMusicTween = FlxTween.tween(FlxG.sound, {volume: newVol}, 2);
+		}
+	}
+
+	function onWindowFocusIn(){
+		new FlxTimer().start(0.2, function(tmr:FlxTimer)
+		{
+			focused = true;
+		});
+
+		if (Type.getClass(FlxG.state) != PlayState)
+		{
+			// Normal global volume when focused
+			if (focusMusicTween != null)
+				focusMusicTween.cancel();
+	
+			focusMusicTween = FlxTween.tween(FlxG.sound, {volume: oldVol}, 2);
+		}
+	}
+
 
 	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
 	// very cool person for real they don't get enough credit for their work
