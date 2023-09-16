@@ -71,6 +71,11 @@ class Main extends Sprite
 		setupGame();
 	}
 
+	var oldVol:Float = 1.0;
+	var newVol:Float = 0.2;
+
+	public static var focusMusicTween:FlxTween;
+
 	private function setupGame():Void
 	{
 		var stageWidth:Int = Lib.current.stage.stageWidth;
