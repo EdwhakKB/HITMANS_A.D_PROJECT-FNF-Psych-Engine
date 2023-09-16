@@ -365,6 +365,11 @@ class ModchartEditorState extends MusicBeatState
 			ClientPrefs.middleScroll = false;
 		}
 
+        var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/DefaultBackGround.png', IMAGE));
+        bg.screenCenter();
+		bg.setGraphicSize(Std.int(FlxG.width),Std.int(FlxG.height));
+		add(bg);
+
         #if PSYCH
 		strumLine = new FlxSprite(ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 50).makeGraphic(FlxG.width, 10);
         if(ModchartUtil.getDownscroll(this)) strumLine.y = FlxG.height - 150;
@@ -429,6 +434,7 @@ class ModchartEditorState extends MusicBeatState
         updateEventSprites();
 
         line = new FlxSprite().makeGraphic(10, gridSize);
+        line.color = 0xFF000000;
         add(line);
 
         generateStaticArrows(0);
