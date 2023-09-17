@@ -72,8 +72,9 @@ import Conductor.Rating;
 
 #if !flash 
 import flixel.addons.display.FlxRuntimeShader;
-import shaders.Shaders.ShaderEffect as ShaderEffect;
-import shaders.Shaders;
+import Shaders.ShaderEffect as ShaderEffect;
+import Shaders;
+import shaders.FNFShader;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 #end
@@ -99,6 +100,10 @@ using StringTools;
 class PlayState extends MusicBeatState
 {
 	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
+	
+	public var filters:Array<BitmapFilter> = [];
+	public var filterList:Array<BitmapFilter> = [];
+	public var camfilters:Array<BitmapFilter> = [];
 	// var modchartedSongs:Array<String> = []; PUT THE SONG NAME HERE IF YOU WANT TO USE THE ANDROMEDA MODIFIER SYSTEM!!
 
 	// // THEN GOTO MODCHARTSHIT.HX TO DEFINE MODIFIERS ETC
@@ -137,6 +142,7 @@ class PlayState extends MusicBeatState
 	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
 	public var modchartTexts:Map<String, ModchartText> = new Map<String, ModchartText>();
 	public var modchartSaves:Map<String, FlxSave> = new Map<String, FlxSave>();
+	public var modchartCameras:Map<String, FlxCamera> = new Map<String, FlxCamera>(); // FUCK!!!
 	#else
 	public var boyfriendMap:Map<String, Boyfriend> = new Map<String, Boyfriend>();
 	public var dadMap:Map<String, Character> = new Map<String, Character>();
@@ -148,6 +154,7 @@ class PlayState extends MusicBeatState
 	public var modchartSounds:Map<String, FlxSound> = new Map();
 	public var modchartTexts:Map<String, ModchartText> = new Map();
 	public var modchartSaves:Map<String, FlxSave> = new Map();
+	public var modchartCameras:Map<String, FlxCamera> = new Map(); // FUCK!!!
 	#end
 
 	public var BF_X:Float = 770;
@@ -217,45 +224,6 @@ class PlayState extends MusicBeatState
 	//Of course, i always don't know how to make better code lmao, but well, this is made to make people have way more fair time doing modcharts with lua so, it is worthy -Ed
 
 	//I HATE DOING THIS STUPID SHIT MANUALLY AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-
-	//-----------------SHADERS------------------
-
-	public var tiltShiftShader:TiltshiftEffect = null;
-	public var grainShader:GrainEffect = null;
-	public var scanLineShader:ScanlineEffect = null;
-	public var distortionShader:DistortBGEffect = null;
-	public var vcrShader:VCRDistortionEffect = null;
-	public var glitchShader:GlitchEffect = null;
-	public var vcrShader2:VCRDistortionEffect2 = null;
-	public var threeDShader:ThreeDEffect = null;
-	public var bloomShader:BloomEffect = null;
-	public var rgbShader:RGBShiftGlitchEffect = null;
-	public var pulseShader:PulseEffect = null;
-	public var chromaShader:ChromaticAberrationEffect = null;
-	public var desaturationShader:DesaturationEffect = null;
-	public var fishEyeShader:FishEyeEffect = null;
-	public var channelMaskShader:ChannelMaskEffect = null;
-	public var colorMaskShader:ColorMaskEffect = null;
-	public var scrollShader:ScrollEffect = null;
-
-	//--------------END OF SHADERS--------------
-
-	//--------------EFFECT SHIT FOR SHADERS--------------
-
-	// var threeDPerspective:Array<Float> = [0,0,0];
-	var threeDPerspectiveX:Float = 0;
-	var threeDPerspectiveY:Float = 0;
-	var threeDPerspectiveZ:Float = 0;
-	function addThreeDMath(x:Float,y:Float,z:Float)
-	{
-		threeDPerspectiveX = x;
-		threeDPerspectiveY = y;
-		threeDPerspectiveZ = z;
-		threeDShader.setThreeD(threeDPerspectiveX,threeDPerspectiveY,threeDPerspectiveZ);
-	}
-
-	public var easeShader:FlxSprite;
-	//------------------END OF EFFECTS------------------
 
 	public var spawnTime:Float = 2000;
 
@@ -522,8 +490,8 @@ class PlayState extends MusicBeatState
 	// public var noteCameras21:FlxCamera;
 	// public var noteCameras22:FlxCamera;
 
-	public var tweenManager:FlxTweenManager = null;
-	public var timerManager:FlxTimerManager = null;
+	public static var tweenManager:FlxTweenManager = null;
+	public static var timerManager:FlxTimerManager = null;
 
 	public function createTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
 	{
@@ -1610,7 +1578,6 @@ class PlayState extends MusicBeatState
 			noteCameras20, noteCameras21, noteCameras22*/];
 			add(playfieldRenderer);
 		}
-		threeDShader = new ThreeDEffect(0,0,0); //added this since well its cool have this ig (as a secret at least)
 		camFollow = new FlxPoint();
 		camFollowPos = new FlxObject(0, 0, 1, 1);
 
@@ -2365,12 +2332,7 @@ class PlayState extends MusicBeatState
 					}
 					Reflect.setProperty(obj, "shader", null);
 			}
-		}
-
-		public function setThreeDEffect(x:Float,y:Float,z:Float)
-		{  
-			addThreeDMath(x,y,z);
-		}		
+		}	
 
 	public function getLuaObject(tag:String, text:Bool=true):FlxSprite {
 		if(modchartSprites.exists(tag)) return modchartSprites.get(tag);
@@ -3229,9 +3191,12 @@ class PlayState extends MusicBeatState
 	var lastReportedPlayheadPosition:Int = 0;
 	var songTime:Float = 0;
 
+	public var songStarted = false;
+
 	function startSong():Void
 	{
 		startingSong = false;
+		songStarted = true;
 
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
@@ -4334,6 +4299,19 @@ class PlayState extends MusicBeatState
 			// Conductor.lastSongPos = FlxG.sound.music.time;
 		}
 
+		#if desktop
+		if (songStarted)
+		{
+			var shaderThing = FunkinLua.lua_Shaders;
+
+			for(shaderKey in shaderThing.keys())
+			{
+				if(shaderThing.exists(shaderKey))
+					shaderThing.get(shaderKey).update(elapsed);
+			}
+		}
+		#end
+		
 		if (camZooming)
 		{
 			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125 * camZoomingDecay * playbackRate), 0, 1));
@@ -6798,6 +6776,7 @@ class PlayState extends MusicBeatState
 			lua.stop();
 		}
 		luaArray = [];
+		FunkinLua.killShaders();
 
 		#if hscript
 		if(FunkinLua.hscript != null) FunkinLua.hscript = null;
@@ -7175,5 +7154,56 @@ class PlayState extends MusicBeatState
 	function roundQuantNote(num: Float, numDecimalPlaces: Int = 0): Float {
 		var mult: Float = Math.pow(10, numDecimalPlaces);
 		return Math.floor(num * mult + 0.5) / mult;
+	}
+
+	public var currentShaders:Array<FlxRuntimeShader> = [];
+
+	private function setShaders(obj:Dynamic, shaders:Array<FNFShader>)
+	{
+		#if (!flash && sys)
+		var filters = [];
+
+		for (shader in shaders)
+		{
+			filters.push(new ShaderFilter(shader));
+
+			if (!Std.isOfType(obj, FlxCamera))
+			{
+				obj.shader = shader;
+
+				return true;
+			}
+
+			currentShaders.push(shader);
+		}
+		if (Std.isOfType(obj, FlxCamera))
+			obj.setFilters(filters);
+
+		return true;
+		#end
+	}
+
+	private function removeShaders(obj:Dynamic)
+	{
+		#if (!flash && sys)
+		var filters = [];
+
+		for (shader in currentShaders)
+		{
+			currentShaders.remove(shader);
+		}
+
+		if (!Std.isOfType(obj, FlxCamera))
+		{
+			obj.shader = null;
+
+			return true;
+		}
+
+		if (Std.isOfType(obj, FlxCamera))
+			obj.setFilters(filters);
+
+		return true;
+		#end
 	}
 }

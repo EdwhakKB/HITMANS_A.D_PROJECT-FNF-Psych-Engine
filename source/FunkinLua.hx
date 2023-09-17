@@ -35,6 +35,7 @@ import flixel.math.FlxMath;
 import flixel.util.FlxSave;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.system.FlxAssets.FlxShader;
+import flixel.group.FlxSpriteGroup;
 
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
@@ -48,8 +49,8 @@ import sys.io.File;
 import Type.ValueType;
 import Controls;
 import DialogueBoxPsych;
-import shaders.Shaders.ShaderEffect as ShaderEffect;
-import shaders.Shaders;
+import Shaders.ShaderEffect as ShaderEffect;
+import Shaders;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 
@@ -64,6 +65,13 @@ import Discord;
 #end
 
 using StringTools;
+
+typedef LuaCamera =
+{
+    var cam:FlxCamera;
+    var shaders:Array<BitmapFilter>;
+    var shaderNames:Array<String>;
+}
 
 class FunkinLua {
 	public static var Function_Stop:Dynamic = 1;
@@ -82,8 +90,16 @@ class FunkinLua {
 	public static var hscript:HScript = null;
 	#end
 	
+	public static var lua_Cameras:Map<String, LuaCamera> = [];
+	public static var lua_Shaders:Map<String, Shaders.ShaderEffectNew> = [];
+
 	public function new(script:String) {
 		#if LUA_ALLOWED
+		lua_Cameras.set("game", {cam: PlayState.instance.camGame, shaders: [], shaderNames: []});
+		lua_Cameras.set("interfaz", {cam: PlayState.instance.camInterfaz, shaders: [], shaderNames: []});
+		lua_Cameras.set("hud", {cam: PlayState.instance.camHUD, shaders: [], shaderNames: []});
+        lua_Cameras.set("other", {cam: PlayState.instance.camOther, shaders: [], shaderNames: []});
+
 		lua = LuaL.newstate();
 		LuaL.openlibs(lua);
 		Lua.init_callbacks(lua);
@@ -2853,38 +2869,138 @@ class FunkinLua {
 			Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
 				PlayState.instance.clearShaderFromCamera(camera);
 			});
-			// Lua_helper.add_callback(lua, "setThreeDEffect", function(val1:Float, val2:Float, val3:Float) {
-			// 	PlayState.instance.setThreeDEffect(val1, val2, val3);	
-			//});
-			// Lua_helper.add_callback(lua, "easeThreeDEffect", function(tag:String, type:String, value:Dynamic, duration:Float, ease:String) {
-			// 	var penisExam:Dynamic = tweenShit(tag, 'easeShader');
-			// 	if(penisExam != null) {
-			// 		if (type == 'x' || type == 'X'){
-			// 			PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {x: value}, duration, {ease: getFlxEaseByString(ease),
-			// 				onComplete: function(twn:FlxTween) {
-			// 					PlayState.instance.callOnLuas('on3DCompleted', [tag]);
-			// 					PlayState.instance.modchartTweens.remove(tag);
-			// 				}
-			// 			}));
-			// 		}else if (type == 'y' || type == 'Y'){
-			// 			PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {y: value}, duration, {ease: getFlxEaseByString(ease),
-			// 				onComplete: function(twn:FlxTween) {
-			// 					PlayState.instance.callOnLuas('on3DCompleted', [tag]);
-			// 					PlayState.instance.modchartTweens.remove(tag);
-			// 				}
-			// 			}));
-			// 		}else if (type == 'z' || type == 'z'){
-			// 			PlayState.instance.modchartTweens.set(tag, FlxTween.tween(penisExam, {angle: value}, duration, {ease: getFlxEaseByString(ease),
-			// 				onComplete: function(twn:FlxTween) {
-			// 					PlayState.instance.callOnLuas('on3DCompleted', [tag]);
-			// 					PlayState.instance.modchartTweens.remove(tag);
-			// 				}
-			// 			}));
-			// 		}
-			// 	} else {
-			// 		luaTrace('Tweens: Failed load of the ease' + type, false, false, FlxColor.RED);
-			// 	}
-			// });
+			// shader bullshit
+
+		Lua_helper.add_callback(lua,"setActor3DShader", function(id:String, ?speed:Float = 3, ?frequency:Float = 10, ?amplitude:Float = 0.25) {
+            var actor = getActorByName(id);
+
+            if(actor != null)
+            {
+                var funnyShader:Shaders.ThreeDEffectNew = new Shaders.ThreeDEffectNew();
+                funnyShader.waveSpeed = speed;
+                funnyShader.waveFrequency = frequency;
+                funnyShader.waveAmplitude = amplitude;
+                lua_Shaders.set(id, funnyShader);
+                
+                actor.shader = funnyShader.shader;
+            }
+        });
+        
+        Lua_helper.add_callback(lua,"setActorNoShader", function(id:String) {
+            var actor = getActorByName(id);
+
+            if(actor != null)
+            {
+                lua_Shaders.remove(id);
+                actor.shader = null;
+            }
+        });
+
+        Lua_helper.add_callback(lua, "initShaderFromHx", function(name:String, classString:String) {
+
+            if (!ClientPrefs.shaders)
+                return;
+
+            /*#if mobile
+            //Application.current.window.alert("loading shader: "+classString,"Leather Engine Modcharts");
+            if (mobileShaderBlacklist.contains(classString))
+                return;
+            #end*/
+
+            var shaderClass = Type.resolveClass(classString);
+            if (shaderClass != null)
+            {
+                var shad = Type.createInstance(shaderClass, []);
+                lua_Shaders.set(name, shad);
+                trace('created shader: '+name);
+            }
+            else 
+            {
+                lime.app.Application.current.window.alert("shader broken:\n"+classString+" is non existent","Hitmans Corps!");
+            }
+        });
+        Lua_helper.add_callback(lua,"setActorShader", function(actorStr:String, shaderName:String) {
+            if (!ClientPrefs.shaders)
+                return;
+
+            var shad = lua_Shaders.get(shaderName);
+            var actor = getActorByName(actorStr);
+            
+
+            if(actor != null && shad != null)
+            {
+                actor.shader = Reflect.getProperty(shad, 'shader'); //use reflect to workaround compiler errors
+
+                //trace('added shader '+shaderName+" to " + actorStr);
+
+            }
+        });
+
+        Lua_helper.add_callback(lua, "setShaderProperty", function(shaderName:String, prop:String, value:Dynamic) {
+            if (!ClientPrefs.shaders)
+                return;
+            var shad = lua_Shaders.get(shaderName);
+
+            if(shad != null)
+            {
+                Reflect.setProperty(shad, prop, value);
+                //trace('set shader prop');
+            }
+        });
+
+        Lua_helper.add_callback(lua,"tweenShaderProperty", function(shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear") {
+            if (!ClientPrefs.shaders)
+                return;
+            var shad = lua_Shaders.get(shaderName);
+            var ease = getFlxEaseByString(easeStr);
+
+            if(shad != null)
+            {
+                var startVal = Reflect.getProperty(shad, prop);
+
+                PlayState.tweenManager.num(startVal, value, time, {onUpdate: function(tween:FlxTween){
+					var ting = FlxMath.lerp(startVal,value, ease(tween.percent));
+                    Reflect.setProperty(shad, prop, ting);
+				}, ease: ease, onComplete: function(tween:FlxTween) {
+					Reflect.setProperty(shad, prop, value);
+				}});
+                //trace('set shader prop');
+            }
+        });
+
+		Lua_helper.add_callback(lua,"setCameraShader", function(camStr:String, shaderName:String) {
+            if (!ClientPrefs.shaders)
+                return;
+            var cam = getCameraByName(camStr);
+            var shad = lua_Shaders.get(shaderName);
+
+            if(cam != null && shad != null)
+            {
+                cam.shaders.push(new ShaderFilter(Reflect.getProperty(shad, 'shader'))); //use reflect to workaround compiler errors
+                cam.shaderNames.push(shaderName);
+                cam.cam.setFilters(cam.shaders);
+                //trace('added shader '+shaderName+" to " + camStr);
+            }
+        });
+        Lua_helper.add_callback(lua,"removeCameraShader", function(camStr:String, shaderName:String) {
+            if (!ClientPrefs.shaders)
+                return;
+            var cam = getCameraByName(camStr);
+            if (cam != null)
+            {
+                if (cam.shaderNames.contains(shaderName))
+                {
+                    var idx:Int = cam.shaderNames.indexOf(shaderName);
+                    if (idx != -1)
+                    {
+                        cam.shaderNames.remove(cam.shaderNames[idx]);
+                        cam.shaders.remove(cam.shaders[idx]);
+                        cam.cam.setFilters(cam.shaders); //refresh filters
+                    }
+                    
+                }
+            }
+        });
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		
@@ -3232,28 +3348,38 @@ class FunkinLua {
 	}
 
 	function cameraFromString(cam:String):FlxCamera {
-		switch(cam.toLowerCase()) {
-			case 'camhud' | 'hud': return PlayState.instance.camHUD;
-			case 'camother' | 'other': return PlayState.instance.camOther;
-			case 'caminterfaz' | 'interfaz': return PlayState.instance.camInterfaz;
+		var camera:LuaCamera = getCameraByName(cam);
+		if (camera == null)
+		{
+			switch(cam.toLowerCase()) {
+				case 'camhud' | 'hud': return PlayState.instance.camHUD;
+				case 'camother' | 'other': return PlayState.instance.camOther;
+				case 'caminterfaz' | 'interfaz': return PlayState.instance.camInterfaz;
+			}
+			
+			//modded cameras
+			if (Std.isOfType(PlayState.instance.variables.get(cam), FlxCamera)){
+				return PlayState.instance.variables.get(cam);
+			}
+			return PlayState.instance.camGame;
 		}
-		return PlayState.instance.camGame;
+		return camera.cam;
 	}
 
-	function getEffectFromString(?effect:String = '', ?val1:Dynamic, ?val2:Dynamic, ?val3:Dynamic , ?val4:Dynamic = ""):ShaderEffect {
+	public static function getEffectFromString(?effect:String = '', ?val1:Dynamic, ?val2:Dynamic, ?val3:Dynamic , ?val4:Dynamic = ""):ShaderEffect {
 		switch(effect.toLowerCase().trim()) {
 			case 'grayscale' | 'greyscale' : return new GreyscaleEffect();
 			case 'oldtv' : return new OldTVEffect();
 			case 'invert' | 'invertcolor': return new InvertColorsEffect();
 			case 'tiltshift': return new TiltshiftEffect(val1,val2);
 			case 'grain': return new GrainEffect(val1,val2,val3);
-			case 'scanline': return new ScanlineEffect(val1);
+			case 'scanline': return new ScanlineEffectOld(val1);
 			case 'outline': return new OutlineEffect(val1, val2, val3, val4);
 			case 'distortion': return new DistortBGEffect(val1, val2, val3);
 			case 'vcr': return new VCRDistortionEffect(val1,val2,val3,val4);
 			case 'glitch': return new GlitchEffect(val1, val2, val3);
 			case 'vcr2': return new VCRDistortionEffect2(); //the tails doll one
-			case '3d': return new ThreeDEffect(val1, val2);
+			// case '3d': return new ThreeDEffect();
 			case 'bloom': return new BloomEffect(val1/512.0,val2);
 			case 'rgbshiftglitch' | 'rgbshift': return new RGBShiftGlitchEffect(val1, val2);
 			case 'pulse': return new PulseEffect(val1,val2,val3);
@@ -3263,10 +3389,78 @@ class FunkinLua {
 			case 'fisheye': return new FishEyeEffect(val1);
 			case 'channelmask': new ChannelMaskEffect(val1, val2, val3);
 			case 'colormask': new ColorMaskEffect(val1, val2);
-			case 'scroll': return new ScrollEffect(val1, val2);
 		}
 		return new GreyscaleEffect();
 	}
+
+	public static function getCameraByName(id:String):LuaCamera
+    {
+        if(lua_Cameras.exists(id))
+            return lua_Cameras.get(id);
+
+        switch(id.toLowerCase())
+        {
+            case 'camhud' | 'hud': return lua_Cameras.get("hud");
+			case 'camother' | 'other': return lua_Cameras.get("other");
+			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
+        }
+        
+        return lua_Cameras.get("game");
+    }
+
+    public static function killShaders() //dead
+    {
+        for (cam in lua_Cameras)
+        {
+            cam.shaders = [];
+            cam.shaderNames = [];
+        }
+    }
+
+	public static function getActorByName(id:String):Dynamic //kade to psych
+	{
+		if (lua_Cameras.exists(id))
+            		return lua_Cameras.get(id).cam;
+		
+		// pre defined names
+		switch(id)
+		{
+			case 'boyfriend' | 'bf':
+				@:privateAccess
+				return PlayState.instance.boyfriend;
+		}
+
+		if (Std.parseInt(id) == null)
+			return Reflect.getProperty(getTargetInstance(), id);
+
+		return PlayState.instance.strumLineNotes.members[Std.parseInt(id)];
+	}
+
+	public static inline function getTargetInstance()
+		{
+			return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
+		}
+	
+		public static inline function getLowestCharacterGroup():FlxSpriteGroup
+		{
+			var group:FlxSpriteGroup = PlayState.instance.gfGroup;
+			var pos:Int = PlayState.instance.members.indexOf(group);
+	
+			var newPos:Int = PlayState.instance.members.indexOf(PlayState.instance.boyfriendGroup);
+			if(newPos < pos)
+			{
+				group = PlayState.instance.boyfriendGroup;
+				pos = newPos;
+			}
+			
+			newPos = PlayState.instance.members.indexOf(PlayState.instance.dadGroup);
+			if(newPos < pos)
+			{
+				group = PlayState.instance.dadGroup;
+				pos = newPos;
+			}
+			return group;
+		}
 
 	public function luaTrace(text:String, ignoreCheck:Bool = false, deprecated:Bool = false, color:FlxColor = FlxColor.WHITE) {
 		#if LUA_ALLOWED
@@ -3437,6 +3631,8 @@ class FunkinLua {
 		if(lua == null) {
 			return;
 		}
+
+		lua_Cameras.clear();
 
 		Lua.close(lua);
 		lua = null;
