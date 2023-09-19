@@ -55,7 +55,7 @@ class CoolUtil
 
 	public static function difficultyString2():String
 	{
-		return defaultDifficulties[PlayState.storyDifficulty].toUpperCase();
+		return defaultDifficulties[PlayState.storyDifficulty].toLowerCase();
 	}
 
 	public static function boundTo(value:Float, min:Float, max:Float):Float {
