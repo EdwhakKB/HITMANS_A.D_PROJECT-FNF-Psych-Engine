@@ -49,7 +49,7 @@ import sys.io.File;
 import Type.ValueType;
 import Controls;
 import DialogueBoxPsych;
-import Shaders.ShaderEffect as ShaderEffect;
+import Shaders.ShaderEffectNew as ShaderEffect;
 import Shaders;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
@@ -275,7 +275,7 @@ class FunkinLua {
 		});
 
 		// shader shit
-		Lua_helper.add_callback(lua, "initLuaShader", function(name:String, glslVersion:Int = 120) {
+		Lua_helper.add_callback(lua, "initLuaShader", function(name:String, classString:String, ?glslVersion:Int = 120) {
 			if(!ClientPrefs.shaders) return false;
 
 			#if (!flash && MODS_ALLOWED && sys)
@@ -494,6 +494,49 @@ class FunkinLua {
 			}
 			#else
 			luaTrace("setShaderSampler2D: Platform unsupported for Runtime Shaders!", false, false, FlxColor.RED);
+			#end
+		});
+
+
+		// Lua_helper.add_callback(lua,"setCameraLuaShader", function(camStr:String, shaderName:String) {
+        //     if (!ClientPrefs.shaders)
+        //         return;
+        //     var cam = getCameraByName(camStr);
+        //     var shad = PlayState.instance.runtimeShaders.exists(shaderName);
+
+        //     if(cam != null && shad != null)
+        //     {
+        //         cam.shaders.push(new ShaderFilter(Reflect.getProperty(shad, 'shader'))); //use reflect to workaround compiler errors
+        //         cam.shaderNames.push(shaderName);
+        //         cam.cam.setFilters(cam.shaders);
+        //         //trace('added shader '+shaderName+" to " + camStr);
+        //     }
+        // });
+
+		Lua_helper.add_callback(lua, "tweenLuaShader", function(tag:String, usedShader:String, prop:String, val:Float , time:Float, easeStr:String = "linear") {
+			#if (!flash && MODS_ALLOWED && sys)
+			var exist:Dynamic = PlayState.instance.runtimeShaders.exists(usedShader);
+			var easing = getFlxEaseByString(easeStr);
+			if (exist != null){
+				var shader = PlayState.instance.runtimeShaders.get(usedShader);
+				var name = prop;
+    			var sertProperty = 'shader.${name}.value';
+    			var serted = 'shader.${name}';
+        		if (Type.typeof(serted) == null) return;
+        		if (Type.typeof(sertProperty) == null) Type.typeof('shader.${name}.value = [0];');
+        		PlayState.instance.modchartTweens.set(tag, FlxTween.num(Std.parseFloat('shader.${name}.value[0]'), val, time, {
+           			ease: easing,
+            		onComplete: function(test:FlxTween){
+						// Std.parseFloat('shader.${name}.value[0]') = val;
+            			PlayState.instance.runtimeShaders.remove(tag);
+            			PlayState.instance.callOnLuas("onTweenCompleted", [tag, name]);
+        			}
+    			}));
+			}else{
+				luaTrace('tweenShaders: Couldnt find shader: ' + usedShader, false, false, FlxColor.RED);
+			}
+			#else
+				luaTrace("tweenShaders: Platform unsupported for Runtime Shaders!", false, false, FlxColor.RED);
 			#end
 		});
 
@@ -2859,32 +2902,6 @@ class FunkinLua {
 			#end
 			return list;
 		});
-		
-			Lua_helper.add_callback(lua, "addEffect", function(camera:String,effect:String, ?val1:Dynamic, ?val2:Dynamic, ?val3:Dynamic, ?val4:Dynamic) {
-				PlayState.instance.addShaderToCamera(camera, getEffectFromString(effect, val1, val2, val3, val4));		
-			});
-			Lua_helper.add_callback(lua, "removeEffects", function(camera:String, effect:String) {
-				PlayState.instance.removeShaderFromCamera(camera, getEffectFromString(effect));
-			});
-			Lua_helper.add_callback(lua, "clearEffects", function(camera:String) {
-				PlayState.instance.clearShaderFromCamera(camera);
-			});
-			// shader bullshit
-
-		Lua_helper.add_callback(lua,"setActor3DShader", function(id:String, ?speed:Float = 3, ?frequency:Float = 10, ?amplitude:Float = 0.25) {
-            var actor = getActorByName(id);
-
-            if(actor != null)
-            {
-                var funnyShader:Shaders.ThreeDEffectNew = new Shaders.ThreeDEffectNew();
-                funnyShader.waveSpeed = speed;
-                funnyShader.waveFrequency = frequency;
-                funnyShader.waveAmplitude = amplitude;
-                lua_Shaders.set(id, funnyShader);
-                
-                actor.shader = funnyShader.shader;
-            }
-        });
         
         Lua_helper.add_callback(lua,"setActorNoShader", function(id:String) {
             var actor = getActorByName(id);
@@ -2896,7 +2913,7 @@ class FunkinLua {
             }
         });
 
-        Lua_helper.add_callback(lua, "initShaderFromHx", function(name:String, classString:String) {
+        Lua_helper.add_callback(lua, "summongHxShader", function(name:String, classString:String) {
 
             if (!ClientPrefs.shaders)
                 return;
@@ -3364,33 +3381,6 @@ class FunkinLua {
 			return PlayState.instance.camGame;
 		}
 		return camera.cam;
-	}
-
-	public static function getEffectFromString(?effect:String = '', ?val1:Dynamic, ?val2:Dynamic, ?val3:Dynamic , ?val4:Dynamic = ""):ShaderEffect {
-		switch(effect.toLowerCase().trim()) {
-			case 'grayscale' | 'greyscale' : return new GreyscaleEffect();
-			case 'oldtv' : return new OldTVEffect();
-			case 'invert' | 'invertcolor': return new InvertColorsEffect();
-			case 'tiltshift': return new TiltshiftEffect(val1,val2);
-			case 'grain': return new GrainEffect(val1,val2,val3);
-			case 'scanline': return new ScanlineEffectOld(val1);
-			case 'outline': return new OutlineEffect(val1, val2, val3, val4);
-			case 'distortion': return new DistortBGEffect(val1, val2, val3);
-			case 'vcr': return new VCRDistortionEffect(val1,val2,val3,val4);
-			case 'glitch': return new GlitchEffect(val1, val2, val3);
-			case 'vcr2': return new VCRDistortionEffect2(); //the tails doll one
-			// case '3d': return new ThreeDEffect();
-			case 'bloom': return new BloomEffect(val1/512.0,val2);
-			case 'rgbshiftglitch' | 'rgbshift': return new RGBShiftGlitchEffect(val1, val2);
-			case 'pulse': return new PulseEffect(val1,val2,val3);
-			case 'chromaticabberation' | 'ca': return new ChromaticAberrationEffect(val1);
-			case 'sketch': return new SketchEffect();
-			case 'desaturation': return new DesaturationEffect(val1);
-			case 'fisheye': return new FishEyeEffect(val1);
-			case 'channelmask': new ChannelMaskEffect(val1, val2, val3);
-			case 'colormask': new ColorMaskEffect(val1, val2);
-		}
-		return new GreyscaleEffect();
 	}
 
 	public static function getCameraByName(id:String):LuaCamera

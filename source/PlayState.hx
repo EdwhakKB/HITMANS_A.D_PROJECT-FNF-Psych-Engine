@@ -72,7 +72,7 @@ import Conductor.Rating;
 
 #if !flash 
 import flixel.addons.display.FlxRuntimeShader;
-import Shaders.ShaderEffect as ShaderEffect;
+import Shaders.ShaderEffectNew as ShaderEffect;
 import Shaders;
 import shaders.FNFShader;
 import openfl.filters.ShaderFilter;
@@ -2229,110 +2229,110 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public function addShaderToCamera(cam:String,effect:ShaderEffect) //STOLE FROM ANDROMEDA
-		{
-			switch(cam.toLowerCase()) 
-			{
-				case 'camhud' | 'hud':
-						camHUDShaders.push(effect);
-						var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-						for(i in camHUDShaders){
-						  newCamEffects.push(new ShaderFilter(i.shader));
-						}
-						camHUD.setFilters(newCamEffects);
-				case 'camother' | 'other':
-						camOtherShaders.push(effect);
-						var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-						for(i in camOtherShaders){
-						  newCamEffects.push(new ShaderFilter(i.shader));
-						}
-						camOther.setFilters(newCamEffects);
-				case 'camgame' | 'game':
-						camGameShaders.push(effect);
-						var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
-						for(i in camGameShaders){
-						  newCamEffects.push(new ShaderFilter(i.shader));
-						}
-						camGame.setFilters(newCamEffects);
-				default:
-					var obj = null;
-					for (map in [modchartSprites]) {
-						if (map.exists(cam)) {
-							obj = map.get(cam);
-							break;
-						}
-					}
-					if (obj == null) {
-						obj = Reflect.getProperty(PlayState.instance, cam);
-					}
-					Reflect.setProperty(obj, "shader", effect.shader);
-			}
-		}
+	// public function addShaderToCamera(cam:String,effect:ShaderEffect) //STOLE FROM ANDROMEDA
+	// 	{
+	// 		switch(cam.toLowerCase()) 
+	// 		{
+	// 			case 'camhud' | 'hud':
+	// 					camHUDShaders.push(effect);
+	// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+	// 					for(i in camHUDShaders){
+	// 					  newCamEffects.push(new ShaderFilter(i.shader));
+	// 					}
+	// 					camHUD.setFilters(newCamEffects);
+	// 			case 'camother' | 'other':
+	// 					camOtherShaders.push(effect);
+	// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+	// 					for(i in camOtherShaders){
+	// 					  newCamEffects.push(new ShaderFilter(i.shader));
+	// 					}
+	// 					camOther.setFilters(newCamEffects);
+	// 			case 'camgame' | 'game':
+	// 					camGameShaders.push(effect);
+	// 					var newCamEffects:Array<BitmapFilter>=[]; // IT SHUTS HAXE UP IDK WHY BUT WHATEVER IDK WHY I CANT JUST ARRAY<SHADERFILTER>
+	// 					for(i in camGameShaders){
+	// 					  newCamEffects.push(new ShaderFilter(i.shader));
+	// 					}
+	// 					camGame.setFilters(newCamEffects);
+	// 			default:
+	// 				var obj = null;
+	// 				for (map in [modchartSprites]) {
+	// 					if (map.exists(cam)) {
+	// 						obj = map.get(cam);
+	// 						break;
+	// 					}
+	// 				}
+	// 				if (obj == null) {
+	// 					obj = Reflect.getProperty(PlayState.instance, cam);
+	// 				}
+	// 				Reflect.setProperty(obj, "shader", effect.shader);
+	// 		}
+	// 	}
 	
-		public function removeShaderFromCamera(cam:String,effect:ShaderEffect)
-		{
-			switch(cam.toLowerCase()) 
-			{
-				case 'camhud' | 'hud': 
-					camHUDShaders.remove(effect);
-					var newCamEffects:Array<BitmapFilter>=[];
-					for(i in camHUDShaders){
-					newCamEffects.push(new ShaderFilter(i.shader));
-					}
-					camHUD.setFilters(newCamEffects);
-				case 'camother' | 'other': 
-					camOtherShaders.remove(effect);
-					var newCamEffects:Array<BitmapFilter>=[];
-					for(i in camOtherShaders){
-					newCamEffects.push(new ShaderFilter(i.shader));
-					}
-					camOther.setFilters(newCamEffects);
-				case 'camgame' | 'game':
-					camGameShaders.remove(effect);
-					var newCamEffects:Array<BitmapFilter>=[];
-					for(i in camGameShaders){
-					newCamEffects.push(new ShaderFilter(i.shader));
-					}
-					camGame.setFilters(newCamEffects);
-				default: 
-					camGameShaders.remove(effect);
-					var newCamEffects:Array<BitmapFilter>=[];
-					for(i in camGameShaders){
-					newCamEffects.push(new ShaderFilter(i.shader));
-					}
-					camGame.setFilters(newCamEffects);
-			}	  
-		}
+	// 	public function removeShaderFromCamera(cam:String,effect:ShaderEffect)
+	// 	{
+	// 		switch(cam.toLowerCase()) 
+	// 		{
+	// 			case 'camhud' | 'hud': 
+	// 				camHUDShaders.remove(effect);
+	// 				var newCamEffects:Array<BitmapFilter>=[];
+	// 				for(i in camHUDShaders){
+	// 				newCamEffects.push(new ShaderFilter(i.shader));
+	// 				}
+	// 				camHUD.setFilters(newCamEffects);
+	// 			case 'camother' | 'other': 
+	// 				camOtherShaders.remove(effect);
+	// 				var newCamEffects:Array<BitmapFilter>=[];
+	// 				for(i in camOtherShaders){
+	// 				newCamEffects.push(new ShaderFilter(i.shader));
+	// 				}
+	// 				camOther.setFilters(newCamEffects);
+	// 			case 'camgame' | 'game':
+	// 				camGameShaders.remove(effect);
+	// 				var newCamEffects:Array<BitmapFilter>=[];
+	// 				for(i in camGameShaders){
+	// 				newCamEffects.push(new ShaderFilter(i.shader));
+	// 				}
+	// 				camGame.setFilters(newCamEffects);
+	// 			default: 
+	// 				camGameShaders.remove(effect);
+	// 				var newCamEffects:Array<BitmapFilter>=[];
+	// 				for(i in camGameShaders){
+	// 				newCamEffects.push(new ShaderFilter(i.shader));
+	// 				}
+	// 				camGame.setFilters(newCamEffects);
+	// 		}	  
+	// 	}
 	
-		public function clearShaderFromCamera(cam:String)
-		{  
-			var newCamEffects:Array<BitmapFilter>=[];
+	// 	public function clearShaderFromCamera(cam:String)
+	// 	{  
+	// 		var newCamEffects:Array<BitmapFilter>=[];
 	
-			switch(cam.toLowerCase()) 
-			{
-				case 'camhud' | 'hud': 
-					camHUDShaders = [];
-					camHUD.setFilters(newCamEffects);
-				case 'camother' | 'other': 
-					camOtherShaders = [];
-					camOther.setFilters(newCamEffects);
-				case 'camgame' | 'game':
-					camGameShaders = [];
-					camGame.setFilters(newCamEffects);
-				default: 
-					var obj = null;
-					for (map in [modchartSprites]) {
-						if (map.exists(cam)) {
-							obj = map.get(cam);
-							break;
-						}
-					}
-					if (obj == null) {
-						obj = Reflect.getProperty(PlayState.instance, cam);
-					}
-					Reflect.setProperty(obj, "shader", null);
-			}
-		}	
+	// 		switch(cam.toLowerCase()) 
+	// 		{
+	// 			case 'camhud' | 'hud': 
+	// 				camHUDShaders = [];
+	// 				camHUD.setFilters(newCamEffects);
+	// 			case 'camother' | 'other': 
+	// 				camOtherShaders = [];
+	// 				camOther.setFilters(newCamEffects);
+	// 			case 'camgame' | 'game':
+	// 				camGameShaders = [];
+	// 				camGame.setFilters(newCamEffects);
+	// 			default: 
+	// 				var obj = null;
+	// 				for (map in [modchartSprites]) {
+	// 					if (map.exists(cam)) {
+	// 						obj = map.get(cam);
+	// 						break;
+	// 					}
+	// 				}
+	// 				if (obj == null) {
+	// 					obj = Reflect.getProperty(PlayState.instance, cam);
+	// 				}
+	// 				Reflect.setProperty(obj, "shader", null);
+	// 		}
+	// 	}	
 
 	public function getLuaObject(tag:String, text:Bool=true):FlxSprite {
 		if(modchartSprites.exists(tag)) return modchartSprites.get(tag);

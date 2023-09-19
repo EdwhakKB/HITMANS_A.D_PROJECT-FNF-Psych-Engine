@@ -210,7 +210,7 @@ class ModchartEditorState extends MusicBeatState
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
         InvertSineModifier, BoostModifier, BrakeModifier, JumpModifier, WaveXModifier, WaveYModifier,
         WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier, EaseXModifier,
-        StealthBoostModifier, StealthBrakeModifier/*, CamRotateModifier*/
+        StealthBoostModifier, StealthBrakeModifier, NotesModifier/*, CamRotateModifier*/
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -1526,6 +1526,8 @@ class ModchartEditorState extends MusicBeatState
         explainString = "Modifier based from SkewModifier but only in X";
             case 'SkewYModifier':
         explainString = "Modifier based from SkewModifier but only in Y";
+            case 'NotesModifier':
+        explainString = "Modifier based from other modifiers but only affects notes and no targets";
         }
 
        return explainString;
