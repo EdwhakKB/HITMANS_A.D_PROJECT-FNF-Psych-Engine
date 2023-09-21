@@ -332,8 +332,6 @@ class ResultScreen extends FlxSpriteGroup
 				missed: false
 			});
 		}
-	
-		if (game.combo > highestCombo) highestCombo = combo;
 	}
 	
 	public static function onNoteMissPlayState(note:Note) {
