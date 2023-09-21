@@ -5970,7 +5970,7 @@ class PlayState extends MusicBeatState
 				deathVariableTXT = 'HD';
 		}
 
-		onNoteMissPlayState(daNote);
+		ResultsScreen.onNoteMissPlayState(daNote);
 
 		combo = 0;
 		if (!ClientPrefs.casualMode){
@@ -6381,7 +6381,7 @@ class PlayState extends MusicBeatState
 				
 			}
 
-			onGoodNoteHitPlayState(note);
+			ResultsScreen.onGoodNoteHitPlayState(note);
 			if (!ClientPrefs.casualMode){
 				if (!Note.edwhakIsPlayer){
 					health += note.hitHealth * healthGain;
