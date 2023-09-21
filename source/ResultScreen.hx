@@ -312,20 +312,56 @@ class ResultScreen extends FlxSpriteGroup
 		return name;
 	}
 
-	// public function makeNote(id) { // i tried stamp but it didn't work so this'll do for now
-	// 	var note = new FlxSprite((hitGraphBG.x + 5) + (rsNoteData.get('note' + id).strumTime / (FlxG.sound.music.length / hitGraphBG.width)),
-	// 	ClientPrefs.downScroll ? (hitGraphBG.y + (hitGraphBG.height / 2)) - (rsNoteData.get('note' + id).diff / 2) - 10: (hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note' + id).diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note' + id).miss ? switch(rsNoteData.get('note' + id).rating) {
-	// 		case 'sick': ratingColours.sick;
-	// 		case 'good': ratingColours.good;
-	// 		case 'bad': ratingColours.bad;
-	// 		case 'shit': ratingColours.shit;
-	// 	} : ratingColours.miss);
-
-	// 	add(note);
-
-	// 	note.active = false;
-	// 	note.alive = false;
-	// }
+	function calculateMean():Float {
+		var result:Float;
+	
+		for (i in 0...noteId) result += (rsNoteData.get('note' + i).diff);
+		result /= noteId;
+		result = floorDecimal(result, 2);
+	
+		return result;
+	}
+	
+	public static function onGoodNoteHitPlayState(note:Note) {
+		if (!note.isSustainNote) {
+			noteId++;
+			rsNoteData.set('note' + noteId, {
+				strumTime: note.strumTime,
+				rating: note.rating,
+				diff: (note.strumTime - Conductor.songPosition) / game.playbackRate,
+				missed: false
+			});
+		}
+	
+		if (game.combo > highestCombo) highestCombo = combo;
+	}
+	
+	public static function onNoteMissPlayState(note:Note) {
+		noteId++;
+		rsNoteData.set('note' + noteId, {
+			strumTime: note.strumTime,
+			rating: note.rating,
+			diff: (note.strumTime - Conductor.songPosition) / game.playbackRate,
+			missed: true
+		});
+	}
+	
+	function makeNote(id) { // i tried stamp but it didn't work so this'll do for now
+		var note = new FlxSprite((hitGraphBG.x + 5) + (rsNoteData.get('note' + id).strumTime / (FlxG.sound.music.length / hitGraphBG.width)),
+		ClientPrefs.downScroll ? (hitGraphBG.y + (hitGraphBG.height / 2)) - (rsNoteData.get('note' + id).diff / 2) - 10: (hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note' + id).diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note' + id).miss ? switch(rsNoteData.get('note' + id).rating) {
+			case 'perfect': ratingColours.perfect;
+			case 'excelent': ratingColours.excelent;
+			case 'great': ratingColours.great;
+			case 'decent': ratingColours.decent;
+			case 'wayoff': ratingColours.wayoff;
+		} : ratingColours.miss);
+	
+		add(note);
+		note.camera = game.camOther;
+	
+		note.active = false;
+		note.alive = false;
+	}
 
 	override function update(elapsed:Float)
 	{
