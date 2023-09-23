@@ -33,16 +33,20 @@ class ResultScreen extends FlxSpriteGroup
 
 	var song:FlxText;
 
-	public static var rsNoteData = new StringMap();
+	public static var rsNoteData:StringMap<Dynamic> = new StringMap();
 
 	var ratingColours = {
-		perfect: 0xFF00CCFF,
-		excelent: 0xFFFFE600,
-		great: 0xFF00B400,
-		decent: 0xFF8C00FF,
-		wayoff: 0xFFFF4800,
+		marvelous: 0xFF00CCFF,
+		sick: 0xFFFFE600,
+		good: 0xFF00B400,
+		bad: 0xFF8C00FF,
+		shit: 0xFFFF4800,
 		miss: 0xFFFF0000
 	}
+
+	var result:Float;
+	var colorChoosen:FlxColor;
+	var note:FlxSprite;
 
 	var isOnGraphMode:Bool = false;
 	public static var noteId:Int = -1;
@@ -170,13 +174,13 @@ class ResultScreen extends FlxSpriteGroup
 		rating.scrollFactor.set();
 		add(rating);
 
-		fantastictxt = new FlxText(70, 220, Std.int(FlxG.width * 0.6), "FANTASTIC: " + fantastic, 30);
+		fantastictxt = new FlxText(70, 220, Std.int(FlxG.width * 0.6), "PERFECTS: " + fantastic, 30);
 		fantastictxt.font = "Assassin Nation Regular";
 		fantastictxt.autoSize = false;
 		fantastictxt.alpha = 0;
 		add(fantastictxt);
 
-		excelenttxt = new FlxText(70, 260, Std.int(FlxG.width * 0.6), "EXCELENTS: " + excelent, 30);
+		excelenttxt = new FlxText(70, 260, Std.int(FlxG.width * 0.6), "AMAZINGS: " + excelent, 30);
 		excelenttxt.font = "Assassin Nation Regular";
 		excelenttxt.autoSize = false;
 		excelenttxt.alpha = 0;
@@ -187,17 +191,17 @@ class ResultScreen extends FlxSpriteGroup
 		greattxt.alpha = 0;
 		add(greattxt);
 
-		wayofftxt = new FlxText(70, 340, Std.int(FlxG.width * 0.6), "DECENTS: " + decent, 30);
+		wayofftxt = new FlxText(70, 340, Std.int(FlxG.width * 0.6), "LATE: " + decent, 30);
 		wayofftxt.font = "Assassin Nation Regular";
 		wayofftxt.alpha = 0;
 		add(wayofftxt);
 
-		decenttxt = new FlxText(70, 380, Std.int(FlxG.width * 0.6), "WAYS OFFS: " + wayoff, 30);
+		decenttxt = new FlxText(70, 380, Std.int(FlxG.width * 0.6), "WAY LATE: " + wayoff, 30);
 		decenttxt.font = "Assassin Nation Regular";
 		decenttxt.alpha = 0;
 		add(decenttxt);
 
-		misstxt = new FlxText(70, 420, Std.int(FlxG.width * 0.6), "MISSES: " + miss, 30);
+		misstxt = new FlxText(70, 420, Std.int(FlxG.width * 0.6), "ERROR: " + miss, 30);
 		misstxt.font = "Assassin Nation Regular";
 		misstxt.alpha = 0;
 		add(misstxt);
@@ -313,7 +317,6 @@ class ResultScreen extends FlxSpriteGroup
 	}
 
 	function calculateMean():Float {
-		var result:Float;
 	
 		for (i in 0...noteId) result += (rsNoteData.get('note' + i).diff);
 		result /= noteId;
@@ -328,7 +331,7 @@ class ResultScreen extends FlxSpriteGroup
 			rsNoteData.set('note' + noteId, {
 				strumTime: note.strumTime,
 				rating: note.rating,
-				diff: (note.strumTime - Conductor.songPosition) / game.playbackRate,
+				diff: (note.strumTime - Conductor.songPosition) / PlayState.instance.playbackRate,
 				missed: false
 			});
 		}
@@ -339,26 +342,26 @@ class ResultScreen extends FlxSpriteGroup
 		rsNoteData.set('note' + noteId, {
 			strumTime: note.strumTime,
 			rating: note.rating,
-			diff: (note.strumTime - Conductor.songPosition) / game.playbackRate,
+			diff: (note.strumTime - Conductor.songPosition) / PlayState.instance.playbackRate,
 			missed: true
 		});
 	}
 	
-	function makeNote(id) { // i tried stamp but it didn't work so this'll do for now
-		var note = new FlxSprite((hitGraphBG.x + 5) + (rsNoteData.get('note' + id).strumTime / (FlxG.sound.music.length / hitGraphBG.width)),
-		ClientPrefs.downScroll ? (hitGraphBG.y + (hitGraphBG.height / 2)) - (rsNoteData.get('note' + id).diff / 2) - 10: (hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note' + id).diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note' + id).miss ? switch(rsNoteData.get('note' + id).rating) {
-			case 'marvelous': ratingColours.perfect;
-			case 'sick': ratingColours.excelent;
-			case 'good': ratingColours.great;
-			case 'bad': ratingColours.decent;
-			case 'shit': ratingColours.wayoff;
-		} : ratingColours.miss);
+	function makeNote(id:Int) { // i tried stamp but it didn't work so this'll do for now
+		
+		switch(rsNoteData.get('note${id}').rating) 
+		{
+			case 'marvelous': colorChoosen = FlxColor.fromString('${ratingColours.marvelous}');
+			case 'sick': colorChoosen = FlxColor.fromString('${ratingColours.sick}');
+			case 'good': colorChoosen = FlxColor.fromString('${ratingColours.good}');
+			case 'bad': colorChoosen = FlxColor.fromString('${ratingColours.bad}');
+			case 'shit': colorChoosen = FlxColor.fromString('${ratingColours.shit}');
+		}
+
+		note = new FlxSprite((hitGraphBG.x + 5) + (rsNoteData.get('note${id}').strumTime / (FlxG.sound.music.length / hitGraphBG.width)),
+		(hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note${id}').diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note${id}').miss ? colorChoosen : FlxColor.fromString('${ratingColours.miss}'));
 	
 		add(note);
-		note.camera = game.camRating;
-	
-		note.active = false;
-		note.alive = false;
 	}
 
 	override function update(elapsed:Float)

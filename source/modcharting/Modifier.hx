@@ -1082,17 +1082,17 @@ class SkewModifier extends Modifier
 {
     override function setupSubValues()
     {
-        baseValue = 1.0;
+        baseValue = 0.0;
         currentValue = 1.0;
         subValues.set('x', new ModifierSubValue(0.0));
         subValues.set('y', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var daswitch = 1;
+        var daswitch = -1;
         if (instance != null)
             if (ModchartUtil.getDownscroll(instance))
-                daswitch = -1;
+                daswitch = 1;
         noteData.skewX += subValues.get('x').value * daswitch;
         noteData.skewY += subValues.get('y').value * daswitch;
     }
@@ -1110,10 +1110,10 @@ class SkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var daswitch = 1;
+        var daswitch = -1;
         if (instance != null)
             if (ModchartUtil.getDownscroll(instance))
-                daswitch = -1;
+                daswitch = 1;
         noteData.skewX += currentValue * daswitch;
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
@@ -1130,10 +1130,10 @@ class SkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var daswitch = 1;
+        var daswitch = -1;
         if (instance != null)
             if (ModchartUtil.getDownscroll(instance))
-                daswitch = -1;
+                daswitch = 1;
         noteData.skewY += currentValue * daswitch;
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
@@ -1175,8 +1175,8 @@ class NotesModifier extends Modifier
         noteData.y += subValues.get('y').value * daswitch;
         noteData.angle += subValues.get('angle').value;
         noteData.z += subValues.get('z').value;
-        noteData.skewX += subValues.get('skewx').value * daswitch;
-        noteData.skewY += subValues.get('skewy').value * daswitch;
+        noteData.skewX += subValues.get('skewx').value * -daswitch;
+        noteData.skewY += subValues.get('skewy').value * -daswitch;
     }
 
     override function reset()

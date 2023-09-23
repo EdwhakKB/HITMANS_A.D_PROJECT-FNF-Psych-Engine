@@ -69,6 +69,7 @@ import StageData;
 import FunkinLua;
 import DialogueBoxPsych;
 import Conductor.Rating;
+import ResultScreen;
 
 #if !flash 
 import flixel.addons.display.FlxRuntimeShader;
@@ -597,7 +598,7 @@ class PlayState extends MusicBeatState
 		ratings.visible = false;
 		add(ratings);
 
-		ratingsOP = new FlxSprite(180, 230);
+		ratingsOP = new FlxSprite(200, 230);
 		ratingsOP.frames = Paths.getSparrowAtlas('judgements');
 		ratingsOP.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
 		ratingsOP.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -5950,7 +5951,7 @@ class PlayState extends MusicBeatState
 				deathVariableTXT = 'HD';
 		}
 
-		ResultsScreen.onNoteMissPlayState(daNote);
+		ResultScreen.onNoteMissPlayState(daNote);
 
 		combo = 0;
 		if (!ClientPrefs.casualMode){
@@ -6361,7 +6362,7 @@ class PlayState extends MusicBeatState
 				
 			}
 
-			ResultsScreen.onGoodNoteHitPlayState(note);
+			ResultScreen.onGoodNoteHitPlayState(note);
 			if (!ClientPrefs.casualMode){
 				if (!Note.edwhakIsPlayer){
 					health += note.hitHealth * healthGain;
