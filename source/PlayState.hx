@@ -247,8 +247,8 @@ class PlayState extends MusicBeatState
 	//Handles the new epic mega sexy cam code that i've done
 	public var camFollow:FlxPoint;
 	public var camFollowPos:FlxObject;
-	private static var prevCamFollow:FlxPoint;
-	private static var prevCamFollowPos:FlxObject;
+	public static var prevCamFollow:FlxPoint;
+	public static var prevCamFollowPos:FlxObject;
 
 	public var strumLineNotes:FlxTypedGroup<StrumNote>;
 	public var opponentStrums:FlxTypedGroup<StrumNote>;
@@ -387,6 +387,7 @@ class PlayState extends MusicBeatState
 
 	var resultScreen:ResultScreen;
 
+	public static var exitResults:Bool = false;
 	public static var inResultsScreen:Bool = false;
 	private var hits:Int = 0;
 	private var total:Int = 0;
@@ -580,7 +581,7 @@ class PlayState extends MusicBeatState
 
 		//Hitmans Ratings (Kinda Better LOL, sorry if separated i can't use array due keyboard bug)
 		//570 x and 200 y (just in case)
-		ratings = new FlxSprite(900, 230);
+		ratings = new FlxSprite(850, 230);
 		ratings.frames = Paths.getSparrowAtlas('judgements');
 		ratings.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
 		ratings.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -598,7 +599,7 @@ class PlayState extends MusicBeatState
 		ratings.visible = false;
 		add(ratings);
 
-		ratingsOP = new FlxSprite(200, 230);
+		ratingsOP = new FlxSprite(180, 230);
 		ratingsOP.frames = Paths.getSparrowAtlas('judgements');
 		ratingsOP.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
 		ratingsOP.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -2377,9 +2378,11 @@ class PlayState extends MusicBeatState
 	function startAndEnd()
 	{
 		if(endingSong)
-			Rating();
+			if (!inResultsScreen)
+				endSong();
 		else
-			startCountdown();
+			if (!inResultsScreen)
+				startCountdown();
 	}
 
 	var dialogueCount:Int = 0;
@@ -2399,12 +2402,14 @@ class PlayState extends MusicBeatState
 			if(endingSong) {
 				psychDialogue.finishThing = function() {
 					psychDialogue = null;
-					Rating();
+					if (!inResultsScreen)
+						endSong();
 				}
 			} else {
 				psychDialogue.finishThing = function() {
 					psychDialogue = null;
-					startCountdown();
+					if (!inResultsScreen)
+						startCountdown();
 				}
 			}
 			psychDialogue.nextDialogueThing = startNextDialogue;
@@ -2414,9 +2419,11 @@ class PlayState extends MusicBeatState
 		} else {
 			FlxG.log.warn('Your dialogue file is badly formatted!');
 			if(endingSong) {
-				Rating();
+				if (!inResultsScreen)
+					endSong();
 			} else {
-				startCountdown();
+				if (!inResultsScreen)
+					startCountdown();
 			}
 		}
 	}
@@ -4145,7 +4152,8 @@ class PlayState extends MusicBeatState
 					FlxG.sound.music.pause();
 					vocals.pause();
 				}
-				openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				if (!inResultsScreen)
+					openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 				//}
 		
 				#if desktop
@@ -4561,7 +4569,8 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.pause();
 			vocals.pause();
 		}
-		openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+		if (!inResultsScreen)
+			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 		//}
 
 		#if desktop
@@ -5216,7 +5225,7 @@ class PlayState extends MusicBeatState
 
 	public function finishSong(?ignoreNoteOffset:Bool = false):Void
 	{
-		var finishCallback:Void->Void = Rating; //In case you want to change it in a specific song.
+		var finishCallback:Void->Void = rating; //In case you want to change it in a specific song.
 
 		if (isStoryMode)
 		{
@@ -5239,21 +5248,11 @@ class PlayState extends MusicBeatState
 
 	public var transitioning = false;
 
-	public function Rating():Void
+	public function rating():Void
 	{
-		canPause = false;
-		FlxG.sound.music.volume = 0;
-		vocals.volume = 0;
-		camZooming = false;
-		camHUD.zoom = 1;
 		var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
 
-		resultScreen = new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses);
-		resultScreen.scrollFactor.set();
-		resultScreen.cameras = [camRate];
-		resultScreen.end = endSong;
-
-		add(resultScreen);
+		openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
 
 		inResultsScreen = true;
 
@@ -5280,7 +5279,6 @@ class PlayState extends MusicBeatState
 					if(Math.isNaN(percent)) percent = 0;
 					Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
 				}
-				resultScreen.load();
 			#end
 		}
 	}
@@ -5333,114 +5331,19 @@ class PlayState extends MusicBeatState
 
 		var ret:Dynamic = callOnLuas('onEndSong', [], false);
 		if(ret != FunkinLua.Function_Stop && !transitioning) {
-			if (SONG.validScore && notITGMod && !practiceMode)
-			{
-				#if !switch
-				var percent:Float = ratingPercent;
-				if(Math.isNaN(percent)) percent = 0;
-				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
-				#end
-			}
+			
 			playbackRate = 1;
 
-			if (chartingMode)
-			{
-				persistentUpdate = false;
-				paused = true;
-				cancelMusicFadeTween();
-				MusicBeatState.switchState(new ChartingState());
-				chartingMode = true;
-		
-				#if desktop
-				DiscordClient.changePresence("Chart Editor", null, null, true);
-				#end
-				return;
-			}
+			var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
 
-			if (isStoryMode)
-			{
-				campaignScore += songScore;
-				campaignMisses += weekMisses;
+			openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
 
-				storyPlaylist.remove(storyPlaylist[0]);
+			inResultsScreen = true;
 
-				if (storyPlaylist.length <= 0)
-				{
-					WeekData.loadTheFirstEnabledMod();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
-					#if desktop DiscordClient.resetClientID(); #end
-					cancelMusicFadeTween();
-					if(FlxTransitionableState.skipNextTransIn) {
-						CustomFadeTransition.nextCamera = null;
-					}
-					MusicBeatState.switchState(new StoryMenuState());
+			#if desktop
+				DiscordClient.changePresence("Results - " + detailsText, SONG.song + " (" + storyDifficultyText +")" + "Score:" + Math.round(songScore), iconP2.getCharacter());
+			#end
 
-					// if ()
-					if(!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)  && !ClientPrefs.getGameplaySetting('modchart', true)) {
-						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
-
-						if (SONG.validScore)
-						{
-							Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore, storyDifficulty);
-						}
-
-						FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
-						FlxG.save.flush();
-					}
-					changedDifficulty = false;
-				}
-				else
-				{
-					var difficulty:String = CoolUtil.getDifficultyFilePath();
-
-					trace('LOADING NEXT SONG');
-					trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
-
-					var winterHorrorlandNext = (Paths.formatToSongPath(SONG.song) == "eggnog");
-					if (winterHorrorlandNext)
-					{
-						var blackShit:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom,
-							-FlxG.height * FlxG.camera.zoom).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
-						blackShit.scrollFactor.set();
-						add(blackShit);
-						camHUD.visible = false;
-
-						FlxG.sound.play(Paths.sound('Lights_Shut_off'));
-					}
-
-					FlxTransitionableState.skipNextTransIn = true;
-					FlxTransitionableState.skipNextTransOut = true;
-
-					prevCamFollow = camFollow;
-					prevCamFollowPos = camFollowPos;
-
-					PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
-					FlxG.sound.music.stop();
-
-					if(winterHorrorlandNext) {
-						new FlxTimer().start(1.5, function(tmr:FlxTimer) {
-							cancelMusicFadeTween();
-							LoadingState.loadAndSwitchState(new PlayState());
-						});
-					} else {
-						cancelMusicFadeTween();
-						LoadingState.loadAndSwitchState(new PlayState());
-					}
-				}
-			}
-			else
-			{
-				trace('WENT BACK TO FREEPLAY??');
-				WeekData.loadTheFirstEnabledMod();
-				#if desktop DiscordClient.resetClientID(); #end
-				cancelMusicFadeTween();
-				if(FlxTransitionableState.skipNextTransIn) {
-					CustomFadeTransition.nextCamera = null;
-				}
-				MusicBeatState.switchState(new FreeplayState());
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
-				changedDifficulty = false;
-			}
 			transitioning = true;
 
 			if (forceMiddleScroll){
@@ -5468,7 +5371,8 @@ class PlayState extends MusicBeatState
 	{
 		achievementObj = null;
 		if(endingSong && !inCutscene) {
-			Rating();
+			if (!inResultsScreen)
+				endSong();
 		}
 	}
 	#end

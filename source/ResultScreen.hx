@@ -14,8 +14,12 @@ import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import flixel.tweens.FlxTween;
 import haxe.ds.StringMap;
 import flixel.system.FlxSound;
+import flixel.FlxCamera;
+import flixel.addons.transition.FlxTransitionableState;
+import editors.ChartingState;
 import Controls.Control;
 #if desktop
 import Discord.DiscordClient;
@@ -23,13 +27,18 @@ import Discord.DiscordClient;
 
 using StringTools;
 
-class ResultScreen extends FlxSpriteGroup
+class ResultScreen extends MusicBeatSubstate
 {
+	private var camRate:FlxCamera;
+
 	var bgFade:FlxSprite;
 	var background:FlxSprite;
 	var topUp:FlxSprite;
 	var topDown:FlxSprite;
 	var numbers:FlxText;
+
+	var gameInstance:PlayState = PlayState.instance;
+	var game:PlayState;
 
 	var song:FlxText;
 
@@ -93,6 +102,11 @@ class ResultScreen extends FlxSpriteGroup
 	public function new(score:Int, oldBest:Int, maxc:Int, acc:Float, fantastic:Int, excelent:Int, great:Int, decent:Int, wayoff:Int, miss:Int)
 	{
 		super();
+
+		camRate = new FlxCamera();
+		FlxG.cameras.add(camRate, false);
+        FlxCamera.defaultCameras = [camRate];
+		FlxG.cameras.setDefaultDrawTarget(camRate, true);
 
 		dascore = score;
 		daacc = acc;
@@ -220,7 +234,7 @@ class ResultScreen extends FlxSpriteGroup
 		add(zeroMs);
 		zeroMs.alpha = 0;
 
-		topMs = new FlxText(hitGraphBG.x - 100, hitGraphBG.y + 69, 100, (ClientPrefs.downScroll ? '-' : '') + floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
+		topMs = new FlxText(hitGraphBG.x - 100, hitGraphBG.y + 69, 100, Highscore.floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
 		topMs.font = "Assassin Nation Regular";
 		topMs.borderStyle = OUTLINE;
 		topMs.borderSize = 2;
@@ -229,7 +243,7 @@ class ResultScreen extends FlxSpriteGroup
 		add(topMs);
 		topMs.alpha = 0;
 
-		bottomMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + hitGraphBG.height) - 87, 100, (ClientPrefs.downScroll ? '' : '-') + floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
+		bottomMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + hitGraphBG.height) - 87, 100, '-' + Highscore.floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
 		bottomMs.font = "Assassin Nation Regular";
 		bottomMs.borderStyle = OUTLINE;
 		bottomMs.borderSize = 2;
@@ -297,19 +311,6 @@ class ResultScreen extends FlxSpriteGroup
 		}
 	}
 
-	public function floorDecimal(value:Float, decimals:Int):Float
-	{
-		if(decimals < 1)
-			return Math.floor(value);
-
-		var tempMult:Float = 1;
-		for (i in 0...decimals)
-			tempMult *= 10;
-
-		var newValue:Float = Math.floor(value * tempMult);
-		return newValue / tempMult;
-	}
-
 	public function convertPauseMenuSong(name:String) {
 		name = name.toLowerCase();
 		name = StringTools.replace(name, ' ', '-');
@@ -320,17 +321,17 @@ class ResultScreen extends FlxSpriteGroup
 	
 		for (i in 0...noteId) result += (rsNoteData.get('note' + i).diff);
 		result /= noteId;
-		result = floorDecimal(result, 2);
+		result = Highscore.floorDecimal(result, 2);
 	
 		return result;
 	}
 	
 	public static function onGoodNoteHitPlayState(note:Note) {
 		if (!note.isSustainNote) {
-			noteId++;
+			noteId+=1;
 			rsNoteData.set('note' + noteId, {
 				strumTime: note.strumTime,
-				rating: note.rating,
+				ratings: note.rating,
 				diff: (note.strumTime - Conductor.songPosition) / PlayState.instance.playbackRate,
 				missed: false
 			});
@@ -338,17 +339,19 @@ class ResultScreen extends FlxSpriteGroup
 	}
 	
 	public static function onNoteMissPlayState(note:Note) {
-		noteId++;
-		rsNoteData.set('note' + noteId, {
-			strumTime: note.strumTime,
-			rating: note.rating,
-			diff: (note.strumTime - Conductor.songPosition) / PlayState.instance.playbackRate,
-			missed: true
-		});
+		if (!note.isSustainNote) {
+			noteId+=1;
+			rsNoteData.set('note' + noteId, {
+				strumTime: note.strumTime,
+				ratings: note.rating,
+				diff: (note.strumTime - Conductor.songPosition) / PlayState.instance.playbackRate,
+				missed: true
+			});
+		}
 	}
 	
 	function makeNote(id:Int) { // i tried stamp but it didn't work so this'll do for now
-		
+
 		switch(rsNoteData.get('note${id}').rating) 
 		{
 			case 'marvelous': colorChoosen = FlxColor.fromString('${ratingColours.marvelous}');
@@ -359,14 +362,14 @@ class ResultScreen extends FlxSpriteGroup
 		}
 
 		note = new FlxSprite((hitGraphBG.x + 5) + (rsNoteData.get('note${id}').strumTime / (FlxG.sound.music.length / hitGraphBG.width)),
-		(hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note${id}').diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note${id}').miss ? colorChoosen : FlxColor.fromString('${ratingColours.miss}'));
+		(hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note${id}').diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note${id}').missed ? colorChoosen : FlxColor.fromString('${ratingColours.miss}'));
 	
 		add(note);
 	}
 
 	override function update(elapsed:Float)
 	{
-
+		PlayState.instance.camZooming = false;
 		lerpscore = Math.round(FlxMath.lerp(lerpscore, dascore, 0.5));
 		lerpacc = Math.round(FlxMath.lerp(lerpacc, daacc, 1) * 100) / 100;
 		lerpcom = Math.round(FlxMath.lerp(lerpcom, Math.abs(dacom), 1.5));
@@ -461,9 +464,89 @@ class ResultScreen extends FlxSpriteGroup
 			}
 			if ((FlxG.keys.justPressed.ENTER || FlxG.mouse.justPressed) && !ended)
 			{
-				end();
 				ended = true;
-				PlayState.inResultsScreen = false;
+				PlayState.deathCounter = 0;
+				PlayState.seenCutscene = false;
+				PlayState.changedDifficulty = false;
+				PlayState.inResultsScreen = false; //just to make sure it allows countDown again lmao
+				
+				if (PlayState.chartingMode)
+				{
+					persistentUpdate = false;
+					PlayState.instance.paused = true;
+					PlayState.cancelMusicFadeTween();
+					MusicBeatState.switchState(new ChartingState());
+					PlayState.chartingMode = true;
+				
+					#if desktop
+						DiscordClient.changePresence("Chart Editor", null, null, true);
+					#end
+					return;
+				}
+
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+				PlayState.cancelMusicFadeTween();
+				camRate.fade(FlxColor.BLACK, 0.5, false, function()
+				{
+					if(PlayState.isStoryMode)
+					{
+						PlayState.campaignScore += PlayState.instance.songScore;
+						PlayState.campaignMisses += PlayState.weekMisses;
+
+						PlayState.storyPlaylist.remove(PlayState.storyPlaylist[0]);
+
+						if (PlayState.storyPlaylist.length <= 0)
+						{
+							WeekData.loadTheFirstEnabledMod();
+							FlxG.sound.playMusic(Paths.music('freakyMenu'));
+							#if desktop DiscordClient.resetClientID(); #end
+							PlayState.cancelMusicFadeTween();
+							if(FlxTransitionableState.skipNextTransIn) {
+								CustomFadeTransition.nextCamera = null;
+							}
+							MusicBeatState.switchState(new StoryMenuState());
+
+							if(!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)  && !ClientPrefs.getGameplaySetting('modchart', true)) {
+								StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
+
+								if (PlayState.SONG.validScore)
+								{
+									Highscore.saveWeekScore(WeekData.getWeekFileName(), PlayState.campaignScore, PlayState.storyDifficulty);
+								}
+
+								FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+								FlxG.save.flush();
+							}
+							PlayState.changedDifficulty = false;
+						}
+						else
+						{
+							var difficulty:String = CoolUtil.getDifficultyFilePath();
+
+							trace('LOADING NEXT SONG');
+							trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
+
+
+							FlxTransitionableState.skipNextTransIn = true;
+							FlxTransitionableState.skipNextTransOut = true;
+
+							PlayState.prevCamFollow = PlayState.instance.camFollow;
+							PlayState.prevCamFollowPos = PlayState.instance.camFollowPos;
+
+							PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
+							FlxG.sound.music.stop();
+
+							PlayState.cancelMusicFadeTween();
+							LoadingState.loadAndSwitchState(new PlayState());
+						}
+					}else{
+						MusicBeatState.switchState(new FreeplayState());
+					}
+					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+					FlxG.sound.music.fadeIn(4, 0, 0.7);
+					MusicBeatState.switchState(new FreeplayState());
+					ended = false;
+				});
 			}
 		}
 

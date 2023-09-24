@@ -1671,7 +1671,7 @@ class FunkinLua {
 		});
 		Lua_helper.add_callback(lua, "startRating", function() {
 			PlayState.instance.KillNotes();
-			PlayState.instance.Rating();
+			PlayState.instance.rating();
 			return true;
 		});
 		Lua_helper.add_callback(lua, "restartSong", function(?skipTransition:Bool = false) {

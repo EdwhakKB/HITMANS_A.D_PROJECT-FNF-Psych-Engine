@@ -242,8 +242,14 @@ class Main extends Sprite
 	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
 	// very cool person for real they don't get enough credit for their work
 	#if CRASH_HANDLER
+	static final quotes:Array<String> = [
+        "Ha, a null object reference?", // Slushi
+		"What the fuck you did!?" //Edwhak
+    ];
+
 	function onCrash(e:UncaughtErrorEvent):Void
 	{
+		var build = Sys.systemName();
 		var errMsg:String = "";
 		var path:String;
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
@@ -265,7 +271,15 @@ class Main extends Sprite
 			}
 		}
 
-		errMsg += "\nUncaught Error: " + e.error + "\nPlease report this error to the GitHub page: https://github.com/EdwhakKB/HITMANS_A.D_PROJECT-FNF-Psych-Engine\n\n> Crash Handler written by: sqirra-rng";
+		errMsg += 
+            "\n---------------------"
+            + "\n" + quotes[Std.random(quotes.length)]
+            + "\n---------------------"
+            + "\n\nThis build is running in " + build + "\n(Hitmans AD V" + MainMenuState.psychEngineVersion +")" 
+             + "\nPlease report this error to Github page: https://github.com/EdwhakKB/HITMANS_A.D_PROJECT-FNF-Psych-Engine"     
+            + "\n\n"
+            + "Uncaught Error:\n"
+            + e.error;
 
 		if (!FileSystem.exists("./crash/"))
 			FileSystem.createDirectory("./crash/");
@@ -284,7 +298,7 @@ class Main extends Sprite
         if (FileSystem.exists(crashDialoguePath))
         {
             Sys.println("Found crash dialog: " + crashDialoguePath);
-            new Process(crashDialoguePath, [path]);
+            new Process(crashDialoguePath, ["._. ", path]);
         }
         else
         {
