@@ -32,7 +32,34 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
+	public static var subStates:Array<MusicBeatSubstate> = [];
+
+	override public function destroy()
+	{
+		if (subStates != null)
+		{
+			while (subStates.length > 5)
+			{
+				var subState:MusicBeatSubstate = subStates[0];
+				if (subState != null)
+				{
+					trace('Destroying Substates!');
+					subStates.remove(subState);
+					subState.destroy();
+				}
+				subState = null;
+			}
+
+			subStates.resize(0);
+		}
+
+		super.destroy();
+	}
+
 	override function create() {
+
+		destroySubStates = false;
+
 		camBeat = FlxG.camera;
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 

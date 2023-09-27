@@ -25,6 +25,25 @@ import Controls.Control;
 import Discord.DiscordClient;
 #end
 
+
+import flixel.system.FlxSound;
+import flixel.input.FlxInput;
+import flixel.util.FlxAxes;
+import flixel.util.FlxSpriteUtil;
+import MainMenuState;
+import FreeplayState;
+import LoadingState;
+import OFLSprite;
+import Highscore;
+import WeekData;
+import Ratings;
+import HelperFunctions;
+import flixel.FlxCamera;
+
+import HitGraph;
+
+import Note;
+
 using StringTools;
 
 class ResultScreen extends MusicBeatSubstate
@@ -99,19 +118,35 @@ class ResultScreen extends MusicBeatSubstate
 
 	public var end:Void->Void;
 
-	public function new(score:Int, oldBest:Int, maxc:Int, acc:Float, fantastic:Int, excelent:Int, great:Int, decent:Int, wayoff:Int, miss:Int)
+	public var text:FlxText;
+
+	public var graph:HitGraph;
+	public var graphSprite:OFLSprite;
+	public var hitGraphtxt:FlxText;
+
+	public var comboText:FlxText;
+	public var contText:FlxText;
+	public var settingsText:FlxText;
+
+	public var songText:FlxText;
+
+	public var modifiers:String;
+
+	public var activeMods:FlxText;
+
+	public var superMegaConditionShit:Bool;
+
+	public static var instance:ResultScreen = null;
+
+	public function new()
 	{
 		super();
 
-		camRate = new FlxCamera();
-		FlxG.cameras.add(camRate, false);
-        FlxCamera.defaultCameras = [camRate];
-		FlxG.cameras.setDefaultDrawTarget(camRate, true);
+		instance = this;
 
-		dascore = score;
-		daacc = acc;
-		dacom = maxc;
-		daBest = oldBest;
+		openCallback = refresh;
+
+		if(ClientPrefs.pauseMusic != 'None') music = new FlxSound().loadEmbedded(Paths.music(convertPauseMenuSong(ClientPrefs.pauseMusic)), true);
 
 		background = new FlxSprite(0,0).loadGraphic(Paths.getPath('images/rating/wallPaper.png', IMAGE));
 		background.alpha = 1;
@@ -152,6 +187,14 @@ class ResultScreen extends MusicBeatSubstate
 		ranking.alpha = 0;
 		add(ranking);
 
+		graph = new HitGraph(FlxG.width - 1150, 320, 525, 180);
+
+		hitGraphtxt = new FlxText(graph.x + 200, graph.y + 175, Std.int(FlxG.width * 0.6), "Hit Graph", 80);
+		hitGraphtxt.font = "Assassin Nation Regular";
+		hitGraphtxt.visible = false;
+		hitGraphtxt.alpha = 0;
+		add(hitGraphtxt);
+
 		acctxt = new FlxText(70, 480, Std.int(FlxG.width * 0.6), "Accuracy: 0%", 50);
 		acctxt.font = "Assassin Nation Regular";
 		
@@ -188,80 +231,78 @@ class ResultScreen extends MusicBeatSubstate
 		rating.scrollFactor.set();
 		add(rating);
 
-		fantastictxt = new FlxText(70, 220, Std.int(FlxG.width * 0.6), "PERFECTS: " + fantastic, 30);
+		fantastictxt = new FlxText(70, 220, Std.int(FlxG.width * 0.6), "PERFECTS: " + PlayState.fantastics, 30);
 		fantastictxt.font = "Assassin Nation Regular";
 		fantastictxt.autoSize = false;
 		fantastictxt.alpha = 0;
 		add(fantastictxt);
 
-		excelenttxt = new FlxText(70, 260, Std.int(FlxG.width * 0.6), "AMAZINGS: " + excelent, 30);
+		excelenttxt = new FlxText(70, 260, Std.int(FlxG.width * 0.6), "AMAZINGS: " + PlayState.excelents, 30);
 		excelenttxt.font = "Assassin Nation Regular";
 		excelenttxt.autoSize = false;
 		excelenttxt.alpha = 0;
 		add(excelenttxt);
 
-		greattxt = new FlxText(70, 300, Std.int(FlxG.width * 0.6), "GREATS: " + great, 30);
+		greattxt = new FlxText(70, 300, Std.int(FlxG.width * 0.6), "GREATS: " + PlayState.greats, 30);
 		greattxt.font = "Assassin Nation Regular";
 		greattxt.alpha = 0;
 		add(greattxt);
 
-		wayofftxt = new FlxText(70, 340, Std.int(FlxG.width * 0.6), "LATE: " + decent, 30);
-		wayofftxt.font = "Assassin Nation Regular";
-		wayofftxt.alpha = 0;
-		add(wayofftxt);
-
-		decenttxt = new FlxText(70, 380, Std.int(FlxG.width * 0.6), "WAY LATE: " + wayoff, 30);
+		decenttxt = new FlxText(70, 380, Std.int(FlxG.width * 0.6), "LATE: " + PlayState.decents, 30);
 		decenttxt.font = "Assassin Nation Regular";
 		decenttxt.alpha = 0;
 		add(decenttxt);
 
-		misstxt = new FlxText(70, 420, Std.int(FlxG.width * 0.6), "ERROR: " + miss, 30);
+		wayofftxt = new FlxText(70, 340, Std.int(FlxG.width * 0.6), "WAY LATE: " + PlayState.wayoffs, 30);
+		wayofftxt.font = "Assassin Nation Regular";
+		wayofftxt.alpha = 0;
+		add(wayofftxt);
+
+		misstxt = new FlxText(70, 420, Std.int(FlxG.width * 0.6), "ERROR: " + gameInstance.songMisses, 30);
 		misstxt.font = "Assassin Nation Regular";
 		misstxt.alpha = 0;
 		add(misstxt);
+	}
 
-		hitGraphBG = new FlxSprite(140, 210).makeGraphic(507, 300, FlxColor.BLACK);
-		hitGraphBG.alpha = 0;
-		hitGraphBG.visible = false;
-		add(hitGraphBG);
+	override public function create()
+	{
+		camRate = new FlxCamera();
+		FlxG.cameras.add(camRate, false);
+        FlxCamera.defaultCameras = [camRate];
+		FlxG.cameras.setDefaultDrawTarget(camRate, true);
 
-		zeroMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + (hitGraphBG.height / 2)) - 10, 100, '0ms', 16);
-		zeroMs.font = "Assassin Nation Regular";
-		zeroMs.borderStyle = OUTLINE;
-		zeroMs.borderSize = 2;
-		zeroMs.alignment = 'right';
-		zeroMs.visible = false;
-		add(zeroMs);
-		zeroMs.alpha = 0;
+		dascore = Math.round(gameInstance.songScore);
+		daacc = gameInstance.updateAcc;
+		dacom = gameInstance.maxCombo;
+		daBest = Highscore.getScore(PlayState.SONG.song, PlayState.storyDifficulty);
 
-		topMs = new FlxText(hitGraphBG.x - 100, hitGraphBG.y + 69, 100, Highscore.floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
-		topMs.font = "Assassin Nation Regular";
-		topMs.borderStyle = OUTLINE;
-		topMs.borderSize = 2;
-		topMs.alignment = 'right';
-		topMs.visible = false;
-		add(topMs);
-		topMs.alpha = 0;
+		fantastictxt.text = "PERFECTS: " + PlayState.fantastics;
+		excelenttxt.text = "AMAZINGS: " + PlayState.excelents;
+		greattxt.text = "GREATS: " + PlayState.greats;
+		decenttxt.text = "LATE: " + PlayState.decents;
+		wayofftxt.text = "WAY LATE: " + PlayState.wayoffs;
+		misstxt.text = "ERROR: " + gameInstance.songMisses;
 
-		bottomMs = new FlxText(hitGraphBG.x - 100, (hitGraphBG.y + hitGraphBG.height) - 87, 100, '-' + Highscore.floorDecimal((ClientPrefs.safeFrames / 60) * 1000, 2) + 'ms', 16);
-		bottomMs.font = "Assassin Nation Regular";
-		bottomMs.borderStyle = OUTLINE;
-		bottomMs.borderSize = 2;
-		bottomMs.alignment = 'right';
-		bottomMs.visible = false;
-		add(bottomMs);
-		bottomMs.alpha = 0;
+		if (!PlayState.inResultsScreen)
+		{
+			if (FlxG.sound.music != null) FlxG.sound.music.stop();
 
-		for (i in 0...noteId) makeNote(i);
+			music.volume = 0;
+			FlxG.sound.list.add(music);
+			music.play();
+	
+		}
 
-		if (FlxG.sound.music != null) FlxG.sound.music.stop();
+		graph.update();
 
-		if(ClientPrefs.pauseMusic != 'None') music = new FlxSound().loadEmbedded(Paths.music(convertPauseMenuSong(ClientPrefs.pauseMusic)), true);
-		music.volume = 0.5;
-		FlxG.sound.list.add(music);
-		music.play();
+		graphSprite = new OFLSprite(graph.xPos, graph.yPos, Std.int(graph._width), Std.int(graph._rectHeight), graph);
+		FlxSpriteUtil.drawRect(graphSprite, 0, 0, graphSprite.width, graphSprite.height, FlxColor.TRANSPARENT, {thickness: 1.5, color: FlxColor.WHITE});
 
-		// FlxG.sound.playMusic(Paths.music('result'));
+		graphSprite.scrollFactor.set();
+		graphSprite.visible = false;
+		graphSprite.alpha = 0;
+
+		add(graphSprite);
 	}
 
 	public function switchResult(hitGraph:Bool)
@@ -283,10 +324,9 @@ class ResultScreen extends MusicBeatSubstate
 			decenttxt.visible = true;
 			misstxt.visible = true;
 
-			hitGraphBG.visible = false;
-			zeroMs.visible = false;
-			topMs.visible = false;
-			bottomMs.visible = false;
+			graphSprite.visible = false;
+			hitGraphtxt.visible = false;
+
 		}else{
 			numbers.visible = false;
 			newBest.visible = false;
@@ -304,10 +344,8 @@ class ResultScreen extends MusicBeatSubstate
 			decenttxt.visible = false;
 			misstxt.visible = false;
 
-			hitGraphBG.visible = true;
-			zeroMs.visible = true;
-			topMs.visible = true;
-			bottomMs.visible = true;
+			graphSprite.visible = true;
+			hitGraphtxt.visible = true;
 		}
 	}
 
@@ -317,59 +355,13 @@ class ResultScreen extends MusicBeatSubstate
 		return name;
 	}
 
-	function calculateMean():Float {
-	
-		for (i in 0...noteId) result += (rsNoteData.get('note' + i).diff);
-		result /= noteId;
-		result = Highscore.floorDecimal(result, 2);
-	
-		return result;
-	}
-	
-	public static function onGoodNoteHitPlayState(note:Note) {
-		if (!note.isSustainNote) {
-			noteId+=1;
-			rsNoteData.set('note' + noteId, {
-				strumTime: note.strumTime,
-				ratings: note.rating,
-				diff: (note.strumTime - Conductor.songPosition) / PlayState.instance.playbackRate,
-				missed: false
-			});
-		}
-	}
-	
-	public static function onNoteMissPlayState(note:Note) {
-		if (!note.isSustainNote) {
-			noteId+=1;
-			rsNoteData.set('note' + noteId, {
-				strumTime: note.strumTime,
-				ratings: note.rating,
-				diff: (note.strumTime - Conductor.songPosition) / PlayState.instance.playbackRate,
-				missed: true
-			});
-		}
-	}
-	
-	function makeNote(id:Int) { // i tried stamp but it didn't work so this'll do for now
-
-		switch(rsNoteData.get('note${id}').rating) 
-		{
-			case 'marvelous': colorChoosen = FlxColor.fromString('${ratingColours.marvelous}');
-			case 'sick': colorChoosen = FlxColor.fromString('${ratingColours.sick}');
-			case 'good': colorChoosen = FlxColor.fromString('${ratingColours.good}');
-			case 'bad': colorChoosen = FlxColor.fromString('${ratingColours.bad}');
-			case 'shit': colorChoosen = FlxColor.fromString('${ratingColours.shit}');
-		}
-
-		note = new FlxSprite((hitGraphBG.x + 5) + (rsNoteData.get('note${id}').strumTime / (FlxG.sound.music.length / hitGraphBG.width)),
-		(hitGraphBG.y + (hitGraphBG.height / 2)) + (rsNoteData.get('note${id}').diff / 2)).makeGraphic(5, 5, !rsNoteData.get('note${id}').missed ? colorChoosen : FlxColor.fromString('${ratingColours.miss}'));
-	
-		add(note);
-	}
-
 	override function update(elapsed:Float)
 	{
 		PlayState.instance.camZooming = false;
+
+		if (music.volume < 0.5)
+			music.volume += 0.01;
+		
 		lerpscore = Math.round(FlxMath.lerp(lerpscore, dascore, 0.5));
 		lerpacc = Math.round(FlxMath.lerp(lerpacc, daacc, 1) * 100) / 100;
 		lerpcom = Math.round(FlxMath.lerp(lerpcom, Math.abs(dacom), 1.5));
@@ -426,36 +418,42 @@ class ResultScreen extends MusicBeatSubstate
 					rating.animation.play("F");
 			}
 			
-				if (daacc == 100)
-						ranking.text = "ranking: HITMAN";
-				else if (daacc >= 95)
-						ranking.text = "ranking: LEGENDARY";
-				else if (daacc >= 90)
-						ranking.text = "ranking: MASTER";
-				else if (daacc >= 80)
-						ranking.text = "ranking: GOOD";
-				else if (daacc >= 70)
-						ranking.text = "ranking: NICE";
-				else if (daacc >= 60)
-						ranking.text = "ranking: BAD";
-				else if (daacc >= 50)
-						ranking.text = "ranking: SHIT";
-				else if (daacc <= 40)
-						ranking.text = "ranking: ANNIHILATED";
-				else if (daacc <= 1)
-						ranking.text = "ranking: BOTPLAY";
+			if (daacc == 100)
+				ranking.text = "ranking: HITMAN";
+			else if (daacc >= 95)
+				ranking.text = "ranking: LEGENDARY";
+			else if (daacc >= 90)
+				ranking.text = "ranking: MASTER";
+			else if (daacc >= 80)
+				ranking.text = "ranking: GOOD";
+			else if (daacc >= 70)
+				ranking.text = "ranking: NICE";
+			else if (daacc >= 60)
+				ranking.text = "ranking: BAD";
+			else if (daacc >= 50)
+				ranking.text = "ranking: SHIT";
+			else if (daacc <= 40)
+				ranking.text = "ranking: ANNIHILATED";
+			else if (daacc <= 1)
+				ranking.text = "ranking: BOTPLAY";
+		
 				
-			fantastictxt.alpha += 0.05;
-			excelenttxt.alpha += 0.05;
-			greattxt.alpha += 0.05;
-			wayofftxt.alpha += 0.05;
-			decenttxt.alpha += 0.05;
-			misstxt.alpha += 0.05;
+			if (fantastictxt.alpha < 1)
+				fantastictxt.alpha += 0.05;
+			if (excelenttxt.alpha < 1)
+				excelenttxt.alpha += 0.05;
+			if (greattxt.alpha < 1)
+				greattxt.alpha += 0.05;
+			if (wayofftxt.alpha < 1)
+				wayofftxt.alpha += 0.05;
+			if (decenttxt.alpha < 1)
+				decenttxt.alpha += 0.05;
+			if (misstxt.alpha < 1)
+				misstxt.alpha += 0.05;
 
-			hitGraphBG.alpha = 0.7;
-			zeroMs.alpha += 0.05;
-			topMs.alpha += 0.05;
-			bottomMs.alpha += 0.05;
+			graphSprite.alpha = 0.7;
+			if (hitGraphtxt.alpha < 1)
+				hitGraphtxt.alpha += 0.05;
 
 			if ((FlxG.keys.justPressed.CONTROL) && !ended)
 			{
@@ -551,5 +549,39 @@ class ResultScreen extends MusicBeatSubstate
 		}
 
 		super.update(elapsed);
+	}
+
+	var mean:Float = 0;
+
+	public function registerHit(note:Note, isMiss:Bool = false, isBotPlay:Bool = false, missNote:Float)
+	{
+		var noteRating = note.rating;
+		var noteDiff = note.strumTime - Conductor.songPosition;
+		var noteStrumTime = note.strumTime;
+
+		if (isMiss)
+			noteDiff = missNote;
+
+		if (isBotPlay)
+			noteDiff = 0;
+		// judgement
+
+		if (noteDiff != missNote)
+			mean += noteDiff;
+
+		graph.addToHistory(noteDiff, noteRating, noteStrumTime);
+	}
+
+	override function destroy()
+	{
+		instance = null;
+		graph.destroy();
+		graph = null;
+		graphSprite.destroy();
+		super.destroy();
+	}
+
+	private function refresh()
+	{	
 	}
 }

@@ -106,12 +106,13 @@ class ClientPrefs {
 	];
 
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
-	public static var ratingOffset:Float = 0;
+
 	public static var marvelousWindow:Float = 22.5;
 	public static var sickWindow:Float = 45;
 	public static var goodWindow:Float = 90;
 	public static var badWindow:Float = 135;
 	public static var shitWindow:Float = 180;
+
 	public static var safeFrames:Float = 10;
 	public static var discordRPC:Bool = true;
 
@@ -192,7 +193,6 @@ class ClientPrefs {
 		FlxG.save.data.achievementsMap = Achievements.achievementsMap;
 		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
 
-		FlxG.save.data.ratingOffset = ratingOffset;
 		FlxG.save.data.marvelousWindow = marvelousWindow;
 		FlxG.save.data.sickWindow = sickWindow;
 		FlxG.save.data.goodWindow = goodWindow;
@@ -338,10 +338,6 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.comboOffset != null) {
 			comboOffset = FlxG.save.data.comboOffset;
-		}
-		
-		if(FlxG.save.data.ratingOffset != null) {
-			ratingOffset = FlxG.save.data.ratingOffset;
 		}
 		if(FlxG.save.data.marvelousWindow != null) {
 			marvelousWindow = FlxG.save.data.marvelousWindow;
