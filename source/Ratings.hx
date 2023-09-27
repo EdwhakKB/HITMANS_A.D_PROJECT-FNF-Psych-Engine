@@ -83,7 +83,7 @@ class RatingWindow
 		var healthBonuses:Array<Float> = [-0.2, -0.06, 0, 0.04, 0.06];
 		var scoreBonuses:Array<Int> = [-300, 0, 200, 350, 450];
 		var defaultTimings:Array<Float> = [180, 135, 90, 45, 22.5];
-		var missArray:Array<Bool> = [true, false, false, false, false];
+		var missArray:Array<Bool> = [false, false, false, false, false];
 		var splashArray:Array<Bool> = [false, false, false, false, false];
 		var suffixes:Array<String> = ['s', 's', 's', 's', 's'];
 		var combos:Array<String> = ['', 'FC', 'GFC', 'PFC', 'MFC'];

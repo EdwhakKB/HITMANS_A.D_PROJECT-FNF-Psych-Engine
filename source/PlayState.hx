@@ -5473,8 +5473,6 @@ class PlayState extends MusicBeatState
 			case 22.5:
 				marvelouss++;
 		}
-		
-		ResultScreen.instance.registerHit(note, false, cpuControlled, Ratings.timingWindows[0].timingWindow);
 
 		if (daRating.causeMiss)
 		{
@@ -6303,6 +6301,7 @@ class PlayState extends MusicBeatState
 				if(combo > 9999) combo = 9999;
 				if (combo > maxCombo) maxCombo = combo;
 				popUpScore(note);
+				ResultScreen.instance.registerHit(note, false, cpuControlled, Ratings.timingWindows[0].timingWindow);
 			}
 			if (!note.isSustainNote && note.isHoldEnd){
 				

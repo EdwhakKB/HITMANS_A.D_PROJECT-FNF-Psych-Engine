@@ -146,8 +146,6 @@ class ResultScreen extends MusicBeatSubstate
 
 		openCallback = refresh;
 
-		if(ClientPrefs.pauseMusic != 'None') music = new FlxSound().loadEmbedded(Paths.music(convertPauseMenuSong(ClientPrefs.pauseMusic)), true);
-
 		background = new FlxSprite(0,0).loadGraphic(Paths.getPath('images/rating/wallPaper.png', IMAGE));
 		background.alpha = 1;
 		add(background);
@@ -189,7 +187,7 @@ class ResultScreen extends MusicBeatSubstate
 
 		graph = new HitGraph(FlxG.width - 1150, 320, 525, 180);
 
-		hitGraphtxt = new FlxText(graph.x + 200, graph.y + 175, Std.int(FlxG.width * 0.6), "Hit Graph", 80);
+		hitGraphtxt = new FlxText(graph.x + 200, graph.y + 215, Std.int(FlxG.width * 0.6), "Hit Graph", 80);
 		hitGraphtxt.font = "Assassin Nation Regular";
 		hitGraphtxt.visible = false;
 		hitGraphtxt.alpha = 0;
@@ -248,12 +246,12 @@ class ResultScreen extends MusicBeatSubstate
 		greattxt.alpha = 0;
 		add(greattxt);
 
-		decenttxt = new FlxText(70, 380, Std.int(FlxG.width * 0.6), "LATE: " + PlayState.decents, 30);
+		decenttxt = new FlxText(70, 340, Std.int(FlxG.width * 0.6), "LATE: " + PlayState.decents, 30);
 		decenttxt.font = "Assassin Nation Regular";
 		decenttxt.alpha = 0;
 		add(decenttxt);
 
-		wayofftxt = new FlxText(70, 340, Std.int(FlxG.width * 0.6), "WAY LATE: " + PlayState.wayoffs, 30);
+		wayofftxt = new FlxText(70, 380, Std.int(FlxG.width * 0.6), "WAY LATE: " + PlayState.wayoffs, 30);
 		wayofftxt.font = "Assassin Nation Regular";
 		wayofftxt.alpha = 0;
 		add(wayofftxt);
@@ -271,6 +269,8 @@ class ResultScreen extends MusicBeatSubstate
         FlxCamera.defaultCameras = [camRate];
 		FlxG.cameras.setDefaultDrawTarget(camRate, true);
 
+		if(ClientPrefs.pauseMusic != 'None') music = new FlxSound().loadEmbedded(Paths.music(convertPauseMenuSong(ClientPrefs.pauseMusic)), true);
+		
 		dascore = Math.round(gameInstance.songScore);
 		daacc = gameInstance.updateAcc;
 		dacom = gameInstance.maxCombo;
@@ -283,15 +283,11 @@ class ResultScreen extends MusicBeatSubstate
 		wayofftxt.text = "WAY LATE: " + PlayState.wayoffs;
 		misstxt.text = "ERROR: " + gameInstance.songMisses;
 
-		if (!PlayState.inResultsScreen)
-		{
-			if (FlxG.sound.music != null) FlxG.sound.music.stop();
+		if (FlxG.sound.music != null) FlxG.sound.music.stop();
 
-			music.volume = 0;
-			FlxG.sound.list.add(music);
-			music.play();
-	
-		}
+		music.volume = 0;
+		FlxG.sound.list.add(music);
+		music.play();
 
 		graph.update();
 
@@ -359,8 +355,8 @@ class ResultScreen extends MusicBeatSubstate
 	{
 		PlayState.instance.camZooming = false;
 
-		if (music.volume < 0.5)
-			music.volume += 0.01;
+		if (music.volume < 0.5 && PlayState.inResultsScreen)
+			music.volume += 0.1;
 		
 		lerpscore = Math.round(FlxMath.lerp(lerpscore, dascore, 0.5));
 		lerpacc = Math.round(FlxMath.lerp(lerpacc, daacc, 1) * 100) / 100;
