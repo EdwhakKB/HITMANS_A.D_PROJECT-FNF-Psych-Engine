@@ -1187,6 +1187,43 @@ class NotesModifier extends Modifier
     }
 }
 
+class LanesModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        baseValue = 0.0;
+        currentValue = 1.0;
+        subValues.set('x', new ModifierSubValue(0.0));
+        subValues.set('y', new ModifierSubValue(0.0));
+        subValues.set('angle', new ModifierSubValue(0.0));
+        subValues.set('z', new ModifierSubValue(0.0));
+        subValues.set('skewx', new ModifierSubValue(0.0));
+        subValues.set('skewy', new ModifierSubValue(0.0));
+    }
+
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        var daswitch = 1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                daswitch = -1;
+
+        noteData.x += subValues.get('x').value;
+        noteData.y += subValues.get('y').value * daswitch;
+        noteData.angle += subValues.get('angle').value;
+        noteData.z += subValues.get('z').value;
+        noteData.skewX += subValues.get('skewx').value * -daswitch;
+        noteData.skewY += subValues.get('skewy').value * -daswitch;
+    }
+
+    override function reset()
+    {
+        super.reset();
+        baseValue = 0.0;
+        currentValue = 1.0;
+    }
+}
+
 //this one makes camera stuff so basically it will be experimental until we got something better!
 // class CamRotateModifier extends Modifier
 // {

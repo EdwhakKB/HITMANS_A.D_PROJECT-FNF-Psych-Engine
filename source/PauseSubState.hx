@@ -75,7 +75,6 @@ class PauseSubState extends MusicBeatSubstate
 			menuItemsOG.insert(3 + num, 'End Song');
 			menuItemsOG.insert(4 + num, 'Toggle Practice Mode');
 			menuItemsOG.insert(5 + num, 'Toggle Botplay');
-			menuItemsOG.insert(6 + num, 'Toggle Modchart');
 		}
 		menuItems = menuItemsOG;
 
@@ -401,10 +400,6 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.instance.botplayTxt.visible = PlayState.instance.cpuControlled;
 					PlayState.instance.botplayTxt.alpha = 1;
 					PlayState.instance.botplaySine = 0;
-				case 'Toggle Modchart':
-					PlayState.instance.notITGMod = !PlayState.instance.notITGMod;
-					PlayState.changedDifficulty = true;
-					trace('Variable Changed','yes');
 				case 'Options':
 					goToOptions = true;
                     close();
