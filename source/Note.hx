@@ -3,7 +3,6 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
-import Ratings;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import flixel.util.FlxColor;
@@ -90,7 +89,7 @@ class Note extends FlxSkewedSprite{
 	
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.1;  //0.0475; just in case -Ed
-	public var rating:RatingWindow;
+	public var rating:String = 'unknown';
 	public var ratingMod:Float = 0; //9 = unknown, 0.25 = shit, 0.5 = bad, 0.75 = good, 1 = sick
 	public var ratingDisabled:Bool = false;
 	public static var canDamagePlayer:Bool = true; //for edwhak Instakill Notes and others :3 -Ed

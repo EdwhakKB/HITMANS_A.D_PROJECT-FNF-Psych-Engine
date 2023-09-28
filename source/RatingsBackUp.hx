@@ -1,4 +1,4 @@
-package;
+/*package;
 
 import ClientPrefs;
 import flixel.util.FlxColor;
@@ -97,4 +97,11 @@ class RatingWindow
 			Ratings.timingWindows.push(rClass);
 		}
 	}
-}
+}*/
+
+
+//Awful enough to give up fast, might try back in a future, a LONG LONG future...
+
+//thanks glow for the help but yeah... it was killing myself slowly...
+
+//Edwhak - 27/09/2023

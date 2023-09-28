@@ -68,7 +68,7 @@ import Achievements;
 import StageData;
 import FunkinLua;
 import DialogueBoxPsych;
-import Ratings;
+import Conductor.Rating;
 import ResultScreen;
 
 #if !flash 
@@ -86,13 +86,14 @@ import sys.io.File;
 #end
 
 #if VIDEOS_ALLOWED 
-#if (hxCodec >= "3.0.0") import hxcodec.flixel.FlxVideo as VideoHandler;
+#if (hxCodec >= "3.0.0")
+import hxcodec.flixel.FlxVideo as VideoHandler;
+import lime.app.Event;
 #elseif (hxCodec >= "2.6.1") import hxcodec.VideoHandler as VideoHandler;
-#elseif (hxCodec == "2.6.0") import VideoHandler;
-#else import vlc.MP4Handler as VideoHandler; #end
+#elseif (hxCodec == "2.6.0") import VideoHandler as VideoHandler;
+#end
 #end
 
-import MusicBeatState.subStates;
 import flash.system.System;
 
 using StringTools;
@@ -262,7 +263,7 @@ class PlayState extends MusicBeatState
 	public var health:Float = 1;
 	public var maxHealth:Float = 0; //Totally not stolen from Lullaby lol
 	public var combo:Int = 0;
-	public var maxCombo:Int = 0;
+	private var maxCombo:Int = 0;
 
 	private var healthBarBG:AttachedSprite;
 	private var healthBarHit:AttachedSprite;
@@ -273,17 +274,18 @@ class PlayState extends MusicBeatState
 	private var timeBarBG:AttachedSprite;
 	public var timeBar:FlxBar;
 
-	public static var shits:Int = 0;
-	public static var bads:Int = 0;
-	public static var goods:Int = 0;
-	public static var sicks:Int = 0;
-	public static var marvelouss:Int = 0;
+	public var ratingsData:Array<Rating> = [];
+	public var marvelouss:Int = 0;
+	public var sicks:Int = 0;
+	public var goods:Int = 0;
+	public var bads:Int = 0;
+	public var shits:Int = 0;
 
-	public static var fantastics:Int = 0;
-	public static var excelents:Int = 0;
-	public static var greats:Int = 0;
-	public static var decents:Int = 0;
-	public static var wayoffs:Int = 0;
+	public var fantastics:Int = 0;
+	public var excelents:Int = 0;
+	public var greats:Int = 0;
+	public var decents:Int = 0;
+	public var wayoffs:Int = 0;
 
 	private var generatedMusic:Bool = false;
 	public var endingSong:Bool = false;
@@ -554,15 +556,28 @@ class PlayState extends MusicBeatState
 			'NOTE_RIGHT'
 		];
 
-		marvelouss = 0;
-		sicks = 0;
-		bads = 0;
-		shits = 0;
-		goods = 0;
+		//Ratings
+		ratingsData.push(new Rating('marvelous')); //default rating
 
-		songMisses = 0;
+		var rating:Rating = new Rating('sick');
+		rating.ratingMod = 1;
+		rating.score = 350;
+		ratingsData.push(rating);
 
-		inResultsScreen = false;
+		var rating:Rating = new Rating('good');
+		rating.ratingMod = 0.7;
+		rating.score = 200;
+		ratingsData.push(rating);
+
+		var rating:Rating = new Rating('bad');
+		rating.ratingMod = 0.4;
+		rating.score = 100;
+		ratingsData.push(rating);
+
+		var rating:Rating = new Rating('shit');
+		rating.ratingMod = 0;
+		rating.score = 50;
+		ratingsData.push(rating);
 
 		//Hitmans Ratings (Kinda Better LOL, sorry if separated i can't use array due keyboard bug)
 		//570 x and 200 y (just in case)
@@ -1613,8 +1628,6 @@ class PlayState extends MusicBeatState
 		healthHitBar.alpha = ClientPrefs.healthBarAlpha;
 		add(healthHitBar);
 		add(healthBarHit);
-
-		RatingWindow.createRatings();
 		if (ClientPrefs.hudStyle == 'Classic'){
 			healthHitBar.visible = false;
 			healthBarHit.visible = false;
@@ -1913,15 +1926,10 @@ class PlayState extends MusicBeatState
 					Paths.music(key);
 			}
 		}
-
-		subStates.push(new ResultScreen()); // 0
-
 		Paths.clearUnusedMemory();
 		
 		CustomFadeTransition.nextCamera = camOther;
 	}
-
-	public var updateAcc:Float;
 
 	public function doNoteQuant()
 	{
@@ -3098,8 +3106,6 @@ class PlayState extends MusicBeatState
 
 	public function updateScore(miss:Bool = false)
 	{
-		updateAcc = Highscore.floorDecimal(ratingPercent * 100, 2);
-
 		scoreTxt.text = 'Score: ' + songScore
 		+ ' | Misses: ' + songMisses
 		+ ' | Rating: ' + ratingName
@@ -3332,11 +3338,10 @@ class PlayState extends MusicBeatState
 		var songName:String = Paths.formatToSongPath(SONG.song);
 		var file:String = Paths.json(songName + '/events');
 		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || FileSystem.exists(file))
+		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || FileSystem.exists(file)) {
 		#else
-		if (OpenFlAssets.exists(file)) 
+		if (OpenFlAssets.exists(file)) {
 		#end
-		{
 			var eventsData:Array<Dynamic> = Song.loadFromJson('events', songName).events;
 			for (event in eventsData) //Event Notes
 			{
@@ -4344,7 +4349,7 @@ class PlayState extends MusicBeatState
 			if(startedCountdown)
 			{
 				var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
-				var rollNote:FlxTimer = new FlxTimer();
+				var rollNote:FlxTimer;
 				var isHolding:Bool = false;
 				notes.forEachAlive(function(daNote:Note)
 				{
@@ -4446,7 +4451,7 @@ class PlayState extends MusicBeatState
                             {
                                 if (rollNote != null)
                                     rollNote.cancel();
-                                rollNote.start(0.1, function(tmr){
+                                rollNote = new FlxTimer().start(0.1, function(tmr){
                                     daNote.isSustainNote = false;
                                     daNote.active = false;
                                 });
@@ -5220,7 +5225,7 @@ class PlayState extends MusicBeatState
 
 	public function finishSong(?ignoreNoteOffset:Bool = false):Void
 	{
-		var finishCallback:Void->Void = rating; //In case you want to change it in a specific song.
+		var finishCallback:Void->Void = endSong; //In case you want to change it in a specific song.
 
 		if (isStoryMode)
 		{
@@ -5240,11 +5245,14 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+
 	public var transitioning = false;
 
 	public function rating():Void
 	{
-		openSubState(subStates[0]);
+		var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
+
+		openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
 
 		inResultsScreen = true;
 
@@ -5274,7 +5282,6 @@ class PlayState extends MusicBeatState
 			#end
 		}
 	}
-	
 	public function endSong():Void
 	{
 		//Should kill you if you tried to cheat
@@ -5327,7 +5334,9 @@ class PlayState extends MusicBeatState
 			
 			playbackRate = 1;
 
-			openSubState(subStates[0]);
+			var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
+
+			openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
 
 			inResultsScreen = true;
 
@@ -5399,47 +5408,25 @@ class PlayState extends MusicBeatState
 			pixelShitPart2 = '-pixel';
 		}
 
-		for (ratings in Ratings.timingWindows)
-			Paths.image(pixelShitPart1 + ratings.name.toLowerCase() + pixelShitPart2);
+		Paths.image(pixelShitPart1 + "marvelous" + pixelShitPart2);
+		Paths.image(pixelShitPart1 + "sick" + pixelShitPart2);
+		Paths.image(pixelShitPart1 + "good" + pixelShitPart2);
+		Paths.image(pixelShitPart1 + "bad" + pixelShitPart2);
+		Paths.image(pixelShitPart1 + "shit" + pixelShitPart2);
+		Paths.image(pixelShitPart1 + "combo" + pixelShitPart2);
 		
 		for (i in 0...10) {
 			Paths.image(pixelShitPart1 + 'num' + i + pixelShitPart2);
 		}
 	}
 
-	public function getRatesScore(rate:Float, score:Float):Float
+	private function popUpScore(note:Note = null):Void
 	{
-		var rateX:Float = 1;
-		var lastScore:Float = score;
-		var pr = rate - 0.05;
-		if (pr < 1.00)
-			pr = 1;
-
-		while (rateX <= pr)
-		{
-			if (rateX > pr)
-				break;
-			lastScore = score + ((lastScore * rateX) * 0.022);
-			rateX += 0.05;
-		}
-
-		var actualScore = Math.round(score + (Math.floor((lastScore * pr)) * 0.022));
-
-		return actualScore;
-	}
-
-	private function popUpScore(note:Note):Void
-	{
-		var noteDiff:Float = -(note.strumTime - Conductor.songPosition);
+		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		//trace(noteDiff, ' ' + Math.abs(note.strumTime - Conductor.songPosition));
 
 		// boyfriend.playAnim('hey');
 		vocals.volume = 1;
-
-		if (cpuControlled)
-			noteDiff = 0;
-
-		var noteDiffAbs = Math.abs(noteDiff);
 
 		var placement:String = Std.string(combo);
 
@@ -5449,48 +5436,25 @@ class PlayState extends MusicBeatState
 		//
 
 		var rating:FlxSprite = new FlxSprite();
-		var score:Float = 0;
-
+		var score:Int = 450;
 
 		//tryna do MS based judgment due to popular demand
-		var daRating:RatingWindow = Ratings.judgeNote(noteDiff);
+		var daRating:Rating = Conductor.judgeNote(note, noteDiff / playbackRate);
 
-		totalNotesHit += daRating.accuracyBonus;
-		totalPlayed += 1;
-
-		note.rating = daRating;
-
-		switch (daRating.timingWindow)
-		{
-			case 180:
-				shits++;
-			case 135:
-				bads++;
-			case 90:
-				goods++;
-			case 45:
-				sicks++;
-			case 22.5:
-				marvelouss++;
-		}
-
-		if (daRating.causeMiss)
-		{
-			songMisses++;
-			combo = 0;
-		}
-
-		score = daRating.scoreBonus;
-
-		daRating.count++;
-
-		if (playbackRate >= 1.05)
-			score = getRatesScore(playbackRate, score);
+		totalNotesHit += daRating.ratingMod;
+		note.ratingMod = daRating.ratingMod;
+		if(!note.ratingDisabled) daRating.increase();
+		note.rating = daRating.name;
+		score = daRating.score;
 
 		if(!cpuControlled) {
-			songScore += Math.round(score);
-			songHits++;
-			RecalculateRating(false);
+			songScore += score;
+			if(!note.ratingDisabled)
+			{
+				songHits++;
+				totalPlayed++;
+				RecalculateRating(false);
+			}
 		}
 
 		var pixelShitPart1:String = "";
@@ -5502,7 +5466,7 @@ class PlayState extends MusicBeatState
 			pixelShitPart2 = '-pixel';
 		}
 		if (!cpuControlled){
-		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.name.toLowerCase() + pixelShitPart2));
+		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating.image + pixelShitPart2));
 		rating.cameras = [camInterfaz];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
@@ -5891,12 +5855,6 @@ class PlayState extends MusicBeatState
 				deathVariableTXT = 'HD';
 		}
 
-		if (daNote != null)
-		{
-			daNote.rating = Ratings.timingWindows[0];
-			ResultScreen.instance.registerHit(daNote, true, cpuControlled, Ratings.timingWindows[0].timingWindow);
-		}
-
 		combo = 0;
 		if (!ClientPrefs.casualMode){
 			if (!Note.edwhakIsPlayer){
@@ -6033,7 +5991,7 @@ class PlayState extends MusicBeatState
 		if (edwhakIsEnemy){
 			if (!note.isSustainNote){
 				ratingsBumpScaleOP();
-				setRatingImageOP(note.strumTime - Conductor.songPosition);
+				setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 			}
 			if (!ClientPrefs.casualMode){
 				if(health - edwhakDrain - 0.17 > maxHealth){
@@ -6292,16 +6250,15 @@ class PlayState extends MusicBeatState
 			if (!note.isSustainNote && !note.isHoldEnd)
 			{
 				ratingsBumpScale();
-				setRatingImage(note.strumTime - Conductor.songPosition);
+				setRatingImage(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 				if (!edwhakIsEnemy){
 					ratingsBumpScaleOP();
-					setRatingImageOP(note.strumTime - Conductor.songPosition);
+					setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 				}
 				combo += 1;
 				if(combo > 9999) combo = 9999;
 				if (combo > maxCombo) maxCombo = combo;
 				popUpScore(note);
-				ResultScreen.instance.registerHit(note, false, cpuControlled, Ratings.timingWindows[0].timingWindow);
 			}
 			if (!note.isSustainNote && note.isHoldEnd){
 				
