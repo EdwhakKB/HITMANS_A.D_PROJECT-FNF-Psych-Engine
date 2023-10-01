@@ -226,7 +226,6 @@ class ResultScreen extends MusicBeatSubstate
 		music.volume = 0.5;
 		FlxG.sound.list.add(music);
 		music.play();
-
 		// FlxG.sound.playMusic(Paths.music('result'));
 	}
 

@@ -482,10 +482,17 @@ class ModchartEditorState extends MusicBeatState
         hideNotes.y -= hideNotes.height;
         add(hideNotes);
         
+        var hidenHud:Bool = false;
         var hideUI:FlxButton = new FlxButton(FlxG.width, FlxG.height, 'Show/Hide UI', function ()
         {
-            UI_box.visible = !UI_box.visible;
-            debugText.visible = !debugText.visible;
+            hidenHud = !hidenHud;
+            if (hidenHud){
+                UI_box.visible = false;
+                debugText.alpha = 0; 
+            }else{
+                UI_box.visible = true;
+                debugText.alpha = 1;
+            }
             //camGame.visible = !camGame.visible;
         });
         hideUI.y -= hideUI.height;

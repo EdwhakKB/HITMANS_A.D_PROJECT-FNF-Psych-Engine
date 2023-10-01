@@ -357,6 +357,7 @@ class PauseSubState extends MusicBeatSubstate
 							PlayState.instance.modchartTimers.remove('unPauseTimer');
 							if (PlayState.SONG.song.toLowerCase() == "cyber" && PlayState.storyDifficulty != 0)
 								PlayWindow.reset();
+							pauseMusic.stop();
 							close();
 						}
 					}, 5);
@@ -389,6 +390,7 @@ class PauseSubState extends MusicBeatSubstate
 							PlayState.instance.clearNotesBefore(curTime);
 							PlayState.instance.setSongTime(curTime);
 						}
+						pauseMusic.stop();
 						close();
 					}
 				case "End Song":
