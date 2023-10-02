@@ -524,6 +524,8 @@ class PlayState extends MusicBeatState
 	var col:Int = 0xFFFFD700;
 	var col2:Int = 0xFFFFD700;
 
+	public static var timeToStart:Float = 0;
+
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
@@ -1927,6 +1929,10 @@ class PlayState extends MusicBeatState
 			}
 		}
 		Paths.clearUnusedMemory();
+
+		if(timeToStart > 0){						
+			clearNotesBefore(timeToStart);
+		}
 		
 		CustomFadeTransition.nextCamera = camOther;
 	}
@@ -3236,6 +3242,10 @@ class PlayState extends MusicBeatState
 				controlsPlayer2 = false;
 		}
 
+		if(timeToStart > 0){
+			setSongTime(timeToStart);
+			timeToStart = 0;
+		}
 
 		if(startOnTime > 0)
 		{
@@ -4152,10 +4162,12 @@ class PlayState extends MusicBeatState
 					FlxG.sound.music.pause();
 					vocals.pause();
 				}
+				if (!inResultsScreen)
 					openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 				//}
 		
 				#if desktop
+				if (!inResultsScreen)
 					DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 				#end
 			}
@@ -6115,6 +6127,7 @@ class PlayState extends MusicBeatState
 
 		if (!note.isSustainNote)
 		{
+			createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))]);
 			note.kill();
 			notes.remove(note, true);
 			note.destroy();
@@ -6257,9 +6270,6 @@ class PlayState extends MusicBeatState
 				if (combo > maxCombo) maxCombo = combo;
 				popUpScore(note);
 			}
-			if (!note.isSustainNote && note.isHoldEnd){
-				
-			}
 
 			if (!ClientPrefs.casualMode){
 				if (!Note.edwhakIsPlayer){
@@ -6330,8 +6340,12 @@ class PlayState extends MusicBeatState
 			playerStrums.members[leData].rgbShader.r = note.rgbShader.r;
 			playerStrums.members[leData].rgbShader.b = note.rgbShader.b;
 
+			var ratingDetect = note.rating;
 			if (!note.isSustainNote)
 			{
+				if (ratingDetect == "marvelous") {
+					createNoteEffect(note, playerStrums.members[leData]);
+				}
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
@@ -7037,6 +7051,34 @@ class PlayState extends MusicBeatState
 	function roundQuantNote(num: Float, numDecimalPlaces: Int = 0): Float {
 		var mult: Float = Math.pow(10, numDecimalPlaces);
 		return Math.floor(num * mult + 0.5) / mult;
+	}
+
+	function createNoteEffect(note:Note, strum:StrumNote){
+		//var suffix = game.isPixelStage;
+		var animOffset:Array<Float> = [10, 10];
+		var ef = new StrumNote(strum.x + animOffset[0], strum.y + animOffset[1], strum.noteData, note.mustPress ? 1 : 0);
+		add(ef);
+		ef.reloadNote();
+		ef.rgbShader.r = strum.rgbShader.r;
+		ef.rgbShader.g = strum.rgbShader.g;
+		ef.rgbShader.b = strum.rgbShader.b;
+		ef.alpha -= 0.3;
+		ef.angle = strum.angle;
+		ef.skew.x = strum.skew.x;
+		ef.skew.y = strum.skew.y;
+		ef.playAnim("confirm", true);
+		// ef.offset.set(ef.offset.x + animOffset[0], ef.offset.y + animOffset[1]);
+		ef.cameras = [camHUD];
+		// if (!settings.get("highlight")) {
+		ef.scale.set(strum.scale.x / 1.5, strum.scale.y / 1.5);
+		ef.updateHitbox();
+		FlxTween.tween(ef.scale, {x: strum.scale.x + 0.2, y: strum.scale.y + 0.2}, 0.15 / playbackRate - 0.01, {ease: FlxEase.quadOut});
+		// ef.blend = 0;
+		// } else if (settings.get("unholy")) ef.blend = 0;
+
+		FlxTween.tween(ef, {alpha: 0}, 0.15 / playbackRate + 0.1, {ease: FlxEase.quadOut, startDelay: 0.1, onComplete: function (twn) {
+			ef.destroy();
+		}});
 	}
 
 	public var currentShaders:Array<FlxRuntimeShader> = [];
