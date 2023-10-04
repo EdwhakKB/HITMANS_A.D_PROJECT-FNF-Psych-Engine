@@ -152,6 +152,14 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		#end
 
+		var option:Option = new Option('Splash Skin:',
+			"What splash skin do you like?",
+			'splashSkin',
+			'string',
+			'HITMANS',
+			['HITMANS', 'disabled']);
+		addOption(option);
+
 		// var option:Option = new Option('Combo Stacking',
 		// 	"If unchecked, Ratings and Combo won't stack, saving on System Memory and making them easier to read",
 		// 	'comboStacking',

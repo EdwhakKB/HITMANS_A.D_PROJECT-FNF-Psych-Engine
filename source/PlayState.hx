@@ -6127,7 +6127,9 @@ class PlayState extends MusicBeatState
 
 		if (!note.isSustainNote)
 		{
-			createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))]);
+			if (ClientPrefs.splashSkin != 'disabled'){
+				createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))]);
+			}
 			note.kill();
 			notes.remove(note, true);
 			note.destroy();
@@ -6343,8 +6345,10 @@ class PlayState extends MusicBeatState
 			var ratingDetect = note.rating;
 			if (!note.isSustainNote)
 			{
-				if (ratingDetect == "marvelous") {
-					createNoteEffect(note, playerStrums.members[leData]);
+				if (ClientPrefs.splashSkin != 'disabled'){
+					if (ratingDetect == "marvelous") {
+						createNoteEffect(note, playerStrums.members[leData]);
+					}
 				}
 				note.kill();
 				notes.remove(note, true);

@@ -893,13 +893,14 @@ class TimeStopModifier extends Modifier
     override function setupSubValues()
     {
         subValues.set('stop', new ModifierSubValue(0.0));
+        subValues.set('speed', new ModifierSubValue(1.0));
         subValues.set('continue', new ModifierSubValue(0.0));
     }
     override function curPosMath(lane:Int, curPos:Float, pf:Int)
     {
         if (curPos <= (subValues.get('stop').value*-1000))
             {
-                curPos = (subValues.get('stop').value*-1000) + (curPos*0.02);
+                curPos = (subValues.get('stop').value*-1000) + (curPos*(subValues.get('speed').value/100));
             }
         return curPos;
     }
@@ -907,7 +908,7 @@ class TimeStopModifier extends Modifier
     {
         if (curPos <= (subValues.get('stop').value*-1000))
         {
-            curPos = (subValues.get('stop').value*-1000) + (curPos*0.02);
+            curPos = (subValues.get('stop').value*-1000) + (curPos*(subValues.get('speed').value/100));
         } 
         else if (curPos <= (subValues.get('continue').value*-100))
         {
