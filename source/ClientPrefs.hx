@@ -26,7 +26,8 @@ class ClientPrefs {
     public static var memoryDisplay:Bool = true;
 	public static var noteSkin:String = 'HITMANS';
 	public static var splashSkin:String = 'HITMANS';
-	public static var userName:String = 'Guess';
+	public static var userName:String = '';
+	public static var isLogged:Bool = false;
 	public static var quantization:Bool = false;
 	public static var goStyle:String = 'NEW';
 	public static var lowQuality:Bool = false;
@@ -173,6 +174,7 @@ class ClientPrefs {
 		FlxG.save.data.noteSkin = noteSkin;
 		FlxG.save.data.splashSkin = splashSkin;
 		FlxG.save.data.userName = userName;
+		FlxG.save.data.isLogged = isLogged;
 		FlxG.save.data.quantization = quantization;
 		FlxG.save.data.gameOverStyle = goStyle;
 		//FlxG.save.data.cursing = cursing;
@@ -289,6 +291,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.userName != null) {
 			userName = FlxG.save.data.userName;
+		}
+		if(FlxG.save.data.isLogged != null) {
+			isLogged = FlxG.save.data.isLogged;
 		}
 		if(FlxG.save.data.quantization != null) {
 			quantization = FlxG.save.data.quantization;

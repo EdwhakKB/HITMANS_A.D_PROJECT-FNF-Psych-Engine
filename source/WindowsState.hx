@@ -61,6 +61,7 @@ class WindowsState extends MusicBeatState
 	var vignette:FlxSprite;
 
 	var gameText:FlxText;
+	var anticrash:Bool = true; //TF!?
 	var wordText:FlxText;
 	var tipText:FlxText;
 
@@ -214,7 +215,7 @@ class WindowsState extends MusicBeatState
 		ClientPrefs.loadPrefs();
 
 		//changing states incase if nickname != null
-		if(ClientPrefs.userName != 'Guess') {
+		if(ClientPrefs.isLogged) {
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			MusicBeatState.switchState(new TitleState());
@@ -357,7 +358,7 @@ class WindowsState extends MusicBeatState
 			gameText.scrollFactor.set();
 			gameText.screenCenter();
 			gameText.borderSize = 2.5;
-			gameText.alpha = 0;
+			gameText.alpha = 1;
 			gameText.cameras = [camHUD];
 			add(gameText);	
 	
@@ -800,11 +801,12 @@ class WindowsState extends MusicBeatState
 				}
 			}
 		} else {
-			if(gameText.alpha == 1 && playerStep != 6 && playerStep != 12 && playerStep != 16){
+			if(anticrash || gameText.alpha == 1 && playerStep != 6 && playerStep != 12 && playerStep != 16){
 				if(FlxG.keys.justPressed.ENTER){
 					FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
 					playerStep += 1;
 					gameTalks();
+					anticrash = false; //idk why it works like this
 				}
 			} 
 
@@ -907,6 +909,7 @@ class WindowsState extends MusicBeatState
 						if(wordText.text.length > 2 && wordText.text != ''){
 							gameNickname = wordText.text;
 							ClientPrefs.userName = wordText.text;
+							ClientPrefs.isLogged = true;
 							ClientPrefs.saveSettings();
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
 							playerStep += 1;

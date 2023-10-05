@@ -25,6 +25,79 @@ class ShaderEffectNew
         // nothing yet
     }
 }
+class RainbowEffect extends ShaderEffectNew
+{
+    public var shader(default,null):RainbowShader = new RainbowShader();
+
+    public var r(default, set):Float = 0;
+	public var g(default, set):Float = 0;
+	public var b(default, set):Float = 0;
+    public var blend(default, set):Float = 0;
+
+    public function set_r(roff:Float):Float
+    {
+        r = roff;
+        shader.r.value = [r];
+        return roff; 
+    }
+
+    public function set_g(goff:Float):Float // RECOMMAND TO NOT USE CHANGE VALUE!
+    {
+        g = goff;
+        shader.g.value = [g * -1];
+        return goff; 
+    }
+
+    public function set_b(boff:Float):Float
+    {
+        b = boff;
+        shader.b.value = [b];
+        return boff; 
+    }
+	
+	public function setChrome(chromeOffset:Float):Void
+	{
+		shader.r.value = [chromeOffset];
+		shader.g.value = [0.0];
+		shader.b.value = [chromeOffset * -1];
+	}
+
+    public function set_blend(blending:Float):Float
+	{
+        blend = blending;
+        shader.blend.value = [blend];  
+        return blend;
+	}
+}
+
+class RainbowShader extends FlxFixedShader
+{
+    @:glFragmentSource('
+    #pragma header
+    uniform float r;
+    uniform float g;
+    uniform float b;
+    uniform float blend;
+
+    void main()
+    {
+    vec3 col = vec3(r,g,b);
+
+    vec4 textureStuff = flixel_texture2D(bitmap,openfl_TextureCoordv);
+
+    col = mix(col, textureStuff.rgb, blend);
+
+    float sampleAlpha = textureStuff.a;
+    col *= sampleAlpha;
+    gl_FragColor = vec4(col.r,col.g,col.b,sampleAlpha);
+    }')
+
+    public function new()
+    {
+       super();
+    }
+}
+
 class CircleEffectNew extends ShaderEffectNew
 {
     public var shader(default,null):CircleShader = new CircleShader();

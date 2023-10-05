@@ -475,9 +475,8 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								resetting = true;
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
-										//MusicBeatState.switchState(new TitleState());
-										TitleState.initialized = false;
-										TitleState.closedState = false;
+										// TitleState.initialized = false;
+										// TitleState.closedState = false;
 										FlxG.sound.music.fadeOut(0.3);
 										if(FreeplayState.vocals != null)
 										{
@@ -485,6 +484,39 @@ class CommandPromptSubstate extends MusicBeatSubstate
 											FreeplayState.vocals = null;
 										}
 										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
+										new FlxTimer().start(1, function(tmr:FlxTimer) 
+											{
+												infoText.text = " ";
+												MusicBeatState.switchState(new WindowsState());
+											});
+									});
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+							}
+						else if(wordText.text.toLowerCase() == 'reset data --safe')
+							{
+								infoText.text = 'Reseting(safeMode)...';
+								wordText.text = '';
+								ClientPrefs.isLogged = false;
+								ClientPrefs.userName = '';
+								ClientPrefs.saveSettings();
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										FlxG.sound.music.fadeOut(0.3);
+										if(FreeplayState.vocals != null)
+										{
+											FreeplayState.vocals.fadeOut(0.3);
+											FreeplayState.vocals = null;
+										}
+										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
+										new FlxTimer().start(1, function(tmr:FlxTimer) 
+											{
+												infoText.text = " ";
+												// TitleState.initialized = false;
+												// TitleState.closedState = false;
+												WindowsState.initialized = false;
+												WindowsState.closedState = false;
+												MusicBeatState.switchState(new WindowsState());
+											});
 									});
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
@@ -496,7 +528,6 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
-										//MusicBeatState.switchState(new TitleState());
 										TitleState.initialized = false;
 										TitleState.closedState = false;
 										FlxG.sound.music.fadeOut(0.3);
@@ -867,7 +898,10 @@ class CommandPromptSubstate extends MusicBeatSubstate
 						[0xFF101010, 0xFFFF0000, 0xFF990022],
 						[0xFF101010, 0xFFFF0000, 0xFF990022]
 					];
-					ClientPrefs.userName = 'Guess';
+					ClientPrefs.userName = '';
+					ClientPrefs.isLogged = false;
+					ClientPrefs.edwhakMode = false;
+					ClientPrefs.developerMode = false;
 					ClientPrefs.quantization = false;
 					ClientPrefs.ghostTapping = true;
 					ClientPrefs.timeBarType = 'Time Left';
