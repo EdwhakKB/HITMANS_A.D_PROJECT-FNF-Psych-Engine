@@ -94,7 +94,7 @@ class FunkinLua {
 	
 	public static var lua_Cameras:Map<String, LuaCamera> = [];
 	public static var lua_Shaders:Map<String, Shaders.ShaderEffectNew> = [];
-	public static var lua_Custom_Shader:Map<String, CustomShader> = [];
+	public static var lua_Custom_Shaders:Map<String, CustomShader> = [];
 
 	public function new(script:String) {
 		#if LUA_ALLOWED
@@ -3022,7 +3022,7 @@ class FunkinLua {
             }
         });
 
-		Lua_helper.add_callback(lua, "createCustomShader", function(id:String, file:String, glslVersion:Int = 120){
+		Lua_helper.add_callback(lua, "createLuaShader", function(id:String, file:String, glslVersion:Int = 120){
 			var funnyCustomShader:CustomShader = new CustomShader(Assets.getText(Paths.shaderFragment(file)));
 			lua_Custom_Shaders.set(id, funnyCustomShader);
 		});
@@ -3032,26 +3032,33 @@ class FunkinLua {
 			getActorByName(actor).shader = funnyCustomShader;
 		});
 
-		Lua_helper.add_callback(lua, "setActorNoCustomShader", function(actor:String){
+		Lua_helper.add_callback(lua, "removeActorCustomShader", function(actor:String){
 			getActorByName(actor).shader = null;
 		});
 
 		Lua_helper.add_callback(lua, "setCameraCustomShader", function(id:String, camera:String){
 			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			@:privateAccess
+			cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
 			cameraFromString(camera).setFilters([new ShaderFilter(funnyCustomShader)]);
 		});
 
-		Lua_helper.add_callback(lua, "pushShaderToCamera", function(id:String, camera:String){
-			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
-			@:privateAccess
-			cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
-		});
-
-		Lua_helper.add_callback(lua, "setCameraNoCustomShader", function(camera:String){
+		Lua_helper.add_callback(lua, "removeCameraCustomShader", function(camera:String){
 			cameraFromString(camera).setFilters(null);
 		});
 
-		sLua_helper.add_callback(lua, "getCustomShaderBool", function(id:String, property:String) {
+		Lua_helper.add_callback(lua, "setCustomShaderProperty", function(shaderName:String, prop:String, value:Dynamic) {
+            if (!ClientPrefs.shaders)
+                return;
+            var shad = lua_Custom_Shaders.get(shaderName);
+
+            if(shad != null)
+            {
+                Reflect.setProperty(shad, prop, value);
+            }
+        });
+
+		Lua_helper.add_callback(lua, "getCustomShaderBool", function(id:String, property:String) {
 			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
 			return funnyCustomShader.getBool(property);
 		});
@@ -3083,7 +3090,7 @@ class FunkinLua {
 
 		//Custom shader function tween support test made by me (glowsoony)
 		Lua_helper.add_callback(lua, "TweenCustomShaderProperty", function(shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear") {
-            if (!ClientPrefs.data.shaders)
+            if (!ClientPrefs.shaders)
                 return;
             var shad = lua_Custom_Shaders.get(shaderName);
             var ease = getFlxEaseByString(easeStr);

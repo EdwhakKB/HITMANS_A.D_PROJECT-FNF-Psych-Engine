@@ -4113,6 +4113,8 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (health <= 0 && practiceMode) health = 0;
+		
 		if(!inCutscene) {
 			var lerpVal:Float = CoolUtil.boundTo(elapsed * 2.4 * cameraSpeed * playbackRate, 0, 1);
 			camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
@@ -4719,6 +4721,17 @@ class PlayState extends MusicBeatState
 				isDead = true;
 				return true;
 			}
+		}else if (((skipHealthCheck && instakillOnMiss) || health <= 0) && practiceMode && !isDead){
+			var youdied:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/Edwhak/Hitmans/newGameOver/youdied.png', IMAGE));
+        	youdied.screenCenter();
+        	youdied.scale.y = 2;
+        	youdied.scale.x = 2;
+        	youdied.alpha = 1;
+        	youdied.antialiasing = ClientPrefs.globalAntialiasing;
+        	add(youdied);
+			FlxTween.tween(youdied.scale, {x: 0.5}, 1, {ease:FlxEase.elasticOut});
+        	FlxTween.tween(youdied.scale, {y: 0.5}, 1, {ease:FlxEase.elasticOut});
+			FlxTween.tween(youdied, {alpha: 0}, 1, {ease:FlxEase.quadOut});
 		}
 		return false;
 	}
