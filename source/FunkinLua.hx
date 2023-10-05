@@ -64,6 +64,8 @@ import hscript.Expr;
 import Discord;
 #end
 
+import shaders.CustomShader;
+
 using StringTools;
 
 typedef LuaCamera =
@@ -92,6 +94,7 @@ class FunkinLua {
 	
 	public static var lua_Cameras:Map<String, LuaCamera> = [];
 	public static var lua_Shaders:Map<String, Shaders.ShaderEffectNew> = [];
+	public static var lua_Custom_Shader:Map<String, CustomShader> = [];
 
 	public function new(script:String) {
 		#if LUA_ALLOWED
@@ -3019,6 +3022,86 @@ class FunkinLua {
             }
         });
 
+		Lua_helper.add_callback(lua, "createCustomShader", function(id:String, file:String, glslVersion:Int = 120){
+			var funnyCustomShader:CustomShader = new CustomShader(Assets.getText(Paths.shaderFragment(file)));
+			lua_Custom_Shaders.set(id, funnyCustomShader);
+		});
+
+		Lua_helper.add_callback(lua, "setActorCustomShader", function(id:String, actor:String){
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			getActorByName(actor).shader = funnyCustomShader;
+		});
+
+		Lua_helper.add_callback(lua, "setActorNoCustomShader", function(actor:String){
+			getActorByName(actor).shader = null;
+		});
+
+		Lua_helper.add_callback(lua, "setCameraCustomShader", function(id:String, camera:String){
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			cameraFromString(camera).setFilters([new ShaderFilter(funnyCustomShader)]);
+		});
+
+		Lua_helper.add_callback(lua, "pushShaderToCamera", function(id:String, camera:String){
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			@:privateAccess
+			cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
+		});
+
+		Lua_helper.add_callback(lua, "setCameraNoCustomShader", function(camera:String){
+			cameraFromString(camera).setFilters(null);
+		});
+
+		sLua_helper.add_callback(lua, "getCustomShaderBool", function(id:String, property:String) {
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			return funnyCustomShader.getBool(property);
+		});
+
+		Lua_helper.add_callback(lua, "getCustomShaderInt", function(id:String, property:String) {
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			return funnyCustomShader.getInt(property);
+		});
+
+		Lua_helper.add_callback(lua, "getCustomShaderFloat", function(id:String, property:String) {
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			return funnyCustomShader.getFloat(property);
+		});
+
+		Lua_helper.add_callback(lua, "setCustomShaderBool", function(id:String, property:String, value:Bool) {
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			funnyCustomShader.setBool(property, value);
+		});
+		
+		Lua_helper.add_callback(lua, "setCustomShaderInt", function(id:String, property:String, value:Int) {
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			funnyCustomShader.setInt(property, value);
+		});
+
+		Lua_helper.add_callback(lua, "setCustomShaderFloat", function(id:String, property:String, value:Float) {
+			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
+			funnyCustomShader.setFloat(property, value);
+		});
+
+		//Custom shader function tween support test made by me (glowsoony)
+		Lua_helper.add_callback(lua, "TweenCustomShaderProperty", function(shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear") {
+            if (!ClientPrefs.data.shaders)
+                return;
+            var shad = lua_Custom_Shaders.get(shaderName);
+            var ease = getFlxEaseByString(easeStr);
+
+            if(shad != null)
+            {
+                var startVal = Reflect.getProperty(shad, prop);
+
+                PlayState.tweenManager.num(startVal, value, time, {onUpdate: function(tween:FlxTween){
+					var ting = FlxMath.lerp(startVal,value, ease(tween.percent));
+                    Reflect.setProperty(shad, prop, ting);
+				}, ease: ease, onComplete: function(tween:FlxTween) {
+					Reflect.setProperty(shad, prop, value);
+				}});
+                //trace('set shader prop');
+            }
+        });
+
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		
 		call('onCreate', []);
@@ -3623,6 +3706,7 @@ class FunkinLua {
 		}
 
 		lua_Cameras.clear();
+		lua_Custom_Shaders.clear();
 
 		Lua.close(lua);
 		lua = null;
