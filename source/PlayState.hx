@@ -4307,6 +4307,14 @@ class PlayState extends MusicBeatState
 				if(shaderThing.exists(shaderKey))
 					shaderThing.get(shaderKey).update(elapsed);
 			}
+
+			var shaderThing2 = FunkinLua.lua_Custom_Shaders;
+
+			for(shaderKey2 in shaderThing2.keys())
+			{
+				if(shaderThing2.exists(shaderKey2))
+					shaderThing2.get(shaderKey2).update(elapsed);
+			}
 		}
 		#end
 		
