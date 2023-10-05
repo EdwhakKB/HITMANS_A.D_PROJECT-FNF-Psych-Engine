@@ -3051,7 +3051,7 @@ class FunkinLua {
 			cameraFromString(camera).setFilters(null);
 		});
 
-		sLua_helper.add_callback(lua, "getCustomShaderBool", function(id:String, property:String) {
+		Lua_helper.add_callback(lua, "getCustomShaderBool", function(id:String, property:String) {
 			var funnyCustomShader:CustomShader = lua_Custom_Shaders.get(id);
 			return funnyCustomShader.getBool(property);
 		});
