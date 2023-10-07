@@ -4684,6 +4684,7 @@ class PlayState extends MusicBeatState
 	}
 
 	public var isDead:Bool = false; //Don't mess with this on Lua!!!
+	public var diedPractice:Bool = false; //to fix all stuff since isDead bug all LMAO
 	function doDeathCheck(?skipHealthCheck:Bool = false) {
 		if (((skipHealthCheck && instakillOnMiss) || health <= 0) && !practiceMode && !isDead)
 		{
@@ -4721,17 +4722,18 @@ class PlayState extends MusicBeatState
 				isDead = true;
 				return true;
 			}
-		}else if (((skipHealthCheck && instakillOnMiss) || health <= 0) && practiceMode && !isDead){
+		}else if (((skipHealthCheck && instakillOnMiss) || health <= 0) && practiceMode && !diedPractice){
+			diedPractice = true; //bro died in practice mode LMAO
 			var youdied:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/Edwhak/Hitmans/newGameOver/youdied.png', IMAGE));
         	youdied.screenCenter();
         	youdied.scale.y = 2;
         	youdied.scale.x = 2;
         	youdied.alpha = 1;
+			youdied.cameras = [camOther];
         	youdied.antialiasing = ClientPrefs.globalAntialiasing;
         	add(youdied);
-			FlxTween.tween(youdied.scale, {x: 0.5}, 1, {ease:FlxEase.elasticOut});
-        	FlxTween.tween(youdied.scale, {y: 0.5}, 1, {ease:FlxEase.elasticOut});
-			FlxTween.tween(youdied, {alpha: 0}, 1, {ease:FlxEase.quadOut});
+			FlxTween.tween(youdied.scale, {x: 0.5, y: 0.5}, 1, {ease:FlxEase.elasticOut});
+			FlxTween.tween(youdied, {alpha: 0}, 2, {ease:FlxEase.expoOut});
 		}
 		return false;
 	}
@@ -5920,6 +5922,7 @@ class PlayState extends MusicBeatState
 		{
 			vocals.volume = 0;
 			doDeathCheck(true);
+			health = 0;
 		}
 
 		//For testing purposes
@@ -5976,6 +5979,7 @@ class PlayState extends MusicBeatState
 			{
 				vocals.volume = 0;
 				doDeathCheck(true);
+				health = 0;
 			}
 
 			if (combo > 5 && gf != null && gf.animOffsets.exists('sad'))
