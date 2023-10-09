@@ -1937,6 +1937,11 @@ class PlayState extends MusicBeatState
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
+	private function round(num:Float, numDecimalPlaces:Int){
+		var mult = 10^numDecimalPlaces;
+		return Math.floor(num * mult + 0.5) / mult;
+	}
+
 	public function doNoteQuant()
 	{
 		var bpmChanges = Conductor.bpmChangeMap;
@@ -1954,40 +1959,40 @@ class PlayState extends MusicBeatState
 				dataStuff = ((currentBPM * (newTime - ClientPrefs.noteOffset)) / 1000 / 60);
 				beat = round(dataStuff * 48, 0);
 				if (!note.isSustainNote){
-				if(beat%(192/4)==0){
-					col = ClientPrefs.arrowRQuantize[0];
-					col2 = ClientPrefs.arrowBQuantize[0];
-				}
-				else if(beat%(192/6)==0){
-					col = ClientPrefs.arrowRQuantize[1];
-					col2 = ClientPrefs.arrowBQuantize[1];
-				}
-				else if(beat%(192/8)==0){
-					col = ClientPrefs.arrowRQuantize[2];
-					col2 = ClientPrefs.arrowBQuantize[2];
-				}
-				else if(beat%(192/12)==0){
-					col = ClientPrefs.arrowRQuantize[3];
-					col2 = ClientPrefs.arrowBQuantize[3];
-				}
-				else if(beat%(192/16)==0){
-					col = ClientPrefs.arrowRQuantize[4];
-					col2 = ClientPrefs.arrowBQuantize[4];
-				}
-				else if(beat%(192/24)==0){
-					col = ClientPrefs.arrowRQuantize[5];
-					col2 = ClientPrefs.arrowBQuantize[5];
-				}
-				else if(beat%(192/32)==0){
-					col = ClientPrefs.arrowRQuantize[6];
-					col2 = ClientPrefs.arrowBQuantize[6];
-				}
-				else{
-					col = ClientPrefs.arrowRQuantize[7];
-					col2 = ClientPrefs.arrowBQuantize[7];
-				}
-				note.rgbShader.r = col;
-				note.rgbShader.b = col2;
+					if(beat%(192/4)==0){
+						col = ClientPrefs.arrowRQuantize[0];
+						col2 = ClientPrefs.arrowBQuantize[0];
+					}
+					else if(beat%(192/6)==0){
+						col = ClientPrefs.arrowRQuantize[1];
+						col2 = ClientPrefs.arrowBQuantize[1];
+					}
+					else if(beat%(192/8)==0){
+						col = ClientPrefs.arrowRQuantize[2];
+						col2 = ClientPrefs.arrowBQuantize[2];
+					}
+					else if(beat%(192/12)==0){
+						col = ClientPrefs.arrowRQuantize[3];
+						col2 = ClientPrefs.arrowBQuantize[3];
+					}
+					else if(beat%(192/16)==0){
+						col = ClientPrefs.arrowRQuantize[4];
+						col2 = ClientPrefs.arrowBQuantize[4];
+					}
+					else if(beat%(192/24)==0){
+						col = ClientPrefs.arrowRQuantize[5];
+						col2 = ClientPrefs.arrowBQuantize[5];
+					}
+					else if(beat%(192/32)==0){
+						col = ClientPrefs.arrowRQuantize[6];
+						col2 = ClientPrefs.arrowBQuantize[6];
+					}
+					else{
+						col = ClientPrefs.arrowRQuantize[7];
+						col2 = ClientPrefs.arrowBQuantize[7];
+					}
+					note.rgbShader.r = col;
+					note.rgbShader.b = col2;
 			
 				}else{
 					note.rgbShader.r = note.prevNote.rgbShader.r;
@@ -1996,17 +2001,17 @@ class PlayState extends MusicBeatState
 			}
 		}
 		for (this2 in opponentStrums)
-			{
-				this2.rgbShader.r = 0xFFFFFFFF;
-				this2.rgbShader.b = 0xFF000000;  
-				this2.rgbShader.enabled = false;
-			}
+		{
+			this2.rgbShader.r = 0xFFFFFFFF;
+			this2.rgbShader.b = 0xFF000000;  
+			this2.rgbShader.enabled = false;
+		}
 		for (this2 in playerStrums)
-			{
-				this2.rgbShader.r = 0xFFFFFFFF;
-				this2.rgbShader.b = 0xFF000000;  
-				this2.rgbShader.enabled = false;
-			}
+		{
+			this2.rgbShader.r = 0xFFFFFFFF;
+			this2.rgbShader.b = 0xFF000000;  
+			this2.rgbShader.enabled = false;
+		}
 	}
 
 	#if (!flash && sys)
