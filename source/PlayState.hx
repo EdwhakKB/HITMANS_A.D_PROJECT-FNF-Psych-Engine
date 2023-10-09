@@ -1937,11 +1937,6 @@ class PlayState extends MusicBeatState
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
-	private function round(num:Float, numDecimalPlaces:Int){
-		var mult = 10^numDecimalPlaces;
-		return Math.floor(num * mult + 0.5) / mult;
-	}
-
 	public function doNoteQuant()
 	{
 		var bpmChanges = Conductor.bpmChangeMap;
@@ -6741,6 +6736,8 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.fadeTween = null;
 	}
 
+	var animSkins:Array<String> = ['ITHIT', 'MANIAHIT', 'STEPMANIA', 'NOTITG'];
+
 	var lastStepHit:Int = -1;
 	override function stepHit()
 	{
@@ -6754,35 +6751,37 @@ class PlayState extends MusicBeatState
 		if(curStep == lastStepHit) {
 			return;
 		}
-		if (ClientPrefs.quantization){
-			if (curStep % 4 == 0){
-				for (this2 in opponentStrums)
-				{
-					if (this2.animation.curAnim.name == 'static'){
-						this2.rgbShader.r = 0xFF808080;
-						this2.rgbShader.b = 0xFF474747;
-						this2.rgbShader.enabled = true;
+		for (i in 0... animSkins.length){
+			if (ClientPrefs.noteSkin.contains(animSkins[i])){
+				if (curStep % 4 == 0){
+					for (this2 in opponentStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){
+							this2.rgbShader.r = 0xFF808080;
+							this2.rgbShader.b = 0xFF474747;
+							this2.rgbShader.enabled = true;
+						}
 					}
-				}
-				for (this2 in playerStrums)
-				{
-					if (this2.animation.curAnim.name == 'static'){
-						this2.rgbShader.r = 0xFF808080;
-						this2.rgbShader.b = 0xFF474747;
-						this2.rgbShader.enabled = true;
+					for (this2 in playerStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){
+							this2.rgbShader.r = 0xFF808080;
+							this2.rgbShader.b = 0xFF474747;
+							this2.rgbShader.enabled = true;
+						}
 					}
-				}
-			}else if (curStep % 4 == 1){
-				for (this2 in opponentStrums)
-				{
-					if (this2.animation.curAnim.name == 'static'){ 
-						this2.rgbShader.enabled = false;
+				}else if (curStep % 4 == 1){
+					for (this2 in opponentStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){ 
+							this2.rgbShader.enabled = false;
+						}
 					}
-				}
-				for (this2 in playerStrums)
-				{
-					if (this2.animation.curAnim.name == 'static'){
-						this2.rgbShader.enabled = false;
+					for (this2 in playerStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){
+							this2.rgbShader.enabled = false;
+						}
 					}
 				}
 			}
