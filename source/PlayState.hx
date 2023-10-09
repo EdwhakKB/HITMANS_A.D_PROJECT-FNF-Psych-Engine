@@ -1939,10 +1939,20 @@ class PlayState extends MusicBeatState
 
 	public function doNoteQuant()
 	{
+		var bpmChanges = Conductor.bpmChangeMap;
+		var strumTime:Float = 0;
+		var currentBPM = PlayState.SONG.bpm;
 		for (note in unspawnNotes) {
+			strumTime = note.strumTime;
+			var newTime = strumTime;
+			for (i in 1...bpmChanges.length)
+				if (strumTime > bpmChanges[i].songTime){
+					currentBPM = bpmChanges[i].bpm;
+					newTime = strumTime - bpmChanges[i].songTime;
+				}
 			if (note.rgbShader.enabled && !note.hurtNote){
-			dataStuff = (SONG.bpm * note.strumTime) / 1000 / 60;
-			beat = CoolUtil.quantize(dataStuff * 48, 4);
+				dataStuff = ((currentBPM * (newTime - ClientPrefs.noteOffset)) / 1000 / 60);
+				beat = round(dataStuff * 48, 0);
 				if (!note.isSustainNote){
 				if(beat%(192/4)==0){
 					col = ClientPrefs.arrowRQuantize[0];
@@ -6739,35 +6749,36 @@ class PlayState extends MusicBeatState
 		if(curStep == lastStepHit) {
 			return;
 		}
-
-		if (curStep % 4 == 0){
-			for (this2 in opponentStrums)
-			{
-				if (this2.animation.curAnim.name == 'static'){
-					this2.rgbShader.r = 0xFF808080;
-					this2.rgbShader.b = 0xFF474747;
-					this2.rgbShader.enabled = true;
+		if (ClientPrefs.quantization){
+			if (curStep % 4 == 0){
+				for (this2 in opponentStrums)
+				{
+					if (this2.animation.curAnim.name == 'static'){
+						this2.rgbShader.r = 0xFF808080;
+						this2.rgbShader.b = 0xFF474747;
+						this2.rgbShader.enabled = true;
+					}
 				}
-			}
-			for (this2 in playerStrums)
-			{
-				if (this2.animation.curAnim.name == 'static'){
-					this2.rgbShader.r = 0xFF808080;
-					this2.rgbShader.b = 0xFF474747;
-					this2.rgbShader.enabled = true;
+				for (this2 in playerStrums)
+				{
+					if (this2.animation.curAnim.name == 'static'){
+						this2.rgbShader.r = 0xFF808080;
+						this2.rgbShader.b = 0xFF474747;
+						this2.rgbShader.enabled = true;
+					}
 				}
-			}
-		}else if (curStep % 4 == 1){
-			for (this2 in opponentStrums)
-			{
-				if (this2.animation.curAnim.name == 'static'){ 
-					this2.rgbShader.enabled = false;
+			}else if (curStep % 4 == 1){
+				for (this2 in opponentStrums)
+				{
+					if (this2.animation.curAnim.name == 'static'){ 
+						this2.rgbShader.enabled = false;
+					}
 				}
-			}
-			for (this2 in playerStrums)
-			{
-				if (this2.animation.curAnim.name == 'static'){
-					this2.rgbShader.enabled = false;
+				for (this2 in playerStrums)
+				{
+					if (this2.animation.curAnim.name == 'static'){
+						this2.rgbShader.enabled = false;
+					}
 				}
 			}
 		}
@@ -7077,8 +7088,8 @@ class PlayState extends MusicBeatState
 	var curLight:Int = -1;
 	var curLightEvent:Int = -1;
 
-	function roundQuantNote(num: Float, numDecimalPlaces: Int = 0): Float {
-		var mult: Float = Math.pow(10, numDecimalPlaces);
+	private function round(num:Float, numDecimalPlaces:Int){
+		var mult = 10^numDecimalPlaces;
 		return Math.floor(num * mult + 0.5) / mult;
 	}
 
