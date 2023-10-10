@@ -70,7 +70,7 @@ class RainbowEffect extends ShaderEffectNew
 	}
 }
 
-class RainbowShader extends FlxFixedShader
+class RainbowShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -140,7 +140,7 @@ class CircleEffectNew extends ShaderEffectNew
     }
 }
 
-class CircleShader extends FlxFixedShader
+class CircleShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -216,7 +216,7 @@ class ColorFillEffect extends ShaderEffectNew
     }
 }
 
-class ColorFillShader extends FlxFixedShader
+class ColorFillShader extends FlxShader
 {
     @:glFragmentSource('
         #pragma header
@@ -264,7 +264,7 @@ class ColorOverrideEffect extends ShaderEffectNew
     }
 }
 
-class ColorOverrideShader extends FlxFixedShader
+class ColorOverrideShader extends FlxShader
 {
     @:glFragmentSource('
         #pragma header
@@ -307,7 +307,7 @@ class ChromAbEffect extends ShaderEffectNew
 	}
 }
 
-class ChromAbShader extends FlxFixedShader
+class ChromAbShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -347,7 +347,7 @@ class ChromAbBlueSwapEffect extends ShaderEffectNew
 	}
 }
 
-class ChromAbBlueSwapShader extends FlxFixedShader
+class ChromAbBlueSwapShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -387,7 +387,7 @@ class GreyscaleEffectNew extends ShaderEffectNew
 	}
 }
 
-class GreyscaleShaderNew extends FlxFixedShader
+class GreyscaleShaderNew extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -426,7 +426,7 @@ class SobelEffect extends ShaderEffectNew
 	}
 }
 
-class SobelShader extends FlxFixedShader
+class SobelShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -489,7 +489,7 @@ class MosaicEffect extends ShaderEffectNew
 	}
 }
 
-class MosaicShader extends FlxFixedShader
+class MosaicShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -535,7 +535,7 @@ class BlurEffect extends ShaderEffectNew
 	}
 }
 
-class BlurShader extends FlxFixedShader
+class BlurShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -592,7 +592,7 @@ class BetterBlurEffect extends ShaderEffectNew
 	}
 }
 
-class BetterBlurShader extends FlxFixedShader
+class BetterBlurShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -653,7 +653,7 @@ class BloomEffectBetter extends ShaderEffectNew
     }
 }
 
-class BloomBetterShader extends FlxFixedShader
+class BloomBetterShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -736,7 +736,7 @@ class VignetteEffect extends ShaderEffectNew
 	}
 }
 
-class VignetteShader extends FlxFixedShader
+class VignetteShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -814,7 +814,7 @@ class BarrelBlurEffect extends ShaderEffectNew
 	}
 }
 
-class BarrelBlurShader extends FlxFixedShader
+class BarrelBlurShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -1016,7 +1016,7 @@ class HeatEffect extends ShaderEffectNew
 	}
 }
 
-class HeatShader extends FlxFixedShader
+class HeatShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -1088,7 +1088,7 @@ class MirrorRepeatEffect extends ShaderEffectNew
 }
 
 //moved to a seperate shader because not all modcharts need the barrel shit and probably runs slightly better on weaker pcs
-class MirrorRepeatShader extends FlxFixedShader
+class MirrorRepeatShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -1176,7 +1176,7 @@ class RainEffect extends ShaderEffectNew
 	}
 }
 
-class RainShader extends FlxFixedShader
+class RainShader extends FlxShader
 {
 	@:glFragmentSource('
         #pragma header
@@ -1273,7 +1273,7 @@ class ScanlineEffectNew extends ShaderEffectNew
 	}
 }
 
-class ScanlineShaderNew extends FlxFixedShader
+class ScanlineShaderNew extends FlxShader
 {
 	@:glFragmentSource('
         #pragma header
@@ -1343,7 +1343,7 @@ class PerlinSmokeEffect extends ShaderEffectNew
 	}
 }
 
-class PerlinSmokeShader extends FlxFixedShader
+class PerlinSmokeShader extends FlxShader
 {
 	@:glFragmentSource('
     #pragma header
@@ -1486,7 +1486,7 @@ class WaveBurstEffect extends ShaderEffectNew
 	}
 }
 
-class WaveBurstShader extends FlxFixedShader
+class WaveBurstShader extends FlxShader
 {
 	@:glFragmentSource('
         #pragma header
@@ -1538,7 +1538,7 @@ class WaterEffect extends ShaderEffectNew
 	}
 }
 
-class WaterShader extends FlxFixedShader
+class WaterShader extends FlxShader
 {
 	@:glFragmentSource('
         #pragma header
@@ -1604,7 +1604,7 @@ class RayMarchEffect extends ShaderEffectNew
 }
 
 //shader from here: https://www.shadertoy.com/view/WtGXDD
-class RayMarchShader extends FlxFixedShader
+class RayMarchShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -1779,7 +1779,7 @@ class PaletteEffect extends ShaderEffectNew
 	}
 }
 
-class PaletteShader extends FlxFixedShader
+class PaletteShader extends FlxShader
 {
 	@:glFragmentSource('
     #pragma header
@@ -1837,7 +1837,7 @@ class BuildingEffect extends ShaderEffectNew
     }
 }
 
-class BuildingShader extends FlxFixedShader
+class BuildingShader extends FlxShader
 {
   @:glFragmentSource('
     #pragma header
@@ -1866,7 +1866,7 @@ class SketchEffect extends ShaderEffectNew // Has No Values What-So Ever
   }
 }
 
-class SketchShader extends FlxFixedShader
+class SketchShader extends FlxShader
 {
 	@:glFragmentSource("
 	/* 
@@ -2057,7 +2057,7 @@ class ChromaticAberrationEffect extends ShaderEffectNew
 
 }
 
-class ChromaticAberrationShader extends FlxFixedShader
+class ChromaticAberrationShader extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -2118,7 +2118,7 @@ class TiltshiftEffect extends ShaderEffectNew
     }
 }
 
-class Tiltshift extends FlxFixedShader
+class Tiltshift extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -2212,7 +2212,7 @@ class GreyscaleEffect extends ShaderEffectNew // Has No Values To Add, Change, T
 		
 	}
 }
-class GreyscaleShader extends FlxFixedShader{
+class GreyscaleShader extends FlxShader{
 	@:glFragmentSource('
 		void main() {
 
@@ -2254,7 +2254,7 @@ class OldTVEffect extends ShaderEffectNew //See No Values To Change!
 	}
 }
 
-class OldTVShader extends FlxFixedShader{
+class OldTVShader extends FlxShader{
 	@:glFragmentSource("
         #pragma header
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -2510,7 +2510,7 @@ class GrainEffect extends ShaderEffectNew {
 }
 
 
-class Grain extends FlxFixedShader
+class Grain extends FlxShader
 {
 	@:glFragmentSource('
 		#pragma header
@@ -2749,7 +2749,7 @@ class VCRDistortionEffect extends ShaderEffectNew
   }
 }
 
-class VCRDistortionShader extends FlxFixedShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
+class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
 {
 
   @:glFragmentSource('
@@ -2893,7 +2893,7 @@ class VCRDistortionEffect2 extends ShaderEffectNew //the one used for tails doll
 }
 
 
-class VCRDistortionShader2 extends FlxFixedShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
+class VCRDistortionShader2 extends FlxShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
 {
 
   @:glFragmentSource('
@@ -3058,7 +3058,7 @@ class RGBShiftGlitchEffect extends ShaderEffectNew
 
 }
 
-class RGBShiftGlitchShader extends FlxFixedShader //https://www.shadertoy.com/view/4t23Rc#	
+class RGBShiftGlitchShader extends FlxShader //https://www.shadertoy.com/view/4t23Rc#	
 {
 	@glFragmentSource("
 	#pragma header
@@ -3168,7 +3168,7 @@ class ThreeDEffect extends ShaderEffectNew{
 //coding is like hitting on women, you never start with the number
 //               -naether
 
-class ThreeDShader extends FlxFixedShader{
+class ThreeDShader extends FlxShader{
 	@:glFragmentSource('
 	#pragma header
     //fixed by edwhak
@@ -3283,7 +3283,7 @@ class FuckingTriangleEffect extends ShaderEffectNew{
 }
 
 
-class FuckingTriangle extends FlxFixedShader{
+class FuckingTriangle extends FlxShader{
 	
 	@:glFragmentSource('
 	
@@ -3462,7 +3462,7 @@ class BloomEffect extends ShaderEffectNew{
     }
 }
 
-class BloomShader extends FlxFixedShader{
+class BloomShader extends FlxShader{
 	
 	
 	@:glFragmentSource('
@@ -3685,7 +3685,7 @@ class InvertColorsEffect extends ShaderEffectNew //No Values!
 
 }
 
-class GlitchShader extends FlxFixedShader
+class GlitchShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -3734,7 +3734,7 @@ class GlitchShader extends FlxFixedShader
     }
 }
 
-class InvertShader extends FlxFixedShader
+class InvertShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -3783,7 +3783,7 @@ class DesaturationEffect extends ShaderEffectNew
         return sat;
     }
 }
-class DesaturationShader extends FlxFixedShader
+class DesaturationShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -3824,7 +3824,7 @@ class FishEyeEffect extends ShaderEffectNew
     }
 }
 
-class FishEyeShader extends FlxFixedShader
+class FishEyeShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -3874,7 +3874,7 @@ class OutlineEffect extends ShaderEffectNew
     }
 }
 
-class OutlineShader extends FlxFixedShader
+class OutlineShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -3909,7 +3909,7 @@ class OutlineShader extends FlxFixedShader
     }
 }
 
-class DistortBGShader extends FlxFixedShader
+class DistortBGShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -3964,7 +3964,7 @@ class DistortBGShader extends FlxFixedShader
 }
 
 
-class PulseShader extends FlxFixedShader
+class PulseShader extends FlxShader
 {
     @:glFragmentSource('
     #pragma header
@@ -4018,7 +4018,7 @@ class PulseShader extends FlxFixedShader
     }
 }
 
-class ChannelMaskShader extends FlxFixedShader
+class ChannelMaskShader extends FlxShader
 {
 	@:glFragmentSource('
 	#pragma header
@@ -4103,7 +4103,7 @@ class ChannelMaskEffect extends ShaderEffectNew
 }
 
 
-class ColorMaskShader extends FlxFixedShader
+class ColorMaskShader extends FlxShader
 {
 	@:glFragmentSource('
 	#pragma header
@@ -4175,7 +4175,7 @@ typedef FishEyeNewJSON =
 	var presets:Array<Array<Float>>;
 }
 
-class FishEyeNewShader extends FlxFixedShader // https://www.shadertoy.com/view/WsVSzV
+class FishEyeNewShader extends FlxShader // https://www.shadertoy.com/view/WsVSzV
 {
 		@:glFragmentSource('
 			#pragma header
@@ -4245,7 +4245,7 @@ typedef GlitchNewJSON =
 	var presets:Array<Array<Float>>;
 }
 
-class GlitchNewShader extends FlxFixedShader // https://www.shadertoy.com/view/XtyXzW
+class GlitchNewShader extends FlxShader // https://www.shadertoy.com/view/XtyXzW
 {
 	// Linux crashes due to GL_NV_non_square_matrices
 	// and I haven't found a way to set version to 130
@@ -4554,7 +4554,7 @@ class GlitchNewShader extends FlxFixedShader // https://www.shadertoy.com/view/X
 	}
 }
 
-class InvertNewShader extends FlxFixedShader
+class InvertNewShader extends FlxShader
 {
 	@:glFragmentSource('
 	#pragma header
@@ -4574,7 +4574,7 @@ class InvertNewShader extends FlxFixedShader
 	}
 }
 
-class PixelShader extends FlxFixedShader // https://www.shadertoy.com/view/4l2fDz
+class PixelShader extends FlxShader // https://www.shadertoy.com/view/4l2fDz
 {
   public var upFloat:Float = 0.0;
   @:glFragmentSource('
@@ -4607,7 +4607,7 @@ class PixelShader extends FlxFixedShader // https://www.shadertoy.com/view/4l2fD
   }
 }//haMBURGERCHEESBEUBRGER!!!!!!!!
 
-class StaticShader extends FlxFixedShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
+class StaticShader extends FlxShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
 {
 
   @:glFragmentSource('
@@ -4753,7 +4753,7 @@ class StaticShader extends FlxFixedShader // https://www.shadertoy.com/view/ldjG
   }
 }//haMBURGERCHEESBEUBRGER!!!!!!!!
 
-class WarpShader extends FlxFixedShader // modified from https://www.shadertoy.com/view/wlScRz
+class WarpShader extends FlxShader // modified from https://www.shadertoy.com/view/wlScRz
 {
 	@:glFragmentSource('
 	#pragma header
@@ -4811,7 +4811,7 @@ class WarpShader extends FlxFixedShader // modified from https://www.shadertoy.c
 }
 
 
-class BloomNewShader extends FlxFixedShader // Taken from BBPanzu anime mod hueh
+class BloomNewShader extends FlxShader // Taken from BBPanzu anime mod hueh
 {
 	@:glFragmentSource('
 	#pragma header

@@ -8,6 +8,9 @@
 
 	<haxelib name="fnf-modcharting-tools" />
 
+	<!-- No deprecation warnings. -->
+    <haxedef name="no-deprecation-warnings"/>
+
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 
