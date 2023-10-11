@@ -164,7 +164,7 @@ class Main extends Sprite
 	            openfl.system.System.gc();
 	            #end
 	        });
-		// shader coords fix
+			// shader coords fix
         	FlxG.signals.gameResized.add(fixCameraShaders);
 
 		#if CRASH_HANDLER
@@ -244,7 +244,8 @@ class Main extends Sprite
 	#if CRASH_HANDLER
 	static final quotes:Array<String> = [
         "Ha, a null object reference?", // Slushi
-		"What the fuck you did!?" //Edwhak
+		"What the fuck you did!?", //Edwhak
+		"It was Bolo!" //Glowsoony
     ];
 
 	function onCrash(e:UncaughtErrorEvent):Void
