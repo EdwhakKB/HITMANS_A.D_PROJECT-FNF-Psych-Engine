@@ -5271,11 +5271,16 @@ class PlayState extends MusicBeatState
 		if (!note.isSustainNote)
 		{
 			if (ClientPrefs.splashSkin != 'disabled'){
-				createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))]);
+				createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))], false);
 			}
 			note.kill();
 			notes.remove(note, true);
 			note.destroy();
+		}
+		if (note.isSustainNote){
+			if (ClientPrefs.splashSkin != 'disabled'){
+				createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))], true);
+			}
 		}
 	}
 
@@ -5490,12 +5495,17 @@ class PlayState extends MusicBeatState
 			{
 				if (ClientPrefs.splashSkin != 'disabled'){
 					if (ratingDetect == "marvelous") {
-						createNoteEffect(note, playerStrums.members[leData]);
+						createNoteEffect(note, playerStrums.members[leData], false);
 					}
 				}
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
+			}
+			if (note.isSustainNote){
+				if (ClientPrefs.splashSkin != 'disabled'){
+					createNoteEffect(note, playerStrums.members[leData], true);
+				}
 			}
 		}
 	}
@@ -6151,15 +6161,22 @@ class PlayState extends MusicBeatState
 		return Math.floor(num * mult + 0.5) / mult;
 	}
 
-	function createNoteEffect(note:Note, strum:StrumNote){
+	function createNoteEffect(note:Note, strum:StrumNote, isSustain:Bool){
 		//var suffix = game.isPixelStage;
+		var sustain = isSustain;
 		var animOffset:Array<Float> = [10, 10];
 		var ef = new StrumNote(strum.x + animOffset[0], strum.y + animOffset[1], strum.noteData, note.mustPress ? 1 : 0);
 		add(ef);
 		ef.reloadNote();
-		ef.rgbShader.r = strum.rgbShader.r;
-		ef.rgbShader.g = strum.rgbShader.g;
-		ef.rgbShader.b = strum.rgbShader.b;
+		if (!sustain){
+			ef.rgbShader.r = strum.rgbShader.r;
+			ef.rgbShader.g = strum.rgbShader.g;
+			ef.rgbShader.b = strum.rgbShader.b;
+		}else{
+			ef.rgbShader.r = 0xFFFFFF00;
+			ef.rgbShader.g = strum.rgbShader.g;
+			ef.rgbShader.b = 0xFF7F7F00;
+		}
 		ef.alpha -= 0.3;
 		ef.angle = strum.angle;
 		ef.skew.x = strum.skew.x;
