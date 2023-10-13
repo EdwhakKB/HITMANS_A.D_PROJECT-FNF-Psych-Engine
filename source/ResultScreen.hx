@@ -93,9 +93,14 @@ class ResultScreen extends MusicBeatSubstate
 	var dacom:Int;
 	var daBest:Int;
 
+	var character:FlxSprite;
 	var noModchart:FlxSprite;
 
 	var ended:Bool = false;
+
+	var theEnemy:String = '';
+	var imagenPath:String = 'hitmans/vs/';
+	var imagePH:String = 'placeHolder';
 
 	public var end:Void->Void;
 
@@ -127,6 +132,35 @@ class ResultScreen extends MusicBeatSubstate
 		bgFade.scrollFactor.set();
 		bgFade.alpha = 0.7;
 		add(bgFade);
+	
+
+		switch(gameInstance.dad.curCharacter.toLowerCase()){
+			case 'edwhak':
+				theEnemy = "edwhak";
+			case 'he':
+				theEnemy = "edwhak";
+			case 'edwhakbroken':
+				theEnemy = "edwhak";
+			case 'edkbmassacre':
+				theEnemy = "edwhak";
+			default:
+				theEnemy = gameInstance.dad.curCharacter.toLowerCase();
+		}
+
+		character = new FlxSprite();
+		character.loadGraphic(Paths.image(imagenPath+theEnemy));
+		if(character.graphic == null) //if no graphic was loaded, then load the placeholder
+			character.loadGraphic(Paths.image(imagenPath+imagePH));
+		character.scale.y = 1.3;
+        character.scale.x = 1.3;
+		character.updateHitbox();
+		character.x = 780;
+		character.screenCenter(Y);
+		character.y += 42;
+		character.scale.y = 1.3;
+        character.scale.x = 1.3;
+        character.antialiasing = ClientPrefs.globalAntialiasing;
+        add(character);
 
 		numbers = new FlxText(390, 210, Std.int(FlxG.width * 0.6), "0", 80);
 		numbers.font = "Assassin Nation Regular";
