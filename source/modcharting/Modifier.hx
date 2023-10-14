@@ -1165,6 +1165,7 @@ class NotesModifier extends Modifier
         currentValue = 1.0;
         subValues.set('x', new ModifierSubValue(0.0));
         subValues.set('y', new ModifierSubValue(0.0));
+        subValues.set('yD', new ModifierSubValue(0.0));
         subValues.set('angle', new ModifierSubValue(0.0));
         subValues.set('z', new ModifierSubValue(0.0));
         subValues.set('skewx', new ModifierSubValue(0.0));
@@ -1181,7 +1182,8 @@ class NotesModifier extends Modifier
                 daswitch = -1;
 
         noteData.x += subValues.get('x').value;
-        noteData.y += subValues.get('y').value * daswitch;
+        noteData.y += subValues.get('y').value;
+        noteData.y += subValues.get('yD').value * daswitch;
         noteData.angle += subValues.get('angle').value;
         noteData.z += subValues.get('z').value;
         noteData.skewX += subValues.get('skewx').value * -daswitch;
@@ -1211,6 +1213,7 @@ class LanesModifier extends Modifier
         currentValue = 1.0;
         subValues.set('x', new ModifierSubValue(0.0));
         subValues.set('y', new ModifierSubValue(0.0));
+        subValues.set('yD', new ModifierSubValue(0.0));
         subValues.set('angle', new ModifierSubValue(0.0));
         subValues.set('z', new ModifierSubValue(0.0));
         subValues.set('skewx', new ModifierSubValue(0.0));
@@ -1225,7 +1228,8 @@ class LanesModifier extends Modifier
                 daswitch = -1;
 
         noteData.x += subValues.get('x').value;
-        noteData.y += subValues.get('y').value * daswitch;
+        noteData.y += subValues.get('y').value;
+        noteData.y += subValues.get('yD').value * daswitch;
         noteData.angle += subValues.get('angle').value;
         noteData.z += subValues.get('z').value;
         noteData.skewX += subValues.get('skewx').value * -daswitch;
