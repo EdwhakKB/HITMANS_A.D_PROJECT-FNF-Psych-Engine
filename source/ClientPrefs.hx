@@ -116,7 +116,7 @@ class ClientPrefs {
 	public static var safeFrames:Float = 10;
 	public static var discordRPC:Bool = true;
 
-	public var resultsScreenType:String = 'HITMANS';
+	public static var resultsScreenType:String = 'HITMANS';
 
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
