@@ -926,7 +926,6 @@ class CommandPromptSubstate extends MusicBeatSubstate
 						'opponentplay' => false
 					];
 					ClientPrefs.comboOffset = [100, 75, 205, 140];
-					ClientPrefs.ratingOffset = 0;
 					ClientPrefs.marvelousWindow = 22.5;
 					ClientPrefs.sickWindow = 45;
 					ClientPrefs.goodWindow = 90;
