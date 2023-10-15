@@ -108,6 +108,7 @@ class ClientPrefs {
 	];
 
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
+	public static var ratingOffset:Float = 0;
 	public static var marvelousWindow:Float = 22.5;
 	public static var sickWindow:Float = 45;
 	public static var goodWindow:Float = 90;
@@ -115,8 +116,6 @@ class ClientPrefs {
 	public static var shitWindow:Float = 180;
 	public static var safeFrames:Float = 10;
 	public static var discordRPC:Bool = true;
-
-	public var resultsScreenType:String = 'HITMANS';
 
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
@@ -197,6 +196,7 @@ class ClientPrefs {
 		FlxG.save.data.achievementsMap = Achievements.achievementsMap;
 		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
 
+		FlxG.save.data.ratingOffset = ratingOffset;
 		FlxG.save.data.marvelousWindow = marvelousWindow;
 		FlxG.save.data.sickWindow = sickWindow;
 		FlxG.save.data.goodWindow = goodWindow;
@@ -210,8 +210,6 @@ class ClientPrefs {
 		FlxG.save.data.checkForUpdates = checkForUpdates;
 		FlxG.save.data.comboStacking = comboStacking;
 		FlxG.save.data.discordRPC = discordRPC;
-
-		FlxG.save.data.resultsScreenType = resultsScreenType;
 
 		FlxG.save.data.developerMode = developerMode;
 		FlxG.save.data.edwhakMode = edwhakMode;
@@ -351,6 +349,10 @@ class ClientPrefs {
 		if(FlxG.save.data.comboOffset != null) {
 			comboOffset = FlxG.save.data.comboOffset;
 		}
+		
+		if(FlxG.save.data.ratingOffset != null) {
+			ratingOffset = FlxG.save.data.ratingOffset;
+		}
 		if(FlxG.save.data.marvelousWindow != null) {
 			marvelousWindow = FlxG.save.data.marvelousWindow;
 		}
@@ -407,11 +409,6 @@ class ClientPrefs {
 		if (FlxG.save.data.discordRPC != null)
 		{
 			discordRPC = FlxG.save.data.discordRPC;
-		}
-
-		if (FlxG.save.data.resultsScreenType != null)
-		{
-			resultsScreenType = FlxG.save.data.resultsScreenType;
 		}
 	
 		if(FlxG.save.data.developerMode != null) {

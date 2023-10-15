@@ -1,4 +1,4 @@
-package;
+/*package;
 
 import ClientPrefs;
 import flixel.util.FlxColor;
@@ -69,11 +69,11 @@ class RatingWindow
 			ClientPrefs.marvelousWindow
 		];
 		var colors:Array<FlxColor> = [
-			FlxColor.fromString('#fb8e01'),
-			FlxColor.fromString('#8C00FF'),
-			FlxColor.fromString('#0800FF'),
-			FlxColor.fromString('#FFE600'),
-			FlxColor.fromString('#00B400')
+			FlxColor.fromString('0x8b0000'),
+			FlxColor.ORANGE,
+			FlxColor.BLUE,
+			FlxColor.YELLOW,
+			FlxColor.GREEN
 		];
 		var acc:Array<Float> = [-1.00, 0.5, 0.75, 1.00, 1.00];
 
@@ -95,6 +95,7 @@ class RatingWindow
 		}
 	}
 }
+*/
 
 
 //Awful enough to give up fast, might try back in a future, a LONG LONG future...
