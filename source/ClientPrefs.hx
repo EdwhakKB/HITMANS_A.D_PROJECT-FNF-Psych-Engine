@@ -116,6 +116,8 @@ class ClientPrefs {
 	public static var safeFrames:Float = 10;
 	public static var discordRPC:Bool = true;
 
+	public var resultsScreenType:String = 'HITMANS';
+
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
 		'note_left'		=> [A, LEFT],
@@ -208,6 +210,8 @@ class ClientPrefs {
 		FlxG.save.data.checkForUpdates = checkForUpdates;
 		FlxG.save.data.comboStacking = comboStacking;
 		FlxG.save.data.discordRPC = discordRPC;
+
+		FlxG.save.data.resultsScreenType = resultsScreenType;
 
 		FlxG.save.data.developerMode = developerMode;
 		FlxG.save.data.edwhakMode = edwhakMode;
@@ -403,6 +407,11 @@ class ClientPrefs {
 		if (FlxG.save.data.discordRPC != null)
 		{
 			discordRPC = FlxG.save.data.discordRPC;
+		}
+
+		if (FlxG.save.data.resultsScreenType != null)
+		{
+			resultsScreenType = FlxG.save.data.resultsScreenType;
 		}
 	
 		if(FlxG.save.data.developerMode != null) {

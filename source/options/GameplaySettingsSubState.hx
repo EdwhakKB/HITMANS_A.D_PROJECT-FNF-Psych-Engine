@@ -175,6 +175,14 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		option.changeValue = 0.1;
 		addOption(option);
 
+		var option:Option = new Option('Results Screen',
+			'Choose your result screen!',
+			'resultsScreenType',
+			'string',
+			'HITMANS'
+			['HITMANS', 'KADE']);
+		addOption(option);
+
 		super();
 	}
 

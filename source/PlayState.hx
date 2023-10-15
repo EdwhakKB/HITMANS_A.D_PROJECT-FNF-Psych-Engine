@@ -1551,7 +1551,7 @@ class PlayState extends MusicBeatState
 		
 		CustomFadeTransition.nextCamera = camOther;
 
-		subStates.push(new ResultsScreenKade()); // 0
+		if (ClientPrefs.resultsScreenType == 'KADE') subStates.push(new ResultsScreenKade()); // 0
 	}
 
 	public function doNoteQuant()
@@ -4304,9 +4304,8 @@ class PlayState extends MusicBeatState
 
 		paused = true;
 		persistentUpdate = false;
-		openSubState(subStates[0]);
-
-		//openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
+		if (ClientPrefs.resultsScreenType == 'KADE') openSubState(subStates[0]);
+		else if (ClientPrefs.resultsScreenType == 'HITMANS') openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
 
 		inResultsScreen = true;
 
@@ -4411,11 +4410,10 @@ class PlayState extends MusicBeatState
 			campaignBads += bads;
 			campaignShits += shits;
 
-			//openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
-
 			paused = true;
 			persistentUpdate = false;
-			openSubState(subStates[0]);
+			if (ClientPrefs.resultsScreenType == 'KADE') openSubState(subStates[0]);
+			else if (ClientPrefs.resultsScreenType == 'HITMANS') openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
 
 			inResultsScreen = true;
 
@@ -4544,7 +4542,7 @@ class PlayState extends MusicBeatState
 
 		note.rating = daRating;
 
-		ResultsScreenKade.instance.registerHit(note, false, cpuControlled, Ratings.timingWindows[0].timingWindow);
+		if (ClientPrefs.resultsScreenType == 'KADE') ResultsScreenKade.instance.registerHit(note, false, cpuControlled, Ratings.timingWindows[0].timingWindow);
 
 		if (daRating.causeMiss)
 		{
@@ -5044,7 +5042,7 @@ class PlayState extends MusicBeatState
 		if (daNote != null)
 		{
 			daNote.rating = Ratings.timingWindows[0];
-			ResultsScreenKade.instance.registerHit(daNote, true, cpuControlled, Ratings.timingWindows[0].timingWindow);
+			if (ClientPrefs.resultsScreenType == 'KADE') ResultsScreenKade.instance.registerHit(daNote, true, cpuControlled, Ratings.timingWindows[0].timingWindow);
 		}
 
 		var char:Character = boyfriend;
