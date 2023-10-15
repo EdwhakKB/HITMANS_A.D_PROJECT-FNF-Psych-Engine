@@ -179,7 +179,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'Choose your result screen!',
 			'resultsScreenType',
 			'string',
-			'HITMANS'
+			'HITMANS',
 			['HITMANS', 'KADE']);
 		addOption(option);
 
