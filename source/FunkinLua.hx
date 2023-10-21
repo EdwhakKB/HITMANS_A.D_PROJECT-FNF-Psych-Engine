@@ -2921,12 +2921,6 @@ class FunkinLua {
             if (!ClientPrefs.shaders)
                 return;
 
-            /*#if mobile
-            //Application.current.window.alert("loading shader: "+classString,"Leather Engine Modcharts");
-            if (mobileShaderBlacklist.contains(classString))
-                return;
-            #end*/
-
             var shaderClass = Type.resolveClass(classString);
             if (shaderClass != null)
             {
