@@ -1374,7 +1374,7 @@ class TwirlModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *=(0-(currentValue*FlxMath.fastSin(((curPos*(0.01))*(5*subValues.get('speed').value)))));
+        noteData.scaleX *=(0-(currentValue*FlxMath.fastCos(((Conductor.songPosition*0.001)*(5*subValues.get('speed').value)))));
     }
 }
 class RollModifier extends Modifier
@@ -1385,6 +1385,6 @@ class RollModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleY *=(0-(currentValue*FlxMath.fastSin(((curPos*(0.01))*(5*subValues.get('speed').value)))));
+        noteData.scaleY *=(0-(currentValue*FlxMath.fastCos(((Conductor.songPosition*0.001)*(5*subValues.get('speed').value)))));
     }
 }
