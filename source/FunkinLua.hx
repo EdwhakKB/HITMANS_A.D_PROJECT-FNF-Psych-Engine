@@ -36,6 +36,7 @@ import flixel.util.FlxSave;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.system.FlxAssets.FlxShader;
 import flixel.group.FlxSpriteGroup;
+import flixel.addons.effects.FlxSkewedSprite;
 
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
@@ -1950,7 +1951,22 @@ class FunkinLua {
 		Lua_helper.add_callback(lua, "addAnimationByIndicesLoop", function(obj:String, name:String, prefix:String, indices:String, framerate:Int = 24) {
 			return addAnimByIndices(obj, name, prefix, indices, framerate, true);
 		});
-		
+		Lua_helper.add_callback(lua, "makeLuaSkewedSprite", function(tag:String, ?image:String = null, ?x:Float = 0, ?y:Float = 0, ?skewX:Float = 0, ?skewY:Float = 0) {
+			tag = tag.replace('.', '');
+			resetSkewedSpriteTag(tag);
+			var leSprite:FlxSkewedSprite = null;
+			if(image != null && image.length > 0)
+			{
+				leSprite = new FlxSkewedSprite();
+				leSprite.loadGraphic(Paths.image(image));
+				leSprite.x = x;
+				leSprite.y = y;
+				leSprite.skew.x = skewX;
+				leSprite.skew.y = skewY;
+			}
+			PlayState.instance.modchartSkewedSprite.set(tag, leSprite);
+			leSprite.active = true;
+		});
 
 		Lua_helper.add_callback(lua, "playAnim", function(obj:String, name:String, forced:Bool = false, ?reverse:Bool = false, ?startFrame:Int = 0)
 		{
@@ -2048,6 +2064,28 @@ class FunkinLua {
 				}
 			}
 		});
+		Lua_helper.add_callback(lua, "addSkewedSprite", function(tag:String, front:Bool = false) {
+			if(PlayState.instance.modchartSkewedSprite.exists(tag)) {
+				var spr:FlxSkewedSprite = PlayState.instance.modchartSkewedSprite.get(tag);
+				if(front)
+					getInstance().add(spr);
+				else{
+					if(PlayState.instance.isDead)
+					{
+						GameOverSubstate.instance.insert(GameOverSubstate.instance.members.indexOf(GameOverSubstate.instance.boyfriend), spr);
+					}
+					else
+					{
+						var position:Int = PlayState.instance.members.indexOf(PlayState.instance.gfGroup);
+						if(PlayState.instance.members.indexOf(PlayState.instance.boyfriendGroup) < position) {
+							position = PlayState.instance.members.indexOf(PlayState.instance.boyfriendGroup);
+						} else if(PlayState.instance.members.indexOf(PlayState.instance.dadGroup) < position) {
+							position = PlayState.instance.members.indexOf(PlayState.instance.dadGroup);
+						}
+						PlayState.instance.insert(position, spr);
+					}
+				}
+		}});
 		Lua_helper.add_callback(lua, "setGraphicSize", function(obj:String, x:Int, y:Int = 0, updateHitbox:Bool = true) {
 			if(PlayState.instance.getLuaObject(obj)!=null) {
 				var shit:FlxSprite = PlayState.instance.getLuaObject(obj);
@@ -2132,7 +2170,22 @@ class FunkinLua {
 				PlayState.instance.modchartSprites.remove(tag);
 			}
 		});
+		Lua_helper.add_callback(lua, "removeSkewedSprite", function(tag:String, destroy:Bool = true) {
+			if(!PlayState.instance.modchartSkewedSprite.exists(tag)) {
+				return;
+			}
 
+			var pee:FlxSkewedSprite = PlayState.instance.modchartSkewedSprite.get(tag);
+			if(destroy) {
+				pee.kill();
+			}
+
+			getInstance().remove(pee, true);
+			if(destroy) {
+				pee.destroy();
+				PlayState.instance.modchartSkewedSprite.remove(tag);
+			}
+		});
 		Lua_helper.add_callback(lua, "luaSpriteExists", function(tag:String) {
 			return PlayState.instance.modchartSprites.exists(tag);
 		});
@@ -3357,6 +3410,19 @@ class FunkinLua {
 		pee.destroy();
 		PlayState.instance.modchartSprites.remove(tag);
 	}
+	function resetSkewedSpriteTag(tag:String) {
+        #if LUA_ALLOWED
+        if(!PlayState.instance.modchartSkewedSprite.exists(tag)) {
+            return;
+        }
+        
+        var target:FlxSkewedSprite = PlayState.instance.modchartSkewedSprite.get(tag);
+        target.kill();
+        PlayState.instance.remove(target, true);
+        target.destroy();
+        PlayState.instance.modchartSkewedSprite.remove(tag);
+        #end
+    }
 
 	function cancelTween(tag:String) {
 		if(PlayState.instance.modchartTweens.exists(tag)) {

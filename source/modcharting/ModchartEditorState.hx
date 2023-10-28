@@ -198,19 +198,41 @@ class ModchartEditorState extends MusicBeatState
     //pain
     //tried using a macro but idk how to use them lol
     public static var modifierList:Array<Class<Modifier>> = [
+        //Basic Modifiers with no curpos math
+        XModifier, YModifier, YDModifier, ZModifier, 
+        ConfusionModifier, MiniModifier,
+        ScaleModifier, ScaleXModifier, ScaleYModifier, 
+        SkewModifier, SkewXModifier, SkewYModifier,
+        //Modifiers with curpos math!!!
+        //Drunk Modifiers
         DrunkXModifier, DrunkYModifier, DrunkZModifier,
+        TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier,
+        //Tipsy Modifiers
         TipsyXModifier, TipsyYModifier, TipsyZModifier,
-        ReverseModifier, IncomingAngleModifier, RotateModifier, StrumLineRotateModifier,
-        BumpyModifier,
-        XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier, DizzyModifier, 
-        ScaleModifier, ScaleXModifier, ScaleYModifier, SkewModifier, SkewXModifier, SkewYModifier, SpeedModifier, 
-        StealthModifier, NoteStealthModifier, LaneStealthModifier, InvertModifier, FlipModifier, 
-        MiniModifier, ShrinkModifier, BeatXModifier, BeatYModifier, BeatZModifier, 
-        BounceXModifier, BounceYModifier, BounceZModifier, 
+        //Wave Modifiers
+        WaveXModifier, WaveYModifier, WaveZModifier,
+        TanWaveXModifier, TanWaveYModifier, TanWaveZModifier,
+        //Scroll Modifiers
+        ReverseModifier,
+        SpeedModifier, BoostModifier, BrakeModifier,
+        TwirlModifier, RollModifier,
+        //Stealth Modifiers
+        StealthModifier, NoteStealthModifier, LaneStealthModifier,
+        SuddenModifier, HiddenModifier, BlinkModifier,
+        //Path Modifiers
+        IncomingAngleModifier, InvertSineModifier, DizzyModifier,
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
-        InvertSineModifier, BoostModifier, BrakeModifier, JumpModifier, WaveXModifier, WaveYModifier,
-        WaveZModifier, TimeStopModifier, StrumAngleModifier, JumpTargetModifier, JumpNotesModifier, EaseXModifier,
-        SuddenModifier, HiddenModifier, NotesModifier, LanesModifier/*, CamRotateModifier*/
+        BounceXModifier, BounceYModifier, BounceZModifier, BumpyModifier, BeatXModifier, BeatYModifier, BeatZModifier, 
+        ShrinkModifier,
+        //Target Modifiers
+        RotateModifier, StrumLineRotateModifier, JumpTargetModifier,
+        LanesModifier,
+        //Notes Modifiers
+        TimeStopModifier, JumpNotesModifier,
+        NotesModifier,
+        //Misc Modifiers
+        InvertModifier, FlipModifier, JumpModifier,
+        StrumAngleModifier, EaseXModifier,
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -1537,6 +1559,18 @@ class ModchartEditorState extends MusicBeatState
         explainString = "Modifier based from other modifiers but only affects notes and no targets";
             case 'LanesModifier':
         explainString = "Modifier based from other modifiers but only affects targets and no notes";
+            case 'TanDrunkXModifier':
+        explainString = "Modifier similar to drunk but uses tan instead of sin in X";
+            case 'TanDrunkYModifier':
+        explainString = "Modifier similar to drunk but uses tan instead of sin in Y";
+            case 'TanDrunkZModifier':
+        explainString = "Modifier similar to drunk but uses tan instead of sin in Z";
+            case 'TanWaveXModifier':
+        explainString = "Modifier similar to wave but uses tan instead of sin in X";
+            case 'TanWaveYModifier':
+        explainString = "Modifier similar to wave but uses tan instead of sin in Y";
+            case 'TanWaveZModifier':
+        explainString = "Modifier similar to wave but uses tan instead of sin in Z";
         }
 
        return explainString;

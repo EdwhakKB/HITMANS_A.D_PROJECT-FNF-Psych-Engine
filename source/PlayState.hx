@@ -79,7 +79,7 @@ import shaders.FNFShader;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 #end
-
+import flixel.addons.effects.FlxSkewedSprite;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -144,6 +144,7 @@ class PlayState extends MusicBeatState
 	public var modchartTexts:Map<String, ModchartText> = new Map<String, ModchartText>();
 	public var modchartSaves:Map<String, FlxSave> = new Map<String, FlxSave>();
 	public var modchartCameras:Map<String, FlxCamera> = new Map<String, FlxCamera>(); // FUCK!!!
+	public var modchartSkewedSprite:Map<String, FlxSkewedSprite> = new Map<String, FlxSkewedSprite>();
 	#else
 	public var boyfriendMap:Map<String, Boyfriend> = new Map<String, Boyfriend>();
 	public var dadMap:Map<String, Character> = new Map<String, Character>();
@@ -1842,6 +1843,7 @@ class PlayState extends MusicBeatState
 
 	public function getLuaObject(tag:String, text:Bool=true):FlxSprite {
 		if(modchartSprites.exists(tag)) return modchartSprites.get(tag);
+		if(modchartSkewedSprite.exists(tag)) return modchartSkewedSprite.get(tag);
 		if(text && modchartTexts.exists(tag)) return modchartTexts.get(tag);
 		if(variables.exists(tag)) return variables.get(tag);
 		return null;

@@ -1244,19 +1244,147 @@ class LanesModifier extends Modifier
     }
 }
 
-//this one makes camera stuff so basically it will be experimental until we got something better!
-// class CamRotateModifier extends Modifier
-// {
-//     override function setupSubValues()
-//     {
-//         subValues.set('x', new ModifierSubValue(0.0));
-//         subValues.set('y', new ModifierSubValue(0.0));
-//         subValues.set('angle', new ModifierSubValue(0.0));
-//     }
-//     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-//     {
-//         PlayState.instance.camHUD.angle = subValues.get('angle').value;
-//         PlayState.instance.camHUD.x = subValues.get('x').value;
-//         PlayState.instance.camHUD.y = subValues.get('y').value;
-//     }
-// }
+class TanDrunkXModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('period', new ModifierSubValue(1.0));
+        subValues.set('offset', new ModifierSubValue(1.0));
+        subValues.set('spacing', new ModifierSubValue(1.0));
+        subValues.set('speed', new ModifierSubValue(1.0));
+        subValues.set('size', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.x += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
+        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+}
+
+class TanDrunkYModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('period', new ModifierSubValue(1.0));
+        subValues.set('offset', new ModifierSubValue(1.0));
+        subValues.set('spacing', new ModifierSubValue(1.0));
+        subValues.set('speed', new ModifierSubValue(1.0));
+        subValues.set('size', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.y += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
+        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+}
+
+class TanDrunkZModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('period', new ModifierSubValue(1.0));
+        subValues.set('offset', new ModifierSubValue(1.0));
+        subValues.set('spacing', new ModifierSubValue(1.0));
+        subValues.set('speed', new ModifierSubValue(1.0));
+        subValues.set('size', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.z += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
+        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+}
+
+class TanWaveXModifier extends Modifier 
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.x += 260*currentValue*Math.tan(((Conductor.songPosition) * (subValues.get('speed').value)*0.0008)+(lane/4))*0.2;
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        strumMath(noteData,lane,pf);
+    }
+}
+class TanWaveYModifier extends Modifier 
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.y += 260*currentValue*Math.tan(((Conductor.songPosition) * (subValues.get('speed').value)*0.0008)+(lane/4))*0.2;
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        strumMath(noteData,lane,pf);
+    }
+}
+class TanWaveZModifier extends Modifier 
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.z += 260*currentValue*Math.tan(((Conductor.songPosition) * (subValues.get('speed').value)*0.0008)+(lane/4))*0.2;
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        strumMath(noteData,lane,pf);
+    }
+}
+class BlinkModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.alpha *=(1-(currentValue*FlxMath.fastSin(((Conductor.songPosition*0.001)*(subValues.get('speed').value*10)))));
+    }
+}
+class TwirlModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.scaleX *=(0-(currentValue*FlxMath.fastSin(((curPos*(0.01))*(5*subValues.get('speed').value)))));
+    }
+}
+class RollModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.scaleY *=(0-(currentValue*FlxMath.fastSin(((curPos*(0.01))*(5*subValues.get('speed').value)))));
+    }
+}
