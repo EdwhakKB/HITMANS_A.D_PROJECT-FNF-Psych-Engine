@@ -207,6 +207,7 @@ class ModchartEditorState extends MusicBeatState
         //Drunk Modifiers
         DrunkXModifier, DrunkYModifier, DrunkZModifier,
         TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier,
+        CosecantXModifier, CosecantYModifier, CosecantZModifier,
         //Tipsy Modifiers
         TipsyXModifier, TipsyYModifier, TipsyZModifier,
         //Wave Modifiers
@@ -1571,6 +1572,18 @@ class ModchartEditorState extends MusicBeatState
         explainString = "Modifier similar to wave but uses tan instead of sin in Y";
             case 'TanWaveZModifier':
         explainString = "Modifier similar to wave but uses tan instead of sin in Z";
+            case 'TwirlModifier':
+        explainString = "Modifier that makes the notes incoming rotating in a circle in X";
+            case 'RollModifier':
+        explainString = "Modifier that makes the notes incoming rotating in a circle in Y";
+            case 'BlinkModifier':
+        explainString = "Modifier that makes the notes alpha go to 0 and go back to 1 constantly";
+            case 'CosecantXModifier':
+        explainString = "Modifier similar to TanDrunk but uses cosecant instead of tan in X";
+            case 'CosecantYModifier':
+        explainString = "Modifier similar to TanDrunk but uses cosecant instead of tan in Y";
+            case 'CosecantZModifier':
+        explainString = "Modifier similar to TanDrunk but uses cosecant instead of tan in Z";
         }
 
        return explainString;
