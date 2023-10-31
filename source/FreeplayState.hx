@@ -118,9 +118,9 @@ class FreeplayState extends MusicBeatState
 		for (i in 0...songs.length)
 		{
 			var box:FlxSprite = new FlxSprite();
-			box.loadGraphic(Paths.image('freeplay/EmptyBox'));
+			box.loadGraphic(Paths.image('MenuShit/FreeplaySongSelect'));
 			// box.x=FlxG.width / 2 -(box.width/16);
-			box.x = FlxG.width / 2;
+			box.x = -(FlxG.width / 2) + 500;
 			box.y = FlxG.height / 2 - (box.height / 2) + (i * 415);
 			box.antialiasing = ClientPrefs.globalAntialiasing;
 			box.ID = i;
@@ -170,7 +170,7 @@ class FreeplayState extends MusicBeatState
 
 		add(scoreText);
 
-		rating = new FlxSprite(72.1,435.2);
+		rating = new FlxSprite(342.2,235.2);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
 		rating.animation.addByPrefix('PERFECT', 'Rating-H', 24, true);
 		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
@@ -184,6 +184,7 @@ class FreeplayState extends MusicBeatState
 		rating.alpha = 0;
 		rating.updateHitbox();
 		rating.scrollFactor.set();
+		rating.scale.set(0.34, 0.34);
 		add(rating);
 
 		missingTextBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
@@ -515,7 +516,7 @@ class FreeplayState extends MusicBeatState
 					itext.offset.x = 0;
 				}
 				itext.y = (FlxG.height / 2) - (songs[curSelected].songName.length * 70 / 2) + 70 * i;
-				itext.x = (FlxG.width / 4)- (songs[curSelected].songName.length * 70 / 2) + 70 * i;
+				itext.x = ((FlxG.width / 4) - (songs[curSelected].songName.length * 70 / 2) + 70 * i) - 150;
 				grupoTexto.add(itext);
 			}
 		}
