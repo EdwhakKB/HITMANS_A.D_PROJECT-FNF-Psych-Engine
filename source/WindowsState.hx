@@ -504,7 +504,7 @@ class WindowsState extends MusicBeatState
 						FlxTween.tween(yesText, {alpha: 0}, 0.5, {ease: FlxEase.circOut});
 						new FlxTimer().start(0.5, function(tmr:FlxTimer) 
 							{
-								gameText.text = "Alright. That's all for now.\nHave fun playing this game!";
+								gameText.text = "Alright. That's all for now.\nHave fun playing this game! (remember this is experimental and not done yet)";
 								FlxTween.tween(gameText, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 							});
 					case 4:

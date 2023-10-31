@@ -83,17 +83,19 @@ import flixel.addons.effects.FlxSkewedSprite;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
-#end
 
 #if VIDEOS_ALLOWED 
 #if (hxCodec >= "3.0.0")
 import hxcodec.flixel.FlxVideo as VideoHandler;
 import lime.app.Event;
-#elseif (hxCodec >= "2.6.1") import hxcodec.VideoHandler as VideoHandler;
-#elseif (hxCodec == "2.6.0") import VideoHandler as VideoHandler;
+#elseif (hxCodec >= "2.6.1") 
+import hxcodec.VideoHandler as VideoHandler;
+#elseif (hxCodec == "2.6.0") 
+import VideoHandler as VideoHandler;
 #end
 #end
 
+#end
 import flash.system.System;
 
 using StringTools;
@@ -2471,10 +2473,11 @@ class PlayState extends MusicBeatState
 		var songName:String = Paths.formatToSongPath(SONG.song);
 		var file:String = Paths.json(songName + '/events');
 		#if MODS_ALLOWED
-		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || FileSystem.exists(file)) {
+		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || FileSystem.exists(file))
 		#else
-		if (OpenFlAssets.exists(file)) {
+		if (OpenFlAssets.exists(file))
 		#end
+		{
 			var eventsData:Array<Dynamic> = Song.loadFromJson('events', songName).events;
 			for (event in eventsData) //Event Notes
 			{
