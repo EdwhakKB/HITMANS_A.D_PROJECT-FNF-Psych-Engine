@@ -354,20 +354,19 @@ class CommandPromptSubstate extends MusicBeatSubstate
 							else{
 								debugText.alpha = 0;
 							}
-							
-						if(wordText.text.toLowerCase() == 'options')
-							{
+
+						switch(wordText.text.toLowerCase()){
+							case 'options':
 								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
+								new FlxTimer().start(1, function(tmr:FlxTimer)
 									{
 										infoText.text = " ";
 										LoadingState.loadAndSwitchState(new options.OptionsState());
 									});
-							}
-						else if(wordText.text.toLowerCase() == 'freeplay'){
-							infoText.text = 'EXECUTING...';
+							case 'freeplay':
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
@@ -375,9 +374,8 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										infoText.text = " ";
 										MusicBeatState.switchState(new FreeplayState());
 									});
-						}
-						else if(wordText.text.toLowerCase() == 'storymode'){
-							infoText.text = 'EXECUTING...';
+							case 'storymode':
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
@@ -385,9 +383,8 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										infoText.text = " ";
 										MusicBeatState.switchState(new StoryMenuState());
 									});
-						}
-						else if(wordText.text.toLowerCase() == 'credits'){
-							infoText.text = 'EXECUTING...';
+							case 'credits':
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
@@ -395,9 +392,8 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										infoText.text = " ";
 										MusicBeatState.switchState(new CreditsState());
 									});
-						}
-						else if(wordText.text.toLowerCase() == 'mods'){
-							infoText.text = 'EXECUTING...';
+							case 'mods':
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
@@ -409,9 +405,8 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										infoText.text = "SYSTEM DON'T SUPPORT ANY MODIFICATION";
 										#end
 									});
-						}
-						else if(wordText.text.toLowerCase() == 'awards'){
-							infoText.text = 'NOT IN DEMO';
+							case 'awards':
+								infoText.text = 'NOT IN DEMO';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								// new FlxTimer().start(1, function(tmr:FlxTimer) 
@@ -419,57 +414,55 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								// 		infoText.text = " ";
 								// 		MusicBeatState.switchState(new StoryMenuState());
 								// 	});
-						}
-						else if(wordText.text.toLowerCase() == 'login' && !changingUserName)
-							{
-								if (ClientPrefs.userName == 'Guess'){
-									changingUserName = true;
-									infoText.text = "Please introduce your username";
-									wordText.text = '';
-									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								}else{
-									infoText.text = 'You are already logged in as '+ ClientPrefs.userName +' try "Logout" to change userName';
-									wordText.text = '';
-									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+							case 'login':
+								if (!changingUserName){
+									if (ClientPrefs.userName == 'Guess'){
+										changingUserName = true;
+										infoText.text = "Please introduce your username";
+										wordText.text = '';
+										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+									}else{
+										infoText.text = 'You are already logged in as '+ ClientPrefs.userName +' try "Logout" to change userName';
+										wordText.text = '';
+										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+									}
 								}
-							}
-						else if(wordText.text.toLowerCase() == 'logout' && !changingUserName)
-							{
-								if (ClientPrefs.userName != 'Guess' && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+							case 'logout':
+								if (!changingUserName){
+									if (ClientPrefs.userName != 'Guess' && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+										infoText.text = "You was successfully logged out";
+										wordText.text = '';
+										ClientPrefs.userName = 'Guess';
+										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+									}else if (ClientPrefs.userName != 'Guess' && ClientPrefs.edwhakMode || ClientPrefs.developerMode){
+										infoText.text = "Are you sure you want to logout? "+ ClientPrefs.userName + " You must login again";
+										tryingLogOut = true;
+										wordText.text = '';
+										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+									}else if (ClientPrefs.userName == 'Guess'){
+										infoText.text = "You can't logout on a Guess account";
+										wordText.text = '';
+										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+									}
+								}
+							case 'yes':
+								if (tryingLogOut){
 									infoText.text = "You was successfully logged out";
 									wordText.text = '';
+									tryingLogOut = false;
+									ClientPrefs.edwhakMode = false;
+									ClientPrefs.developerMode = false;
 									ClientPrefs.userName = 'Guess';
 									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								}else if (ClientPrefs.userName != 'Guess' && ClientPrefs.edwhakMode || ClientPrefs.developerMode){
-									infoText.text = "Are you sure you want to logout? "+ ClientPrefs.userName + " You must login again";
-									tryingLogOut = true;
+								}
+							case 'no':
+								if (tryingLogOut){
+									infoText.text = "Ok "+ ClientPrefs.userName +" enjoy your stay";
 									wordText.text = '';
-									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								}else if (ClientPrefs.userName == 'Guess'){
-									infoText.text = "You can't logout on a Guess account";
-									wordText.text = '';
+									tryingLogOut = false;
 									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								}
-							}
-						else if(wordText.text.toLowerCase() == 'yes' && tryingLogOut)
-							{
-								infoText.text = "You was successfully logged out";
-								wordText.text = '';
-								tryingLogOut = false;
-								ClientPrefs.edwhakMode = false;
-								ClientPrefs.developerMode = false;
-								ClientPrefs.userName = 'Guess';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-						else if(wordText.text.toLowerCase() == 'no' && tryingLogOut)
-							{
-								infoText.text = "Ok "+ ClientPrefs.userName +" enjoy your stay";
-								wordText.text = '';
-								tryingLogOut = false;
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-					    else if(wordText.text.toLowerCase() == 'reset data')
-							{
+							case 'reset data':
 								infoText.text = 'Reseting...';
 								wordText.text = '';
 								resetting = true;
@@ -491,14 +484,11 @@ class CommandPromptSubstate extends MusicBeatSubstate
 											});
 									});
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-						else if(wordText.text.toLowerCase() == 'reset data --safe')
-							{
+							case 'reset data --debug':
 								infoText.text = 'Reseting(safeMode)...';
 								wordText.text = '';
-								ClientPrefs.isLogged = false;
 								ClientPrefs.userName = '';
-								ClientPrefs.saveSettings();
+								ClientPrefs.isLogged = false;
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										FlxG.sound.music.fadeOut(0.3);
@@ -508,21 +498,20 @@ class CommandPromptSubstate extends MusicBeatSubstate
 											FreeplayState.vocals = null;
 										}
 										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
-										new FlxTimer().start(1, function(tmr:FlxTimer) 
-											{
-												infoText.text = " ";
-												// TitleState.initialized = false;
-												// TitleState.closedState = false;
-												WindowsState.initialized = false;
-												WindowsState.closedState = false;
-												MusicBeatState.switchState(new WindowsState());
-											});
+									});
+								new FlxTimer().start(1.5, function(tmr:FlxTimer) 
+									{
+										ClientPrefs.saveSettings();
+										infoText.text = " ";
+										// TitleState.initialized = false;
+										// TitleState.closedState = false;
+										WindowsState.initialized = false;
+										WindowsState.closedState = false;
+										WindowsState.testing = true;
+										MusicBeatState.switchState(new WindowsState());
 									});
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-					    else if(wordText.text.toLowerCase() == 'restart')
-							{
+							case 'restart':
 								infoText.text = 'Restarting...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
@@ -538,10 +527,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										}
 										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
 									});
-							}
-
-						else if(wordText.text.toLowerCase() == 'exit')
-							{
+							case 'exit':
 								infoText.text = 'Exitting...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
@@ -558,17 +544,12 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										}
 										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, function(){System.exit(0);}, false);
 									});
-							}
-
-					    else if(wordText.text.toLowerCase() == 'hello')
-							{
+							case 'hello':
 								infoText.text = 'Oh, hello there!\nI hope you like this mod!\nTrying to find all commands, aren\'t you?\nHa-ha, anyway, have fun!';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-						else if(wordText.text.toLowerCase() == 'fuck you')
-							{
+							case 'fuck you':
+								//i'll recode this later lol
 								infoText.text = 'Rude! >:\'<';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
@@ -584,24 +565,11 @@ class CommandPromptSubstate extends MusicBeatSubstate
 												infoText.text = 'Don\'t do that again. :\'<';
 											});
 									});
-							}
-
-						else if(wordText.text.toLowerCase() == 'sorry' && infoText.text == 'Don\'t do that again. :\'<')
-							{
-								infoText.text = 'Aww, okay!\nApologies are accepted :3';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-						else if(wordText.text.toLowerCase() == 'balls')
-							{
+							case 'balls':
 								infoText.text = 'Balls everywhere!';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-
-						else if(wordText.text.toLowerCase() == 'log24')
-							{
+							case 'log24':
 								infoText.text = 'Loading "Forgotten" project...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
@@ -624,20 +592,8 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								        FlxG.sound.music.volume = 0;
 									}
 									);
-							}
-						else if(wordText.text.toLowerCase() == 'mercyless')
-							{
-								infoText.text = 'Wait a few seconds...';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-								{
-									infoText.text = 'Please, put the Password';
-								});
-							}
-						else if(wordText.text.toLowerCase() == 'capsaicin' && infoText.text == 'Please, put the Password')
-							{
-								infoText.text = 'EXECUTING...';
+							case 'mercyless':
+								infoText.text = 'Loading "C18H27NO3" project...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
@@ -659,15 +615,11 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								        FlxG.sound.music.volume = 0;
 									}
 									);
-							}
-						else if(wordText.text.toLowerCase() == 'experiment1213')
-							{
+							case 'experiment1213':
 								infoText.text = 'REDACTED';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-						else if(wordText.text.toLowerCase() == 'redacted info')
-							{
+							case 'redacted info':
 								infoText.text = 'I forgot about them...';
 								wordText.text = '';
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
@@ -681,9 +633,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 									}
 								);
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-						else if(wordText.text.toLowerCase() == 'redacted info')
-							{
+							case 'fallen os':
 								infoText.text = "Interesting people, I would say. Wish I could meet Fillie more";
 								wordText.text = '';
 								new FlxTimer().start(2, function(tmr:FlxTimer) 
@@ -697,9 +647,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 									}
 								);
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							}
-					    else if(wordText.text.toLowerCase() == 'test')
-							{
+							case 'test':
 								infoText.text = 'Loading Testing Song...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
@@ -722,10 +670,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								        FlxG.sound.music.volume = 0;
 									}
 									);
-							}
-
-						else if(wordText.text.toLowerCase() == 'beatmod')
-							{
+							case 'beatmod':
 								infoText.text = '';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
@@ -780,14 +725,12 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										//trace("Quit");
 										System.exit(0);
 									});
+							default:
+								infoText.text = 'Invalid command.\nTry to type again.';
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							}
-							if(wordText.text != '')
-								{
-									infoText.text = 'Invalid command.\nTry to type again.';
-									wordText.text = '';
-									FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								}
-						}					
+						}			
 						else
 						{
 							if(wordText.text == '')

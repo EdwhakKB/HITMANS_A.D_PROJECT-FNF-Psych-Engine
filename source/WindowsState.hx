@@ -45,6 +45,7 @@ class WindowsState extends MusicBeatState
 	public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
+	public static var testing:Bool = false; //just to test this shit ig
 
 	public static var initialized:Bool = false;
 
@@ -101,7 +102,6 @@ class WindowsState extends MusicBeatState
 	6) Shaders and other main effect options
 	7) HUD Settings.
 	*/
-
 	override public function create():Void
 	{
 		Paths.clearStoredMemory();
@@ -211,15 +211,17 @@ class WindowsState extends MusicBeatState
 		#end
 
 		super.create();
-
+		trace(testing);
 		ClientPrefs.loadPrefs();
 
 		//changing states incase if nickname != null
-		if(ClientPrefs.isLogged) {
+		if(ClientPrefs.isLogged && ClientPrefs.userName != '' && !testing) {
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			MusicBeatState.switchState(new TitleState());
+			trace('wellcome back');
 		} else {
+			trace('wellcome');
 			bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 			bg.scrollFactor.set(0);
 			bg.screenCenter();
