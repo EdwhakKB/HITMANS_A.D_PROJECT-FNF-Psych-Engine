@@ -63,6 +63,12 @@ class CommandPromptSubstate extends MusicBeatSubstate
 
 	var promptText:FlxText;
 
+
+	var micrashPercent:Float = 0.0; 
+    var fuckYouCommand:Bool = false;
+    var valueSpeed:Float = 20.0;
+    var micrashPercentText:FlxText;
+
 	override function create()
 	{
 		#if MODS_ALLOWED
@@ -189,6 +195,18 @@ class CommandPromptSubstate extends MusicBeatSubstate
 		wordText.alpha = prompt.alpha;
 		infoText.alpha = prompt.alpha;
 		promptText.alpha = prompt.alpha;
+
+		if(fuckYouCommand)
+			{
+				lime.app.Application.current.window.fullscreen = true;
+				micrashPercent += valueSpeed * elapsed;
+
+				micrashPercentText.text = Math.round(micrashPercent) + "%";
+
+				if(micrashPercent >= 100){
+					Sys.exit(1);
+				}
+			}
 
 		if (FlxG.sound.music.volume < 0.8)
 		{
@@ -549,22 +567,94 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							case 'fuck you':
-								//i'll recode this later lol
-								infoText.text = 'Rude! >:\'<';
-								wordText.text = '';
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
+
+							fuckYouCommand = true;
+
+							var errors:Array<String> = 
+							[
+								"SYSTEM_THREAD_EXCEPTION_NOT_HANDLED",
+								"CRITICAL_OBJECT_TERMINATION",
+								"UNMOUNTABLE_BOOT_VOLUME",
+								"KERNEL_MODE_EXCEPTION_NOT_HANDLED_M",
+								"WINLOGON_FATAL_ERROR",
+								"VIDEO_TDR_FAILURE"
+							];
+		
+							lime.app.Application.current.window.fullscreen = true;
+							lime.app.Application.current.window.resizable = false;
+		
+							if(FlxG.sound.music != null){
+								FlxG.sound.music.stop();
+							}
+		
+							FlxG.mouse.visible = false;
+							Main.fpsVar.visible = false;
+		
+							var miCrash = new FlxSprite();
+							miCrash.makeGraphic(FlxG.width, FlxG.height, 0xff0874ab);
+							add(miCrash);
+		
+							if(lime.system.System.platformLabel != null && lime.system.System.platformLabel != "")
+								{
+									if(lime.system.System.platformLabel.contains("Windows 10"))
+										{
+											miCrash.color = 0xff0078d7;
+										}
+									else if(lime.system.System.platformLabel.contains("Windows 11"))
+										{
+											miCrash.color = 0xff000000;
+										}
+									
+									if(lime.system.System.platformLabel.contains("Insider"))
 									{
-										FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-										FlxTween.tween(prompt, {alpha: 0}, 0.25, {ease: FlxEase.circOut});
-										wordText.text = '';
-										infoText.text = '';
-										helpText.alpha = 0;
-										new FlxTimer().start(0.25, function(tmr:FlxTimer) 
-											{
-												infoText.text = 'Don\'t do that again. :\'<';
-											});
-									});
+										miCrash.color = 0xff246f24;
+									}
+								}
+		
+							var caritatriste:FlxText = new FlxText(0, 0, 0, ":(");
+							caritatriste.setFormat(Paths.font("Consolas-Bold.ttf"), 150, FlxColor.WHITE, LEFT, FlxColor.BLACK);
+							caritatriste.scrollFactor.set();
+							caritatriste.screenCenter();
+							caritatriste.x -= 360;
+							caritatriste.y -= 160;
+							caritatriste.antialiasing = true;
+							add(caritatriste);
+							
+							var text:FlxText = new FlxText(caritatriste.x, caritatriste.y + 180, 0, "");
+							text.setFormat(Paths.font("Consolas-Bold.ttf"), 20, FlxColor.WHITE, LEFT,FlxColor.BLACK);
+							text.scrollFactor.set();
+							text.antialiasing = true;
+							text.text = "Your device ran into a problem and needs to restart. We're just \ncollecting some error info, and then well restart for you.";
+							add(text);
+		
+							var completeText:FlxText = new FlxText(text.x + 40, text.y + 75, 0, "complete");
+							completeText.setFormat(Paths.font("Consolas-Bold.ttf"), 20, FlxColor.WHITE, LEFT,FlxColor.BLACK);
+							completeText.scrollFactor.set();
+							completeText.antialiasing = true;
+							add(completeText);
+		
+							micrashPercentText = new FlxText(text.x, completeText.y, 0, "");
+							micrashPercentText.setFormat(Paths.font("Consolas-Bold.ttf"), 20, FlxColor.WHITE, LEFT,FlxColor.BLACK);
+							micrashPercentText.scrollFactor.set();
+							micrashPercentText.antialiasing = true;
+							add(micrashPercentText);
+		
+							var moreInfo:FlxText = new FlxText(text.x + 130, text.y + 140, 0, "");
+							moreInfo.setFormat(Paths.font("Consolas-Bold.ttf"), 12, FlxColor.WHITE, LEFT, FlxColor.BLACK);
+							moreInfo.scrollFactor.set();
+							moreInfo.antialiasing = true;
+							moreInfo.text = "For more information about this issue and possible fixes, visit \nhttps://www.windows.com/stopcode \n\n\nIf you call a support person, give them this info: \nStop Code: ";
+							add(moreInfo);
+							moreInfo.text += errors[Std.random(errors.length)];
+		
+							var miQR:FlxSprite = new FlxSprite(-230, 0);
+							miQR.loadGraphic(Paths.getPath('images/MenuShit/WhenTeRickrolean.png', IMAGE));
+							miQR.scrollFactor.set(0, 0);
+							miQR.setGraphicSize(Std.int(miQR.width * 0.1));
+							miQR.antialiasing = true;
+							add(miQR);
+							FlxG.sound.play(Paths.sound('Edwhak/bluescreenofdeath'), 1, true);
+								//I asked a hacker to do this lmao
 							case 'balls':
 								infoText.text = 'Balls everywhere!';
 								wordText.text = '';
