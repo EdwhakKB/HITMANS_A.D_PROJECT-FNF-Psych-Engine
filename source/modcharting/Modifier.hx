@@ -1574,7 +1574,7 @@ class ArrowPath extends Modifier {
             currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
         }
     public function loadPath() {
-        var file = CoolUtil.coolTextFile(Paths.getTextFromFile("falseparadise"));
+        var file = CoolUtil.coolTextFile(Paths.getTextFromFile("falseparadise.txt"));
         var path = new List<TimeVector>();
         var _g = 0;
         while (_g < file.length) {
@@ -1591,7 +1591,7 @@ class ArrowPath extends Modifier {
         _path = path;
     }
 
-    public function calculatePathDistances(path: List<TimeVector>): Float {
+    public function calculatePathDistances(path:List<TimeVector>): Float {
         @:privateAccess 
         var iterator_head = path.h;
         var val = iterator_head.item;

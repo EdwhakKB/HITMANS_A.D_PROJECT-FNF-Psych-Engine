@@ -266,6 +266,7 @@ class PlayState extends MusicBeatState
 	public var health:Float = 1;
 	public var maxHealth:Float = 0; //Totally not stolen from Lullaby lol
 	public var combo:Int = 0;
+	public var comboOp:Int = 0;
 	private var maxCombo:Int = 0;
 
 	private var healthBarBG:AttachedSprite;
@@ -456,19 +457,16 @@ class PlayState extends MusicBeatState
 	var ratingsBumpTween:FlxTween;
 	var ratingsBumpTween2:FlxTween;
 	var ratingsBumpTimer:FlxTimer;
-	public var inX:FlxTween;
-	public var inY:FlxTween;
-	public var inX2:FlxTween;
-	public var inY2:FlxTween;
 
 	public var ratingsOP:FlxSprite;
 	var ratingsOPBumpTween:FlxTween;
 	var ratingsOPBumpTween2:FlxTween;
 	var ratingsOPBumpTimer:FlxTimer;
-	public var inXOP:FlxTween;
-	public var inYOP:FlxTween;
-	public var inXOP2:FlxTween;
-	public var inYOP2:FlxTween;
+
+	var noteScore:FlxText;
+	var noteScoreOp:FlxText;
+	public var noteRatingTween:FlxTween;
+	public var noteRatingTweenOp:FlxTween;
 
 	//the 21 cameras
 	public var noteCameras0:FlxCamera;
@@ -621,6 +619,20 @@ class PlayState extends MusicBeatState
 		ratingsOP.scrollFactor.set();
 		ratingsOP.visible = false;
 		add(ratingsOP);
+
+		noteScoreOp = new FlxText(ratingsOP.x, 0, FlxG.width, '', 36);
+		noteScoreOp.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
+		noteScoreOp.borderSize = 2;
+		noteScoreOp.scrollFactor.set();
+		noteScoreOp.visible = false;
+		add(noteScoreOp);
+
+		noteScore = new FlxText(ratings.x, 0, FlxG.width, '', 36);
+		noteScore.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
+		noteScore.borderSize = 2;
+		noteScore.scrollFactor.set();
+		noteScore.visible = false;
+		add(noteScore);
 
 		// For the "Just the Two of Us" achievement
 		for (i in 0...keysArray.length)
@@ -1367,6 +1379,8 @@ class PlayState extends MusicBeatState
 		healthHitBar.cameras = [camOther];
 		ratings.cameras = [camOther];
 		ratingsOP.cameras = [camOther];
+		noteScore.cameras = [camOther];
+		noteScoreOp.cameras = [camOther];
 		if (ClientPrefs.hudStyle == 'HITMANS'){
 			iconP1.cameras = [camOther];
 			iconP2.cameras = [camOther];	
@@ -3297,6 +3311,36 @@ class PlayState extends MusicBeatState
 			// Conductor.lastSongPos = FlxG.sound.music.time;
 		}
 
+		//noteRating shit ig but only for x and y LOL
+		if (combo == 0)
+			noteScore.alpha = 0;
+		else
+			noteScore.alpha = 1;
+
+		if (comboOp != 0 && edwhakIsEnemy)
+			noteScoreOp.alpha = 1;
+		else if (combo == 0 && !edwhakIsEnemy)
+			noteScoreOp.alpha = 0;
+		else if (combo != 0 && !edwhakIsEnemy)
+			noteScoreOp.alpha = 1;
+		else
+			noteScoreOp.alpha = 0;
+
+		noteScore.x = ratings.x-510;
+		noteScoreOp.x = ratingsOP.x-510;
+
+		// noteScore.x += ratings.x;
+		// noteScoreOp.x += ratingsOP.x;
+
+		noteScore.y = ratings.y+100;
+		noteScoreOp.y = ratingsOP.y+100;
+
+		noteScore.text = Std.string(combo);
+		if (!edwhakIsEnemy)
+			noteScoreOp.text = Std.string(combo);
+		else
+			noteScoreOp.text = Std.string(comboOp);
+
 		#if desktop
 		if (songStarted)
 		{
@@ -5024,6 +5068,7 @@ class PlayState extends MusicBeatState
 			if (!note.isSustainNote){
 				ratingsBumpScaleOP();
 				setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+				comboOp +=1;
 			}
 			if (!ClientPrefs.casualMode){
 				if(health - edwhakDrain - 0.17 > maxHealth){
@@ -5401,6 +5446,9 @@ class PlayState extends MusicBeatState
 		if(ratingsBumpTimer != null) {
 			ratingsBumpTimer.cancel();
 		}
+		if(noteRatingTween != null) {
+			noteRatingTween.cancel(); // like scoreTxt scale tween
+		}
 		ratings.scale.x = 1.5;
 		ratings.scale.y = 1.5;
 		ratingsBumpTween = FlxTween.tween(ratings.scale, {x: 1.3, y: 1.3}, 0.1, {ease:FlxEase.circOut,
@@ -5417,8 +5465,24 @@ class PlayState extends MusicBeatState
 				});
 			}
 		});
+		noteScore.scale.x = 1.125;
+		noteScore.scale.y = 1.125;
+		noteRatingTween = FlxTween.tween(noteScore.scale, {x: 1, y: 1}, 0.1, {ease:FlxEase.circOut,
+			onComplete: function(twn:FlxTween) {
+				noteRatingTween = null;
+			}
+		});
+
+		// FlxTween.tween(numScoreOp, {alpha: 0}, 0.2 / playbackRate, {
+		// 	onComplete: function(tween:FlxTween)
+		// 	{
+		// 		numScoreOp.destroy();
+		// 	},
+		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
+		// });
 		if (ClientPrefs.hudStyle == 'HITMANS'){
 			ratings.visible = true;
+			noteScore.visible = true;
 		}
 	}
 
@@ -5432,6 +5496,9 @@ class PlayState extends MusicBeatState
 		}
 		if(ratingsOPBumpTimer != null) {
 			ratingsOPBumpTimer.cancel();
+		}
+		if(noteRatingTweenOp != null) {
+			noteRatingTweenOp.cancel(); // like scoreTxt scale tween
 		}
 		ratingsOP.scale.x = 1.5;
 		ratingsOP.scale.y = 1.5;
@@ -5449,8 +5516,24 @@ class PlayState extends MusicBeatState
 				});
 			}
 		});
+		noteScoreOp.scale.x = 1.125;
+		noteScoreOp.scale.y = 1.125;
+		noteRatingTweenOp = FlxTween.tween(noteScoreOp.scale, {x: 1, y: 1}, 0.1, {ease:FlxEase.circOut,
+			onComplete: function(twn:FlxTween) {
+				noteRatingTweenOp = null;
+			}
+		});
+
+		// FlxTween.tween(numScoreOp, {alpha: 0}, 0.2 / playbackRate, {
+		// 	onComplete: function(tween:FlxTween)
+		// 	{
+		// 		numScoreOp.destroy();
+		// 	},
+		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
+		// });
 		if (ClientPrefs.hudStyle == 'HITMANS'){
 			ratingsOP.visible = true;
+			noteScoreOp.visible = true;
 		}
 	}
 
