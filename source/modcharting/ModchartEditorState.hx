@@ -205,14 +205,14 @@ class ModchartEditorState extends MusicBeatState
         SkewModifier, SkewXModifier, SkewYModifier,
         //Modifiers with curpos math!!!
         //Drunk Modifiers
-        DrunkXModifier, DrunkYModifier, DrunkZModifier,
-        TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier,
+        DrunkXModifier, DrunkYModifier, DrunkZModifier, DrunkAngleModifier,
+        TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier, TanDrunkAngleModifier,
         CosecantXModifier, CosecantYModifier, CosecantZModifier,
         //Tipsy Modifiers
         TipsyXModifier, TipsyYModifier, TipsyZModifier,
         //Wave Modifiers
-        WaveXModifier, WaveYModifier, WaveZModifier,
-        TanWaveXModifier, TanWaveYModifier, TanWaveZModifier,
+        WaveXModifier, WaveYModifier, WaveZModifier, WaveAngleModifier,
+        TanWaveXModifier, TanWaveYModifier, TanWaveZModifier, TanWaveAngleModifier,
         //Scroll Modifiers
         ReverseModifier,
         SpeedModifier, BoostModifier, BrakeModifier,

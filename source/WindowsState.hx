@@ -46,7 +46,7 @@ class WindowsState extends MusicBeatState
 	public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
-	public static var testing:Bool = true; //just to test this shit ig
+	public static var testing:Bool = false; //just to test this shit ig
 
 	public static var initialized:Bool = false;
 
@@ -221,6 +221,7 @@ class WindowsState extends MusicBeatState
 			trace('wellcome back');
 		} else {
 			trace('wellcome');
+
 			bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 			bg.scrollFactor.set(0);
 			bg.screenCenter();
@@ -228,6 +229,16 @@ class WindowsState extends MusicBeatState
 			bg.alpha = 0;
 			bg.cameras = [camGame];
 			add(bg);
+
+			strumLine = new FlxSprite(STRUM_X, 50).makeGraphic(FlxG.width, 10);
+			// if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
+			strumLine.scrollFactor.set();
+
+			opponentStrums = new FlxTypedGroup<StrumNote>();
+			playerStrums = new FlxTypedGroup<StrumNote>();
+
+			strumLineNotes = new FlxTypedGroup<StrumNote>();
+			add(strumLineNotes);
 	
 			vignette = new FlxSprite().loadGraphic(Paths.image('hitmans/vignette'));
 			vignette.scrollFactor.set(0);
@@ -302,15 +313,6 @@ class WindowsState extends MusicBeatState
 			// 	case 'Recreated':
 			// 		Conductor.changeBPM(70);
 			// }
-			strumLine = new FlxSprite(STRUM_X, 50).makeGraphic(FlxG.width, 10);
-			// if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
-			strumLine.scrollFactor.set();
-
-			opponentStrums = new FlxTypedGroup<StrumNote>();
-			playerStrums = new FlxTypedGroup<StrumNote>();
-
-			strumLineNotes = new FlxTypedGroup<StrumNote>();
-			add(strumLineNotes);
 
 			strumLineNotes.cameras = [camHUD];
 		}
@@ -363,7 +365,7 @@ class WindowsState extends MusicBeatState
 						FlxTween.tween(yesText, {alpha: 0}, 0.5, {ease: FlxEase.circOut});
 						new FlxTimer().start(0.5, function(tmr:FlxTimer) 
 							{
-								gameText.text = "MiddleScroll - gets your notes centered.\nDo you want me to enable this?";
+								gameText.text = "Casual Mode - begginer friendly.\nDo you want me to enable this?";
 								FlxTween.tween(gameText, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 								if(onYes){
 									FlxTween.tween(noText, {alpha: 0.6}, 0.5, {ease: FlxEase.circOut});
@@ -610,6 +612,8 @@ class WindowsState extends MusicBeatState
 						if(onYes) {
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
 							ClientPrefs.downScroll = true;
+							for (i in 0...strumLineNotes.members.length)
+								FlxTween.tween(strumLineNotes.members[i], {y: FlxG.height - 150}, 1, {ease: FlxEase.smoothStepInOut});
 							ClientPrefs.saveSettings();
 							playerStep += 1;
 							gameTalks();
@@ -635,13 +639,13 @@ class WindowsState extends MusicBeatState
 					if(FlxG.keys.justPressed.ENTER) {
 						if(onYes) {
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
-							ClientPrefs.middleScroll = true;
+							ClientPrefs.casualMode = true;
 							ClientPrefs.saveSettings();
 							playerStep += 1;
 							gameTalks();
 						} else {
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
-							ClientPrefs.middleScroll = false;
+							ClientPrefs.casualMode = false;
 							ClientPrefs.saveSettings();
 							playerStep += 1;
 							gameTalks();
@@ -909,25 +913,11 @@ class WindowsState extends MusicBeatState
 	{
 		for (i in 0...4)
 		{
-			// FlxG.log.add(i);
 			var targetAlpha:Float = 1;
-			// if (player < 1)
-			// {
-			// 	if(!ClientPrefs.opponentStrums) targetAlpha = 0;
-			// 	else if(ClientPrefs.middleScroll) targetAlpha = 0.35;
-			// }
 
-			var babyArrow:StrumNote = new StrumNote(STRUM_X, strumLine.y, i, player, 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets');
-			// babyArrow.downScroll = ClientPrefs.downScroll;
-			// if (!isStoryMode && !skipArrowStartTween)
-			// {
-				//babyArrow.y -= 10;
-				babyArrow.alpha = 0;
-				FlxTween.tween(babyArrow, {/*y: babyArrow.y + 10,*/ alpha: targetAlpha}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
-			// else
-			// {
-			// 	babyArrow.alpha = targetAlpha;
-			// }
+			var babyArrow:StrumNote = new StrumNote(STRUM_X_MIDDLESCROLL, strumLine.y, i, player, 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets', 'shared');
+			babyArrow.alpha = 0;
+			FlxTween.tween(babyArrow, {alpha: targetAlpha}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
 
 			if (player == 1)
 			{
@@ -935,13 +925,9 @@ class WindowsState extends MusicBeatState
 			}
 			else
 			{
-				// if(ClientPrefs.middleScroll)
-				// {
-				// 	babyArrow.x += 310;
-				// 	if(i > 1) { //Up and Right
-				// 		babyArrow.x += FlxG.width / 2 + 25;
-				// 	}
-				// }
+				babyArrow.x += 310;
+				if(i > 1) //Up and Right
+					babyArrow.x += FlxG.width / 2 + 25;
 				opponentStrums.add(babyArrow);
 			}
 

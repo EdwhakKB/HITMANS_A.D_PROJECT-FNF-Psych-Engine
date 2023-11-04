@@ -19,6 +19,7 @@ class StrumNote extends FlxSkewedSprite
 	public var direction:Float = 90;//plan on doing scroll directions soon -bb
 	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
 	public var sustainReduce:Bool = true;
+	var myLibrary:String = '';
 	
 	private var player:Int;
 	
@@ -31,7 +32,7 @@ class StrumNote extends FlxSkewedSprite
 		return value;
 	}
 	public var useRGBShader:Bool = true;
-	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String) {
+	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String) {
 		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
 		rgbShader.enabled = false;
 		var arr:Array<FlxColor> = ClientPrefs.arrowRGB[leData];
@@ -51,10 +52,12 @@ class StrumNote extends FlxSkewedSprite
 		this.noteData = leData;
 		super(x, y);
 
+		myLibrary = library;
 		var skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
 		if(PlayState.SONG != null && PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		if (daTexture != null) texture = daTexture else texture = skin;
 		// texture = skin; //Load texture and anims
+		trace('Using $daTexture found in $library path');
 
 		scrollFactor.set();
 	}
@@ -100,7 +103,7 @@ class StrumNote extends FlxSkewedSprite
 		}
 		else
 		{
-			frames = Paths.getSparrowAtlas(texture);
+			frames = Paths.getSparrowAtlas(texture, myLibrary);
 			animation.addByPrefix('green', 'arrowUP');
 			animation.addByPrefix('blue', 'arrowDOWN');
 			animation.addByPrefix('purple', 'arrowLEFT');
