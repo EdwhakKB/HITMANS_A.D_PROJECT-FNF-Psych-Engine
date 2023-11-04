@@ -19,6 +19,7 @@ class NotePositionData implements IFlxDestroyable
     public var skewY:Float;
     public var curPos:Float;
     public var noteDist:Float;
+    public var offset:Float;
     public var lane:Int;
     public var index:Int;
     public var playfieldIndex:Int;

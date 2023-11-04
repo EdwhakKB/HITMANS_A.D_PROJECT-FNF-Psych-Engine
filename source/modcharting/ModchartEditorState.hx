@@ -1,6 +1,7 @@
 package modcharting;
 
 
+import haxe.io.Path;
 import lime.utils.Assets;
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.util.FlxAxes;
@@ -233,7 +234,7 @@ class ModchartEditorState extends MusicBeatState
         NotesModifier,
         //Misc Modifiers
         InvertModifier, FlipModifier, JumpModifier,
-        StrumAngleModifier, EaseXModifier,
+        StrumAngleModifier, EaseXModifier, ArrowPath
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -1584,6 +1585,16 @@ class ModchartEditorState extends MusicBeatState
         explainString = "Modifier similar to TanDrunk but uses cosecant instead of tan in Y";
             case 'CosecantZModifier':
         explainString = "Modifier similar to TanDrunk but uses cosecant instead of tan in Z";
+            case 'TanDrunkAngleModifier':
+        explainString = "Modifier similar to TanDrunk but in angle";
+            case 'DrunkAngleModifier':
+        explainString = "Modifier similar to Drunk but in angle";
+            case 'WaveAngleModifier':
+        explainString = "Modifier similar to Wave but in angle";
+            case 'TanWaveAngleModifier':
+        explainString = "Modifier similar to TanWave but in angle";
+            case 'ArrowPath':
+        explainString = "This modifier its able to make custom paths for the mods so this should be a very helpful tool";
         }
 
        return explainString;
