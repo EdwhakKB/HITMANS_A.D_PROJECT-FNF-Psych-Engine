@@ -332,9 +332,6 @@ class WindowsState extends MusicBeatState
 								gameText.text = "Alright! Let's get started.";
 								FlxTween.tween(gameText, {alpha: 1}, 0.5, {ease: FlxEase.circInOut});
 
-								generateStaticArrows(0); //so it instant creates notes and stuff!
-								generateStaticArrows(1);
-
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										FlxTween.tween(gameText, {y: gameText.y - 250}, 2, {ease: FlxEase.circOut});
@@ -345,8 +342,10 @@ class WindowsState extends MusicBeatState
 													{
 														FlxTween.tween(gameText, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 														FlxTween.tween(bg, {alpha: 0.5}, 0.5, {ease: FlxEase.circOut});
-														FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+														FlxG.sound.playMusic(Paths.music('bloodstained'), 0);
 														FlxG.sound.music.fadeIn(4, 0, 0.7);
+														generateStaticArrows(0); //so it instant creates notes and stuff!
+														generateStaticArrows(1);
 														gameText.text = "DownScroll - puts your notes down, instead of up.\nDo you want me to enable this?";
 														if(onYes){
 															FlxTween.tween(noText, {alpha: 0.6}, 0.5, {ease: FlxEase.circOut});
@@ -381,7 +380,7 @@ class WindowsState extends MusicBeatState
 						FlxTween.tween(yesText, {alpha: 0}, 0.5, {ease: FlxEase.circOut});
 						new FlxTimer().start(0.5, function(tmr:FlxTimer) 
 							{
-								gameText.text = "Also, you can hide opponent notes, if they bother you.\nDo you want me to hide them?";
+								gameText.text = "Also, you can hide the HUD, if it bother you.\nDo you want me to hide it?";
 								FlxTween.tween(gameText, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 								if(onYes){
 									FlxTween.tween(noText, {alpha: 0.6}, 0.5, {ease: FlxEase.circOut});
@@ -613,7 +612,7 @@ class WindowsState extends MusicBeatState
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
 							ClientPrefs.downScroll = true;
 							for (i in 0...strumLineNotes.members.length)
-								FlxTween.tween(strumLineNotes.members[i], {y: FlxG.height - 150}, 1, {ease: FlxEase.smoothStepInOut});
+								FlxTween.tween(strumLineNotes.members[i], {y: FlxG.height - 150}, 1, {ease: FlxEase.cubeOut});
 							ClientPrefs.saveSettings();
 							playerStep += 1;
 							gameTalks();
@@ -665,13 +664,13 @@ class WindowsState extends MusicBeatState
 					if(FlxG.keys.justPressed.ENTER) {
 						if(onYes) {
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
-							ClientPrefs.opponentStrums = false;
+							ClientPrefs.hideHud = true;
 							ClientPrefs.saveSettings();
 							playerStep += 1;
 							gameTalks();
 						} else {
 							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
-							ClientPrefs.opponentStrums = true;
+							ClientPrefs.hideHud = false;
 							ClientPrefs.saveSettings();
 							playerStep += 1;
 							gameTalks();
@@ -786,8 +785,8 @@ class WindowsState extends MusicBeatState
 				if (FlxG.keys.justPressed.ENTER)
 					{
 						if(wordText.text.length > 2 && wordText.text != ''){
-							gameNickname = wordText.text;
 							if (!testing){
+								gameNickname = wordText.text;
 								ClientPrefs.userName = wordText.text;
 								ClientPrefs.isLogged = true;
 								ClientPrefs.saveSettings();

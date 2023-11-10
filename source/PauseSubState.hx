@@ -419,7 +419,7 @@ class PauseSubState extends MusicBeatSubstate
 						MusicBeatState.switchState(new FreeplayState());
 					}
 					PlayState.cancelMusicFadeTween();
-					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+					FlxG.sound.playMusic(Paths.music('bloodstained'));
 					PlayState.changedDifficulty = false;
 					PlayState.chartingMode = false;
 					if (PlayState.forceMiddleScroll){

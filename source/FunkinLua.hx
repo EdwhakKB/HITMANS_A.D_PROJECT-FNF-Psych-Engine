@@ -112,27 +112,28 @@ class FunkinLua {
 		//trace("LuaJIT version: " + Lua.versionJIT());
 
 		//LuaL.dostring(lua, CLENSE);
-		try{
-			var result:Dynamic = LuaL.dofile(lua, script);
-			var resultStr:String = Lua.tostring(lua, result);
-			if(resultStr != null && result != 0) {
-				trace('Error on lua script! ' + resultStr);
-				#if windows
-				lime.app.Application.current.window.alert(resultStr, 'Error on lua script!');
-				#else
-				luaTrace('Error loading lua script: "$script"\n' + resultStr, true, false, FlxColor.RED);
-				#end
-				lua = null;
-				return;
-			}
-		} catch(e:Dynamic) {
-			trace(e);
-			return;
-		}
+		// script = scriptName.trim();
+		// try{
+		// 	var result:Dynamic = LuaL.dofile(lua, script);
+		// 	var resultStr:String = Lua.tostring(lua, result);
+		// 	if(resultStr != null && result != 0) {
+		// 		trace('Error on lua script! ' + resultStr);
+		// 		#if windows
+		// 		lime.app.Application.current.window.alert(resultStr, 'Error on lua script!');
+		// 		#else
+		// 		luaTrace('Error loading lua script: "$script"\n' + resultStr, true, false, FlxColor.RED);
+		// 		#end
+		// 		lua = null;
+		// 		return;
+		// 	}
+		// } catch(e:Dynamic) {
+		// 	trace(e);
+		// 	return;
+		// }
 		scriptName = script;
 		initHaxeModule();
 
-		trace('lua file loaded succesfully:' + script);
+		// trace('lua file loaded succesfully:' + script);
 
 		// Lua shit
 		set('Function_StopLua', Function_StopLua);
@@ -3158,6 +3159,33 @@ class FunkinLua {
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		
+		try{
+			var isString:Bool = !FileSystem.exists(scriptName);
+			var result:Dynamic = null;
+			if(scriptName.endsWith('.lua')) result = LuaL.dofile(lua, scriptName);
+			else
+			{
+   	 			result = LuaL.dostring(lua, scriptName);
+    			scriptName = 'stringscript';
+			}
+
+			var resultStr:String = Lua.tostring(lua, result);
+			if(resultStr != null && result != 0) {
+				trace(resultStr);
+				#if windows
+				lime.app.Application.current.window.alert(resultStr, 'Error on lua script!');
+				#else
+				luaTrace('$scriptName\n$resultStr', true, false, FlxColor.RED);
+				#end
+				lua = null;
+				return;
+			}
+			if(isString) scriptName = 'unknown';
+		} catch(e:Dynamic) {
+			trace(e);
+			return;
+		}
+		trace('lua file loaded succesfully:' + scriptName);
 		call('onCreate', []);
 		#end
 	}

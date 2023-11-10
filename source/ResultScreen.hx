@@ -432,7 +432,7 @@ class ResultScreen extends MusicBeatSubstate
 						if (PlayState.storyPlaylist.length <= 0)
 						{
 							WeekData.loadTheFirstEnabledMod();
-							FlxG.sound.playMusic(Paths.music('freakyMenu'));
+							FlxG.sound.playMusic(Paths.music('bloodstained'));
 							#if desktop DiscordClient.resetClientID(); #end
 							PlayState.cancelMusicFadeTween();
 							if(FlxTransitionableState.skipNextTransIn) {
@@ -440,7 +440,7 @@ class ResultScreen extends MusicBeatSubstate
 							}
 							MusicBeatState.switchState(new StoryMenuState());
 
-							if(!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)  && !ClientPrefs.getGameplaySetting('modchart', true)) {
+							if(!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
 								StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
 
 								if (PlayState.SONG.validScore)
