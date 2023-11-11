@@ -38,6 +38,9 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
+import flixel.addons.effects.FlxTrail;
+import flixel.addons.effects.FlxTrailArea;
+import flixel.FlxCamera;
 
 using StringTools;
 typedef TitleData =
@@ -66,6 +69,11 @@ class TitleState extends MusicBeatState
 	var textGroup:FlxGroup;
 	var ngSpr:FlxSprite;
 	
+	private var camGame:FlxCamera;
+	private var camHUD:FlxCamera;
+	private var camOther:FlxCamera;
+
+	var fearThing:FlxSprite;
 	var titleTextColors:Array<FlxColor> = [0xFF33FFFF, 0xFF3333CC];
 	var titleTextAlphas:Array<Float> = [1, .64];
 
@@ -116,6 +124,20 @@ class TitleState extends MusicBeatState
 			}
 		}
 		#end*/
+
+		// CAM SHIT
+		camGame = new FlxCamera();
+		camHUD = new FlxCamera();
+		camOther = new FlxCamera();
+		camHUD.bgColor.alpha = 0;
+		camOther.bgColor.alpha = 0;
+
+		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(camHUD, false);
+		FlxG.cameras.add(camOther, false);
+
+		FlxG.cameras.setDefaultDrawTarget(camOther, true);
+		FlxG.camera = camOther;
 
 		FlxG.game.focusLostFramerate = 60;
 		FlxG.sound.muteKeys = muteKeys;
@@ -238,7 +260,7 @@ class TitleState extends MusicBeatState
 
 	var gfDance:FlxSprite;
 	var danceLeft:Bool = false;
-	var titleText:FlxSprite;
+	var titleText:FlxText;
 	var swagShader:ColorSwap = null;
 	var startedIntro:Bool = false;
 
@@ -286,9 +308,10 @@ class TitleState extends MusicBeatState
 		// bg.antialiasing = ClientPrefs.globalAntialiasing;
 		// bg.setGraphicSize(Std.int(bg.width * 0.6));
 		// bg.updateHitbox();
+		bg.cameras = [camGame];
 		add(bg);
 
-		logoBl = new FlxSprite(110, 250).loadGraphic(Paths.image('HitmansLogo'));
+		logoBl = new FlxSprite(110, 280).loadGraphic(Paths.image('HitmansLogo'));
 		logoBl.scale.x = 1.3;
 		logoBl.scale.y = 1.3;
 		logoBl.antialiasing = ClientPrefs.globalAntialiasing;
@@ -301,6 +324,13 @@ class TitleState extends MusicBeatState
 
 		var easterEgg:String = FlxG.save.data.psychDevsEasterEgg;
 		if(easterEgg == null) easterEgg = ''; //html5 fix
+
+		fearThing = new FlxSprite(0, 0).loadGraphic(Paths.image('Hitmans/FearMe'));
+		fearThing.screenCenter();
+		fearThing.scale.set(0.53, 0.53);
+		fearThing.alpha = 1;
+		fearThing.antialiasing = ClientPrefs.globalAntialiasing;
+		fearThing.cameras = [camOther];
 
 		switch(easterEgg.toUpperCase())
 		{
@@ -339,44 +369,9 @@ class TitleState extends MusicBeatState
 		add(logoBl);
 		logoBl.shader = swagShader.shader;
 
-		titleText = new FlxSprite(titleJSON.startx, titleJSON.starty);
-		#if (desktop && MODS_ALLOWED)
-		var path = "mods/" + Paths.currentModDirectory + "/images/titleEnter.png";
-		//trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path)){
-			path = "mods/images/titleEnter.png";
-		}
-		//trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path)){
-			path = "assets/images/titleEnter.png";
-		}
-		//trace(path, FileSystem.exists(path));
-		titleText.frames = FlxAtlasFrames.fromSparrow(BitmapData.fromFile(path),File.getContent(StringTools.replace(path,".png",".xml")));
-		#else
-
-		titleText.frames = Paths.getSparrowAtlas('titleEnter');
-		#end
-		var animFrames:Array<FlxFrame> = [];
-		@:privateAccess {
-			titleText.animation.findByPrefix(animFrames, "ENTER IDLE");
-			titleText.animation.findByPrefix(animFrames, "ENTER FREEZE");
-		}
-		
-		if (animFrames.length > 0) {
-			newTitle = true;
-			
-			titleText.animation.addByPrefix('idle', "ENTER IDLE", 24);
-			titleText.animation.addByPrefix('press', ClientPrefs.flashing ? "ENTER PRESSED" : "ENTER FREEZE", 24);
-		}
-		else {
-			newTitle = false;
-			
-			titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24);
-			titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
-		}
-		
+		titleText = new FlxText(0, FlxG.height - 250, FlxG.width, "Press Start", 64);
+		titleText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 64, 0xff920000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		titleText.antialiasing = ClientPrefs.globalAntialiasing;
-		titleText.animation.play('idle');
 		titleText.updateHitbox();
 		// titleText.screenCenter(X);
 		add(titleText);
@@ -384,6 +379,7 @@ class TitleState extends MusicBeatState
 		var logo:FlxSprite = new FlxSprite().loadGraphic(Paths.image('logo'));
 		logo.screenCenter();
 		logo.antialiasing = ClientPrefs.globalAntialiasing;
+		add(fearThing);
 		// add(logo);
 
 		// FlxTween.tween(logoBl, {y: logoBl.y + 50}, 0.6, {ease: FlxEase.quadInOut, type: PINGPONG});
@@ -500,12 +496,13 @@ class TitleState extends MusicBeatState
 			
 			if(pressedEnter)
 			{
-				titleText.color = FlxColor.WHITE;
-				titleText.alpha = 1;
-				
-				if(titleText != null) titleText.animation.play('press');
+				var blackFade = new FlxSprite();
+				blackFade.makeGraphic(FlxG.width, FlxG.height, 0xff000000);
+				blackFade.alpha = 0;
+				add(blackFade);
+				blackFade.cameras = [camOther];
+				FlxTween.tween(blackFade, {alpha: 1}, 0.75, {ease: FlxEase.quadInOut});
 
-				FlxG.camera.flash(ClientPrefs.flashing ? FlxColor.WHITE : 0x4CFFFFFF, 1);
 				FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
 
 				transitioning = true;
@@ -622,12 +619,85 @@ class TitleState extends MusicBeatState
 		}
 	}
 
+	var noteColor:Array<FlxColor> = [FlxColor.RED, FlxColor.ORANGE, FlxColor.YELLOW, FlxColor.GREEN, FlxColor.BLUE, FlxColor.PURPLE];
+	function noteEffect()
+	{
+		if(!ClientPrefs.lowQuality) {
+			var note:FlxSprite = new FlxSprite().loadGraphic(Paths.image('DANOTE', 'shared'));
+			note.antialiasing = ClientPrefs.globalAntialiasing;
+			note.cameras = [camGame];
+			note.scale.set(1, 1);
+			note.updateHitbox();
+			note.y = -200;
+			note.x = FlxG.random.int(0, FlxG.width);
+			note.angle = FlxG.random.int(0, 360);
+			note.alpha = 0.5;
+			note.color = FlxColor.BLACK;
+			add(note);
+
+			var currentColor:Int = FlxG.random.int(0, 5);
+			var noteTrail = new FlxTrail(note, null, 5, 7, 0.25, 0.05);
+			noteTrail.cameras = [camGame];
+			noteTrail.alpha = 0.5;
+			noteTrail.color = noteColor[currentColor];
+			insert(members.indexOf(note), noteTrail);
+			FlxTween.tween(noteTrail, {alpha: 0}, 2, {ease: FlxEase.quadInOut});
+			FlxTween.tween(note, {x: note.x -125, y: 730, angle: note.angle + 360, alpha: 0}, 2, {ease: FlxEase.quadInOut, 
+				onComplete: function(twn:FlxTween)
+				{
+					remove(note);
+					remove(noteTrail);
+				}
+			});
+	
+		}
+	}
+	function noteEffectUp()
+		{
+			if(!ClientPrefs.lowQuality) {
+				var note:FlxSprite = new FlxSprite().loadGraphic(Paths.image('DANOTE', 'shared'));
+				note.antialiasing = ClientPrefs.globalAntialiasing;
+				note.cameras = [camGame];
+				note.scale.set(1, 1);
+				note.updateHitbox();
+				note.y = FlxG.height + 100;
+				note.x = FlxG.random.int(0, FlxG.width);
+				note.angle = FlxG.random.int(0, 360);
+				note.alpha = 0.5;
+				note.color = FlxColor.BLACK;
+				add(note);
+	
+				var currentColor:Int = FlxG.random.int(0, 5);
+				var noteTrail = new FlxTrail(note, null, 5, 7, 0.25, 0.05);
+				noteTrail.cameras = [camGame];
+				noteTrail.alpha = 0.5;
+				noteTrail.color = noteColor[currentColor];
+				insert(members.indexOf(note), noteTrail);
+				FlxTween.tween(noteTrail, {alpha: 0}, 2, {ease: FlxEase.quadInOut});
+				FlxTween.tween(note, {x: note.x -125, y: 0, angle: note.angle + 360, alpha: 0}, 2, {ease: FlxEase.quadInOut, 
+					onComplete: function(twn:FlxTween)
+					{
+						remove(note);
+						remove(noteTrail);
+					}
+				});
+		
+			}
+		}
 	private var sickBeats:Int = 0; //Basically curBeat but won't be skipped if you hold the tab or resize the screen
 	public static var closedState:Bool = false;
+	override function stepHit()
+	{
+		super.stepHit();
+		if (curStep %4 == 2){
+			noteEffect();
+		}else if (curStep %4 == 0){
+			noteEffectUp();
+		}
+	}
 	override function beatHit()
 	{
 		super.beatHit();
-
 		// if(logoBl != null)
 		// 	logoBl.animation.play('bump', true);
 

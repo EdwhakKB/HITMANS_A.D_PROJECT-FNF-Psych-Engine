@@ -61,6 +61,7 @@ class Note extends FlxSkewedSprite{
 
 	public var rgbShader:RGBShaderReference;
 	public static var globalRgbShaders:Array<RGBPalette> = [];
+	public static var globalHurtRgbShaders:Array<RGBPalette> = [];
 	public var inEditor:Bool = false;
 
 	public var animSuffix:String = '';
@@ -409,7 +410,7 @@ class Note extends FlxSkewedSprite{
 
 		if(noteData > -1) {
 			texture = '';
-			rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
+			rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
 
 			x += swagWidth * (noteData);
@@ -500,6 +501,23 @@ class Note extends FlxSkewedSprite{
 				}
 			}
 			return globalRgbShaders[noteData];
+		}
+	public static function initializeGlobalHurtRGBShader(noteData:Int)
+		{
+			if(globalHurtRgbShaders[noteData] == null)
+			{
+				var newRGB:RGBPalette = new RGBPalette();
+				globalHurtRgbShaders[noteData] = newRGB;
+	
+				var arr:Array<FlxColor> = ClientPrefs.hurtRGB[noteData];
+				if (noteData > -1 && noteData <= arr.length)
+				{
+					newRGB.r = arr[0];
+					newRGB.g = arr[1];
+					newRGB.b = arr[2];
+				}
+			}
+			return globalHurtRgbShaders[noteData];
 		}
 
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;

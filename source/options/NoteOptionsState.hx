@@ -28,38 +28,27 @@ import flixel.addons.transition.FlxTransitionableState;
 
 using StringTools;
 
-class OptionsState extends MusicBeatState
+class NoteOptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Note Options', 'KeyBinds', 'Delay and Combo', 'Graphics', 'Visuals and UI', 'Gameplay'];
+	var options:Array<String> = ['Note Colors', 'Hurt Colors', 'Quant Colors'/*, 'Misc'*/];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 
-	public static var isInPause = false;
-
-    public function new(pauseMenu:Bool = false)
+    public function new()
     {
         super();
-
-        isInPause = pauseMenu;
     }
-
 	function openSelectedSubstate(label:String) {
 		switch(label) {
-			case 'Note Options':
-				FlxTransitionableState.skipNextTransOut = true;
-				FlxTransitionableState.skipNextTransIn = true;
-				MusicBeatState.switchState(new options.NoteOptionsState());
-			case 'KeyBinds':
-				openSubState(new options.ControlsSubState());
-			case 'Graphics':
-				openSubState(new options.GraphicsSettingsSubState());
-			case 'Visuals and UI':
-				openSubState(new options.VisualsUISubState());
-			case 'Gameplay':
-				openSubState(new options.GameplaySettingsSubState());
-			case 'Delay and Combo':
-				LoadingState.loadAndSwitchState(new options.NoteOffsetState());
+			case 'Note Colors':
+				openSubState(new options.NotesSubState());
+			case 'Hurt Colors':
+				openSubState(new options.HurtsSubState());
+			case 'Quant Colors':
+				openSubState(new options.QuantSubState());
+			// case 'Misc':
+			// 	openSubState(new options.MiscSubState());
 		}
 	}
 
@@ -68,7 +57,7 @@ class OptionsState extends MusicBeatState
 
 	override function create() {
 		#if desktop
-		DiscordClient.changePresence("System - Options", null);
+		DiscordClient.changePresence("System - Note Options", null);
 		#end
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
@@ -130,13 +119,13 @@ class OptionsState extends MusicBeatState
 
 		if (controls.BACK) {
             FlxG.sound.play(Paths.sound('cancelMenu'));
-            if (!isInPause)
-                MusicBeatState.switchState(new MainMenuState());
+            FlxTransitionableState.skipNextTransOut = true;
+			FlxTransitionableState.skipNextTransIn = true;
+            if (OptionsState.isInPause)
+                MusicBeatState.switchState(new options.OptionsState(true));
             else
-            {
-                PauseSubState.goToOptions = false;
-                LoadingState.loadAndSwitchState(new PlayState());
-            }
+                MusicBeatState.switchState(new options.OptionsState());
+            
         }
 
 		if (controls.ACCEPT) {
