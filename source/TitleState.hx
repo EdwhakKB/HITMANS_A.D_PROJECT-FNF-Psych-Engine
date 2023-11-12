@@ -81,14 +81,6 @@ class TitleState extends MusicBeatState
 
 	var wackyImage:FlxSprite;
 
-	#if TITLE_SCREEN_EASTER_EGG
-	var easterEggKeys:Array<String> = [
-		'SHADOW', 'RIVER', 'SHUBS', 'BBPANZU'
-	];
-	var allowedKeys:String = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var easterEggKeysBuffer:String = '';
-	#end
-
 	var mustUpdate:Bool = false;
 
 	var titleJSON:TitleData;
@@ -107,23 +99,6 @@ class TitleState extends MusicBeatState
 		#end
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
 		WeekData.loadTheFirstEnabledMod();
-
-		//trace(path, FileSystem.exists(path));
-
-		/*#if (polymod && !html5)
-		if (sys.FileSystem.exists('mods/')) {
-			var folders:Array<String> = [];
-			for (file in sys.FileSystem.readDirectory('mods/')) {
-				var path = haxe.io.Path.join(['mods/', file]);
-				if (sys.FileSystem.isDirectory(path)) {
-					folders.push(file);
-				}
-			}
-			if(folders.length > 0) {
-				polymod.Polymod.init({modRoot: "mods", dirs: folders});
-			}
-		}
-		#end*/
 
 		// CAM SHIT
 		camGame = new FlxCamera();
@@ -188,25 +163,6 @@ class TitleState extends MusicBeatState
 
 		// IGNORE THIS!!!
 		titleJSON = Json.parse(Paths.getTextFromFile('images/gfDanceTitle.json'));
-
-		#if TITLE_SCREEN_EASTER_EGG
-		if (FlxG.save.data.psychDevsEasterEgg == null) FlxG.save.data.psychDevsEasterEgg = ''; //Crash prevention
-		switch(FlxG.save.data.psychDevsEasterEgg.toUpperCase())
-		{
-			case 'SHADOW':
-				titleJSON.gfx += 210;
-				titleJSON.gfy += 40;
-			case 'RIVER':
-				titleJSON.gfx += 100;
-				titleJSON.gfy += 20;
-			case 'SHUBS':
-				titleJSON.gfx += 160;
-				titleJSON.gfy -= 10;
-			case 'BBPANZU':
-				titleJSON.gfx += 45;
-				titleJSON.gfy += 100;
-		}
-		#end
 
 		if(!initialized)
 		{
@@ -310,17 +266,7 @@ class TitleState extends MusicBeatState
 		logoBl.updateHitbox();
 
 		swagShader = new ColorSwap();
-		gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
-		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
-		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
-
-		gfDance.visible = false;
-		add(gfDance);
-		gfDance.shader = swagShader.shader;
 		add(logoBl);
-		logoBl.shader = swagShader.shader;
 
 		titleText = new FlxText(0, FlxG.height - 250, FlxG.width, "Press Start", 64);
 		titleText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 64, 0xff920000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -341,12 +287,12 @@ class TitleState extends MusicBeatState
 		fearThing.cameras = [camOther];
 		add(fearThing);
 
+		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		add(blackScreen);
+
 		credGroup = new FlxGroup();
 		add(credGroup);
 		textGroup = new FlxGroup();
-
-		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		add(blackScreen);
 
 		credTextShit = new Alphabet(0, 0, "", true);
 		credTextShit.screenCenter();
@@ -481,37 +427,44 @@ class TitleState extends MusicBeatState
 		super.update(elapsed);
 	}
 
-	function createCoolText(textArray:Array<String>, ?offset:Float = 0)
+	function createCoolText(textArray:String, ?offset:Float = 0)
 	{
-		for (i in 0...textArray.length)
-		{
-			var money:Alphabet = new Alphabet(0, 0, textArray[i], true);
-			money.screenCenter(X);
-			money.y += (i * 60) + 200 + offset;
-			if(credGroup != null && textGroup != null) {
-				credGroup.add(money);
-				textGroup.add(money);
-			}
+		var money:FlxText = new FlxText(0, 0, FlxG.width, textArray, 64);
+		money.alpha = 0;
+		money.setFormat(Paths.font("DEADLY KILLERS.ttf"), 64, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		money.screenCenter(XY);
+		if(credGroup != null && textGroup != null) {
+			credGroup.add(money);
+			textGroup.add(money);
+			FlxTween.tween(money, {alpha: 1}, 1, {ease: FlxEase.smoothStepOut});
 		}
 	}
 
 	function addMoreText(text:String, ?offset:Float = 0)
 	{
 		if(textGroup != null && credGroup != null) {
-			var coolText:Alphabet = new Alphabet(0, 0, text, true);
-			coolText.screenCenter(X);
-			coolText.y += (textGroup.length * 60) + 200 + offset;
+			var coolText:FlxText = new FlxText(0, 0, FlxG.width, text, 64);
+			coolText.alpha = 0;
+			coolText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 64, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			coolText.screenCenter(XY);
 			credGroup.add(coolText);
 			textGroup.add(coolText);
+			FlxTween.tween(coolText, {alpha: 1}, 1, {ease: FlxEase.smoothStepOut});
 		}
 	}
 
 	function deleteCoolText()
 	{
-		while (textGroup.members.length > 0)
+		if (textGroup.members.length > 0)
 		{
-			credGroup.remove(textGroup.members[0], true);
-			textGroup.remove(textGroup.members[0], true);
+			FlxTween.tween(textGroup.members[0], {alpha: 0}, 1, {
+				ease: FlxEase.smoothStepIn,
+				onComplete: function(twn:FlxTween)
+					{
+						credGroup.remove(textGroup.members[0], true);
+						textGroup.remove(textGroup.members[0], true);
+					}
+				});
 		}
 	}
 
@@ -594,16 +547,6 @@ class TitleState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
-		// if(logoBl != null)
-		// 	logoBl.animation.play('bump', true);
-
-		if(gfDance != null) {
-			danceLeft = !danceLeft;
-			if (danceLeft)
-				gfDance.animation.play('danceRight');
-			else
-				gfDance.animation.play('danceLeft');
-		}
 
 		if(!closedState) {
 			sickBeats++;
@@ -613,7 +556,59 @@ class TitleState extends MusicBeatState
 					//FlxG.sound.music.stop();
 					FlxG.sound.playMusic(Paths.music('bloodstained'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
-				case 131:
+				case 5:
+					createCoolText("In a forgotten place");
+				case 10:
+					deleteCoolText();
+				case 15:
+					createCoolText("Where the blood flows");
+				case 20:
+					deleteCoolText();
+				case 25:
+					createCoolText("And the dark shines");
+				case 30:
+					deleteCoolText();
+				case 35:
+					createCoolText("All the memories");
+				case 40:
+					deleteCoolText();
+				case 45:
+					createCoolText("The mistakes");
+				case 50:
+					deleteCoolText();
+				case 55:
+					createCoolText("The lost hopes");
+				case 60:
+					deleteCoolText();
+				case 65:
+					createCoolText("And the broken dreams");
+				case 70:
+					deleteCoolText();
+				case 75:
+					createCoolText("Stays where the peace leads");
+				case 80:
+					deleteCoolText();
+				case 85:
+					createCoolText("Where a last man stands");
+				case 90:
+					deleteCoolText();
+				case 95:
+					createCoolText("Waiting for a chance");
+				case 100:
+					deleteCoolText();
+				case 105:
+					createCoolText("To bring everyone back");
+				case 110:
+					deleteCoolText();
+				case 115:
+					createCoolText("To finally take his revenge");
+				case 120:
+					deleteCoolText();
+				case 125:
+					createCoolText("And make everyone know the...");
+				case 127:
+					deleteCoolText();
+				case 130:
 					skipIntro();
 			}
 		}
@@ -634,6 +629,7 @@ class TitleState extends MusicBeatState
 			else //Default! Edit this one!!
 			{
 				remove(ngSpr);
+				remove(credGroup);
 				FlxTween.tween(blackScreen, {alpha: 0}, 1, {
 					ease: FlxEase.smoothStepIn,
 					onComplete: function(twn:FlxTween)

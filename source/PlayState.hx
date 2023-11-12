@@ -3618,21 +3618,12 @@ class PlayState extends MusicBeatState
 		persistentDraw = true;
 		paused = true;
 
-		// 1 / 1000 chance for Gitaroo Man easter egg
-		/*if (FlxG.random.bool(0.1))
-		{
-			// gitaroo man easter egg
-			cancelMusicFadeTween();
-			MusicBeatState.switchState(new GitarooPause());
-		}
-		else {*/
 		if(FlxG.sound.music != null) {
 			FlxG.sound.music.pause();
 			vocals.pause();
 		}
 		if (!inResultsScreen)
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-		//}
 
 		#if desktop
 		if (!inResultsScreen){
@@ -3713,11 +3704,6 @@ class PlayState extends MusicBeatState
 		cancelMusicFadeTween();
 		MusicBeatState.switchState(new modcharting.ModchartEditorState());
 		chartingMode = true;
-		if (!instance.notITGMod)
-			{
-				instance.notITGMod = true;
-				// do nothing lamoo
-			}
 		
 			#if desktop
 			DiscordClient.changePresence("Modchart Editor", null, null, true);
@@ -4408,15 +4394,7 @@ class PlayState extends MusicBeatState
 			
 			playbackRate = 1;
 
-			var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
-
-			openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
-
-			inResultsScreen = true;
-
-			#if desktop
-				DiscordClient.changePresence("Results - " + detailsText, SONG.song + " (" + storyDifficultyText +")" + "Score:" + Math.round(songScore), iconP2.getCharacter());
-			#end
+			rating();
 
 			transitioning = true;
 
@@ -6051,7 +6029,7 @@ class PlayState extends MusicBeatState
 	{
 		if(chartingMode) return null;
 
-		var usedPractice:Bool = (ClientPrefs.getGameplaySetting('practice', false) || ClientPrefs.getGameplaySetting('botplay', false) || ClientPrefs.getGameplaySetting('modchart', false) || ClientPrefs.casualMode);
+		var usedPractice:Bool = (practiceMode || cpuControlled || !notITGMod || ClientPrefs.casualMode);
 		for (i in 0...achievesToCheck.length) {
 			var achievementName:String = achievesToCheck[i];
 			if(!Achievements.isAchievementUnlocked(achievementName) && !cpuControlled) {

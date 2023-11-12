@@ -440,7 +440,7 @@ class ResultScreen extends MusicBeatSubstate
 							}
 							MusicBeatState.switchState(new StoryMenuState());
 
-							if(!ClientPrefs.getGameplaySetting('practice', false) && !ClientPrefs.getGameplaySetting('botplay', false)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
+							if(!ClientPrefs.getGameplaySetting('practice', true) && !ClientPrefs.getGameplaySetting('botplay', true)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
 								StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
 
 								if (PlayState.SONG.validScore)
@@ -476,7 +476,7 @@ class ResultScreen extends MusicBeatSubstate
 					}else{
 						MusicBeatState.switchState(new FreeplayState());
 					}
-					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
+					FlxG.sound.playMusic(Paths.music('bloodstained'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
 					MusicBeatState.switchState(new FreeplayState());
 					ended = false;
