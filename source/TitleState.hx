@@ -589,7 +589,7 @@ class TitleState extends MusicBeatState
 				case 80:
 					deleteCoolText();
 				case 85:
-					createCoolText("Where a last man stands");
+					createCoolText("Where the last man stands");
 				case 90:
 					deleteCoolText();
 				case 95:
