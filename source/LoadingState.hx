@@ -305,9 +305,9 @@ class LoadingState extends MusicBeatState
 		return Paths.voices(PlayState.SONG.song);
 	}
 	
-	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
+	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false, ?isBlack:Bool = false, ?time:Float = 0.7)
 	{
-		MusicBeatState.switchState(getNextState(target, stopMusic));
+		MusicBeatState.switchState(getNextState(target, stopMusic), isBlack, time);
 	}
 	
 	static function getNextState(target:FlxState, stopMusic = false):FlxState

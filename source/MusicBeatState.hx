@@ -28,6 +28,8 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 	private var controls(get, never):Controls;
 
 	public static var camBeat:FlxCamera;
+	public static var isBlack:Bool = false;
+	public static var time:Float = 0.7;
 
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
@@ -71,7 +73,7 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 		super.create();
 
 		if(!skip) {
-			openSubState(new CustomFadeTransition(0.7, true));
+			openSubState(new CustomFadeTransition(time, true, isBlack));
 		}
 		FlxTransitionableState.skipNextTransOut = false;
 	}
@@ -151,12 +153,14 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 		curStep = lastChange.stepTime + Math.floor(shit);
 	}
 
-	public static function switchState(nextState:FlxState) {
+	public static function switchState(nextState:FlxState, ?usesBlack:Bool = false, ?datime:Float = 0.7) {
 		// Custom made Trans in
+		isBlack = usesBlack;
+		time = datime;
 		var curState:Dynamic = FlxG.state;
 		var leState:MusicBeatState = curState;
 		if(!FlxTransitionableState.skipNextTransIn) {
-			leState.openSubState(new CustomFadeTransition(0.6, false));
+			leState.openSubState(new CustomFadeTransition(time, false, isBlack));
 			if(nextState == FlxG.state) {
 				CustomFadeTransition.finishCallback = function() {
 					FlxG.resetState();
