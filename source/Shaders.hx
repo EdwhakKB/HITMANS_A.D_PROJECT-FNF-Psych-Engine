@@ -25,6 +25,48 @@ class ShaderEffectNew
         // nothing yet
     }
 }
+
+class MultiSplitEffect extends ShaderEffectNew
+{
+    public var shader(default,null):MultiSplit = new MultiSplit();
+
+    public var multi(default, set):Float = 0;
+
+    public function set_multi(mul:Float):Float
+    {
+        multi = mul;
+        shader.multi.value = [multi];
+        return mul; 
+    }
+}
+
+class MultiSplit extends FlxShader
+{
+    @:glFragmentSource('
+    #pragma header
+
+    uniform float multi = 1.0;
+
+    void main()
+    {
+        vec2 uv = openfl_TextureCoordv*openfl_TextureSize/openfl_TextureSize.xy;
+            uv.x *= multi;
+            uv.y *= multi;
+            uv = fract(uv);
+        vec3 duplicate = vec3(mod(floor(uv.x) + floor(uv.y),1.0));
+        vec3 color1 = vec3(flixel_texture2D(bitmap,uv));
+        vec3 color;
+            color = color1 * (1.0 - duplicate);
+        
+        gl_FragColor = vec4(color,flixel_texture2D(bitmap, uv).a);
+    }')
+
+    public function new()
+    {
+       super();
+    }
+}
+
 class RainbowEffect extends ShaderEffectNew
 {
     public var shader(default,null):RainbowShader = new RainbowShader();

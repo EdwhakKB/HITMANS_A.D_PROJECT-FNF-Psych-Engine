@@ -667,69 +667,6 @@ class PlayState extends MusicBeatState
 		noteCameras1 = new FlxCamera();
 		noteCameras1.bgColor.alpha = 0;
 		noteCameras1.visible = false;
-		// noteCameras2 = new FlxCamera();
-		// noteCameras2.bgColor.alpha = 0;
-		// noteCameras2.visible = false;
-		// noteCameras3 = new FlxCamera();
-		// noteCameras3.bgColor.alpha = 0;
-		// noteCameras3.visible = false;
-		// noteCameras4 = new FlxCamera();
-		// noteCameras4.bgColor.alpha = 0;
-		// noteCameras4.visible = false;
-		// noteCameras5 = new FlxCamera();
-		// noteCameras5.bgColor.alpha = 0;
-		// noteCameras5.visible = false;
-		// noteCameras6 = new FlxCamera();
-		// noteCameras6.bgColor.alpha = 0;
-		// noteCameras6.visible = false;
-		// noteCameras7 = new FlxCamera();
-		// noteCameras7.bgColor.alpha = 0;
-		// noteCameras7.visible = false;
-		// noteCameras8 = new FlxCamera();
-		// noteCameras8.bgColor.alpha = 0;
-		// noteCameras8.visible = false;
-		// noteCameras9 = new FlxCamera();
-		// noteCameras9.bgColor.alpha = 0;
-		// noteCameras9.visible = false;
-		// noteCameras10 = new FlxCamera();
-		// noteCameras10.bgColor.alpha = 0;
-		// noteCameras10.visible = false;
-		// noteCameras11 = new FlxCamera();
-		// noteCameras11.bgColor.alpha = 0;
-		// noteCameras11.visible = false;
-		// noteCameras12 = new FlxCamera();
-		// noteCameras12.bgColor.alpha = 0;
-		// noteCameras12.visible = false;
-		// noteCameras13 = new FlxCamera();
-		// noteCameras13.bgColor.alpha = 0;
-		// noteCameras13.visible = false;
-		// noteCameras14 = new FlxCamera();
-		// noteCameras14.bgColor.alpha = 0;
-		// noteCameras14.visible = false;
-		// noteCameras15 = new FlxCamera();
-		// noteCameras15.bgColor.alpha = 0;
-		// noteCameras15.visible = false;
-		// noteCameras16 = new FlxCamera();
-		// noteCameras16.bgColor.alpha = 0;
-		// noteCameras16.visible = false;
-		// noteCameras17 = new FlxCamera();
-		// noteCameras17.bgColor.alpha = 0;
-		// noteCameras17.visible = false;
-		// noteCameras18 = new FlxCamera();
-		// noteCameras18.bgColor.alpha = 0;
-		// noteCameras18.visible = false;
-		// noteCameras19 = new FlxCamera();
-		// noteCameras19.bgColor.alpha = 0;
-		// noteCameras19.visible = false;
-		// noteCameras20 = new FlxCamera();
-		// noteCameras20.bgColor.alpha = 0;
-		// noteCameras20.visible = false;
-		// noteCameras21 = new FlxCamera();
-		// noteCameras21.visible = false;
-		// noteCameras21.bgColor.alpha = 0;
-		// noteCameras22 = new FlxCamera();
-		// noteCameras22.bgColor.alpha = 0;
-		// noteCameras22.visible = false;
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camInterfaz, false);
@@ -737,27 +674,6 @@ class PlayState extends MusicBeatState
 
 		FlxG.cameras.add(noteCameras0, false);
 		FlxG.cameras.add(noteCameras1, false);
-		// FlxG.cameras.add(noteCameras2, false);
-		// FlxG.cameras.add(noteCameras3, false);
-		// FlxG.cameras.add(noteCameras4, false);
-		// FlxG.cameras.add(noteCameras5, false);
-		// FlxG.cameras.add(noteCameras6, false);
-		// FlxG.cameras.add(noteCameras7, false);
-		// FlxG.cameras.add(noteCameras8, false);
-		// FlxG.cameras.add(noteCameras9, false);
-		// FlxG.cameras.add(noteCameras10, false);
-		// FlxG.cameras.add(noteCameras11, false);
-		// FlxG.cameras.add(noteCameras12, false);
-		// FlxG.cameras.add(noteCameras13, false);
-		// FlxG.cameras.add(noteCameras14, false);
-		// FlxG.cameras.add(noteCameras15, false);
-		// FlxG.cameras.add(noteCameras16, false);
-		// FlxG.cameras.add(noteCameras17, false);
-		// FlxG.cameras.add(noteCameras18, false);
-		// FlxG.cameras.add(noteCameras19, false);
-		// FlxG.cameras.add(noteCameras20, false);
-		// FlxG.cameras.add(noteCameras21, false);
-		// FlxG.cameras.add(noteCameras22, false);
 		FlxG.cameras.add(camOther, false);
 		FlxG.cameras.add(camRate, false);
 
@@ -1065,7 +981,6 @@ class PlayState extends MusicBeatState
 			Note.edwhakIsPlayer = false;
 		}
 				// i can't die to my own notes u dumb
-				// also my GF can't die too because i fucking love her
 
 				/*———————————No instakill?———————————
 				⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
@@ -1242,9 +1157,7 @@ class PlayState extends MusicBeatState
 		// add(strumLine);
 		if (SONG.notITG && notITGMod){
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
-			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1/*, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
-				noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
-			noteCameras20, noteCameras21, noteCameras22*/];
+			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1];
 			add(playfieldRenderer);
 		}
 		camFollow = new FlxPoint();
@@ -1364,15 +1277,10 @@ class PlayState extends MusicBeatState
 		}
 
 		strumLineNotes.cameras = [
-			camHUD, noteCameras0, noteCameras1/*, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
-			noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
-		noteCameras20, noteCameras21, noteCameras22*/
-		];
+			camHUD, noteCameras0, noteCameras1];
 		notes.cameras = [
-			camHUD, noteCameras0, noteCameras1/*, noteCameras2, noteCameras3, noteCameras4, noteCameras5, noteCameras6, noteCameras7, noteCameras8,
-			noteCameras9, noteCameras10, noteCameras11, noteCameras12, noteCameras13, noteCameras14, noteCameras15, noteCameras16, noteCameras17, noteCameras18, noteCameras19,
-		noteCameras20, noteCameras21, noteCameras22*/
-		];
+			camHUD, noteCameras0, noteCameras1];
+
 		healthBar.cameras = [camInterfaz];
 		healthBarBG.cameras = [camInterfaz];
 		healthBarHit.cameras = [camOther];
@@ -1739,30 +1647,6 @@ class PlayState extends MusicBeatState
 		return value;
 	}
 
-	// public function addCameras(from:Dynamic,to:Dynamic){
-	// 	var min:Int = 1;
-	// 	var max:Int = 22;
-	// 	if (from >= 1){
-	// 		min = from;
-	// 	}
-	// 	if (to <= 22){
-	// 		max = to;
-	// 	}
-	// 	for (i in min...max){
-	// 		FlxG.cameras.add(noteCameras0, false);
-	// 		FlxG.cameras.add(noteCameras+i, false);
-	// 	}
-
-	// 	callOnLuas('addCameras', from, to);
-	// }
-	// public function removeCameras(valorMin:Dynamic, valorMax:Dynamic){
-	// 	for (i in valorMin...valorMax)
-	// 		FlxG.cameras.remove(noteCameras+i);
-
-	// 	callOnLuas('RemoveCameras', valorMin, valorMax);
-	// }
-
-
 	public function addTextToDebug(text:String, color:FlxColor) {
 		#if LUA_ALLOWED
 		luaDebugGroup.forEachAlive(function(spr:DebugLuaText) {
@@ -2006,17 +1890,7 @@ class PlayState extends MusicBeatState
 		for (i in 0...opponentStrums.length) {
 			setOnLuas('defaultOpponentStrumX' + i, opponentStrums.members[i].x);
 			setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
-			//if(ClientPrefs.middleScroll) opponentStrums.members[i].visible = false;
 		}
-
-		// for (i in 0...strumLineNotes.length)
-		// {
-		// 	var member = PlayState.instance.strumLineNotes.members[i];
-		// 	setOnLuas("defaultStrum" + i + "X", Math.floor(member.x));
-		// 	setOnLuas("defaultStrum" + i + "Y", Math.floor(member.y));
-		// 	setOnLuas("defaultStrum" + i + "Angle", Math.floor(member.angle));
-		// 	setOnLuas("defaultStrum" + i + "Alpha", Math.floor(member.alpha));
-		// }
 	}
 
 	public function startCountdown():Void
