@@ -220,7 +220,7 @@ class ModchartEditorState extends MusicBeatState
         TwirlModifier, RollModifier,
         //Stealth Modifiers
         StealthModifier, NoteStealthModifier, LaneStealthModifier,
-        SuddenModifier, HiddenModifier, BlinkModifier,
+        SuddenModifier, HiddenModifier, VanishModifier, BlinkModifier,
         //Path Modifiers
         IncomingAngleModifier, InvertSineModifier, DizzyModifier,
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
@@ -234,7 +234,8 @@ class ModchartEditorState extends MusicBeatState
         NotesModifier,
         //Misc Modifiers
         InvertModifier, FlipModifier, JumpModifier,
-        StrumAngleModifier, EaseXModifier, ArrowPath
+        StrumAngleModifier, EaseXModifier, EaseYModifier, EaseZModifier,
+        ArrowPath
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -1547,10 +1548,16 @@ class ModchartEditorState extends MusicBeatState
 		explainString = "Modifier similar to jump but only notes aplied";
             case 'EaseXModifier':
 		explainString = "Modifier used to make notes go left to right on the screen";
+            case 'EaseYModifier':
+		explainString = "Modifier used to make notes go up to down on the screen";
+            case 'EaseZModifier':
+		explainString = "Modifier used to make notes go far to near right on the screen";
             case 'HiddenModifier':
         explainString = "Modifier used to make an alpha boost on notes";
             case 'SuddenModifier':
         explainString = "Modifier used to make an alpha brake on notes";
+            case 'VanishModifier':
+        explainString = "Modifier fushion between sudden and hidden";
             case 'SkewModifier':
         explainString = "Modifier used to make note effects (skew)";
             case 'SkewXModifier':

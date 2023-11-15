@@ -1042,6 +1042,40 @@ class EaseXModifier extends Modifier
     }
 }
 
+class EaseYModifier extends Modifier 
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.y += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) 
+        *(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+}
+
+class EaseZModifier extends Modifier 
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.z += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) 
+        *(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+}
+
 class YDModifier extends Modifier 
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
@@ -1086,14 +1120,36 @@ class HiddenModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        if (curPos >= (subValues.get('offset').value*-100) && curPos <= ((subValues.get('offset').value*-100)-200))
-        {
-            noteData.alpha *=(0+currentValue);
-        } 
-        else if (curPos > ((subValues.get('offset').value*-100)-100))
+        if (curPos > ((subValues.get('offset').value*-100)-100))
         {
             var hmult = (curPos-(subValues.get('offset').value*-100))/200;
             noteData.alpha *=(1-hmult);
+        }
+    }
+}
+
+class VanishModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('offsetIn', new ModifierSubValue(1.0));
+        subValues.set('offsetOut', new ModifierSubValue(0.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        if (curPos <= (subValues.get('offsetOut').value*-100) && curPos >= ((subValues.get('offsetOut').value*-100)-200))
+        {
+            var hmult = -(curPos-(subValues.get('offsetOut').value*-100))/200;
+            noteData.alpha *=(1-hmult)*currentValue;
+        }
+        else if (curPos > ((subValues.get('offsetIn').value*-100)-100))
+        {
+            var hmult = (curPos-(subValues.get('offsetIn').value*-100))/200;
+            noteData.alpha *=(1-hmult);
+        }
+        else if (curPos < ((subValues.get('offsetOut').value*-100)-100))
+        {
+            noteData.alpha *=(1-currentValue);
         }
     }
 }
@@ -1547,7 +1603,7 @@ class TanDrunkAngleModifier extends Modifier
 }
 
 
-//OH MY FUCKING GOD//
+//OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
 class ArrowPath extends Modifier {
     public var _path: List<TimeVector> = null;
     public var _pathDistance: Float = 0;
@@ -1574,7 +1630,7 @@ class ArrowPath extends Modifier {
             currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
         }
     public function loadPath() {
-        var file = CoolUtil.coolTextFile(Paths.getTextFromFile("falseparadise.txt"));
+        var file = CoolUtil.coolTextFile(Paths.txt("pathTest"));
         var path = new List<TimeVector>();
         var _g = 0;
         while (_g < file.length) {
@@ -1586,6 +1642,7 @@ class ArrowPath extends Modifier {
             vec.y *= 200;
             vec.z *= 200;
             path.add(vec);
+            // trace(coords);
         }
         _pathDistance = calculatePathDistances(path);
         _path = path;
