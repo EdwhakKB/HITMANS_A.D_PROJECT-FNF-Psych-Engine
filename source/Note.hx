@@ -62,6 +62,7 @@ class Note extends FlxSkewedSprite{
 	public var rgbShader:RGBShaderReference;
 	public static var globalRgbShaders:Array<RGBPalette> = [];
 	public static var globalHurtRgbShaders:Array<RGBPalette> = [];
+	public static var globalQuantRgbShaders:Array<RGBPalette> = [];
 	public var inEditor:Bool = false;
 
 	public var animSuffix:String = '';
@@ -125,6 +126,8 @@ class Note extends FlxSkewedSprite{
 
 	public var hitsoundDisabled:Bool = false;
 
+	public var quantizedNotes:Bool = false;
+
 	private function set_multSpeed(value:Float):Float {
 		resizeByRatio(value / multSpeed);
 		multSpeed = value;
@@ -173,7 +176,19 @@ class Note extends FlxSkewedSprite{
 			
 	}
 
-	private function set_noteType(value:String):String {
+	public function defaultRGBQuant() {
+		var arrQuantRGB:Array<FlxColor> = ClientPrefs.arrowRGBQuantize[noteData];
+
+		if (noteData > -1 && noteData <= arrQuantRGB.length)
+		{
+			rgbShader.r = arrQuantRGB[0];
+			rgbShader.g = arrQuantRGB[0];
+			rgbShader.b = arrQuantRGB[2];
+		}	
+	}
+
+	private function set_noteType(value:String):String 
+	{
 		defaultRGB();
 
 		if(noteData > -1 && noteType != value) {
@@ -410,13 +425,14 @@ class Note extends FlxSkewedSprite{
 
 		if(noteData > -1) {
 			texture = '';
-			rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
+			if (quantizedNotes) rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalQuantRBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
+			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
 
 			x += swagWidth * (noteData);
 			if(!isSustainNote && noteData > -1) { //Doing this 'if' check to fix the warnings on Senpai songs
 				var animToPlay:String = '';
-				animToPlay = colArray[noteData % 4];
+				animToPlay = colArray[noteData % colArray.length];
 				animation.play(animToPlay + 'Scroll');
 			}
 			if(!sustainRGB && isSustainNote){
@@ -519,6 +535,24 @@ class Note extends FlxSkewedSprite{
 			}
 			return globalHurtRgbShaders[noteData];
 		}
+	public static function initializeGlobalQuantRBShader(noteData:Int)
+		{
+			if(globalQuantRgbShaders[noteData] == null)
+			{
+				var newRGB:RGBPalette = new RGBPalette();
+				globalQuantRgbShaders[noteData] = newRGB;
+	
+				var arr:Array<FlxColor> = ClientPrefs.arrowRGBQuantize[noteData];
+
+				if (noteData > -1 && noteData <= arr.length)
+				{
+					newRGB.r = arr[0];
+					newRGB.g = arr[1];
+					newRGB.b = arr[2];
+				}
+			}
+			return globalQuantRgbShaders[noteData];
+		}	
 
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
 	var lastNoteScaleToo:Float = 1;

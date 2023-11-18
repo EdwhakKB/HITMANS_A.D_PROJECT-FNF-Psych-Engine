@@ -520,10 +520,8 @@ class PlayState extends MusicBeatState
 	//quant stuff
 	var beat:Float = 0;
 	var dataStuff:Float = 0;
-	var quantcolord:Array<FlxColor> = ClientPrefs.arrowRQuantize;
-	var quantcolord2:Array<FlxColor> = ClientPrefs.arrowBQuantize;
-	var col:Int = 0xFFFFD700;
-	var col2:Int = 0xFFFFD700;
+	var col:FlxColor = 0xFFFFD700;
+	var col2:FlxColor = 0xFFFFD700;
 
 	public static var timeToStart:Float = 0;
 
@@ -1493,42 +1491,47 @@ class PlayState extends MusicBeatState
 				beat = round(dataStuff * 48, 0);
 				if (!note.isSustainNote){
 					if(beat%(192/4)==0){
-						col = ClientPrefs.arrowRQuantize[0];
-						col2 = ClientPrefs.arrowBQuantize[0];
-					}
-					else if(beat%(192/6)==0){
-						col = ClientPrefs.arrowRQuantize[1];
-						col2 = ClientPrefs.arrowBQuantize[1];
+						col = ClientPrefs.arrowRGBQuantize[0][0];
+						col2 = ClientPrefs.arrowRGBQuantize[0][2];
 					}
 					else if(beat%(192/8)==0){
-						col = ClientPrefs.arrowRQuantize[2];
-						col2 = ClientPrefs.arrowBQuantize[2];
+						col = ClientPrefs.arrowRGBQuantize[1][0];
+						col2 = ClientPrefs.arrowRGBQuantize[1][2];
 					}
 					else if(beat%(192/12)==0){
-						col = ClientPrefs.arrowRQuantize[3];
-						col2 = ClientPrefs.arrowBQuantize[3];
+						col = ClientPrefs.arrowRGBQuantize[2][0];
+						col2 = ClientPrefs.arrowRGBQuantize[2][2];
 					}
 					else if(beat%(192/16)==0){
-						col = ClientPrefs.arrowRQuantize[4];
-						col2 = ClientPrefs.arrowBQuantize[4];
+						col = ClientPrefs.arrowRGBQuantize[3][0];
+						col2 = ClientPrefs.arrowRGBQuantize[3][2];
 					}
 					else if(beat%(192/24)==0){
-						col = ClientPrefs.arrowRQuantize[5];
-						col2 = ClientPrefs.arrowBQuantize[5];
+						col = ClientPrefs.arrowRGBQuantize[4][0];
+						col2 = ClientPrefs.arrowRGBQuantize[4][2];
 					}
 					else if(beat%(192/32)==0){
-						col = ClientPrefs.arrowRQuantize[6];
-						col2 = ClientPrefs.arrowBQuantize[6];
+						col = ClientPrefs.arrowRGBQuantize[5][0];
+						col2 = ClientPrefs.arrowRGBQuantize[5][2];
 					}
-					else{
-						col = ClientPrefs.arrowRQuantize[7];
-						col2 = ClientPrefs.arrowBQuantize[7];
+					else if(beat%(192/48)==0){
+						col = ClientPrefs.arrowRGBQuantize[6][0];
+						col2 = ClientPrefs.arrowRGBQuantize[6][2];
+					}
+					else if(beat%(192/64)==0){
+						col = ClientPrefs.arrowRGBQuantize[7][0];
+						col2 = ClientPrefs.arrowRGBQuantize[7][2];
+					}else{
+						col = 0xFF7C7C7C;
+						col2 = 0xFF3A3A3A;
 					}
 					note.rgbShader.r = col;
+					note.rgbShader.g = ClientPrefs.arrowRGBQuantize[0][1];
 					note.rgbShader.b = col2;
 			
 				}else{
 					note.rgbShader.r = note.prevNote.rgbShader.r;
+					note.rgbShader.g = note.prevNote.rgbShader.g;
 					note.rgbShader.b = note.prevNote.rgbShader.b;  
 				}
 			}

@@ -49,27 +49,17 @@ class ClientPrefs {
 		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
 		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
 	];
-	public static var arrowRGBBackUp:Array<Array<FlxColor>> = [
-		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],
-		[0xFF00FFFF, 0xFFFFFFFF, 0xFF1542B7],
-		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
-		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
-	];
-	public static var arrowRQuantize:Array<FlxColor> = [
-		0xFFFF0000,0xFF0000FF,0xFF800080,0xFFFFFF00,
-		0xFFFF00FF,0xFFFF7300,0xFF00FFDD,0xFF00FF00
-	];
-	public static var arrowBQuantize:Array<FlxColor> = [
-		0xFF7F0000,0xFF00007F,0xFF400040,0xFF7F7F00,
-		0xFF8A018A,0xFF883D00,0xFF008573,0xFF007F00
+	public static var arrowRGBQuantize:Array<Array<FlxColor>> = [
+		[0xFFFF0000, 0xFFFFFFFF, 0xFF7F0000],
+		[0xFF0000FF, 0xFFFFFFFF, 0xFF00007F],
+		[0xFF800080, 0xFFFFFFFF, 0xFF400040],
+		[0xFF00FF00, 0xFFFFFFFF, 0xFF007F00],
+		[0xFFFFFF00, 0xFFFFFFFF, 0xFF7F7F00],
+		[0xFF00FFDD, 0xFFFFFFFF, 0xFF018573],
+		[0xFFFF00FF, 0xFFFFFFFF, 0xFF8A018A],
+		[0xFFFF7300, 0xFFFFFFFF, 0xFF883D00]
 	];
 	public static var hurtRGB:Array<Array<FlxColor>> = [
-		[0xFF101010, 0xFFFF0000, 0xFF990022],
-		[0xFF101010, 0xFFFF0000, 0xFF990022],
-		[0xFF101010, 0xFFFF0000, 0xFF990022],
-		[0xFF101010, 0xFFFF0000, 0xFF990022]
-	];
-	public static var hurtRGBBackUp:Array<Array<FlxColor>> = [
 		[0xFF101010, 0xFFFF0000, 0xFF990022],
 		[0xFF101010, 0xFFFF0000, 0xFF990022],
 		[0xFF101010, 0xFFFF0000, 0xFF990022],
@@ -184,8 +174,7 @@ class ClientPrefs {
 		FlxG.save.data.hideHud = hideHud;
 		FlxG.save.data.arrowHSV = arrowHSV;
 		FlxG.save.data.arrowRGB = arrowRGB;
-		FlxG.save.data.arrowRQuantize = arrowRQuantize;
-		FlxG.save.data.arrowBQuantize = arrowBQuantize;
+		FlxG.save.data.arrowRGBQuantize = arrowRGBQuantize;
 		FlxG.save.data.hurtRGB = hurtRGB;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.timeBarType = timeBarType;
@@ -322,11 +311,8 @@ class ClientPrefs {
 		if(FlxG.save.data.arrowRGB != null) {
 			arrowRGB = FlxG.save.data.arrowRGB;
 		}
-		if(FlxG.save.data.arrowRQuantize != null) {
-			arrowRQuantize = FlxG.save.data.arrowRQuantize;
-		}
-		if(FlxG.save.data.arrowBQuantize != null) {
-			arrowBQuantize = FlxG.save.data.arrowBQuantize;
+		if(FlxG.save.data.arrowRGBQuantize != null) {
+			arrowRGBQuantize = FlxG.save.data.arrowRGBQuantize;
 		}
 		if(FlxG.save.data.hurtRGB != null) {
 			hurtRGB = FlxG.save.data.hurtRGB;

@@ -65,6 +65,12 @@ class NotesSubState extends MusicBeatSubstate
 
 	var noteSkinInt:Int = 0;
 
+	public var rgb:Array<Array<FlxColor>> = [
+		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],
+		[0xFF00FFFF, 0xFFFFFFFF, 0xFF1542B7],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFFF9393F, 0xFFFFFFFF, 0xFF651038]
+	];
 	//Support for HurtNote, Quant notes and others!
 	var quantcolord:Array<FlxColor> = [0xFFFF0000,0xFF0000FF,0xFF800080,0xFFFFFF00,0xFFFF00FF,0xFFFF7300,0xFF00FFDD,0xFF00FF00];
 	var quantcolord2:Array<FlxColor> = [0xFF7F0000,0xFF00007F,0xFF400040,0xFF7F7F00,0xFF8A018A,0xFF883D00,0xFF008573,0xFF007F00];
@@ -517,7 +523,7 @@ class NotesSubState extends MusicBeatSubstate
 				for (i in 0...3)
 				{
 					var strumRGB:RGBShaderReference = myNotes.members[curSelectedNote].rgbShader;
-					var color:FlxColor = ClientPrefs.arrowRGBBackUp[curSelectedNote][i];
+					var color:FlxColor = rgb[curSelectedNote][i];
 					switch(i)
 					{
 						case 0:
@@ -530,7 +536,7 @@ class NotesSubState extends MusicBeatSubstate
 					dataArray[curSelectedNote][i] = color;
 				}
 			}
-			setShaderColor(ClientPrefs.arrowRGB[curSelectedNote][curSelectedMode]);
+			setShaderColor(rgb[curSelectedNote][curSelectedMode]);
 			FlxG.sound.play(Paths.sound('cancelMenu'), 0.6);
 			updateColors();
 		}

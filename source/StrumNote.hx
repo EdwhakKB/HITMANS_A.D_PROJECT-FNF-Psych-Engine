@@ -32,10 +32,11 @@ class StrumNote extends FlxSkewedSprite
 		return value;
 	}
 	public var useRGBShader:Bool = true;
-	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String) {
-		rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
+	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String, ?quantizedNotes:Bool) {
+		rgbShader = new RGBShaderReference(this, !quantizedNotes ? Note.initializeGlobalRGBShader(leData) : 
+																Note.initializeGlobalQuantRBShader(leData));
 		rgbShader.enabled = false;
-		var arr:Array<FlxColor> = ClientPrefs.arrowRGB[leData];
+		var arr:Array<FlxColor> = !quantizedNotes ? ClientPrefs.arrowRGB[leData] : ClientPrefs.arrowRGBQuantize[leData];
 
 		if(leData <= arr.length)
 			{

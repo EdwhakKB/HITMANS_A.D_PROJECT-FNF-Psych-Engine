@@ -64,7 +64,7 @@ class Modifier
     public var renderer:PlayfieldRenderer = null;
     public static var beat:Float = 0;
     public var notes:FlxTypedGroup<Note>;
-
+    
     public function new(tag:String, ?type:ModifierType = ALL, ?playfield:Int = -1)
     {
         this.tag = tag;
@@ -117,7 +117,6 @@ class Modifier
     public dynamic function curPosMath(lane:Int, curPos:Float, pf:Int) { return curPos; }
     public dynamic function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int):Float { return noteDist; }
     public dynamic function setupSubValues() {}
-    public dynamic function setupNotePath(startDist:Float, endDist:Float, next:TimeVector) {}
 
     public function checkPlayField(pf:Int):Bool //returns true if should display on current playfield
     {
@@ -153,7 +152,6 @@ class Modifier
         mod.incomingAngleMath = this.incomingAngleMath;
         mod.curPosMath = this.curPosMath;
         mod.noteDistMath = this.noteDistMath;
-        mod.setupNotePath = this.setupNotePath;
         mod.currentValue = this.currentValue;
         mod.baseValue = this.currentValue;
         mod.subValues = this.subValues;
@@ -1630,7 +1628,7 @@ class ArrowPath extends Modifier {
             currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
         }
     public function loadPath() {
-        var file = CoolUtil.coolTextFile(Paths.txt("pathTest"));
+        var file = CoolUtil.coolTextFile(Paths.getTextFromFile(PlayState.SONG.song.toLowerCase()+"/customMods/path.txt"));
         var path = new List<TimeVector>();
         var _g = 0;
         while (_g < file.length) {
