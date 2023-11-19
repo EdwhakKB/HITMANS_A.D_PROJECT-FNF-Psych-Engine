@@ -299,7 +299,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
 		new FlxTimer().start(3, function(tmr:FlxTimer)
 		{
-			FlxG.sound.play(Paths.sound(loopSoundName));
+			FlxG.sound.play(Paths.sound(loopSoundName), 0.1);
 			musicplaying=true;
             runTimer1 = true;
 		});
@@ -318,9 +318,9 @@ class NewHitmansGameOver extends MusicBeatSubstate
 	{
 		super.update(elapsed);
 
-		if (musicplaying && FlxG.sound.music.volume < 0.8)
+		if (musicplaying && FlxG.sound.music.volume < 1.0)
 		{
-			FlxG.sound.music.volume += 0.25 * FlxG.elapsed;
+			FlxG.sound.music.volume += 0.15 * FlxG.elapsed;
 		}
 
         diedToAnote.text = deathVariable;
@@ -408,7 +408,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
                         taunt.text = "I expected you to last more time, dissapointing";
                 }
                 taunt.color = 0xff007500;
-            case 'anby':
+            case 'drake':
                 switch (tauntNum){
                     case 1:
                         taunt.text = "Another day, another death, your time was choosen, by me";
@@ -580,7 +580,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
         }
 
 		PlayState.instance.callOnLuas('onUpdate', [elapsed]);
-        elapsedTime += elapsed;
+        elapsedTime = elapsed;
 
         if(!youdiedFading){
             youdiedFading = true;
