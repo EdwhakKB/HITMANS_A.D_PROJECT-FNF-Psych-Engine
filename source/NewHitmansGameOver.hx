@@ -28,7 +28,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
     var camHUD:FlxCamera;
     var retry:FlxSprite;
-    var youdied:FlxSprite;
+    var youdied:FlxText;
     var staticDeath:FlxSprite;
     var tvStatic:FlxSprite;
     var tvEffect:FlxSprite;
@@ -266,10 +266,9 @@ class NewHitmansGameOver extends MusicBeatSubstate
         offEffect.antialiasing = ClientPrefs.globalAntialiasing;
         add(offEffect);
 
-        youdied = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/Edwhak/Hitmans/newGameOver/youdied.png', IMAGE));
+        youdied = new FlxText(0, 450, Std.int(FlxG.width * 0.8), "CONNECTION TERMINATED", 120);
+        youdied.setFormat(Paths.font("kremlin.ttf"), 120, 0xff5a5858, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         youdied.screenCenter();
-        youdied.scale.y = 2;
-        youdied.scale.x = 2;
         youdied.alpha = 0;
         youdied.antialiasing = ClientPrefs.globalAntialiasing;
         add(youdied);

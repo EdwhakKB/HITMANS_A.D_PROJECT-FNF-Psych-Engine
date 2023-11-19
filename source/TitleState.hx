@@ -42,6 +42,9 @@ import flixel.addons.effects.FlxTrail;
 import flixel.addons.effects.FlxTrailArea;
 import flixel.FlxCamera;
 
+import textbox.*;
+import flixel.system.FlxAssets;
+
 using StringTools;
 typedef TitleData =
 {
@@ -57,6 +60,10 @@ typedef TitleData =
 }
 class TitleState extends MusicBeatState
 {
+	var tbox:Textbox;
+	var tbox2:Textbox;
+	var dacursor:DemoTextCursor;
+	var cursorTween:FlxTween;
 	public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
 	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
 	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
@@ -639,7 +646,107 @@ class TitleState extends MusicBeatState
 				});
 			}
 			FlxTween.tween(logoBl, {alpha: 1}, 1, {ease: FlxEase.smoothStepIn});
+			dacursor = new DemoTextCursor(0, 0);
+			var settingsTbox:Settings = new Settings
+			(
+				FlxAssets.FONT_DEFAULT,
+				24,
+				Std.int(FlxG.width * 0.8),
+				FlxColor.WHITE,
+				4
+			);
+			var settingsTbox:Settings = new Settings(
+				FlxAssets.FONT_DEFAULT,
+				16,
+				325,
+				FlxColor.WHITE
+			);
+			tbox = new Textbox(200,30, settingsTbox);
+			tbox.setText("Hello World!@011001500 How goes? @010@001FF0000Color test!@000 This is a good old textbox test.");
+			add(dacursor);
+			dacursor.attachToTextbox(tbox);
+			tbox.bring();
+	
+			var settingsTbox2:Settings = new Settings
+			(
+				FlxAssets.FONT_DEFAULT,
+				12,
+				400,
+				FlxColor.YELLOW,
+				30,
+				24
+			);
+			tbox2 = new Textbox(30,150, settingsTbox2);
+			tbox2.setText("This is @021014010another@020 textbox, to show how the settings variables can change the result. Speed, size or color and @031023820more with the effects@030! Note that there is a fully working text wrap! :D");
+			tbox2.statusChangeCallbacks.push(function(s:Textbox.Status):Void
+			{
+				if (s == Textbox.Status.DONE)
+				{
+					cursorTween = FlxTween.color(dacursor, 0.5, dacursor.color, FlxColor.TRANSPARENT,
+						{
+							type: FlxTweenType.PINGPONG,
+							ease: FlxEase.cubeInOut
+						}
+					);
+				}
+			});
+	
+	
+			tbox.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
+			{
+				if (newStatus == Textbox.Status.FULL)
+				{
+					tbox.continueWriting();
+				}
+				else if(newStatus == Textbox.Status.DONE)
+				{
+					add(tbox2);
+					dacursor.detachFromTextbox(tbox);
+					dacursor.attachToTextbox(tbox2);
+					tbox2.bring();
+				}
+			});
+			add(tbox);
 			skippedIntro = true;
 		}
 	}
+}
+
+class DemoTextCursor extends FlxSprite
+{
+	public override function new(X:Float, Y:Float)
+	{
+		super(X, Y);
+		makeGraphic(8, 4);
+
+		ownCharacterCallback = function(character:textbox.Text)
+		{
+			characterCallbackInternal(character);
+		};
+	}
+
+
+	public function attachToTextbox(textbox:Textbox)
+	{
+		textbox.characterDisplayCallbacks.push(ownCharacterCallback);
+	}
+
+	public function detachFromTextbox(textbox:Textbox)
+	{
+		textbox.characterDisplayCallbacks.remove(ownCharacterCallback);
+	}
+
+	private function characterCallbackInternal(character:textbox.Text)
+	{
+		x = character.x + character.width + 2;
+
+		// I noted an issue : the character height is 0 if targetting javascript.
+		if (character.text != " ")
+		{
+			y = character.y + character.height - 4;
+		}
+		color = character.color;
+	}
+
+	private var ownCharacterCallback:textbox.Text->Void = null;
 }
