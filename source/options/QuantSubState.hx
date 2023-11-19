@@ -46,6 +46,7 @@ class QuantSubState extends MusicBeatSubstate
 	var colorWheelSelector:FlxSprite;
 
 	var alphabetR:Alphabet;
+	var alphabetG:Alphabet;
 	var alphabetB:Alphabet;
 	var alphabetHex:Alphabet;
 
@@ -193,6 +194,8 @@ class QuantSubState extends MusicBeatSubstate
 		var txtY = 90;
 		alphabetR = makeColorAlphabet(txtX - 100, txtY);
 		add(alphabetR);
+		alphabetG = makeColorAlphabet(txtX, txtY);
+		add(alphabetG);
 		alphabetB = makeColorAlphabet(txtX + 100, txtY);
 		add(alphabetB);
 		alphabetHex = makeColorAlphabet(txtX, txtY - 55);
@@ -201,29 +204,6 @@ class QuantSubState extends MusicBeatSubstate
 		hexTypeLine.visible = false;
 		add(hexTypeLine);
 
-		switch (ClientPrefs.noteSkin)
-		{
-			case 'HITMANS':
-				noteSkinInt = 0;
-			case 'INHUMAN':
-				noteSkinInt = 1;
-			case 'FNF':
-				noteSkinInt = 2;
-			case 'ITHIT':
-				noteSkinInt = 3;
-			case 'MANIAHIT':
-				noteSkinInt = 4;
-			case 'FUTURE':
-				noteSkinInt = 5;
-			case 'CIRLCE':
-				noteSkinInt = 6;
-			case 'STEPMANIA':
-				noteSkinInt = 7;
-			case 'NOTITG':
-				noteSkinInt = 8;
-		}
-
-		onChangeSkin(noteSkinInt);
 		spawnNotes();
 		updateNotes(true);
 		FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -272,26 +252,10 @@ class QuantSubState extends MusicBeatSubstate
 		var qHold = FlxG.keys.pressed.Q;
 		var eHold = FlxG.keys.pressed.E;
 
-		if(qPress)
-		{
-			onChangeSkin(-1);
-			spawnNotes();
-			updateNotes(true);
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
-		}
-
 		if(qHold){
 			leftArrow.animation.play('press');
 		}else{
 			leftArrow.animation.play('idle');
-		}
-
-		if(ePress)
-		{
-			onChangeSkin(1);
-			spawnNotes();
-			updateNotes(true);
-			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
 		}
 
 		if(eHold){
@@ -302,7 +266,6 @@ class QuantSubState extends MusicBeatSubstate
 
 		if (FlxG.mouse.overlaps(rightArrow)) {
 			if (FlxG.mouse.justPressed) {
-				onChangeSkin(1);
 				spawnNotes();
 				updateNotes(true);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -316,7 +279,6 @@ class QuantSubState extends MusicBeatSubstate
 
 		if (FlxG.mouse.overlaps(leftArrow)) {
 			if (FlxG.mouse.justPressed) {
-				onChangeSkin(-1);
 				spawnNotes();
 				updateNotes(true);
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -612,18 +574,6 @@ class QuantSubState extends MusicBeatSubstate
 		add(text);
 		return text;
 	}
-
-	function onChangeSkin(?val:Int = 0){
-		curNum += val; //So it does a "change" lmao, i still need get some variables such as grab the current skin and load a number -Ed
-
-		if (curNum < 0)
-			curNum = skins.length - 1;
-		if (curNum >= skins.length)
-			curNum = 0;
-
-		ClientPrefs.noteSkin = skins[curNum];
-		skinIndicator.text = skins[curNum];
-	}
 	
 	// notes sprites functions
 	var skinNote:FlxSprite;
@@ -731,6 +681,7 @@ class QuantSubState extends MusicBeatSubstate
 		var color:FlxColor = getShaderColor();
 		var wheelColor:FlxColor = specific == null ? getShaderColor() : specific;
 		alphabetR.text = Std.string(color.red);
+		alphabetG.text = Std.string(color.green);
 		alphabetB.text = Std.string(color.blue);
 		alphabetHex.text = color.toHexString(false, false);
 		for (letter in alphabetHex.letters) letter.color = color;

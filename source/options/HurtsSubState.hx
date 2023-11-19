@@ -71,9 +71,6 @@ class HurtsSubState extends MusicBeatSubstate
 		[0xFF101010, 0xFFFF0000, 0xFF990022],
 		[0xFF101010, 0xFFFF0000, 0xFF990022]
 	];
-	//Support for HurtNote, Quant notes and others!
-	var quantcolord:Array<FlxColor> = [0xFFFF0000,0xFF0000FF,0xFF800080,0xFFFFFF00,0xFFFF00FF,0xFFFF7300,0xFF00FFDD,0xFF00FF00];
-	var quantcolord2:Array<FlxColor> = [0xFF7F0000,0xFF00007F,0xFF400040,0xFF7F7F00,0xFF8A018A,0xFF883D00,0xFF008573,0xFF007F00];
 	var isOnMode:Int = 0;
 	var reloadedNotes = false;
 
