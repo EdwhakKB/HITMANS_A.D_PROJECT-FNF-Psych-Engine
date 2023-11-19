@@ -1481,7 +1481,7 @@ class PlayState extends MusicBeatState
 		for (note in unspawnNotes) {
 			strumTime = note.strumTime;
 			var newTime = strumTime;
-			for (i in 1...bpmChanges.length)
+			for (i in 0...bpmChanges.length)
 				if (strumTime > bpmChanges[i].songTime){
 					currentBPM = bpmChanges[i].bpm;
 					newTime = strumTime - bpmChanges[i].songTime;

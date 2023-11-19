@@ -215,7 +215,7 @@ class ModchartEditorState extends MusicBeatState
         WaveXModifier, WaveYModifier, WaveZModifier, WaveAngleModifier,
         TanWaveXModifier, TanWaveYModifier, TanWaveZModifier, TanWaveAngleModifier,
         //Scroll Modifiers
-        ReverseModifier,
+        ReverseModifier, CrossModifier, SplitModifier, AlternateModifier,
         SpeedModifier, BoostModifier, BrakeModifier,
         TwirlModifier, RollModifier,
         //Stealth Modifiers
@@ -1458,6 +1458,12 @@ class ModchartEditorState extends MusicBeatState
 		explainString = "Modifier similar to DrunkZ but don't affect notes poss";
             case 'ReverseModifier':
 		explainString = "Flip the scroll type (Upscroll/Downscroll)";
+            case 'SplitModifier':
+		explainString = "Flip the scroll type (HalfUpscroll/HalfDownscroll)";
+            case 'CrossModifier':
+		explainString = "Flip the scroll type (Upscroll/Downscroll/Downscroll/Upscroll)";
+            case 'AlternateModifier':
+		explainString = "Flip the scroll type (Upscroll/Downscroll/Upscroll/Downscroll)";
             case 'IncomingAngleModifier':
 		explainString = "Modifier that changes how notes come to the target (if X and Y aplied it will use Z)";
             case 'RotateModifier': 
