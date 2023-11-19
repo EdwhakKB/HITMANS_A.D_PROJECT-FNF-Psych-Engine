@@ -1600,7 +1600,6 @@ class TanDrunkAngleModifier extends Modifier
     }
 }
 
-
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
 class ArrowPath extends Modifier {
     public var _path: List<TimeVector> = null;
