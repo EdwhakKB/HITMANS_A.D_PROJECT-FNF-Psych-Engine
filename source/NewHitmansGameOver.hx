@@ -138,7 +138,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
         FlxCamera.defaultCameras = [camHUD];
 
         deathSprite = new FlxSprite(770,0);
-        deathSprite.frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin+'/'+noteWhoKilled+'_assets', 'shared');
+        deathSprite.frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin[0]+'/'+noteWhoKilled+'_assets', 'shared');
         deathSprite.animation.addByPrefix('note', 'green0', 24, true);
         deathSprite.animation.play('note');
         deathSprite.scale.y = 1.5;

@@ -200,7 +200,7 @@ class NotesSubState extends MusicBeatSubstate
 		hexTypeLine.visible = false;
 		add(hexTypeLine);
 
-		switch (ClientPrefs.noteSkin)
+		switch (ClientPrefs.noteSkin[0])
 		{
 			case 'HITMANS':
 				noteSkinInt = 0;
@@ -620,7 +620,7 @@ class NotesSubState extends MusicBeatSubstate
 		if (curNum >= skins.length)
 			curNum = 0;
 
-		ClientPrefs.noteSkin = skins[curNum];
+		ClientPrefs.noteSkin[0] = skins[curNum];
 		skinIndicator.text = skins[curNum];
 	}
 	

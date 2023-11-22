@@ -198,6 +198,9 @@ class Note extends FlxSkewedSprite{
 					ignoreNote = mustPress;
 					defaultRGBHurt();
 
+					if(ClientPrefs.noteSkin[1] != 'MIMIC') {
+						reloadNote('', 'Skins/Hurts/'+ClientPrefs.noteSkin[1]+'-HURT_assets');				
+					}
 					copyAlpha=false;
 					alpha=0.55; //not fully invisible but yeah
 					lowPriority = true;
@@ -213,6 +216,10 @@ class Note extends FlxSkewedSprite{
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					defaultRGBHurt();
+
+					if(ClientPrefs.noteSkin[1] != 'MIMIC') {
+						reloadNote('', 'Skins/Hurts/'+ClientPrefs.noteSkin[1]+'-HURT_assets');				
+					}
 
 					lowPriority = true;
 	
@@ -417,7 +424,7 @@ class Note extends FlxSkewedSprite{
 
 		this.noteData = noteData;
 
-		if (ClientPrefs.noteSkin == 'NOTITG'){
+		if (ClientPrefs.noteSkin[0] == 'NOTITG'){
 			sustainRGB = false;
 		}else{
 			sustainRGB = true;
@@ -566,7 +573,7 @@ class Note extends FlxSkewedSprite{
 		if(texture.length < 1) {
 			skin = PlayState.SONG != null ? PlayState.SONG.arrowSkin : null;
 			if(skin == null || skin.length < 1) {
-				skin = 'Skins/Notes/'+ClientPrefs.noteSkin+'/NOTE_assets';
+				skin = 'Skins/Notes/'+ClientPrefs.noteSkin[0]+'/NOTE_assets';
 			}
 		}
 

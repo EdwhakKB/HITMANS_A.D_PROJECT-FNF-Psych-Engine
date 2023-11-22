@@ -63,6 +63,13 @@ class EditorPlayState extends MusicBeatState
 
 	public static var instance:EditorPlayState;
 
+	//quant stuff
+	var beat:Float = 0;
+	var dataStuff:Float = 0;
+	var col:FlxColor = 0xFFFFD700;
+	var col3:FlxColor = 0xFFFFD700;
+	var col2:FlxColor = 0xFFFFD700;
+
 	override function create()
 	{
 		instance = this;
@@ -158,7 +165,100 @@ class EditorPlayState extends MusicBeatState
 			FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 			FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
+		if (ClientPrefs.quantization)
+			doNoteQuant();
 		super.create();
+	}
+
+	public function doNoteQuant()
+	{
+		var bpmChanges = Conductor.bpmChangeMap;
+		var strumTime:Float = 0;
+		var currentBPM = PlayState.SONG.bpm;
+		for (note in unspawnNotes) {
+			strumTime = note.strumTime;
+			var newTime = strumTime;
+			for (i in 0...bpmChanges.length)
+				if (strumTime > bpmChanges[i].songTime){
+					currentBPM = bpmChanges[i].bpm;
+					newTime = strumTime - bpmChanges[i].songTime;
+				}
+			if (note.rgbShader.enabled && !note.hurtNote){
+				dataStuff = ((currentBPM * (newTime - ClientPrefs.noteOffset)) / 1000 / 60);
+				beat = round(dataStuff * 48, 0);
+				if (!note.isSustainNote){
+					if(beat%(192/4)==0){
+						col = ClientPrefs.arrowRGBQuantize[0][0];
+						col3 = ClientPrefs.arrowRGBQuantize[0][1];
+						col2 = ClientPrefs.arrowRGBQuantize[0][2];
+					}
+					else if(beat%(192/8)==0){
+						col = ClientPrefs.arrowRGBQuantize[1][0];
+						col3 = ClientPrefs.arrowRGBQuantize[1][1];
+						col2 = ClientPrefs.arrowRGBQuantize[1][2];
+					}
+					else if(beat%(192/12)==0){
+						col = ClientPrefs.arrowRGBQuantize[2][0];
+						col3 = ClientPrefs.arrowRGBQuantize[2][1];
+						col2 = ClientPrefs.arrowRGBQuantize[2][2];
+					}
+					else if(beat%(192/16)==0){
+						col = ClientPrefs.arrowRGBQuantize[3][0];
+						col3 = ClientPrefs.arrowRGBQuantize[3][1];
+						col2 = ClientPrefs.arrowRGBQuantize[3][2];
+					}
+					else if(beat%(192/24)==0){
+						col = ClientPrefs.arrowRGBQuantize[4][0];
+						col3 = ClientPrefs.arrowRGBQuantize[4][1];
+						col2 = ClientPrefs.arrowRGBQuantize[4][2];
+					}
+					else if(beat%(192/32)==0){
+						col = ClientPrefs.arrowRGBQuantize[5][0];
+						col3 = ClientPrefs.arrowRGBQuantize[5][1];
+						col2 = ClientPrefs.arrowRGBQuantize[5][2];
+					}
+					else if(beat%(192/48)==0){
+						col = ClientPrefs.arrowRGBQuantize[6][0];
+						col3 = ClientPrefs.arrowRGBQuantize[6][1];
+						col2 = ClientPrefs.arrowRGBQuantize[6][2];
+					}
+					else if(beat%(192/64)==0){
+						col = ClientPrefs.arrowRGBQuantize[7][0];
+						col3 = ClientPrefs.arrowRGBQuantize[7][1];
+						col2 = ClientPrefs.arrowRGBQuantize[7][2];
+					}else{
+						col = 0xFF7C7C7C;
+						col3 = 0xFFFFFFFF;
+						col2 = 0xFF3A3A3A;
+					}
+					note.rgbShader.r = col;
+					note.rgbShader.g = col3;
+					note.rgbShader.b = col2;
+			
+				}else{
+					note.rgbShader.r = note.prevNote.rgbShader.r;
+					note.rgbShader.g = note.prevNote.rgbShader.g;
+					note.rgbShader.b = note.prevNote.rgbShader.b;  
+				}
+			}
+		}
+		for (this2 in opponentStrums)
+		{
+			this2.rgbShader.r = 0xFFFFFFFF;
+			this2.rgbShader.b = 0xFF000000;  
+			this2.rgbShader.enabled = false;
+		}
+		for (this2 in playerStrums)
+		{
+			this2.rgbShader.r = 0xFFFFFFFF;
+			this2.rgbShader.b = 0xFF000000;  
+			this2.rgbShader.enabled = false;
+		}
+	}
+
+	private function round(num:Float, numDecimalPlaces:Int){
+		var mult = 10^numDecimalPlaces;
+		return Math.floor(num * mult + 0.5) / mult;
 	}
 
 	function sayGo() {
@@ -455,7 +555,8 @@ class EditorPlayState extends MusicBeatState
 					}
 					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)), time);
 					daNote.hitByOpponent = true;
-
+					opponentStrums.members[daNote.noteData].rgbShader.r = daNote.rgbShader.r;
+					opponentStrums.members[daNote.noteData].rgbShader.b = daNote.rgbShader.b;
 					if (!daNote.isSustainNote)
 					{
 						daNote.kill();
@@ -501,9 +602,23 @@ class EditorPlayState extends MusicBeatState
 		sectionTxt.text = 'Beat: ' + curSection;
 		beatTxt.text = 'Beat: ' + curBeat;
 		stepTxt.text = 'Step: ' + curStep;
+
+		if (ClientPrefs.quantization)
+			noteQuantUpdatePost();
+
 		super.update(elapsed);
 	}
 	
+	function noteQuantUpdatePost()
+	{
+		for (this2 in playerStrums){
+			if (this2.animation.curAnim.name == 'static'){
+				this2.rgbShader.r = 0xFF808080;
+				this2.rgbShader.b = 0xFFFFFFFF;
+			}
+		}
+	}
+
 	override public function onFocus():Void
 	{
 		vocals.play();
@@ -528,12 +643,49 @@ class EditorPlayState extends MusicBeatState
 		}
 	}
 
+	var animSkins:Array<String> = ['ITHIT', 'MANIAHIT', 'STEPMANIA', 'NOTITG'];
+	
 	override function stepHit()
 	{
 		super.stepHit();
 		if (FlxG.sound.music.time > Conductor.songPosition + 20 || FlxG.sound.music.time < Conductor.songPosition - 20)
 		{
 			resyncVocals();
+		}
+		for (i in 0... animSkins.length){
+			if (ClientPrefs.noteSkin[0].contains(animSkins[i])){
+				if (curStep % 4 == 0){
+					for (this2 in opponentStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){
+							this2.rgbShader.r = 0xFF808080;
+							this2.rgbShader.b = 0xFF474747;
+							this2.rgbShader.enabled = true;
+						}
+					}
+					for (this2 in playerStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){
+							this2.rgbShader.r = 0xFF808080;
+							this2.rgbShader.b = 0xFF474747;
+							this2.rgbShader.enabled = true;
+						}
+					}
+				}else if (curStep % 4 == 1){
+					for (this2 in opponentStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){ 
+							this2.rgbShader.enabled = false;
+						}
+					}
+					for (this2 in playerStrums)
+					{
+						if (this2.animation.curAnim.name == 'static'){
+							this2.rgbShader.enabled = false;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -756,6 +908,9 @@ class EditorPlayState extends MusicBeatState
 
 			note.wasGoodHit = true;
 			vocals.volume = 1;
+
+			playerStrums.members[note.noteData].rgbShader.r = note.rgbShader.r;
+			playerStrums.members[note.noteData].rgbShader.b = note.rgbShader.b;
 
 			if (!note.isSustainNote)
 			{

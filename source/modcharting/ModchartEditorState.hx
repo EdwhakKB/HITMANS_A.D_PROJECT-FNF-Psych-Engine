@@ -110,6 +110,13 @@ class ModchartEditorState extends MusicBeatState
 		persistentUpdate = true;
 		super.closeSubState();
 	}
+    //quant stuff
+	var beat:Float = 0;
+	var dataStuff:Float = 0;
+	var col:FlxColor = 0xFFFFD700;
+	var col3:FlxColor = 0xFFFFD700;
+	var col2:FlxColor = 0xFFFFD700;
+
     #if LEATHER 
     private var curDecStep:Float = 0;
 	private var curDecBeat:Float = 0;
@@ -489,6 +496,9 @@ class ModchartEditorState extends MusicBeatState
 
         add(debugText);
 
+        if (ClientPrefs.quantization)
+			doNoteQuant();
+
         super.create(); //do here because tooltips be dumb
         _ui.load(null);
         setupEditorUI();
@@ -533,6 +543,9 @@ class ModchartEditorState extends MusicBeatState
     var totalElapsed:Float = 0;
     override public function update(elapsed:Float)
     {
+        if (ClientPrefs.quantization)
+			noteQuantUpdatePost();
+        
         totalElapsed += elapsed;
         highlight.alpha = 0.8+Math.sin(totalElapsed*5)*0.15;
         super.update(elapsed);
@@ -706,6 +719,8 @@ class ModchartEditorState extends MusicBeatState
                 daNote.wasGoodHit = true;
                 var strum = strumLineNotes.members[daNote.noteData+(daNote.mustPress ? NoteMovement.keyCount : 0)];
                 strum.playAnim("confirm", true);
+                strum.rgbShader.r = daNote.rgbShader.r;
+                strum.rgbShader.b = daNote.rgbShader.b;
                 strum.resetAnim = 0.15;
                 if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end')) {
                     strum.resetAnim = 0.3;
@@ -1215,7 +1230,154 @@ class ModchartEditorState extends MusicBeatState
         }
     }
     
+    public function doNoteQuant()
+        {
+            var bpmChanges = Conductor.bpmChangeMap;
+            var strumTime:Float = 0;
+            var currentBPM = PlayState.SONG.bpm;
+            for (note in unspawnNotes) {
+                strumTime = note.strumTime;
+                var newTime = strumTime;
+                for (i in 0...bpmChanges.length)
+                    if (strumTime > bpmChanges[i].songTime){
+                        currentBPM = bpmChanges[i].bpm;
+                        newTime = strumTime - bpmChanges[i].songTime;
+                    }
+                if (note.rgbShader.enabled && !note.hurtNote){
+                    dataStuff = ((currentBPM * (newTime - ClientPrefs.noteOffset)) / 1000 / 60);
+                    beat = round(dataStuff * 48, 0);
+                    if (!note.isSustainNote){
+                        if(beat%(192/4)==0){
+                            col = ClientPrefs.arrowRGBQuantize[0][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[0][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[0][2];
+                        }
+                        else if(beat%(192/8)==0){
+                            col = ClientPrefs.arrowRGBQuantize[1][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[1][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[1][2];
+                        }
+                        else if(beat%(192/12)==0){
+                            col = ClientPrefs.arrowRGBQuantize[2][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[2][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[2][2];
+                        }
+                        else if(beat%(192/16)==0){
+                            col = ClientPrefs.arrowRGBQuantize[3][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[3][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[3][2];
+                        }
+                        else if(beat%(192/24)==0){
+                            col = ClientPrefs.arrowRGBQuantize[4][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[4][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[4][2];
+                        }
+                        else if(beat%(192/32)==0){
+                            col = ClientPrefs.arrowRGBQuantize[5][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[5][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[5][2];
+                        }
+                        else if(beat%(192/48)==0){
+                            col = ClientPrefs.arrowRGBQuantize[6][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[6][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[6][2];
+                        }
+                        else if(beat%(192/64)==0){
+                            col = ClientPrefs.arrowRGBQuantize[7][0];
+                            col3 = ClientPrefs.arrowRGBQuantize[7][1];
+                            col2 = ClientPrefs.arrowRGBQuantize[7][2];
+                        }else{
+                            col = 0xFF7C7C7C;
+                            col3 = 0xFFFFFFFF;
+                            col2 = 0xFF3A3A3A;
+                        }
+                        note.rgbShader.r = col;
+                        note.rgbShader.g = col3;
+                        note.rgbShader.b = col2;
+                
+                    }else{
+                        note.rgbShader.r = note.prevNote.rgbShader.r;
+                        note.rgbShader.g = note.prevNote.rgbShader.g;
+                        note.rgbShader.b = note.prevNote.rgbShader.b;  
+                    }
+                }
+            }
+            for (this2 in opponentStrums)
+            {
+                this2.rgbShader.r = 0xFFFFFFFF;
+                this2.rgbShader.b = 0xFF000000;  
+                this2.rgbShader.enabled = false;
+            }
+            for (this2 in playerStrums)
+            {
+                this2.rgbShader.r = 0xFFFFFFFF;
+                this2.rgbShader.b = 0xFF000000;  
+                this2.rgbShader.enabled = false;
+            }
+        }
 
+    private function round(num:Float, numDecimalPlaces:Int){
+        var mult = 10^numDecimalPlaces;
+        return Math.floor(num * mult + 0.5) / mult;
+    }
+
+    function noteQuantUpdatePost()
+        {
+            for (this2 in playerStrums){
+                if (this2.animation.curAnim.name == 'static'){
+                    this2.rgbShader.r = 0xFF808080;
+                    this2.rgbShader.b = 0xFFFFFFFF;
+                }
+            }
+        }
+
+    var animSkins:Array<String> = ['ITHIT', 'MANIAHIT', 'STEPMANIA', 'NOTITG'];
+
+    var lastStepHit:Int = -1;
+    override function stepHit()
+    {
+        super.stepHit();
+
+        if(curStep == lastStepHit) {
+            return;
+        }
+        for (i in 0... animSkins.length){
+            if (ClientPrefs.noteSkin[0].contains(animSkins[i])){
+                if (curStep % 4 == 0){
+                    for (this2 in opponentStrums)
+                    {
+                        if (this2.animation.curAnim.name == 'static'){
+                            this2.rgbShader.r = 0xFF808080;
+                            this2.rgbShader.b = 0xFF474747;
+                            this2.rgbShader.enabled = true;
+                        }
+                    }
+                    for (this2 in playerStrums)
+                    {
+                        if (this2.animation.curAnim.name == 'static'){
+                            this2.rgbShader.r = 0xFF808080;
+                            this2.rgbShader.b = 0xFF474747;
+                            this2.rgbShader.enabled = true;
+                        }
+                    }
+                }else if (curStep % 4 == 1){
+                    for (this2 in opponentStrums)
+                    {
+                        if (this2.animation.curAnim.name == 'static'){ 
+                            this2.rgbShader.enabled = false;
+                        }
+                    }
+                    for (this2 in playerStrums)
+                    {
+                        if (this2.animation.curAnim.name == 'static'){
+                            this2.rgbShader.enabled = false;
+                        }
+                    }
+                }
+            }
+        }
+        lastStepHit = curStep;
+    }
 
     public static function createGrid(CellWidth:Int, CellHeight:Int, Width:Int, Height:Int):BitmapData
     {

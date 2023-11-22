@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="HURT-ALERTNOTE_assets.png">
+<SubTexture name="purple0000" x="0" y="0" width="152" height="138" frameX="-9" frameY="-11" frameWidth="158" frameHeight="158" />
+<SubTexture name="blue0000" x="0" y="0" width="152" height="138" frameX="-9" frameY="-11" frameWidth="158" frameHeight="158" />
+<SubTexture name="green0000" x="0" y="0" width="152" height="138" frameX="-9" frameY="-11" frameWidth="158" frameHeight="158" />
+<SubTexture name="red0000" x="0" y="0" width="152" height="138" frameX="-9" frameY="-11" frameWidth="158" frameHeight="158" />
+<SubTexture name="purple hold piece00000000" x="152" y="72" width="92" height="53" frameX="-9" frameY="0" frameWidth="100" frameHeight="43" />
+<SubTexture name="pruple end hold00000000" x="152" y="0" width="92" height="72" frameX="-9" frameY="0" frameWidth="100" frameHeight="62" />
+<SubTexture name="blue hold piece00000000" x="152" y="72" width="92" height="53" frameX="-9" frameY="0" frameWidth="100" frameHeight="43" />
+<SubTexture name="blue hold end00000000" x="152" y="0" width="92" height="72" frameX="-9" frameY="0" frameWidth="100" frameHeight="62" />
+<SubTexture name="green hold piece00000000" x="152" y="72" width="92" height="53" frameX="-9" frameY="0" frameWidth="100" frameHeight="43" />
+<SubTexture name="green hold end00000000" x="152" y="0" width="92" height="72" frameX="-9" frameY="0" frameWidth="100" frameHeight="62" />
+<SubTexture name="red hold piece00000000" x="152" y="72" width="92" height="53" frameX="-9" frameY="0" frameWidth="100" frameHeight="43" />
+<SubTexture name="red hold end00000000" x="152" y="0" width="92" height="72" frameX="-9" frameY="0" frameWidth="100" frameHeight="62" />
+</TextureAtlas>

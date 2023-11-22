@@ -58,7 +58,7 @@ class HurtsSubState extends MusicBeatSubstate
 
 	//skins stuff lol
 	public var skinIndicator:FlxText;
-	var skins:Array<String> = ['HITMANS', 'INHUMAN', 'FNF', 'ITHIT', 'MANIAHIT', 'FUTURE', 'CIRCLE', 'STEPMANIA', 'NOTITG']; //There must be a better way but for now with this im okay -Ed
+	var skins:Array<String> = ['MIMIC', 'ALERT', 'MINE', 'CORRUPT']; //There must be a better way but for now with this im okay -Ed
 	private static var curNum:Int = 0;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
@@ -200,26 +200,16 @@ class HurtsSubState extends MusicBeatSubstate
 		hexTypeLine.visible = false;
 		add(hexTypeLine);
 
-		switch (ClientPrefs.noteSkin)
+		switch (ClientPrefs.noteSkin[1])
 		{
-			case 'HITMANS':
+			case 'MIMIC':
 				noteSkinInt = 0;
-			case 'INHUMAN':
+			case 'ALERT':
 				noteSkinInt = 1;
-			case 'FNF':
+			case 'MINE':
 				noteSkinInt = 2;
-			case 'ITHIT':
+			case 'CORRUPT':
 				noteSkinInt = 3;
-			case 'MANIAHIT':
-				noteSkinInt = 4;
-			case 'FUTURE':
-				noteSkinInt = 5;
-			case 'CIRLCE':
-				noteSkinInt = 6;
-			case 'STEPMANIA':
-				noteSkinInt = 7;
-			case 'NOTITG':
-				noteSkinInt = 8;
 		}
 
 		onChangeSkin(noteSkinInt);
@@ -636,7 +626,7 @@ class HurtsSubState extends MusicBeatSubstate
 		if (curNum >= skins.length)
 			curNum = 0;
 
-		ClientPrefs.noteSkin = skins[curNum];
+		ClientPrefs.noteSkin[1] = skins[curNum];
 		skinIndicator.text = skins[curNum];
 	}
 	
@@ -710,6 +700,8 @@ class HurtsSubState extends MusicBeatSubstate
 		}
 
 		bigNote = new Note(0, 0, false, true);
+		if (ClientPrefs.noteSkin[1] != 'MIMIC')
+			bigNote.noteType = 'HurtAgressive';
 		bigNote.setPosition(250, 325);
 		bigNote.setGraphicSize(250);
 		bigNote.updateHitbox();

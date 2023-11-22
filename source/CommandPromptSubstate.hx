@@ -901,7 +901,9 @@ class CommandPromptSubstate extends MusicBeatSubstate
 
 			if(resetting)
 				{
-					ClientPrefs.noteSkin = 'HITMANS';
+					ClientPrefs.noteSkin[0] = 'HITMANS';
+					ClientPrefs.noteSkin[1] = 'MIMIC';
+					ClientPrefs.noteSkin[2] = 'HIT';
 					ClientPrefs.hudStyle = 'HITMANS';
 					ClientPrefs.downScroll = false;
 					ClientPrefs.middleScroll = true;
