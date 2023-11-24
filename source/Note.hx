@@ -265,7 +265,7 @@ class Note extends FlxSkewedSprite{
 				case 'Instakill Note':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-					reloadNote('INSTAKILL');
+					reloadNote('', 'Skins/Notes/INSTAKILLNOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'INSTAKILLNOTE_assets';
 					lowPriority = true;
@@ -287,7 +287,7 @@ class Note extends FlxSkewedSprite{
 				case 'Mine Note':
 					ignoreNote = mustPress;
 					isRoll = false;
-					reloadNote('MINE');
+					reloadNote('', 'Skins/Misc/'+ClientPrefs.noteSkin[2]+'/MINENOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'MINENOTE_assets';
 					lowPriority = true;
@@ -302,7 +302,7 @@ class Note extends FlxSkewedSprite{
 					//maybe in a future i'll port it to Haxe lmao -Ed
 				case 'HD Note':
 					usedDifferentWidth = true;
-					reloadNote('HD');
+					reloadNote('', 'Skins/Notes/HDNOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'HDNOTE_assets';
 					if(isSustainNote) {
@@ -315,7 +315,7 @@ class Note extends FlxSkewedSprite{
 				case 'Love Note':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-					reloadNote('LOVE');
+					reloadNote('', 'Skins/Notes/LOVENOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'LOVENOTE_assets';
 					if (!edwhakIsPlayer){
@@ -336,7 +336,7 @@ class Note extends FlxSkewedSprite{
 				case 'Fire Note':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-					reloadNote('FIRE');
+					reloadNote('', 'Skins/Notes/FIRENOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'FIRENOTE_assets';
 					if (!edwhakIsPlayer){
@@ -358,7 +358,7 @@ class Note extends FlxSkewedSprite{
 				case 'True Love Note':
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
-					reloadNote('TLOVE');
+					reloadNote('', 'Skins/Notes/TLOVENOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'TLOVENOTE_assets';
 					if (!edwhakIsPlayer){

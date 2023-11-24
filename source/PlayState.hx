@@ -3630,6 +3630,19 @@ class PlayState extends MusicBeatState
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
+				#if ACHIEVEMENTS_ALLOWED
+				Achievements.totalDeaths++;
+				FlxG.save.data.totalDeaths = Achievements.totalDeaths;
+				var achieve:String = checkForAchievement(['Inmortal']);
+				if (achieve != null) {
+					startAchievement(achieve);
+				} else {
+					FlxG.save.flush();
+				}
+				FlxG.log.add('Deaths: ' + Achievements.totalDeaths);
+				trace('Deaths: ' + Achievements.totalDeaths);
+				#end
+
 				#if desktop
 				// Game Over doesn't get his own variable because it's only used here
 				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
@@ -5097,8 +5110,8 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								deathVariableTXT = 'Hurts';
 							}
+							deathVariableTXT = 'Hurts';
 						}
 						case 'Invisible Hurt Note': //what you can't see but it still damage you lmao
 						if (canChange)
@@ -5106,8 +5119,8 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								deathVariableTXT = 'Hurts';
 							}
+							deathVariableTXT = 'Hurts';
 						}
 						case 'HurtAgressive': //agressive hurts that cause more damage
 						if (canChange)
@@ -5115,8 +5128,8 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								deathVariableTXT = 'Hurts';
 							}
+							deathVariableTXT = 'Hurts';
 						}
 						case 'Mimic Note': //hurts but similar to notes
 						if (canChange)
@@ -5124,8 +5137,8 @@ class PlayState extends MusicBeatState
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
-								deathVariableTXT = 'Hurts';
 							}
+							deathVariableTXT = 'Hurts';
 						}
 					}
 				}
@@ -5600,18 +5613,6 @@ class PlayState extends MusicBeatState
 				limoCorpse.visible = false;
 				limoCorpseTwo.visible = false;
 				limoKillingState = 1;
-
-				#if ACHIEVEMENTS_ALLOWED
-				Achievements.henchmenDeath++;
-				FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
-				var achieve:String = checkForAchievement(['roadkill_enthusiast']);
-				if (achieve != null) {
-					startAchievement(achieve);
-				} else {
-					FlxG.save.flush();
-				}
-				FlxG.log.add('Deaths: ' + Achievements.henchmenDeath);
-				#end
 			}
 		}
 	}
@@ -5930,43 +5931,16 @@ class PlayState extends MusicBeatState
 				}
 				switch(achievementName)
 				{
-					case 'ur_bad':
+					case 'massacred':
 						if(ratingPercent < 0.2 && !practiceMode) {
 							unlock = true;
 						}
-					case 'ur_good':
+					case 'hitman':
 						if(ratingPercent >= 1 && !usedPractice) {
 							unlock = true;
 						}
-					case 'roadkill_enthusiast':
-						if(Achievements.henchmenDeath >= 100) {
-							unlock = true;
-						}
-					case 'oversinging':
-						if(boyfriend.holdTimer >= 10 && !usedPractice) {
-							unlock = true;
-						}
-					case 'hype':
-						if(!boyfriendIdled && !usedPractice) {
-							unlock = true;
-						}
-					case 'two_keys':
-						if(!usedPractice) {
-							var howManyPresses:Int = 0;
-							for (j in 0...keysPressed.length) {
-								if(keysPressed[j]) howManyPresses++;
-							}
-
-							if(howManyPresses <= 2) {
-								unlock = true;
-							}
-						}
-					case 'toastie':
-						if(/*ClientPrefs.framerate <= 60 &&*/ !ClientPrefs.shaders && ClientPrefs.lowQuality && !ClientPrefs.globalAntialiasing) {
-							unlock = true;
-						}
-					case 'debugger':
-						if(Paths.formatToSongPath(SONG.song) == 'test' && !usedPractice) {
+					case 'inmortal':
+						if(Achievements.totalDeaths >= 100) {
 							unlock = true;
 						}
 				}

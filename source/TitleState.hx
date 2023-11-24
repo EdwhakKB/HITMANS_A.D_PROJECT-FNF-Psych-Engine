@@ -647,14 +647,6 @@ class TitleState extends MusicBeatState
 			}
 			FlxTween.tween(logoBl, {alpha: 1}, 1, {ease: FlxEase.smoothStepIn});
 			dacursor = new DemoTextCursor(0, 0);
-			var settingsTbox:Settings = new Settings
-			(
-				FlxAssets.FONT_DEFAULT,
-				24,
-				Std.int(FlxG.width * 0.8),
-				FlxColor.WHITE,
-				4
-			);
 			var settingsTbox:Settings = new Settings(
 				FlxAssets.FONT_DEFAULT,
 				16,

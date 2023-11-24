@@ -128,7 +128,7 @@ class QuantSubState extends MusicBeatSubstate
 		text.setScale(0.4);
 		add(text);
 
-		skinIndicator = new FlxText(280, 20, 0, "SkinName", 56);
+		skinIndicator = new FlxText(260, 20, 0, ClientPrefs.noteSkin[0], 56);
 		skinIndicator.setFormat(Paths.font("DEADLY KILLERS.ttf"), 56, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		skinIndicator.borderSize = 2;
 		add(skinIndicator);
@@ -622,7 +622,7 @@ class QuantSubState extends MusicBeatSubstate
 		var res:Int = 160;
 		for (i in 0...3)
 		{
-			var newNote:FlxSprite = new FlxSprite(230 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/note'), true, res, res);
+			var newNote:FlxSprite = new FlxSprite(210 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/note'), true, res, res);
 			newNote.antialiasing = ClientPrefs.globalAntialiasing;
 			newNote.setGraphicSize(85);
 			newNote.updateHitbox();
@@ -636,7 +636,7 @@ class QuantSubState extends MusicBeatSubstate
 		for (i in 0...dataArray.length)
 		{
 			Note.initializeGlobalQuantRBShader(i);
-			var newNote:StrumNote = new StrumNote(50 + (680 / dataArray.length * i), 200, i, 0, true);
+			var newNote:StrumNote = new StrumNote(10 + (680 / dataArray.length * i), 200, i, 0, true);
 			newNote.useRGBShader = true;
 			newNote.setGraphicSize(102);
 			newNote.updateHitbox();

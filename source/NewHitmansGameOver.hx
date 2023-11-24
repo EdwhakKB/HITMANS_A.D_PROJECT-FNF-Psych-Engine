@@ -16,7 +16,10 @@ import flixel.util.FlxSave;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import Song.SwagSong;
+import Note;
 
+import textbox.*;
+import flixel.system.FlxAssets;
 //make more than one wasn't that easy but i like the idea lmao -Ed
 
 class NewHitmansGameOver extends MusicBeatSubstate
@@ -26,6 +29,30 @@ class NewHitmansGameOver extends MusicBeatSubstate
 	public static var endSoundName:String = 'inhuman_gameOverEnd';
     public static var characterName = 'Enemy';  //Character = (SONG.player2);
 
+    //WOOOOOO THE TEXT BOX!
+	var dacursor:TextBoxCursor;
+	var cursorTween:FlxTween;
+
+    //some settings that will make all text go easier ig?
+    var settingsTbox:Settings = new Settings(
+        Paths.font("kremlin.ttf"),
+        30,
+        Std.int(FlxG.width * 0.6),
+        FlxColor.WHITE,
+        3,
+        12
+    );
+    //for small stuff in textBox (such as killed by and died to)
+    var settingsTbox2:Settings = new Settings
+    (
+        Paths.font("kremlin.ttf"),
+        45,
+        Std.int(FlxG.width * 0.6),
+        FlxColor.RED,
+        3,
+        24
+    );
+    
     var camHUD:FlxCamera;
     var retry:FlxSprite;
     var youdied:FlxText;
@@ -43,19 +70,19 @@ class NewHitmansGameOver extends MusicBeatSubstate
     var skiped:Bool = false; //to enable player see the end part lol
     var enableRestart:Bool = false;
 
-    public var diedToAnote:FlxText;
-    public var killedByCharacter:FlxText;
+    public var diedToAnote:Textbox;
+    public var killedByCharacter:Textbox;
     public static var deathCounter:Int = 0;
     public static var deathVariable:String = 'notes';
     //help MEEEEEEE! -Ed
     //added a lot since now game loads every Helper as different shits so...  yeah!
 
     //global so i can set the "Show all deaths" shit
-    public var text1:FlxText;
-    public var text2:FlxText;
-    public var text3:FlxText;
-    public var text4:FlxText;
-    public var text5:FlxText;
+    public var text1:Textbox;
+    public var text2:Textbox;
+    public var text3:Textbox;
+    public var text4:Textbox;
+    public var text5:Textbox;
     //Separated since yeah idk a fucking better way to do this -Ed
     var runTimer1:Bool = false;
 
@@ -67,7 +94,8 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
     public var tauntNum:Int = 0;
 
-    public var deathSprite:FlxSprite;
+    public var deathSprite:Note;
+    public var imageDeath:FlxSprite;
     public var noteWhoKilled:String = 'NOTE';
     public var killedByANote:Bool = true;
     public var yOffset:Int = 0;
@@ -104,22 +132,17 @@ class NewHitmansGameOver extends MusicBeatSubstate
         if(deathVariable == 'Notes' ){
             noteWhoKilled = 'NOTE';
         }else if(deathVariable == 'Hurts' ){
-            noteWhoKilled = 'HURTNOTE';
+            noteWhoKilled = 'HurtAgressive';
         }else if(deathVariable == 'Instakill' ){
-            noteWhoKilled = 'INSTAKILLNOTE';
-            yOffset -= 80;
+            noteWhoKilled = 'Instakill Note';
         }else if(deathVariable == 'Mine' ){
-            noteWhoKilled = 'MINENOTE';
-        }else if(deathVariable == 'Ice' ){
-            noteWhoKilled = 'ICENOTE';
+            noteWhoKilled = 'Mine Note';
         }else if(deathVariable == 'Love' ){
-            noteWhoKilled = 'LOVENOTE';
-            yOffset -= 80;
-        }else if(deathVariable == 'Corrupted' ){
-            noteWhoKilled = 'GLITCHNOTE';
+            noteWhoKilled = 'Love Note';
         }else if(deathVariable == 'HD' ){
-            noteWhoKilled = 'HDNOTE';
-            yOffset -= 80;
+            noteWhoKilled = 'HD Note';
+        }else if(deathVariable == 'Fire' ){
+            noteWhoKilled = 'Fire Note';
         }else if(deathVariable == 'TV' ){
             killedByANote = false;
         }else if(deathVariable == 'ALERTS' ){
@@ -137,15 +160,17 @@ class NewHitmansGameOver extends MusicBeatSubstate
         FlxG.cameras.add(camHUD);
         FlxCamera.defaultCameras = [camHUD];
 
-        deathSprite = new FlxSprite(770,0);
-        deathSprite.frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.noteSkin[0]+'/'+noteWhoKilled+'_assets', 'shared');
+        deathSprite = new Note(0, 0, false, true);
+        if (killedByANote && deathVariable != 'Notes'){
+            deathSprite.noteType = noteWhoKilled; //WHY I NEVER THINK ABOUT THIS LMAO
+        }
+        deathSprite.setPosition(830,0);
         deathSprite.animation.addByPrefix('note', 'green0', 24, true);
         deathSprite.animation.play('note');
         deathSprite.scale.y = 1.5;
         deathSprite.scale.x = 1.5;
         deathSprite.angle = 6;
         deathSprite.screenCenter(Y);
-        deathSprite.y += yOffset;
         if (!killedByANote){
             deathSprite.alpha = 0;
         }
@@ -183,53 +208,37 @@ class NewHitmansGameOver extends MusicBeatSubstate
         panel.antialiasing = ClientPrefs.globalAntialiasing;
         add(panel);
 
-        diedToAnote = new FlxText(80, 150, Std.int(FlxG.width * 0.6), "", 90);
-        diedToAnote.setFormat(Paths.font("DEADLY KILLERS.ttf"), 90, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-        diedToAnote.borderSize = 2;
+        diedToAnote = new Textbox(80, 150, settingsTbox2);
 		diedToAnote.alpha = 1;
 		add(diedToAnote);
 
-        killedByCharacter = new FlxText(80, 550, Std.int(FlxG.width * 0.6), "Killed By", 60);
-        killedByCharacter.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-        killedByCharacter.borderSize = 2;
+        killedByCharacter = new Textbox(80, 550, settingsTbox2);
 		killedByCharacter.alpha = 1;
 		add(killedByCharacter);
 
-        text1 = new FlxText(80, 250, Std.int(FlxG.width * 0.6), "-", 60);
-        text1.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-        text1.borderSize = 2;
+        text1 = new Textbox(80, 250, settingsTbox);
 		text1.alpha = 1;
 		add(text1);
 
-        text2 = new FlxText(80, 300, Std.int(FlxG.width * 0.6), "-", 60);
-        text2.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-        text2.borderSize = 2;
+        text2 = new Textbox(80, 300, settingsTbox);
 		text2.alpha = 1;
 		add(text2);
 
-        text3 = new FlxText(80, 350, Std.int(FlxG.width * 0.6), "-", 60);
-        text3.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-        text3.borderSize = 2;
+        text3 = new Textbox(80, 350, settingsTbox);
 		text3.alpha = 1;
 		add(text3);
 
-        text4 = new FlxText(80, 400, Std.int(FlxG.width * 0.6), "-", 60);
-        text4.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-        text4.borderSize = 2;
+        text4 = new Textbox(80, 400, settingsTbox);
 		text4.alpha = 1;
 		add(text4);
 
-        text5 = new FlxText(80, 450, Std.int(FlxG.width * 0.6), "-", 60);
-        text5.setFormat(Paths.font("DEADLY KILLERS.ttf"), 60, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-        text5.borderSize = 2;
+        text5 = new Textbox(80, 450, settingsTbox);
 		text5.alpha = 1;
 		add(text5);
 
-        tauntPanel = new FlxSprite(300, 380).loadGraphic(Paths.getPath('images/Edwhak/Hitmans/newGameOver/DeathPanel.png', IMAGE));
-        tauntPanel.scale.y = 0.4;
-        tauntPanel.scale.x = 0.4;
-        tauntPanel.antialiasing = ClientPrefs.globalAntialiasing;
-        add(tauntPanel);
+        dacursor = new TextBoxCursor(0, 0);
+        dacursor.alpha = 0;
+		add(dacursor);
 
         retry = new FlxSprite();
         retry.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/retry');
@@ -238,8 +247,8 @@ class NewHitmansGameOver extends MusicBeatSubstate
         retry.animation.addByPrefix('idle', "gameover-retry-loop", 2, true);
         retry.setGraphicSize(Std.int(retry.width * 0.375));
 		retry.screenCenter();
-		retry.x = 560;
-		retry.y = 540;
+		retry.x = 380;
+		retry.y = 570;
 		retry.antialiasing = ClientPrefs.globalAntialiasing;
         add(retry);
 		retry.alpha=0;
@@ -266,8 +275,18 @@ class NewHitmansGameOver extends MusicBeatSubstate
         offEffect.antialiasing = ClientPrefs.globalAntialiasing;
         add(offEffect);
 
-        youdied = new FlxText(0, 450, Std.int(FlxG.width * 0.8), "CONNECTION TERMINATED", 120);
-        youdied.setFormat(Paths.font("kremlin.ttf"), 120, 0xff5a5858, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+        imageDeath = new FlxSprite();
+        imageDeath.loadGraphic(Paths.image('hitmans/death/' + characterName.toLowerCase()));
+        if(imageDeath.graphic == null) //if no graphic was loaded, then load the placeholder
+            imageDeath.loadGraphic(Paths.image('hitmans/death/dawperKill'));
+        imageDeath.screenCenter(XY);
+        imageDeath.scale.set(0.62,0.62);
+        imageDeath.alpha = 0;
+        imageDeath.antialiasing = ClientPrefs.globalAntialiasing;
+        add(imageDeath);
+
+        youdied = new FlxText(0, 450, Std.int(FlxG.width*1.5), "CONNECTION TERMINATED", 120);
+        youdied.setFormat(Paths.font("kremlin.ttf"), 120, 0xff5a5858, CENTER);
         youdied.screenCenter();
         youdied.alpha = 0;
         youdied.antialiasing = ClientPrefs.globalAntialiasing;
@@ -294,11 +313,12 @@ class NewHitmansGameOver extends MusicBeatSubstate
         // new FlxTimer().start(1, function(tmr:FlxTimer){
         //     FlxTween.tween(offEffect, {alpha: 0}, 1, {ease:FlxEase.smoothStepIn});
         // });
-		Conductor.bpm = 115.0;
+		Conductor.bpm = 148;
 
 		new FlxTimer().start(3, function(tmr:FlxTimer)
 		{
-			FlxG.sound.play(Paths.sound(loopSoundName), 0.1);
+			FlxG.sound.playMusic(Paths.sound(loopSoundName), 0, false);
+            FlxG.sound.music.fadeIn(16, 0, 0.8);
 			musicplaying=true;
             runTimer1 = true;
 		});
@@ -310,89 +330,72 @@ class NewHitmansGameOver extends MusicBeatSubstate
                 FlxTween.tween(tvEffect, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepIn});
             });
         });
-	}
-    var elapsedTime:Float = 0;
-    var characterFor:Int = 0;
-	override function update(elapsed:Float)
-	{
-		super.update(elapsed);
 
-		if (musicplaying && FlxG.sound.music.volume < 1.0)
-		{
-			FlxG.sound.music.volume += 0.15 * FlxG.elapsed;
-		}
+        diedToAnote.setText(deathVariable);
+        killedByCharacter.setText("Killed by " + characterName.toUpperCase());
 
-        diedToAnote.text = deathVariable;
-        killedByCharacter.text = "Killed by " + characterName;
-
-        switch (deathVariable)
+        switch (diedTo)
         {
             case 'Notes':
-                text1.text = "-The usual notes";
-                text2.text = "-Hit them to gain life";
-                text3.text = "-Don't miss them";
-                text4.text = "-They appear in all songs";
-                text5.text = "-Good luck next time";
+                text1.setText("-The usual notes");
+                text2.setText("-Hit them to gain life");
+                text3.setText("-Don't miss them");
+                text4.setText("-They appear in all songs");
+                text5.setText("-Good luck next time");
             case 'Hurts':
-                text1.text = "-The Damage Notes";
-                text2.text = "-DO NOT hit them";
-                text3.text = "-They're skin its mostly red";
-                text4.text = "-They only appears in easy chart songs";
-                text5.text = "-You got this, try again";
+                text1.setText("-The Damage Notes");
+                text2.setText("-DO NOT hit them");
+                text3.setText("-They're skin its mostly red");
+                text4.setText("-They only appears in easy chart songs");
+                text5.setText("-You got this, try again");
             case 'Instakill':
-                text1.text = "-The Killbot notes";
-                text2.text = "-DO NOT TOUCH";
-                text3.text = "-Any hit of those notes will kill";
-                text4.text = "-Mostly appears in Edwhak songs";
-                text5.text = "-Don't get distracted, you can do it";
+                text1.setText("-The Killbot notes");
+                text2.setText("-DO NOT TOUCH");
+                text3.setText("-Any hit of those notes will kill");
+                text4.setText("-Mostly appears in Edwhak songs");
+                text5.setText("-Don't get distracted, you can do it");
             case 'Mine':
-                text1.text = "-The Boom Notes";
-                text2.text = "-Hit them will cause a lot of damage";
-                text3.text = "-Evade the most as possible";
-                text4.text = "-They only appears in hard charts";
-                text5.text = "-Focus, concentrate";
-            case 'Ice':
-                text1.text = "-The Frost notes";
-                text2.text = "-Any hit disables your strums";
-                text3.text = "-Lethal when hard charts";
-                text4.text = "-They appear in all Anby songs";
-                text5.text = "-You can beat this, try again";
+                text1.setText("-The Boom Notes");
+                text2.setText("-Hit them will cause a lot of damage");
+                text3.setText("-Evade the most as possible");
+                text4.setText("-They only appears in hard charts");
+                text5.setText("-Focus, concentrate");
+            case 'Fire':
+                text1.setText("-The Fire notes");
+                text2.setText("-Any hit drains your life");
+                text3.setText("-Lethal when easy charts");
+                text4.setText("-They appear only vs santyax songs");
+                text5.setText("-Good luck next time");
             case 'Love':
-                text1.text = "-The Lovely note";
-                text2.text = "-If you aren't santyax they damage";
-                text3.text = "-Miss them in that case";
-                text4.text = "-Mainly used to help santyax";
-                text5.text = "-Do not fail in that false notes again";
-            case 'Corrupted':
-                text1.text = "-The Weird ones";
-                text2.text = "-More than 5 hits kills you";
-                text3.text = "-every hit change something";
-                text4.text = "-They appear in virus sections";
-                text5.text = "-Don't feel scared, you are strong";
+                text1.setText("-The Lovely note");
+                text2.setText("-If you aren't santyax they damage");
+                text3.setText("-Miss them in that case");
+                text4.setText("-Mainly used to help santyax");
+                text5.setText("-Do not fail in that false notes again");
             case 'HD':
-                text1.text = "-The Alert Notes";
-                text2.text = "-You need hit them";
-                text3.text = "-Any miss can be lethal";
-                text4.text = "-They appear in all songs";
-                text5.text = "-Be pattient, you'll get it soon";
+                text1.setText("-The Alert Notes");
+                text2.setText("-You need hit them");
+                text3.setText("-Any miss can be lethal");
+                text4.setText("-They appear in all songs");
+                text5.setText("-Be pattient, you'll get it soon");
             case 'TV':
-                text1.text = "-The Tv";
-                text2.text = "-You need follow the patern";
-                text3.text = "-you can fail 5 times";
-                text4.text = "-Used by Anby mainly";
-                text5.text = "-Never give up and you'll get it";
+                text1.setText("-The Tv");
+                text2.setText("-You need follow the patern");
+                text3.setText("-you can fail 5 times");
+                text4.setText("-Used by Anby mainly");
+                text5.setText("-Never give up and you'll get it");
             case 'ALERTS':
-                text1.text = "-The Ding Ding";
-                text2.text = "-Dodge when its needed";
-                text3.text = "-Be ultra carefull";
-                text4.text = "-Used by Edwhak mainly";
-                text5.text = "-Don't get nervous";
+                text1.setText("-The Ding Ding");
+                text2.setText("-Dodge when its needed");
+                text3.setText("-Be ultra carefull");
+                text4.setText("-Used by Edwhak mainly");
+                text5.setText("-Don't get nervous");
             case 'VISION':
-                text1.text = "-The Less vision";
-                text2.text = "-Will make your screen less visible";
-                text3.text = "-Remember focus in the notes";
-                text4.text = "-It can appear in Ak song mainly";
-                text5.text = "-Do not be scare of what you see";
+                text1.setText("-The Less vision");
+                text2.setText("-Will make your screen less visible");
+                text3.setText("-Remember focus in the notes");
+                text4.setText("-It can appear in Ak song mainly");
+                text5.setText("-Do not be scare of what you see");
         }
 
         switch (characterName)
@@ -577,6 +580,15 @@ class NewHitmansGameOver extends MusicBeatSubstate
                         taunt.text = "END OF THE REPORT";
                 }
         }
+	}
+    var elapsedTime:Float = 0;
+    var characterFor:Int = 0;
+	override function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		if (FlxG.sound.music != null && musicplaying)
+			Conductor.songPosition = FlxG.sound.music.time;
 
 		PlayState.instance.callOnLuas('onUpdate', [elapsed]);
         elapsedTime = elapsed;
@@ -592,15 +604,19 @@ class NewHitmansGameOver extends MusicBeatSubstate
             new FlxTimer().start(3, function(tmr3:FlxTimer)
             {
                 FlxTween.tween(youdied, {alpha: 1}, 1, {ease:FlxEase.smoothStepIn});
+                FlxTween.tween(imageDeath, {alpha: 0.5}, 1, {ease:FlxEase.smoothStepIn});
                 FlxTween.tween(taunt, {alpha: 1}, 1, {ease:FlxEase.smoothStepIn});
             });
             new FlxTimer().start(5, function(tmr4:FlxTimer)
             {
-                FlxTween.tween(youdied, {y: 5}, 1, {ease:FlxEase.smoothStepIn});
+                FlxTween.tween(youdied, {y: 5}, 1, {ease:FlxEase.backOut});
                 FlxTween.tween(taunt, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepIn});
+                FlxTween.tween(imageDeath, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepIn});
                 FlxTween.tween(offEffect, {alpha: 0}, 1, {ease:FlxEase.smoothStepIn});
-                retry.animation.play('start');
-                retry.alpha = 0.5;
+            });
+            new FlxTimer().start(6, function(tmr5:FlxTimer)
+            {
+                summongDeathTexts();
             });
         }
 
@@ -615,7 +631,8 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
 		if (controls.BACK)
 		{
-			FlxG.sound.music.stop();
+            if (FlxG.sound.music != null)
+			    FlxG.sound.music.stop();
 			PlayState.deathCounter = 0;
 			PlayState.seenCutscene = false;
 
@@ -624,14 +641,10 @@ class NewHitmansGameOver extends MusicBeatSubstate
 			else
 				MusicBeatState.switchState(new FreeplayState());
 
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			FlxG.sound.playMusic(Paths.music('bloodstained'));
 			PlayState.instance.callOnLuas('onGameOverConfirm', [false]);
 		}
 
-		if (FlxG.sound.music.playing)
-		{
-			Conductor.songPosition = FlxG.sound.music.time;
-		}
 		PlayState.instance.callOnLuas('onUpdatePost', [elapsed]);
 	}
 
@@ -651,14 +664,118 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
 	var isEnding:Bool = false;
 
+
+    function summongDeathTexts()
+    {
+        diedToAnote.bring();
+        dacursor.alpha = 1;
+		dacursor.attachToTextbox(diedToAnote);
+        killedByCharacter.statusChangeCallbacks.push(function(s:Textbox.Status):Void
+        {
+            if (s == Textbox.Status.DONE)
+            {
+                cursorTween = FlxTween.color(dacursor, 0.3, dacursor.color, FlxColor.TRANSPARENT,
+                    {
+                        type: FlxTweenType.PINGPONG,
+                        ease: FlxEase.cubeInOut
+                    }
+                );
+                retry.animation.play('start');
+                retry.alpha = 1;
+            }
+        });
+
+
+        diedToAnote.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
+        {
+            if (newStatus == Textbox.Status.FULL)
+            {
+                diedToAnote.continueWriting();
+            }
+            else if(newStatus == Textbox.Status.DONE)
+            {
+                dacursor.detachFromTextbox(diedToAnote);
+                dacursor.attachToTextbox(text1);
+                text1.bring();
+            }
+        });
+        text1.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
+        {
+            if (newStatus == Textbox.Status.FULL)
+            {
+                text1.continueWriting();
+            }
+            else if(newStatus == Textbox.Status.DONE)
+            {
+                dacursor.detachFromTextbox(text1);
+                dacursor.attachToTextbox(text2);
+                text2.bring();
+            }
+        });
+        text2.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
+        {
+            if (newStatus == Textbox.Status.FULL)
+            {
+                text2.continueWriting();
+            }
+            else if(newStatus == Textbox.Status.DONE)
+            {
+                dacursor.detachFromTextbox(text2);
+                dacursor.attachToTextbox(text3);
+                text3.bring();
+            }
+        });
+        text3.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
+        {
+            if (newStatus == Textbox.Status.FULL)
+            {
+                text3.continueWriting();
+            }
+            else if(newStatus == Textbox.Status.DONE)
+            {
+                dacursor.detachFromTextbox(text3);
+                dacursor.attachToTextbox(text4);
+                text4.bring();
+            }
+        });
+        text4.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
+        {
+            if (newStatus == Textbox.Status.FULL)
+            {
+                text4.continueWriting();
+            }
+            else if(newStatus == Textbox.Status.DONE)
+            {
+                dacursor.detachFromTextbox(text4);
+                dacursor.attachToTextbox(text5);
+                text5.bring();
+            }
+        });
+        text5.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
+        {
+            if (newStatus == Textbox.Status.FULL)
+            {
+                text5.continueWriting();
+            }
+            else if(newStatus == Textbox.Status.DONE)
+            {
+                dacursor.detachFromTextbox(text5);
+                dacursor.attachToTextbox(killedByCharacter);
+                killedByCharacter.bring();
+            }
+        });
+    }
+
+
 	function endBullshit():Void
     {
         if (!isEnding)
         {
 			remove(retry);
             isEnding = true;
-            FlxG.sound.music.stop();
-            FlxG.sound.play(Paths.music(endSoundName));
+            if (FlxG.sound.music != null)
+                FlxG.sound.music.stop();
+            // FlxG.sound.play(Paths.music(endSoundName));
             new FlxTimer().start(0.7, function(tmr:FlxTimer)
             {
                 camHUD.fade(FlxColor.BLACK, 2, false, function()
@@ -669,4 +786,43 @@ class NewHitmansGameOver extends MusicBeatSubstate
             PlayState.instance.callOnLuas('onGameOverConfirm', [true]);
         }
     }
+}
+
+class TextBoxCursor extends FlxSprite
+{
+	public override function new(X:Float, Y:Float)
+	{
+		super(X, Y);
+		makeGraphic(16, 8);
+
+		ownCharacterCallback = function(character:textbox.Text)
+		{
+			characterCallbackInternal(character);
+		};
+	}
+
+
+	public function attachToTextbox(textbox:Textbox)
+	{
+		textbox.characterDisplayCallbacks.push(ownCharacterCallback);
+	}
+
+	public function detachFromTextbox(textbox:Textbox)
+	{
+		textbox.characterDisplayCallbacks.remove(ownCharacterCallback);
+	}
+
+	private function characterCallbackInternal(character:textbox.Text)
+	{
+		x = character.x + character.width + 2;
+
+		// I noted an issue : the character height is 0 if targetting javascript.
+		if (character.text != " ")
+		{
+			y = character.y + character.height - 4;
+		}
+		color = character.color;
+	}
+
+	private var ownCharacterCallback:textbox.Text->Void = null;
 }

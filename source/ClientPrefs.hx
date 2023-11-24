@@ -24,7 +24,7 @@ class ClientPrefs {
     public static var countDownSounds:Array<String> = ["intro3", "intro2", "intro1", "introGo"];
     public static var ratingStyle:Array<Dynamic> = ["", null];
     public static var memoryDisplay:Bool = true;
-	public static var noteSkin:Array<String> = ['HITMANS', 'MIMIC', 'HIT'];
+	public static var noteSkin:Array<String> = ['HITMANS', 'MIMIC', 'HITMANS'];
 	public static var splashSkin:String = 'HITMANS';
 	public static var userName:String = '';
 	public static var isLogged:Bool = false;
@@ -183,7 +183,7 @@ class ClientPrefs {
 		FlxG.save.data.healthBarAlpha = healthBarAlpha;
 		FlxG.save.data.comboOffset = comboOffset;
 		FlxG.save.data.achievementsMap = Achievements.achievementsMap;
-		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
+		FlxG.save.data.totalDeaths = Achievements.totalDeaths;
 
 		FlxG.save.data.ratingOffset = ratingOffset;
 		FlxG.save.data.marvelousWindow = marvelousWindow;

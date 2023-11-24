@@ -730,7 +730,8 @@ class EditorPlayState extends MusicBeatState
 							sortedNotesList.push(daNote);
 							//notesDatas.push(daNote.noteData);
 						}
-						canMiss = true;
+						if (!daNote.isSustainNote)
+							canMiss = true;
 					}
 				});
 				sortedNotesList.sort(sortHitNotes);
@@ -950,21 +951,26 @@ class EditorPlayState extends MusicBeatState
 		var rating:FlxSprite = new FlxSprite();
 		//var score:Int = 350;
 
-		var daRating:String = "sick";
+		var daRating:String = "marvelous";
 
-		if (noteDiff > Conductor.safeZoneOffset * 0.75)
+		if (noteDiff > Conductor.safeZoneOffset * 0.8)
 		{
 			daRating = 'shit';
 			//score = 50;
 		}
-		else if (noteDiff > Conductor.safeZoneOffset * 0.5)
+		else if (noteDiff > Conductor.safeZoneOffset * 0.6)
 		{
 			daRating = 'bad';
 			//score = 100;
 		}
-		else if (noteDiff > Conductor.safeZoneOffset * 0.25)
+		else if (noteDiff > Conductor.safeZoneOffset * 0.4)
 		{
 			daRating = 'good';
+			//score = 200;
+		}
+		else if (noteDiff > Conductor.safeZoneOffset * 0.2)
+		{
+			daRating = 'sick';
 			//score = 200;
 		}
 
