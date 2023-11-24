@@ -287,7 +287,7 @@ class Note extends FlxSkewedSprite{
 				case 'Mine Note':
 					ignoreNote = mustPress;
 					isRoll = false;
-					reloadNote('', 'Skins/Misc/'+ClientPrefs.noteSkin[2]+'/MINENOTE_assets');
+					reloadNote('', 'Skins/Misc/ITHIT/MINENOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'MINENOTE_assets';
 					lowPriority = true;
