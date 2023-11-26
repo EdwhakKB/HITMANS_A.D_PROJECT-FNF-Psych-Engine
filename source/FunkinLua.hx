@@ -2988,10 +2988,7 @@ class FunkinLua {
                 lime.app.Application.current.window.alert("shader broken:\n"+classString+" is non existent","Hitmans Corps!");
             }
         });
-        Lua_helper.add_callback(lua,"setActorShader", function(actorStr:String, shaderName:String, ?hardCoded:Bool) {
-            if (!ClientPrefs.shaders && !hardCoded)
-                return;
-
+        Lua_helper.add_callback(lua,"setActorShader", function(actorStr:String, shaderName:String) {
             var shad = lua_Shaders.get(shaderName);
             var actor = getActorByName(actorStr);
             
@@ -3002,24 +2999,24 @@ class FunkinLua {
 
                 //trace('added shader '+shaderName+" to " + actorStr);
 
-            }
+            }else if(actor == null && shad == null){
+				return;
+			}
         });
 
-        Lua_helper.add_callback(lua, "setShaderProperty", function(shaderName:String, prop:String, value:Dynamic, ?hardCoded:Bool) {
-            if (!ClientPrefs.shaders && !hardCoded)
-                return;
+        Lua_helper.add_callback(lua, "setShaderProperty", function(shaderName:String, prop:String, value:Dynamic) {
             var shad = lua_Shaders.get(shaderName);
 
             if(shad != null)
             {
                 Reflect.setProperty(shad, prop, value);
                 //trace('set shader prop');
-            }
+            }else if (shad == null){
+				return;
+			}
         });
 
-        Lua_helper.add_callback(lua,"tweenShaderProperty", function(shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear", ?hardCoded:Bool) {
-            if (!ClientPrefs.shaders && !hardCoded)
-                return;
+        Lua_helper.add_callback(lua,"tweenShaderProperty", function(shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear") {
             var shad = lua_Shaders.get(shaderName);
             var ease = getFlxEaseByString(easeStr);
 
@@ -3034,12 +3031,12 @@ class FunkinLua {
 					Reflect.setProperty(shad, prop, value);
 				}});
                 //trace('set shader prop');
-            }
+			}else if(shad == null){
+				return;
+			}
         });
 
-		Lua_helper.add_callback(lua,"setCameraShader", function(camStr:String, shaderName:String, ?hardCoded:Bool) {
-            if (!ClientPrefs.shaders && !hardCoded)
-                return;
+		Lua_helper.add_callback(lua,"setCameraShader", function(camStr:String, shaderName:String) {
             var cam = getCameraByName(camStr);
             var shad = lua_Shaders.get(shaderName);
 
@@ -3049,11 +3046,11 @@ class FunkinLua {
                 cam.shaderNames.push(shaderName);
                 cam.cam.setFilters(cam.shaders);
                 //trace('added shader '+shaderName+" to " + camStr);
-            }
+			}else if(cam == null && shad == null){
+				return;
+			}
         });
-        Lua_helper.add_callback(lua,"removeCameraShader", function(camStr:String, shaderName:String, ?hardCoded:Bool) {
-            if (!ClientPrefs.shaders && !hardCoded)
-                return;
+        Lua_helper.add_callback(lua,"removeCameraShader", function(camStr:String, shaderName:String) {
             var cam = getCameraByName(camStr);
             if (cam != null)
             {

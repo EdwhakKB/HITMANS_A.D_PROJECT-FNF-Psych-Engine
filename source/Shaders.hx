@@ -26,6 +26,361 @@ class ShaderEffectNew
     }
 }
 
+class SlashEffect extends ShaderEffectNew
+{
+    public var shader(default,null):SlashShader = new SlashShader();
+
+    public var xrot1(default, set):Float = 0;
+    public var yrot1(default, set):Float = 0;
+    public var zrot1(default, set):Float = 0;
+    public var xpos1(default, set):Float = 0;
+    public var ypos1(default, set):Float = 0;
+    public var depth1(default, set):Float = 0;
+
+    public var xrot2(default, set):Float = 0;
+    public var yrot2(default, set):Float = 0;
+    public var zrot2(default, set):Float = 0;
+    public var xpos2(default, set):Float = 0;
+    public var ypos2(default, set):Float = 0;
+    public var depth2(default, set):Float = 0;
+
+    public var warpX1(default, set):Float = 0;
+    public var warpY1(default, set):Float = 0;
+    public var warpZ1(default, set):Float = 0;
+
+    public var warpX2(default, set):Float = 0;
+    public var warpY2(default, set):Float = 0;
+    public var warpZ2(default, set):Float = 0;
+
+    public var upscroll(default, set):Bool = false;
+
+    function set_xrot1(x:Float):Float
+    {
+        xrot1 = x;
+        shader.xrot1.value = [xrot1];
+        return x;
+    }
+    function set_yrot1(y:Float):Float
+    {
+        yrot1 = y;
+        shader.yrot1.value = [yrot1];
+        return y;
+    }
+    function set_zrot1(z:Float):Float
+    {
+        zrot1 = z;
+        shader.zrot1.value = [zrot1];
+        return z;
+    }
+    function set_xpos1(x:Float):Float
+    {
+        xpos1 = x;
+        shader.xpos1.value = [xpos1];
+        return x;
+    }
+    function set_ypos1(y:Float):Float
+    {
+        ypos1 = y;
+        shader.ypos1.value = [ypos1];
+        return y;
+    }
+    function set_depth1(d:Float):Float
+    {
+        depth1 = d;
+        shader.depth1.value = [depth1];
+        return d;
+    }
+
+
+    function set_xrot2(x:Float):Float
+    {
+        xrot2 = x;
+        shader.xrot2.value = [xrot2];
+        return x;
+    }
+    function set_yrot2(y:Float):Float
+    {
+        yrot2 = y;
+        shader.yrot2.value = [yrot2];
+        return y;
+    }
+    function set_zrot2(z:Float):Float
+    {
+        zrot2 = z;
+        shader.zrot2.value = [zrot2];
+        return z;
+    }
+    function set_xpos2(x:Float):Float
+    {
+        xpos2 = x;
+        shader.xpos2.value = [xpos2];
+        return x;
+    }
+    function set_ypos2(y:Float):Float
+    {
+        ypos2 = y;
+        shader.ypos2.value = [ypos2];
+        return y;
+    }
+    function set_depth2(d:Float):Float
+    {
+        depth2 = d;
+        shader.depth2.value = [depth2];
+        return d;
+    }
+
+
+    function set_warpX1(x:Float):Float
+    {
+        warpX1 = x;
+        shader.warpX1.value = [warpX1];
+        return x;
+    }
+    function set_warpY1(y:Float):Float
+    {
+        warpY1 = y;
+        shader.warpY1.value = [warpY1];
+        return y;
+    }
+    function set_warpZ1(z:Float):Float
+    {
+        warpZ1 = z;
+        shader.warpZ1.value = [warpZ1];
+        return z;
+    }
+    function set_warpX2(x:Float):Float
+    {
+        warpX2 = x;
+        shader.warpX2.value = [warpX2];
+        return x;
+    }
+    function set_warpY2(y:Float):Float
+    {
+        warpY2 = y;
+        shader.warpY2.value = [warpY2];
+        return y;
+    }
+    function set_warpZ2(z:Float):Float
+    {
+        warpZ2 = z;
+        shader.warpZ2.value = [warpZ2];
+        return z;
+    }
+    function set_upscroll(up:Bool):Bool
+    {
+        upscroll = up;
+        shader.upscroll.value = [upscroll];
+        return up;
+    }
+}
+
+class SlashShader extends FlxShader
+{
+    @:glFragmentSource('
+    #pragma header
+
+    #define pi 3.14159265358979323846264338327950288419716939937510
+    uniform float xrot1 = 0.0;
+	uniform float yrot1 = 0.0;
+	uniform float zrot1 = 0.0;
+    uniform float xpos1 = 0.0;
+    uniform float ypos1 = 0.0;
+	uniform float depth1 = 0.0;
+
+    uniform float xrot2 = 0.0;
+	uniform float yrot2 = 0.0;
+	uniform float zrot2 = 0.0;
+    uniform float xpos2 = 0.0;
+    uniform float ypos2 = 0.0;
+	uniform float depth2 = 0.0;
+
+    uniform float warpX1 = 0.0;
+    uniform float warpY1 = 0.0;
+    uniform float warpZ1 = 0.0;
+
+    uniform float warpX2 = 0.0;
+    uniform float warpY2 = 0.0;
+    uniform float warpZ2 = 0.0;
+    uniform bool upscroll=false;
+
+    float mainPossition = 0.4455;
+
+    float plane( in vec3 norm, in vec3 po, in vec3 ro, in vec3 rd ) {
+            float de = dot(norm, rd);
+            de = sign(de)*max( abs(de), 0.001);
+            return dot(norm, po-ro)/de;
+        }
+
+    vec2 raytraceTexturedQuad(in vec3 rayOrigin, in vec3 rayDirection, in vec3 quadCenter, in vec3 quadRotation, in vec2 quadDimensions) {
+            //Rotations ------------------
+            float a = sin(quadRotation.x); float b = cos(quadRotation.x); 
+            float c = sin(quadRotation.y); float d = cos(quadRotation.y); 
+            float e = sin(quadRotation.z); float f = cos(quadRotation.z); 
+            float ac = a*c;   float bc = b*c;
+            
+            mat3 RotationMatrix  = 
+                    mat3(	  d*f,      d*e,  -c,
+                        ac*f-b*e, ac*e+b*f, a*d,
+                        bc*f+a*e, bc*e-a*f, b*d );
+            //--------------------------------------
+            
+            vec3 right = RotationMatrix * vec3(quadDimensions.x, 0.0, 0.0);
+            vec3 up = RotationMatrix * vec3(0, quadDimensions.y, 0);
+            vec3 normal = cross(right, up);
+            normal /= length(normal);
+            
+            //Find the plane hit point in space
+            vec3 pos = (rayDirection * plane(normal, quadCenter, rayOrigin, rayDirection)) - quadCenter;
+            
+            //Find the texture UV by projecting the hit point along the plane dirs
+            return vec2(dot(pos, right) / dot(right, right),
+                        dot(pos, up)    / dot(up,    up)) + 0.5;
+        }
+
+    void main()
+    {   
+        //Screen UV goes from 0 - 1 along each axis
+        vec2 screenUV = openfl_TextureCoordv;
+        vec4 texColor = texture2D(bitmap, openfl_TextureCoordv);
+        vec2 p = (2.0 * screenUV) - 1.0;
+        float screenAspect = 1280/720;
+        p.x *= screenAspect;
+
+        //Normalized Ray Dir
+        vec3 dir = vec3(p.x, p.y, 1.0);
+        dir /= length(dir);
+
+        //Define the plane
+        vec3 planePosition = vec3(mainPossition+xpos1, ypos1, 0.5+depth1);
+        vec3 planeRotation = vec3(xrot1, pi+yrot1, zrot1);//this the shit you needa change
+        vec2 planeDimension = vec2(-screenAspect, 1.0);
+
+        if(upscroll){
+            planeRotation.x += (1.0-screenUV.y) * warpX1;
+            planeRotation.y -= screenUV.x * warpY1;
+            planeRotation.z += (1.0-screenUV.y) * warpZ1;
+        }
+        else{
+            planeRotation.x -= screenUV.y * warpX1;
+            planeRotation.y -= screenUV.x * warpY1;
+            planeRotation.z -= screenUV.y * warpZ1;
+        }  
+
+        vec2 uv = raytraceTexturedQuad(vec3(0), dir, planePosition, planeRotation, planeDimension);
+
+        //If we hit the rectangle, sample the texture
+        if (abs(uv.x - 0.5) < 0.25 && abs(uv.y - 0.5) < 0.5) {
+            uv.x-=0.256;
+            gl_FragColor = vec4(flixel_texture2D(bitmap, uv));
+        }
+        
+        
+        //Define the plane
+        planePosition = vec3(mainPossition+xpos2, ypos2, 0.5+depth2);
+        planeRotation = vec3(xrot2, pi+yrot2, zrot2);
+        planeDimension = vec2(-screenAspect, 1.0);
+        
+        if(upscroll){
+            planeRotation.x += (1.0-screenUV.y) * warpX2;
+            planeRotation.y -= screenUV.x * warpY2;
+            planeRotation.z += (1.0-screenUV.y) * warpZ2;
+        }
+        else{
+            planeRotation.x -= screenUV.y * warpX2;
+            planeRotation.y -= screenUV.x * warpY2;
+            planeRotation.z -= screenUV.y * warpZ2;
+        }
+
+        uv = raytraceTexturedQuad(vec3(0), dir, planePosition, planeRotation, planeDimension);
+
+        //If we hit the rectangle, sample the texture
+        if (abs(uv.x - 0.5) < 0.25 && abs(uv.y - 0.5) < 0.5) {
+            uv.x+=0.244;
+            gl_FragColor = vec4(flixel_texture2D(bitmap, uv));
+        }
+    }
+    ')
+
+    public function new()
+    {
+       super();
+    }
+}
+
+// class SlashEffect extends ShaderEffectNew
+// {
+//     public var shader(default,null):SlashShader = new SlashShader();
+
+//     public var rip(default, set):Float = 0;
+//     public var ripAdd(default, set):Float = 0;
+//     public var angle(default, set):Float = 0;
+//     public var edgeColor(default, set):Float = 0;
+
+//     public function set_rip(mul:Float):Float
+//     {
+//         rip = mul;
+//         shader.rip.value = [rip];
+//         return mul; 
+//     }
+//     public function set_ripAdd(mul:Float):Float
+//     {
+//         ripAdd = mul;
+//         shader.ripAdd.value = [ripAdd];
+//         return mul; 
+//     }
+//     public function set_angle(mul:Float):Float
+//     {
+//         angle = mul;
+//         shader.angle.value = [angle];
+//         return mul; 
+//     }
+//     public function set_edgeColor(mul:Float):Float
+//     {
+//         edgeColor = mul;
+//         shader.edgeColor.value = [edgeColor];
+//         return mul; 
+//     }
+// }
+
+// class SlashShader extends FlxShader
+// {
+//     @:glFragmentSource('
+//     #pragma header
+
+//     varying vec4 color;
+
+
+//     uniform vec2 rip;
+//     uniform vec2 ripAdd = vec2( 0.0, 0.0 );
+//     uniform vec2 angle = vec2( 1.0, 1.0 );
+//     uniform vec4 edgeColor = vec4( 4.0, 2.0, 1.0, 0.5 );
+
+//     bool isValidUV( vec2 v ) { return 0.0 < v.x && v.x < 1.0 && 0.0 < v.y && v.y < 1.0; }
+//     vec2 img2tex( vec2 v ) { return v / openfl_TextureCoordv; }
+
+//     void main() {
+//     vec2 uv = openfl_TextureCoordv ;
+//     vec2 nAngle = normalize( angle );
+//     vec2 nAngle90 = nAngle.yx * vec2( 1.0, -1.0 );
+//     float dist = dot( nAngle90, uv - 0.5 );
+//     float dir = sign( dist );
+//     uv += dir * ( rip.x * nAngle - rip.y * nAngle90 + ripAdd );
+//     float distT = dot( nAngle90, uv - 0.5 );
+
+//     if ( isValidUV( uv ) && 0.0 < dir * distT ) {
+//         gl_FragColor = color * flixel_texture2D( bitmap, img2tex( uv ) );
+//         gl_FragColor.xyz += exp( -50.0 * dir * distT ) * edgeColor.xyz * edgeColor.w;
+//     } else {
+//         gl_FragColor = vec4( 0.0, 0.0, 0.0, 1.0 );
+//     }
+//     }')
+
+//     public function new()
+//     {
+//        super();
+//     }
+// }
+
 class MultiSplitEffect extends ShaderEffectNew
 {
     public var shader(default,null):MultiSplit = new MultiSplit();
