@@ -433,23 +433,23 @@ class NewHitmansGameOver extends MusicBeatSubstate
             case 'lady':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "My movements distract you?";
+                        taunt.text = "Do my movements distract you?";
                     case 2:
                         taunt.text = "I wasn't even trying to kill you...";
                     case 3:
-                        taunt.text = "Oh dear... did you really thinked you got a chance to beat me?";
+                        taunt.text = "Oh dear... did you really think you had a chance to beat me?";
                 }
                 taunt.color = 0xff00a300;
-            case 'medy':
+            case 'dawper':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "Try harder next time buddy, but the outcome will still be a fail";
+                        taunt.text = "Try harder next time bro, but i always win";
                     case 2:
-                        taunt.text = "Was it hard enough for chu...?";
+                        taunt.text = "Was it hard enough for you...?";
                     case 3:
-                        taunt.text = "Do chu want me two nerf this?";
+                        taunt.text = "Do you want me two nerf this?";
                 }
-                taunt.color = 0xffff31ee;
+                taunt.color = 0xff8d3800;
             case 'mary':
                 switch (tauntNum){
                     case 1:
@@ -505,7 +505,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 1:
                         taunt.text = "SYSTEM 32 HAS BEEN DELETED";
                     case 2:
-                        taunt.text = "Too slow to delete a virus";
+                        taunt.text = "Too slow to erase me";
                     case 3:
                         taunt.text = "print('haha skill issue');";
                 }

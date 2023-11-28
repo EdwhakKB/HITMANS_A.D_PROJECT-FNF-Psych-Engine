@@ -396,7 +396,7 @@ class ClientPrefs {
 		{
 			discordRPC = FlxG.save.data.discordRPC;
 		}
-	
+
 		if(FlxG.save.data.developerMode != null) {
 			developerMode = FlxG.save.data.developerMode;
 		}
