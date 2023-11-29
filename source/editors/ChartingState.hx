@@ -253,6 +253,7 @@ class ChartingState extends MusicBeatState
 				speed: 1,
 				stage: 'stage',
 				validScore: false,
+				bossFight: false,
 				notITG: false,
 				rightScroll: false,
 				middleScroll: false
@@ -431,6 +432,7 @@ class ChartingState extends MusicBeatState
 	var check_warnings:FlxUICheckBox = null;
 	var playSoundBf:FlxUICheckBox = null;
 	var playSoundDad:FlxUICheckBox = null;
+	var bossFight:FlxUICheckBox = null;
 	var notITGModchart:FlxUICheckBox = null;
 	var ForceRightScroll:FlxUICheckBox = null;
 	var ForceMiddleScroll:FlxUICheckBox = null;
@@ -650,6 +652,13 @@ class ChartingState extends MusicBeatState
 			updateGrid();
 		});
 
+		var bossFight = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y-50, null, null, "Boss Fight", 100);
+		bossFight.checked = _song.bossFight;
+		bossFight.callback = function()
+		{
+			_song.bossFight = bossFight.checked;
+		};
+
 		var notITGModchart = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y + 20, null, null, "NotITG modcharts", 100);
 		notITGModchart.checked = _song.notITG;
 		notITGModchart.callback = function()
@@ -714,6 +723,7 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(UI_songTitle);
 
 		tab_group_song.add(check_voices);
+		tab_group_song.add(bossFight);
 		tab_group_song.add(notITGModchart);
 		tab_group_song.add(forceMiddleScroll);
 		tab_group_song.add(forceRightScroll);

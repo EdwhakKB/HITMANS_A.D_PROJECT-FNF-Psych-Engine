@@ -624,7 +624,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 							text.setFormat(Paths.font("Consolas-Bold.ttf"), 20, FlxColor.WHITE, LEFT,FlxColor.BLACK);
 							text.scrollFactor.set();
 							text.antialiasing = true;
-							text.text = "Your device ran into a problem and needs to restart. We're just \ncollecting some error info, and then well restart for you.";
+							text.text = "Your device ran into a problem and needs to restart. We're just \ncollecting some error info, and then we'll restart for you.";
 							add(text);
 		
 							var completeText:FlxText = new FlxText(text.x + 40, text.y + 75, 0, "complete");

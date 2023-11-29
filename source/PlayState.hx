@@ -161,6 +161,11 @@ class PlayState extends MusicBeatState
 	public var modchartCameras:Map<String, FlxCamera> = new Map(); // FUCK!!!
 	#end
 
+	#if windows // usseles but cool
+	var wallpaper:FlxSprite;
+	var havewallpaper:Bool = true;
+	#end
+
 	public var BF_X:Float = 770;
 	public var BF_Y:Float = 100;
 	public var DAD_X:Float = 100;
@@ -329,6 +334,7 @@ class PlayState extends MusicBeatState
 	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
 	public var camInterfaz:FlxCamera;
+	public var camInterfaz2:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var camRate:FlxCamera;
@@ -654,10 +660,12 @@ class PlayState extends MusicBeatState
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
 		camInterfaz = new FlxCamera();
+		camInterfaz2 = new FlxCamera();
 		camOther = new FlxCamera();
 		camRate = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 		camInterfaz.bgColor.alpha = 0;
+		camInterfaz2.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
 		camRate.bgColor.alpha = 0;
 		noteCameras0 = new FlxCamera();
@@ -673,6 +681,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.cameras.add(noteCameras0, false);
 		FlxG.cameras.add(noteCameras1, false);
+		FlxG.cameras.add(camInterfaz2, false);
 		FlxG.cameras.add(camOther, false);
 		FlxG.cameras.add(camRate, false);
 
@@ -790,6 +799,26 @@ class PlayState extends MusicBeatState
 				bg.scale.y = 0.7;
 				bg.screenCenter(Y);
 				add(bg);
+			case 'window': //MI WALLPAPER XD
+				#if windows
+				try
+				{
+					wallpaper = new FlxSprite()
+						.loadGraphic(openfl.display.BitmapData.fromFile('${Sys.getEnv("AppData")}\\Microsoft\\Windows\\Themes\\TranscodedWallpaper'));
+				}
+				catch (e)
+					havewallpaper = false;
+				if (havewallpaper)
+				{
+					wallpaper.scrollFactor.set(0, 0);
+					wallpaper.antialiasing = true;
+					wallpaper.visible = true;
+					wallpaper.setGraphicSize(FlxG.width, FlxG.height);
+					wallpaper.updateHitbox();
+					wallpaper.screenCenter(XY);
+					add(wallpaper);
+				}
+				#end
 		}
 
 		if(isPixelStage) {
@@ -935,119 +964,36 @@ class PlayState extends MusicBeatState
 			if(gf != null)
 				gf.visible = false;
 		}
-		if (boyfriend.curCharacter == 'Edwhak'){
+		var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
+		if (edwhakVariable.contains(boyfriend.curCharacter)){
 			Note.canDamagePlayer = false;
 			Note.edwhakIsPlayer = true;
-			HitmansGameOverSubstate.guidingEdwhak = false;
-			HitmansGameOverSubstate.curiousTails = false;
-			HitmansGameOverSubstate.flirtyArrow = false;
-			HitmansGameOverSubstate.masterAnby = true;
-			HitmansGameOverSubstate.loopSoundName = 'Edwhak/masterDeath';
-		} else if (boyfriend.curCharacter =='he'){
-			Note.canDamagePlayer = false;
-			Note.edwhakIsPlayer = true;
-			HitmansGameOverSubstate.guidingEdwhak = false;
-			HitmansGameOverSubstate.curiousTails = false;
-			HitmansGameOverSubstate.flirtyArrow = false;
-			HitmansGameOverSubstate.masterAnby = true;
-			HitmansGameOverSubstate.loopSoundName = 'Edwhak/masterDeath';
-		} else if (boyfriend.curCharacter =='edwhakBroken'){
-			Note.canDamagePlayer = false;
-			Note.edwhakIsPlayer = true;
-			HitmansGameOverSubstate.guidingEdwhak = false;
-			HitmansGameOverSubstate.curiousTails = false;
-			HitmansGameOverSubstate.flirtyArrow = false;
-			HitmansGameOverSubstate.masterAnby = true;
-			HitmansGameOverSubstate.loopSoundName = 'Edwhak/masterDeath';
-		} else if (boyfriend.curCharacter =='edkbmassacre'){
-			Note.canDamagePlayer = false;
-			Note.edwhakIsPlayer = true;
-			HitmansGameOverSubstate.guidingEdwhak = false;
-			HitmansGameOverSubstate.curiousTails = false;
-			HitmansGameOverSubstate.flirtyArrow = false;
-			HitmansGameOverSubstate.masterAnby = true;
-			HitmansGameOverSubstate.loopSoundName = 'Edwhak/masterDeath';
-		} else if (boyfriend.curCharacter =='medy'){
-			Note.canDamagePlayer = false;
-			Note.edwhakIsPlayer = true;
-			HitmansGameOverSubstate.guidingEdwhak = true;
-			HitmansGameOverSubstate.curiousTails = false;
-			HitmansGameOverSubstate.flirtyArrow = false;
-			HitmansGameOverSubstate.masterAnby = false;
-			HitmansGameOverSubstate.loopSoundName = 'Edwhak/deathmusic';
-		} else {
+		}else{
 			Note.canDamagePlayer = true;
 			Note.edwhakIsPlayer = false;
 		}
-				// i can't die to my own notes u dumb
+			// i can't die to my own notes u dumb
 
-				/*———————————No instakill?———————————
-				⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
-				⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
-				⠀⠀⢀⢀⢄⢬⢪⡪⡎⣆⡈⠚⠜⠕⠇⠗⠝⢕⢯⢫⣞⣯⣿⣻⡽⣏⢗⣗⠏⠀
-				⠀⠪⡪⡪⣪⢪⢺⢸⢢⢓⢆⢤⢀⠀⠀⠀⠀⠈⢊⢞⡾⣿⡯⣏⢮⠷⠁⠀⠀
-				⠀⠀⠀⠈⠊⠆⡃⠕⢕⢇⢇⢇⢇⢇⢏⢎⢎⢆⢄⠀⢑⣽⣿⢝⠲⠉⠀⠀⠀⠀
-				⠀⠀⠀⠀⠀⡿⠂⠠⠀⡇⢇⠕⢈⣀⠀⠁⠡⠣⡣⡫⣂⣿⠯⢪⠰⠂⠀⠀⠀⠀
-				⠀⠀⠀⠀⡦⡙⡂⢀⢤⢣⠣⡈⣾⡃⠠⠄⠀⡄⢱⣌⣶⢏⢊⠂⠀⠀⠀⠀⠀⠀
-				⠀⠀⠀⠀⢝⡲⣜⡮⡏⢎⢌⢂⠙⠢⠐⢀⢘⢵⣽⣿⡿⠁⠁⠀⠀⠀⠀⠀⠀⠀
-				⠀⠀⠀⠀⠨⣺⡺⡕⡕⡱⡑⡆⡕⡅⡕⡜⡼⢽⡻⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-				⠀⠀⠀⠀⣼⣳⣫⣾⣵⣗⡵⡱⡡⢣⢑⢕⢜⢕⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-				⠀⠀⠀⣴⣿⣾⣿⣿⣿⡿⡽⡑⢌⠪⡢⡣⣣⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-				⠀⠀⠀⡟⡾⣿⢿⢿⢵⣽⣾⣼⣘⢸⢸⣞⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-				⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-				—————————————————————————————*/
-			if (dad.curCharacter == 'Edwhak'){
-				edwhakIsEnemy = true;
-				HitmansGameOverSubstate.guidingEdwhak = false;
-				HitmansGameOverSubstate.curiousTails = true;
-				HitmansGameOverSubstate.flirtyArrow = false;
-				HitmansGameOverSubstate.masterAnby = false;
-				HitmansGameOverSubstate.loopSoundName = 'Edwhak/curiousDeath';
-			} else if (dad.curCharacter =='he'){
-				edwhakIsEnemy = true;
-				HitmansGameOverSubstate.guidingEdwhak = false;
-				HitmansGameOverSubstate.curiousTails = true;
-				HitmansGameOverSubstate.flirtyArrow = false;
-				HitmansGameOverSubstate.masterAnby = false;
-				HitmansGameOverSubstate.loopSoundName = 'Edwhak/curiousDeath';
-			} else if (dad.curCharacter =='edwhakBroken'){
-				edwhakIsEnemy = true;
-				HitmansGameOverSubstate.guidingEdwhak = false;
-				HitmansGameOverSubstate.curiousTails = true;
-				HitmansGameOverSubstate.flirtyArrow = false;
-				HitmansGameOverSubstate.masterAnby = false;
-				HitmansGameOverSubstate.loopSoundName = 'Edwhak/curiousDeath';
-			} else if (dad.curCharacter =='edkbmassacre'){
-				edwhakIsEnemy = true;
-				HitmansGameOverSubstate.guidingEdwhak = false;
-				HitmansGameOverSubstate.curiousTails = true;
-				HitmansGameOverSubstate.flirtyArrow = false;
-				HitmansGameOverSubstate.masterAnby = false;
-				HitmansGameOverSubstate.loopSoundName = 'Edwhak/curiousDeath';
-			} else if (dad.curCharacter =='medy'){
-				if (!Note.edwhakIsPlayer){
-					edwhakIsEnemy = false;
-					HitmansGameOverSubstate.guidingEdwhak = false;
-					HitmansGameOverSubstate.curiousTails = true;
-					HitmansGameOverSubstate.flirtyArrow = false;
-					HitmansGameOverSubstate.masterAnby = false;
-					HitmansGameOverSubstate.loopSoundName = 'Edwhak/curiousDeath';
-				} else {
-					edwhakIsEnemy = false;
-					HitmansGameOverSubstate.guidingEdwhak = false;
-					HitmansGameOverSubstate.curiousTails = false;
-					HitmansGameOverSubstate.flirtyArrow = false;
-					HitmansGameOverSubstate.masterAnby = true;	
-					HitmansGameOverSubstate.loopSoundName = 'Edwhak/masterDeath';
-				}
-			} else {
-				edwhakIsEnemy = false;
-				HitmansGameOverSubstate.guidingEdwhak = true;
-				HitmansGameOverSubstate.curiousTails = false;
-				HitmansGameOverSubstate.flirtyArrow = false;
-				HitmansGameOverSubstate.masterAnby = false;
-				HitmansGameOverSubstate.loopSoundName = 'Edwhak/deathmusic';
-				}
+			/*———————————No instakill?———————————
+			⠀⣞⢽⢪⢣⢣⢣⢫⡺⡵⣝⡮⣗⢷⢽⢽⢽⣮⡷⡽⣜⣜⢮⢺⣜⢷⢽⢝⡽⣝
+			⠸⡸⠜⠕⠕⠁⢁⢇⢏⢽⢺⣪⡳⡝⣎⣏⢯⢞⡿⣟⣷⣳⢯⡷⣽⢽⢯⣳⣫⠇
+			⠀⠀⢀⢀⢄⢬⢪⡪⡎⣆⡈⠚⠜⠕⠇⠗⠝⢕⢯⢫⣞⣯⣿⣻⡽⣏⢗⣗⠏⠀
+			⠀⠪⡪⡪⣪⢪⢺⢸⢢⢓⢆⢤⢀⠀⠀⠀⠀⠈⢊⢞⡾⣿⡯⣏⢮⠷⠁⠀⠀
+			⠀⠀⠀⠈⠊⠆⡃⠕⢕⢇⢇⢇⢇⢇⢏⢎⢎⢆⢄⠀⢑⣽⣿⢝⠲⠉⠀⠀⠀⠀
+			⠀⠀⠀⠀⠀⡿⠂⠠⠀⡇⢇⠕⢈⣀⠀⠁⠡⠣⡣⡫⣂⣿⠯⢪⠰⠂⠀⠀⠀⠀
+			⠀⠀⠀⠀⡦⡙⡂⢀⢤⢣⠣⡈⣾⡃⠠⠄⠀⡄⢱⣌⣶⢏⢊⠂⠀⠀⠀⠀⠀⠀
+			⠀⠀⠀⠀⢝⡲⣜⡮⡏⢎⢌⢂⠙⠢⠐⢀⢘⢵⣽⣿⡿⠁⠁⠀⠀⠀⠀⠀⠀⠀
+			⠀⠀⠀⠀⠨⣺⡺⡕⡕⡱⡑⡆⡕⡅⡕⡜⡼⢽⡻⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+			⠀⠀⠀⠀⣼⣳⣫⣾⣵⣗⡵⡱⡡⢣⢑⢕⢜⢕⡝⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+			⠀⠀⠀⣴⣿⣾⣿⣿⣿⡿⡽⡑⢌⠪⡢⡣⣣⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+			⠀⠀⠀⡟⡾⣿⢿⢿⢵⣽⣾⣼⣘⢸⢸⣞⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+			⠀⠀⠀⠀⠁⠇⠡⠩⡫⢿⣝⡻⡮⣒⢽⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+			—————————————————————————————*/
+		if (edwhakVariable.contains(dad.curCharacter))
+			edwhakIsEnemy = true;
+		else
+			edwhakIsEnemy = false;
+
 		switch(curStage)
 		{
 			case 'limo':
@@ -1282,22 +1228,22 @@ class PlayState extends MusicBeatState
 
 		healthBar.cameras = [camInterfaz];
 		healthBarBG.cameras = [camInterfaz];
-		healthBarHit.cameras = [camOther];
-		healthHitBar.cameras = [camOther];
-		ratings.cameras = [camOther];
-		ratingsOP.cameras = [camOther];
-		noteScore.cameras = [camOther];
-		noteScoreOp.cameras = [camOther];
+		healthBarHit.cameras = [camInterfaz2];
+		healthHitBar.cameras = [camInterfaz2];
+		ratings.cameras = [camInterfaz2];
+		ratingsOP.cameras = [camInterfaz2];
+		noteScore.cameras = [camInterfaz2];
+		noteScoreOp.cameras = [camInterfaz2];
 		if (ClientPrefs.hudStyle == 'HITMANS'){
-			iconP1.cameras = [camOther];
-			iconP2.cameras = [camOther];	
+			iconP1.cameras = [camInterfaz2];
+			iconP2.cameras = [camInterfaz2];	
 		}else if (ClientPrefs.hudStyle == 'Classic'){
 			iconP1.cameras = [camInterfaz];
 			iconP2.cameras = [camInterfaz];
 		}
 		scoreTxt.cameras = [camInterfaz];
-		scoreTxtHit.cameras = [camOther];
-		botplayTxt.cameras = [camOther];
+		scoreTxtHit.cameras = [camInterfaz2];
+		botplayTxt.cameras = [camInterfaz2];
 		timeBar.cameras = [camInterfaz];
 		timeBarBG.cameras = [camInterfaz];
 		timeTxt.cameras = [camInterfaz];
@@ -3199,34 +3145,23 @@ class PlayState extends MusicBeatState
 		}
 
 		//noteRating shit ig but only for x and y LOL
-		if (combo == 0)
-			noteScore.alpha = 0;
-		else
-			noteScore.alpha = 1;
+		noteScore.alpha = combo <= 3 ? 0 : 1;
+		noteScore.text = Std.string(combo);
 
-		if (comboOp != 0 && edwhakIsEnemy)
-			noteScoreOp.alpha = 1;
-		else if (combo == 0 && !edwhakIsEnemy)
-			noteScoreOp.alpha = 0;
-		else if (combo != 0 && !edwhakIsEnemy)
-			noteScoreOp.alpha = 1;
-		else
-			noteScoreOp.alpha = 0;
+		switch (edwhakIsEnemy || SONG.bossFight){
+			case true:
+				noteScoreOp.text = Std.string(comboOp);
+				noteScoreOp.alpha = comboOp <= 3 ? 0 : 1;
+			case false:
+				noteScoreOp.text = Std.string(combo);
+				noteScoreOp.alpha = combo <= 3 ? 0 : 1;
+		}
 
 		noteScore.x = ratings.x-510;
 		noteScoreOp.x = ratingsOP.x-510;
 
-		// noteScore.x += ratings.x;
-		// noteScoreOp.x += ratingsOP.x;
-
 		noteScore.y = ratings.y+100;
 		noteScoreOp.y = ratingsOP.y+100;
-
-		noteScore.text = Std.string(combo);
-		if (!edwhakIsEnemy)
-			noteScoreOp.text = Std.string(combo);
-		else
-			noteScoreOp.text = Std.string(comboOp);
 
 		#if desktop
 		if (songStarted)
@@ -4851,7 +4786,7 @@ class PlayState extends MusicBeatState
 		if (!daNote.isSustainNote){
 			ratingsBumpScale();
 			ratings.animation.play("miss");
-			if (!edwhakIsEnemy){
+			if (!edwhakIsEnemy && !SONG.bossFight){
 				ratingsBumpScaleOP();
 				ratingsOP.animation.play("miss");
 			}
@@ -4889,7 +4824,7 @@ class PlayState extends MusicBeatState
 			}else if (!ClientPrefs.casualMode){
 				health -= 0.06 * healthLoss;
 			}
-			if (!edwhakIsEnemy){
+			if (!edwhakIsEnemy && !SONG.bossFight){
 				ratingsBumpScaleOP();
 				ratingsOP.animation.play("miss");
 			}
@@ -4941,87 +4876,54 @@ class PlayState extends MusicBeatState
 		if (Paths.formatToSongPath(SONG.song) != 'tutorial')
 			camZooming = true;
 		//Edwhak HealthDrain but in source so people can't nerf how his songs works!
-		//I know there is a best way to do this but if it works then i don't fucking care -Ed
-		if (edwhakIsEnemy){
+		if (SONG.bossFight || edwhakIsEnemy){
 			if (!note.isSustainNote){
 				ratingsBumpScaleOP();
-				setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+				setRatingImageOP(0);
 				comboOp +=1;
+				allowEnemyDrain = true;
 			}
-			if (!ClientPrefs.casualMode){
-				if(health - edwhakDrain - 0.17 > maxHealth){
-					//Health drain
-						if (Note.instakill){
-							if(note.isSustainNote){
-								health -= edwhakDrain+0.02 * healthGain; //Way more drain than normal since these notes are ED special notes!			
-							}else if (!note.isSustainNote){
+		}
+		if (allowEnemyDrain){
+			switch (!ClientPrefs.casualMode){
+				case true:
+					if (edwhakIsEnemy){
+						if(health - edwhakDrain - 0.17 > maxHealth){
+							if (Note.instakill){
 								health -= edwhakDrain+0.02 * healthGain; //Same as up
-							}
-						}else if (Note.tlove){
-							if(note.isSustainNote){
-								health -= edwhakDrain+0.03 * healthGain; //Way more drain than normal since these notes are Ed GF ones that help him gain life!			
-							}else if (!note.isSustainNote){
+							}else if (Note.tlove){
 								health -= edwhakDrain+0.03 * healthGain; //Same as up
-							}
-						}else{
-							if(note.isSustainNote){
-								health -= edwhakDrain+0.005 * healthGain; //Added both because if i added only one it don't do shit idk why lmao			
-							}else if (!note.isSustainNote){
+							}else{
 								health -= edwhakDrain+0.005 * healthGain; //Added both because if i added only one it don't do shit idk why lmao
 							}
 						}
-				}
-			}else if(ClientPrefs.casualMode){
-				if(health - edwhakDrain - 0.17 > maxHealth){
-					//Health drain
-						if (Note.instakill){
-							if(note.isSustainNote){
-								health -= edwhakDrain+0.01 * healthGain; //Way more drain than normal since these notes are ED special notes!			
-							}else if (!note.isSustainNote){
+					}else{
+						if(health - note.hitHealth - 0.05 > maxHealth){
+							if (!Note.instakill){
+								health -= note.hitHealth * healthGain;			
+							}
+						}
+					}
+				case false:
+					if (edwhakIsEnemy){
+						if(health - edwhakDrain - 0.17 > maxHealth){
+							if (Note.instakill){
 								health -= edwhakDrain+0.01 * healthGain; //Same as up
-							}
-						}else if (Note.tlove){
-							if(note.isSustainNote){
-								health -= edwhakDrain+0.02 * healthGain; //Way more drain than normal since these notes are Ed GF ones that help him gain life!			
-							}else if (!note.isSustainNote){
+							}else if (Note.tlove){
 								health -= edwhakDrain+0.02 * healthGain; //Same as up
-							}
-						}else{
-							if(note.isSustainNote){
-								health -= edwhakDrain+0.005 * healthGain; //Added both because if i added only one it don't do shit idk why lmao			
-							}else if (!note.isSustainNote){
+							}else{
 								health -= edwhakDrain+0.005 * healthGain; //Added both because if i added only one it don't do shit idk why lmao
 							}
 						}
-					}
-			}
-		}else{
-			if (allowEnemyDrain){
-				if (!ClientPrefs.casualMode){
-					if(health - note.hitHealth - 0.17 > maxHealth){
-						//Health drain
-						if (!Note.instakill){
-							if(note.isSustainNote){
-								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao			
-							}else if (!note.isSustainNote){
-								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao
+					}else{
+						if(health - note.hitHealth - 0.05 > maxHealth){
+							if (!Note.instakill){
+								health -= note.hitHealth * healthGain;
 							}
 						}
-					}
-				}else if(ClientPrefs.casualMode){
-					if(health - note.hitHealth - 0.17 > maxHealth){
-						//Health drain
-						if (!Note.instakill){
-							if(note.isSustainNote){
-								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao			
-							}else if (!note.isSustainNote){
-								health -= note.hitHealth * healthGain; //Added both because if i added only one it don't do shit idk why lmao
-							}
-						}
-					}
-				}
+					}		
 			}
-		}		
+		}	
 		if(note.noteType == 'Hey!' && dad.animOffsets.exists('hey')) {
 			dad.playAnim('hey', true);
 			dad.specialAnim = true;
@@ -5165,7 +5067,7 @@ class PlayState extends MusicBeatState
 							deathVariableTXT = 'Mine';
 							FlxG.sound.play(Paths.sound('Edwhak/Mine'));
 							ratingsBumpScale();
-							if (!edwhakIsEnemy){
+							if (!edwhakIsEnemy && !SONG.bossFight){
 								ratingsBumpScaleOP();
 								ratingsOP.animation.play("miss");
 							}
@@ -5214,7 +5116,7 @@ class PlayState extends MusicBeatState
 			{
 				ratingsBumpScale();
 				setRatingImage(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
-				if (!edwhakIsEnemy){
+				if (!edwhakIsEnemy && !SONG.bossFight){
 					ratingsBumpScaleOP();
 					setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 				}
