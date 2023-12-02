@@ -192,7 +192,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             if (notes.members[noteIndex].hurtNote)
                 noteAlpha = 0.55;
             if (notes.members[noteIndex].mimicNote)
-                noteAlpha = 0.4;
+                noteAlpha = ClientPrefs.mimicNoteAlpha;
         }else{
             noteAlpha = 0;
         }

@@ -56,19 +56,14 @@ class NewHitmansGameOver extends MusicBeatSubstate
     var camHUD:FlxCamera;
     var retry:FlxSprite;
     var youdied:FlxText;
-    var staticDeath:FlxSprite;
     var tvStatic:FlxSprite;
     var tvEffect:FlxSprite;
     var vignette:FlxSprite;
     var panel:FlxSprite;
-    var offEffect:FlxSprite;
+    var blackFade:FlxSprite;
     var youdiedFading:Bool = false;
 	var musicplaying:Bool = false;
-    var tauntPanel:FlxSprite;
     public static var taunt:FlxText;
-
-    var skiped:Bool = false; //to enable player see the end part lol
-    var enableRestart:Bool = false;
 
     public var diedToAnote:Textbox;
     public var killedByCharacter:Textbox;
@@ -83,14 +78,6 @@ class NewHitmansGameOver extends MusicBeatSubstate
     public var text3:Textbox;
     public var text4:Textbox;
     public var text5:Textbox;
-    //Separated since yeah idk a fucking better way to do this -Ed
-    var runTimer1:Bool = false;
-
-
-    var moveTimer:Bool = false;
-    var moveTimer2:Bool = false;
-    var moveTimery:Bool = false;
-    var moveTimer2y:Bool = false;
 
     public var tauntNum:Int = 0;
 
@@ -98,7 +85,6 @@ class NewHitmansGameOver extends MusicBeatSubstate
     public var imageDeath:FlxSprite;
     public var noteWhoKilled:String = 'NOTE';
     public var killedByANote:Bool = true;
-    public var yOffset:Int = 0;
 
 	public static var instance:NewHitmansGameOver;
 
@@ -169,7 +155,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
         deathSprite.animation.play('note');
         deathSprite.scale.y = 1.5;
         deathSprite.scale.x = 1.5;
-        deathSprite.angle = 6;
+        deathSprite.angle = 7.5564;
         deathSprite.screenCenter(Y);
         if (!killedByANote){
             deathSprite.alpha = 0;
@@ -254,26 +240,10 @@ class NewHitmansGameOver extends MusicBeatSubstate
 		retry.alpha=0;
 		retry.animation.play('empty');
 
-        staticDeath = new FlxSprite();
-        staticDeath.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/Static');
-        staticDeath.animation.addByPrefix('idle', 'Static Animated', 48, true);	
-        staticDeath.antialiasing = ClientPrefs.globalAntialiasing;
-        staticDeath.scale.y = 3;
-        staticDeath.scale.x = 3;				
-        staticDeath.screenCenter();
-        staticDeath.alpha = 1;
-        staticDeath.animation.play("idle");
-        add(staticDeath);
-
-        offEffect = new FlxSprite();
-        offEffect.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/tv-effect');
-        offEffect.animation.addByPrefix('play', 'shutdown', 24, false);
-        offEffect.screenCenter();
-        offEffect.scale.y = 1;
-        offEffect.scale.x = 1;
-        offEffect.alpha = 0;
-        offEffect.antialiasing = ClientPrefs.globalAntialiasing;
-        add(offEffect);
+        blackFade = new FlxSprite();
+		blackFade.makeGraphic(FlxG.width, FlxG.height, 0xff000000);
+        blackFade.alpha = 1;
+		add(blackFade);
 
         imageDeath = new FlxSprite();
         imageDeath.loadGraphic(Paths.image('hitmans/death/' + characterName.toLowerCase()));
@@ -306,13 +276,9 @@ class NewHitmansGameOver extends MusicBeatSubstate
         vignette.antialiasing = ClientPrefs.globalAntialiasing;
         add(vignette);
 
-		FlxG.sound.play(Paths.sound(deathSoundName));
+		// FlxG.sound.play(Paths.sound(deathSoundName));
         FlxTween.tween(youdied.scale, {x: 0.5}, 1, {ease:FlxEase.elasticOut});
         FlxTween.tween(youdied.scale, {y: 0.5}, 1, {ease:FlxEase.elasticOut});
-        // offEffect.animation.play('play');
-        // new FlxTimer().start(1, function(tmr:FlxTimer){
-        //     FlxTween.tween(offEffect, {alpha: 0}, 1, {ease:FlxEase.smoothStepIn});
-        // });
 		Conductor.bpm = 148;
 
 		new FlxTimer().start(3, function(tmr:FlxTimer)
@@ -320,7 +286,6 @@ class NewHitmansGameOver extends MusicBeatSubstate
 			FlxG.sound.playMusic(Paths.sound(loopSoundName), 0, false);
             FlxG.sound.music.fadeIn(16, 0, 0.8);
 			musicplaying=true;
-            runTimer1 = true;
 		});
         new FlxTimer().start(6, function(tmr4:FlxTimer)
         {
@@ -595,12 +560,6 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
         if(!youdiedFading){
             youdiedFading = true;
-            new FlxTimer().start(1, function(tmr2:FlxTimer)
-            {
-                staticDeath.alpha = 0;
-                offEffect.alpha = 1;
-                offEffect.animation.play('play');
-            });
             new FlxTimer().start(3, function(tmr3:FlxTimer)
             {
                 FlxTween.tween(youdied, {alpha: 1}, 1, {ease:FlxEase.smoothStepIn});
@@ -610,9 +569,9 @@ class NewHitmansGameOver extends MusicBeatSubstate
             new FlxTimer().start(5, function(tmr4:FlxTimer)
             {
                 FlxTween.tween(youdied, {y: 5}, 1, {ease:FlxEase.backOut});
-                FlxTween.tween(taunt, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepIn});
-                FlxTween.tween(imageDeath, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepIn});
-                FlxTween.tween(offEffect, {alpha: 0}, 1, {ease:FlxEase.smoothStepIn});
+                FlxTween.tween(taunt, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepOut});
+                FlxTween.tween(imageDeath, {alpha: 0}, 0.3, {ease:FlxEase.smoothStepOut});
+                FlxTween.tween(blackFade, {alpha: 0}, 1, {ease:FlxEase.smoothStepOut});
             });
             new FlxTimer().start(6, function(tmr5:FlxTimer)
             {

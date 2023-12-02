@@ -36,12 +36,23 @@ class MiscSubState extends BaseOptionsMenu
 
         var option:Option = new Option('Mine Skin:',
 		"What Mine Note Skin You want to use??.",
-		'noteSkin[2]',
+		'mineSkin',
 		'string',
 		'HITMANS',
-		['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR', 'ITHIT']);
+		['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'NOTITG', 'ITHIT']);
 		addOption(option);
-		option.onChange = onChangeSkin;
+		// option.onChange = onChangeSkin;
+
+		var option:Option = new Option('Mimic Note Alpha:',
+			'Changes the alpha of the mimic notes',
+			'mimicNoteAlpha',
+			'float',
+			0.5);
+		option.scrollSpeed = 1;
+		option.minValue = 0.3;
+		option.maxValue = 0.7;
+		option.changeValue = 0.1;
+		addOption(option);
 
 		super();
 	}

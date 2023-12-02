@@ -102,6 +102,7 @@ class FunkinLua {
 		#if LUA_ALLOWED
 		lua_Cameras.set("game", {cam: PlayState.instance.camGame, shaders: [], shaderNames: []});
 		lua_Cameras.set("interfaz", {cam: PlayState.instance.camInterfaz, shaders: [], shaderNames: []});
+		lua_Cameras.set("interfaz2", {cam: PlayState.instance.camInterfaz2, shaders: [], shaderNames: []});
 		lua_Cameras.set("hud", {cam: PlayState.instance.camHUD, shaders: [], shaderNames: []});
         lua_Cameras.set("other", {cam: PlayState.instance.camOther, shaders: [], shaderNames: []});
 
@@ -3548,6 +3549,7 @@ class FunkinLua {
 				case 'camhud' | 'hud': return PlayState.instance.camHUD;
 				case 'camother' | 'other': return PlayState.instance.camOther;
 				case 'caminterfaz' | 'interfaz': return PlayState.instance.camInterfaz;
+				case 'caminterfaz2' | 'interfaz2': return PlayState.instance.camInterfaz;
 			}
 			
 			//modded cameras
@@ -3569,6 +3571,7 @@ class FunkinLua {
             case 'camhud' | 'hud': return lua_Cameras.get("hud");
 			case 'camother' | 'other': return lua_Cameras.get("other");
 			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
+			case 'caminterfaz2' | 'interfaz2': return lua_Cameras.get("interfaz2");
         }
         
         return lua_Cameras.get("game");

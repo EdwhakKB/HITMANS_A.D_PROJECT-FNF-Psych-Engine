@@ -30,7 +30,7 @@ using StringTools;
 
 class NoteOptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Note Colors', 'Hurt Colors', 'Quant Colors'/*, 'Misc'*/];
+	var options:Array<String> = ['Note Colors', 'Hurt Colors', 'Quant Colors', 'Misc'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -47,8 +47,8 @@ class NoteOptionsState extends MusicBeatState
 				openSubState(new options.HurtsSubState());
 			case 'Quant Colors':
 				openSubState(new options.QuantSubState());
-			// case 'Misc':
-			// 	openSubState(new options.MiscSubState());
+			case 'Misc':
+				openSubState(new options.MiscSubState());
 		}
 	}
 

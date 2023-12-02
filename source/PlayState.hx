@@ -1,5 +1,6 @@
 package;
 
+import flixel.tweens.misc.NumTween;
 import flixel.graphics.FlxGraphic;
 #if desktop
 import Discord.DiscordClient;
@@ -532,6 +533,9 @@ class PlayState extends MusicBeatState
 
 	public static var timeToStart:Float = 0;
 
+	//gameOver stuff
+	var staticDeath:FlxSprite;
+    var offEffect:FlxSprite;
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
@@ -639,6 +643,30 @@ class PlayState extends MusicBeatState
 		noteScore.visible = false;
 		add(noteScore);
 
+
+		//hitmans gameOverShit ig lmao
+		staticDeath = new FlxSprite();
+		staticDeath.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/Static');
+		staticDeath.animation.addByPrefix('idle', 'Static Animated', 48, true);	
+		staticDeath.antialiasing = ClientPrefs.globalAntialiasing;
+		staticDeath.scale.y = 3;
+		staticDeath.scale.x = 3;	
+		staticDeath.updateHitbox();	
+		staticDeath.screenCenter();
+		staticDeath.alpha =0 ;
+		staticDeath.animation.play("idle");
+		add(staticDeath);
+
+		offEffect = new FlxSprite();
+		offEffect.frames = Paths.getSparrowAtlas('Edwhak/Hitmans/newGameOver/tv-effect');
+		offEffect.animation.addByPrefix('play', 'shutdown', 24, false);
+		offEffect.scale.y = 1;
+		offEffect.scale.x = 1;
+		offEffect.alpha = 0;
+		offEffect.updateHitbox();
+		offEffect.screenCenter();
+		offEffect.antialiasing = ClientPrefs.globalAntialiasing;
+		add(offEffect);
 		// For the "Just the Two of Us" achievement
 		for (i in 0...keysArray.length)
 		{
@@ -1249,6 +1277,8 @@ class PlayState extends MusicBeatState
 		timeTxt.cameras = [camInterfaz];
 		doof.cameras = [camInterfaz];
 
+		staticDeath.cameras = [camOther];
+		offEffect.cameras = [camOther];
 		// if (SONG.song == 'South')
 		// FlxG.camera.alpha = 0.7;
 		// UI_camera.zoom = 1;
@@ -3545,9 +3575,6 @@ class PlayState extends MusicBeatState
 
 				paused = true;
 
-				vocals.stop();
-				FlxG.sound.music.stop();
-
 				persistentUpdate = false;
 				persistentDraw = false;
 				for (tween in modchartTweens) {
@@ -3559,7 +3586,26 @@ class PlayState extends MusicBeatState
 				// if (ClientPrefs.goStyle == 'OLD'){
 				// 	openSubState(new HitmansGameOverSubstate(deathVariableTXT,this));
 				// }else if (ClientPrefs.goStyle == 'NEW'){
-				openSubState(new NewHitmansGameOver(deathVariableTXT,this));
+				var defaultPlaybackRate:Float = playbackRate;
+				FlxTween.num(defaultPlaybackRate, 0, 3, {onUpdate: 	function(tween:FlxTween){
+					var thing = FlxMath.lerp(defaultPlaybackRate,0, tween.percent);
+                    playbackRate = thing;
+				},ease:FlxEase.elasticOut, onComplete: function(tween:FlxTween) {
+					playbackRate = 1;
+					vocals.stop();
+					FlxG.sound.music.stop();
+				}});
+				FlxTween.tween(staticDeath, {alpha: 1}, 3, {ease:FlxEase.sineIn, onComplete:function(daTween:FlxTween){
+					FlxG.sound.play(Paths.sound('Edwhak/deathSound'), 1, false);
+					playbackRate = 1;
+					staticDeath.alpha = 0;
+                	offEffect.alpha = 1;
+                	offEffect.animation.play('play');
+					new FlxTimer().start(1, function(tmr2:FlxTimer)
+					{
+						openSubState(new NewHitmansGameOver(deathVariableTXT,this));	
+					});
+				}});
 				//}
 				//openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
 

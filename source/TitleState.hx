@@ -646,59 +646,6 @@ class TitleState extends MusicBeatState
 				});
 			}
 			FlxTween.tween(logoBl, {alpha: 1}, 1, {ease: FlxEase.smoothStepIn});
-			dacursor = new DemoTextCursor(0, 0);
-			var settingsTbox:Settings = new Settings(
-				FlxAssets.FONT_DEFAULT,
-				16,
-				325,
-				FlxColor.WHITE
-			);
-			tbox = new Textbox(200,30, settingsTbox);
-			tbox.setText("Hello World!@011001500 How goes? @010@001FF0000Color test!@000 This is a good old textbox test.");
-			add(dacursor);
-			dacursor.attachToTextbox(tbox);
-			tbox.bring();
-	
-			var settingsTbox2:Settings = new Settings
-			(
-				FlxAssets.FONT_DEFAULT,
-				12,
-				400,
-				FlxColor.YELLOW,
-				30,
-				24
-			);
-			tbox2 = new Textbox(30,150, settingsTbox2);
-			tbox2.setText("This is @021014010another@020 textbox, to show how the settings variables can change the result. Speed, size or color and @031023820more with the effects@030! Note that there is a fully working text wrap! :D");
-			tbox2.statusChangeCallbacks.push(function(s:Textbox.Status):Void
-			{
-				if (s == Textbox.Status.DONE)
-				{
-					cursorTween = FlxTween.color(dacursor, 0.5, dacursor.color, FlxColor.TRANSPARENT,
-						{
-							type: FlxTweenType.PINGPONG,
-							ease: FlxEase.cubeInOut
-						}
-					);
-				}
-			});
-	
-	
-			tbox.statusChangeCallbacks.push(function (newStatus:Textbox.Status):Void
-			{
-				if (newStatus == Textbox.Status.FULL)
-				{
-					tbox.continueWriting();
-				}
-				else if(newStatus == Textbox.Status.DONE)
-				{
-					add(tbox2);
-					dacursor.detachFromTextbox(tbox);
-					dacursor.attachToTextbox(tbox2);
-					tbox2.bring();
-				}
-			});
-			add(tbox);
 			skippedIntro = true;
 		}
 	}

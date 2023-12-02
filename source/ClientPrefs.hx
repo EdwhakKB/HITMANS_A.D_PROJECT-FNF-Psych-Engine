@@ -16,7 +16,7 @@ class ClientPrefs {
 	public static var showFPS:Bool = true;
 	public static var flashing:Bool = true;
 	public static var globalAntialiasing:Bool = true;
-	public static var mineNoteAlpha:Float = 0.6;
+	public static var mimicNoteAlpha:Float = 0.6;
 	public static var hudStyle:String = 'HITMANS';
 	public static var customHudName:String = 'FNF';
     public static var healthBarStyle:String = 'healthBar';
@@ -24,7 +24,8 @@ class ClientPrefs {
     public static var countDownSounds:Array<String> = ["intro3", "intro2", "intro1", "introGo"];
     public static var ratingStyle:Array<Dynamic> = ["", null];
     public static var memoryDisplay:Bool = true;
-	public static var noteSkin:Array<String> = ['HITMANS', 'MIMIC', 'HITMANS'];
+	public static var noteSkin:Array<String> = ['HITMANS', 'MIMIC'];
+	public static var mineSkin:String = 'HITMANS';
 	public static var splashSkin:String = 'HITMANS';
 	public static var userName:String = '';
 	public static var isLogged:Bool = false;
@@ -162,6 +163,8 @@ class ClientPrefs {
         FlxG.save.data.countDownSounds = countDownSounds;
         FlxG.save.data.ratingStyle = ratingStyle;
 		FlxG.save.data.noteSkin = noteSkin;
+		FlxG.save.data.mineSkin = mineSkin;
+		FlxG.save.data.mimicNoteAlpha = mimicNoteAlpha;
 		FlxG.save.data.splashSkin = splashSkin;
 		FlxG.save.data.userName = userName;
 		FlxG.save.data.isLogged = isLogged;
@@ -274,6 +277,12 @@ class ClientPrefs {
         }
 		if(FlxG.save.data.noteSkin != null) {
 			noteSkin = FlxG.save.data.noteSkin;
+		}
+		if(FlxG.save.data.mineSkin != null) {
+			mineSkin = FlxG.save.data.mineSkin;
+		}
+		if(FlxG.save.data.mimicNoteAlpha != null) {
+			mimicNoteAlpha = FlxG.save.data.mimicNoteAlpha;
 		}
 		if(FlxG.save.data.splashSkin != null) {
 			splashSkin = FlxG.save.data.splashSkin;

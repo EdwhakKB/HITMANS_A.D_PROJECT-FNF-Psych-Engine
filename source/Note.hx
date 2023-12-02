@@ -252,7 +252,7 @@ class Note extends FlxSkewedSprite{
 				case 'Mimic Note':
 					ignoreNote = mustPress;
 					copyAlpha=false;
-					alpha=0.55; //not fully invisible but yeah
+					alpha=ClientPrefs.mimicNoteAlpha; //not fully invisible but yeah
 					lowPriority = true;
 
 					if(isSustainNote) {
@@ -287,7 +287,7 @@ class Note extends FlxSkewedSprite{
 				case 'Mine Note':
 					ignoreNote = mustPress;
 					isRoll = false;
-					reloadNote('', 'Skins/Misc/ITHIT/MINENOTE_assets');
+					reloadNote('', 'Skins/Misc/'+ClientPrefs.mineSkin+'/MINENOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'MINENOTE_assets';
 					lowPriority = true;

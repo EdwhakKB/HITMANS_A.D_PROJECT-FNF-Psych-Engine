@@ -44,29 +44,12 @@ class VisualsUISubState extends BaseOptionsMenu
 		['Classic', 'HITMANS']);
 		addOption(option);
 
-		// var option:Option = new Option('Note Skin:',
-		// "What Skin You want to use??.",
-		// 'noteSkin',
-		// 'string',
-		// 'HITMANS',
-		// ['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'DELTA', 'GROVE', 'SUSSY', 'EPIC', 'ITGOPT', 'DDR', 'ITHIT']);
-		// addOption(option);
-		// option.onChange = onChangeSkin;
-
 		var option:Option = new Option('Note Quantization',
 		"Notes will change their color based on the beats.",
 		'quantization',
 		'bool',
 		false);
 		addOption(option);
-
-		// var option:Option = new Option('GameOver Style:',
-		// "What Game Over do you want to see?.",
-		// 'goStyle',
-		// 'string',
-		// 'NEW',
-		// ['OLD', 'NEW']);
-		// addOption(option);
 
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
@@ -152,19 +135,12 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		#end
 
-		var option:Option = new Option('Splash Skin:',
-			"What splash skin do you like?",
-			'splashSkin',
-			'string',
-			'HITMANS',
-			['HITMANS', 'disabled']);
-		addOption(option);
-
-		// var option:Option = new Option('Combo Stacking',
-		// 	"If unchecked, Ratings and Combo won't stack, saving on System Memory and making them easier to read",
-		// 	'comboStacking',
-		// 	'bool',
-		// 	true);
+		// var option:Option = new Option('Splash Skin:',
+		// 	"What splash skin do you like?",
+		// 	'splashSkin',
+		// 	'string',
+		// 	'HITMANS',
+		// 	['HITMANS', 'disabled']);
 		// addOption(option);
 
 		super();
