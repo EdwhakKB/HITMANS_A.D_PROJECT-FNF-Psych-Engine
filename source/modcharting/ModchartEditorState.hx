@@ -240,7 +240,7 @@ class ModchartEditorState extends MusicBeatState
         TimeStopModifier, JumpNotesModifier,
         NotesModifier,
         //Misc Modifiers
-        InvertModifier, FlipModifier, JumpModifier,
+        StrumsModifier, InvertModifier, FlipModifier, JumpModifier,
         StrumAngleModifier, EaseXModifier, EaseYModifier, EaseZModifier,
         ArrowPath
     ];
@@ -1736,6 +1736,8 @@ class ModchartEditorState extends MusicBeatState
         explainString = "Modifier based from other modifiers but only affects notes and no targets";
             case 'LanesModifier':
         explainString = "Modifier based from other modifiers but only affects targets and no notes";
+            case 'StrumsModifier':
+        explainString = "Modifier based from other modifiers but affects targets and notes";
             case 'TanDrunkXModifier':
         explainString = "Modifier similar to drunk but uses tan instead of sin in X";
             case 'TanDrunkYModifier':

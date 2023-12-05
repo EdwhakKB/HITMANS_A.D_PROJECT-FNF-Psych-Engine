@@ -22,6 +22,7 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 
 	private var curStep:Int = 0;
 	private var curBeat:Int = 0;
+	private var curBeat2:Float = 0;
 
 	public var curDecStep:Float = 0;
 	public var curDecBeat:Float = 0;
@@ -140,6 +141,7 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 
 	private function updateBeat():Void
 	{
+		curBeat2 = curStep/4; //so i can grab the decimal variables
 		curBeat = Math.floor(curStep / 4);
 		curDecBeat = curDecStep/4;
 	}
@@ -192,9 +194,16 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 	{
 		if (curStep % 4 == 0)
 			beatHit();
+		
+		beatDecimalHit();
 	}
 
 	public function beatHit():Void
+	{
+		//trace('Beat: ' + curBeat);
+	}
+
+	public function beatDecimalHit():Void
 	{
 		//trace('Beat: ' + curBeat);
 	}
