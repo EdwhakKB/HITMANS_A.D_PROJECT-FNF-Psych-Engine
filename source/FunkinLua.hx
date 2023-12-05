@@ -66,6 +66,7 @@ import Discord;
 #end
 
 import shaders.CustomShader;
+import lime.app.Application;
 
 using StringTools;
 
@@ -108,7 +109,6 @@ class FunkinLua {
 
 		lua = LuaL.newstate();
 		LuaL.openlibs(lua);
-		Lua.init_callbacks(lua);
 
 		//trace('Lua version: ' + Lua.version());
 		//trace("LuaJIT version: " + Lua.versionJIT());
@@ -3172,15 +3172,18 @@ class FunkinLua {
 			if(resultStr != null && result != 0) {
 				trace(resultStr);
 				#if windows
-				lime.app.Application.current.window.alert(resultStr, 'Error on lua script!');
+				Application.current.window.alert(resultStr, 'Error on lua script!');
 				#else
 				luaTrace('$scriptName\n$resultStr', true, false, FlxColor.RED);
 				#end
 				lua = null;
+				PlayState.instance.luaArray.remove(this);
+				PlayState.instance.luaArray = [];
 				return;
 			}
 			if(isString) scriptName = 'unknown';
 		} catch(e:Dynamic) {
+			Application.current.window.alert('Failed to catch error on script and error on loading script!', 'Error on loading...');
 			trace(e);
 			return;
 		}
