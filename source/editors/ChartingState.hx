@@ -231,6 +231,7 @@ class ChartingState extends MusicBeatState
 	public var mouseQuant:Bool = false;
 
 	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
+	var saveOldSectionOrTime:Int = 0;
 
 	override function create()
 	{
@@ -419,6 +420,9 @@ class ChartingState extends MusicBeatState
 		}
 		lastSong = currentSongName;
 
+		if (curSection != saveOldSectionOrTime)
+			changeSection(saveOldSectionOrtime);
+
 		zoomTxt = new FlxText(10, 10, 0, "Zoom: 1 / 1", 16);
 		zoomTxt.scrollFactor.set();
 		add(zoomTxt);
@@ -513,7 +517,8 @@ class ChartingState extends MusicBeatState
 
 		var startHere:FlxButton = new FlxButton(clear_events.x, clear_events.y - 30, 'Start Here', function()
 			{
-				PlayState.timeToStart = Conductor.songPosition;				
+				PlayState.timeToStart = Conductor.songPosition;	
+				saveOldSectionOrTime = curSection;
 				startSong();
 			});
 
