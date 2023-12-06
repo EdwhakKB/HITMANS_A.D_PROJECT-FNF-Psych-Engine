@@ -109,6 +109,7 @@ class FunkinLua {
 
 		lua = LuaL.newstate();
 		LuaL.openlibs(lua);
+		Lua.init_callbacks(lua);
 
 		//trace('Lua version: ' + Lua.version());
 		//trace("LuaJIT version: " + Lua.versionJIT());
@@ -3666,12 +3667,14 @@ class FunkinLua {
 		return null;
 	}
 
-	var lastCalledFunction:String = '';
+	public var lastCalledFunction:String = '';
+	public static var lastCalledScript:FunkinLua = null;
 	public function call(func:String, args:Array<Dynamic>):Dynamic {
 		#if LUA_ALLOWED
 		if(closed) return Function_Continue;
 
 		lastCalledFunction = func;
+		lastCalledScript = this;
 		try {
 			if(lua == null) return Function_Continue;
 
@@ -3701,9 +3704,11 @@ class FunkinLua {
 			if (result == null) result = Function_Continue;
 
 			Lua.pop(lua, 1);
+			if(closed) stop();
 			return result;
 		}
 		catch (e:Dynamic) {
+			Application.current.window.alert('Failed to call $func in script!', 'Error on $func...');
 			trace(e);
 		}
 		#end
@@ -3800,12 +3805,15 @@ class FunkinLua {
 
 	public function stop() {
 		#if LUA_ALLOWED
+		PlayState.instance.luaArray.remove(this);
+		closed = true;
+		
+		lua_Cameras.clear();
+		lua_Custom_Shaders.clear();
+		
 		if(lua == null) {
 			return;
 		}
-
-		lua_Cameras.clear();
-		lua_Custom_Shaders.clear();
 
 		Lua.close(lua);
 		lua = null;
