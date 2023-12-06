@@ -421,7 +421,7 @@ class ChartingState extends MusicBeatState
 		lastSong = currentSongName;
 
 		if (curSection != saveOldSectionOrTime)
-			changeSection(saveOldSectionOrtime);
+			changeSection(saveOldSectionOrTime);
 
 		zoomTxt = new FlxText(10, 10, 0, "Zoom: 1 / 1", 16);
 		zoomTxt.scrollFactor.set();
