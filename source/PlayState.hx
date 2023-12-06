@@ -2193,7 +2193,7 @@ class PlayState extends MusicBeatState
 	{
 		startingSong = false;
 		songStarted = true;
-
+		canPause = true;
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 		if((SONG.song.toLowerCase() == "system-reloaded" || SONG.song.toLowerCase() == "metakill" ) && storyDifficulty == 1){
@@ -2799,7 +2799,7 @@ class PlayState extends MusicBeatState
 	public var paused:Bool = false;
 	public var canReset:Bool = true;
 	var startedCountdown:Bool = false;
-	var canPause:Bool = true;
+	var canPause:Bool = false;
 	var limoSpeed:Float = 0;
 	var lastSection:Int = 0;
 	public var camDisplaceX:Float = 0;
@@ -3019,7 +3019,7 @@ class PlayState extends MusicBeatState
 			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
 		}
 
-		if (controls.PAUSE || !Main.focused && startedCountdown && canPause && !inResultsScreen)
+		if ((controls.PAUSE || !Main.focused) && startedCountdown && canPause && !inResultsScreen)
 		{
 			var ret:Dynamic = callOnLuas('onPause', [], false);
 			if(ret != FunkinLua.Function_Stop) {
