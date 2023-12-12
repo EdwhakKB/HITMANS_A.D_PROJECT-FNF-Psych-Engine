@@ -420,67 +420,63 @@ class ResultScreen extends MusicBeatSubstate
 
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				PlayState.cancelMusicFadeTween();
-				camRate.fade(FlxColor.BLACK, 0.5, false, function()
+				if(PlayState.isStoryMode)
 				{
-					if(PlayState.isStoryMode)
+					PlayState.campaignScore += PlayState.instance.songScore;
+					PlayState.campaignMisses += PlayState.weekMisses;
+
+					PlayState.storyPlaylist.remove(PlayState.storyPlaylist[0]);
+
+					if (PlayState.storyPlaylist.length <= 0)
 					{
-						PlayState.campaignScore += PlayState.instance.songScore;
-						PlayState.campaignMisses += PlayState.weekMisses;
-
-						PlayState.storyPlaylist.remove(PlayState.storyPlaylist[0]);
-
-						if (PlayState.storyPlaylist.length <= 0)
-						{
-							WeekData.loadTheFirstEnabledMod();
-							FlxG.sound.playMusic(Paths.music('bloodstained'));
-							#if desktop DiscordClient.resetClientID(); #end
-							PlayState.cancelMusicFadeTween();
-							if(FlxTransitionableState.skipNextTransIn) {
-								CustomFadeTransition.nextCamera = null;
-							}
-							MusicBeatState.switchState(new StoryMenuState());
-
-							if(!ClientPrefs.getGameplaySetting('practice', true) && !ClientPrefs.getGameplaySetting('botplay', true)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
-								StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
-
-								if (PlayState.SONG.validScore)
-								{
-									Highscore.saveWeekScore(WeekData.getWeekFileName(), PlayState.campaignScore, PlayState.storyDifficulty);
-								}
-
-								FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
-								FlxG.save.flush();
-							}
-							PlayState.changedDifficulty = false;
+						WeekData.loadTheFirstEnabledMod();
+						FlxG.sound.playMusic(Paths.music('bloodstained'));
+						#if desktop DiscordClient.resetClientID(); #end
+						PlayState.cancelMusicFadeTween();
+						if(FlxTransitionableState.skipNextTransIn) {
+							CustomFadeTransition.nextCamera = null;
 						}
-						else
-						{
-							var difficulty:String = CoolUtil.getDifficultyFilePath();
+						MusicBeatState.switchState(new StoryMenuState(), true, 0.75);
 
-							trace('LOADING NEXT SONG');
-							trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
+						if(!ClientPrefs.getGameplaySetting('practice', true) && !ClientPrefs.getGameplaySetting('botplay', true)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
+							StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
 
+							if (PlayState.SONG.validScore)
+							{
+								Highscore.saveWeekScore(WeekData.getWeekFileName(), PlayState.campaignScore, PlayState.storyDifficulty);
+							}
 
-							FlxTransitionableState.skipNextTransIn = true;
-							FlxTransitionableState.skipNextTransOut = true;
-
-							PlayState.prevCamFollow = PlayState.instance.camFollow;
-							PlayState.prevCamFollowPos = PlayState.instance.camFollowPos;
-
-							PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
-							FlxG.sound.music.stop();
-
-							PlayState.cancelMusicFadeTween();
-							LoadingState.loadAndSwitchState(new PlayState());
+							FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+							FlxG.save.flush();
 						}
-					}else{
-						MusicBeatState.switchState(new FreeplayState());
+						PlayState.changedDifficulty = false;
 					}
+					else
+					{
+						var difficulty:String = CoolUtil.getDifficultyFilePath();
+
+						trace('LOADING NEXT SONG');
+						trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
+
+
+						FlxTransitionableState.skipNextTransIn = true;
+						FlxTransitionableState.skipNextTransOut = true;
+
+						PlayState.prevCamFollow = PlayState.instance.camFollow;
+						PlayState.prevCamFollowPos = PlayState.instance.camFollowPos;
+
+						PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
+						FlxG.sound.music.stop();
+
+						PlayState.cancelMusicFadeTween();
+						LoadingState.loadAndSwitchState(new PlayState(), true, 0.75);
+					}
+				}else{
 					FlxG.sound.playMusic(Paths.music('bloodstained'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
-					MusicBeatState.switchState(new FreeplayState());
-					ended = false;
-				});
+					MusicBeatState.switchState(new FreeplayState(), true, 0.75);
+				}
+				ended = false;				
 			}
 		}
 

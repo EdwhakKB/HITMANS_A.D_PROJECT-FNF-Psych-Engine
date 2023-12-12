@@ -193,7 +193,8 @@ class Note extends FlxSkewedSprite{
 
 		if(noteData > -1 && noteType != value) {
 			switch(value) {
-				case 'Hurt Note':
+				case 'Hurt Note' | 'HurtAgressive':
+					var isAgressive:Bool = value == 'HurtAgressive';
 					usedDifferentWidth = true;
 					ignoreNote = mustPress;
 					defaultRGBHurt();
@@ -201,32 +202,22 @@ class Note extends FlxSkewedSprite{
 					if(ClientPrefs.noteSkin[1] != 'MIMIC') {
 						reloadNote('', 'Skins/Hurts/'+ClientPrefs.noteSkin[1]+'-HURT_assets');				
 					}
-					copyAlpha=false;
-					alpha=0.55; //not fully invisible but yeah
+					if (!isAgressive){
+						copyAlpha=false;
+						alpha=0.55; //not fully invisible but yeah
+					}
 					lowPriority = true;
 
 					if(isSustainNote) {
-						missHealth = 0.1;
+						if (isAgressive)
+							missHealth = 0.2;
+						else
+							missHealth = 0.1;
 					} else {
-						missHealth = 0.3;
-					}
-					hurtNote = true;
-					hitCausesMiss = true;
-				case 'HurtAgressive':
-					usedDifferentWidth = true;
-					ignoreNote = mustPress;
-					defaultRGBHurt();
-
-					if(ClientPrefs.noteSkin[1] != 'MIMIC') {
-						reloadNote('', 'Skins/Hurts/'+ClientPrefs.noteSkin[1]+'-HURT_assets');				
-					}
-
-					lowPriority = true;
-	
-					if(isSustainNote) {
-						missHealth = 0.2;
-					} else {
-						missHealth = 0.5;
+						if (isAgressive)
+							missHealth = 0.5;
+						else
+							missHealth = 0.3;
 					}
 					hurtNote = true;
 					hitCausesMiss = true;

@@ -115,26 +115,31 @@ class NewHitmansGameOver extends MusicBeatSubstate
 
         tauntNum = FlxG.random.int(1,3);
 
-        if(deathVariable == 'Notes' ){
-            noteWhoKilled = 'NOTE';
-        }else if(deathVariable == 'Hurts' ){
-            noteWhoKilled = 'HurtAgressive';
-        }else if(deathVariable == 'Instakill' ){
-            noteWhoKilled = 'Instakill Note';
-        }else if(deathVariable == 'Mine' ){
-            noteWhoKilled = 'Mine Note';
-        }else if(deathVariable == 'Love' ){
-            noteWhoKilled = 'Love Note';
-        }else if(deathVariable == 'HD' ){
-            noteWhoKilled = 'HD Note';
-        }else if(deathVariable == 'Fire' ){
-            noteWhoKilled = 'Fire Note';
-        }else if(deathVariable == 'TV' ){
-            killedByANote = false;
-        }else if(deathVariable == 'ALERTS' ){
-            killedByANote = false;
-        }else if(deathVariable == 'VISION' ){
-            killedByANote = false;
+        switch (deathVariable){
+            case 'Notes':
+                noteWhoKilled = 'Note';
+            case 'Hurts':
+                noteWhoKilled = 'HurtAgressive';
+            case 'InvisibleHurts':
+                noteWhoKilled = 'HurtInvisible';
+            case 'Mimics':
+                noteWhoKilled = 'Mimic Note';
+            case 'Instakill':
+                noteWhoKilled = 'Instakill Note';
+            case 'Mine':
+                noteWhoKilled = 'Mine Note';
+            case 'Love':
+                noteWhoKilled = 'Love Note';
+            case 'HD':
+                noteWhoKilled = 'HD Note';
+            case 'Fire':
+                noteWhoKilled = 'Fire Note';
+            case 'TV':
+                killedByANote = false;
+            case 'ALERTS':
+                killedByANote = false;
+            case 'VISION':
+                killedByANote = false;
         }
 
         trace("Character: ",characterName);
@@ -147,9 +152,9 @@ class NewHitmansGameOver extends MusicBeatSubstate
         FlxCamera.defaultCameras = [camHUD];
 
         deathSprite = new Note(0, 0, false, true);
-        if (killedByANote && deathVariable != 'Notes'){
-            deathSprite.noteType = noteWhoKilled; //WHY I NEVER THINK ABOUT THIS LMAO
-        }
+        if (killedByANote && deathVariable != 'InvisibleHurts') deathSprite.noteType = deathVariable == 'Notes' ? '' : noteWhoKilled;
+        if (killedByANote && deathVariable == 'InvisibleHurts') deathSprite.noteType = 'HurtAgressive'; //lmao
+        
         deathSprite.setPosition(830,0);
         deathSprite.animation.addByPrefix('note', 'green0', 24, true);
         deathSprite.animation.play('note');
@@ -313,6 +318,18 @@ class NewHitmansGameOver extends MusicBeatSubstate
                 text3.setText("-They're skin its mostly red");
                 text4.setText("-They only appears in easy chart songs");
                 text5.setText("-You got this, try again");
+            case 'InvisibleHurts':
+                text1.setText("-The Invisible Notes");
+                text2.setText("-They prevent you from spamming");
+                text3.setText("-Quiet but mortal");
+                text4.setText("-They appear in any song");
+                text5.setText("-Next attempt will be victory");
+            case 'Mimics':
+                text1.setText("-The Doppelganger Notes");
+                text2.setText("-Avoid hit any of those notes");
+                text3.setText("-They looks exactly like your notes");
+                text4.setText("-Usually appears in BOSS Tiers songs");
+                text5.setText("-Watch your steps, you can do it");
             case 'Instakill':
                 text1.setText("-The Killbot notes");
                 text2.setText("-DO NOT TOUCH");
@@ -330,7 +347,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
                 text2.setText("-Any hit drains your life");
                 text3.setText("-Lethal when easy charts");
                 text4.setText("-They appear only vs santyax songs");
-                text5.setText("-Good luck next time");
+                text5.setText("-Better stay cold next time");
             case 'Love':
                 text1.setText("-The Lovely note");
                 text2.setText("-If you aren't santyax they damage");

@@ -104,7 +104,7 @@ using StringTools;
 class PlayState extends MusicBeatState
 {
 	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
-	
+
 	public var filters:Array<BitmapFilter> = [];
 	public var filterList:Array<BitmapFilter> = [];
 	public var camfilters:Array<BitmapFilter> = [];
@@ -221,7 +221,7 @@ class PlayState extends MusicBeatState
 	var modChartDefaultStrumY:Array<Float> = [0,0,0,0,0,0,0,0];
 	var deathVariableTXT:String = 'Notes'; //game load the shit here too to make death screen works well lmao -Ed
 	var deathTimer:FlxTimer;
-	public var canChange:Bool = true; //simple shit to allow or disable death screen variables when a special note was hit/miss
+	public var gameOver:Bool = true; //simple shit to allow or disable death screen variables when a special note was hit/miss
 	public var drain:Bool = false;
 	public var gain:Bool = false;
 
@@ -3570,6 +3570,7 @@ class PlayState extends MusicBeatState
 		{
 			var ret:Dynamic = callOnLuas('onGameOver', [], false);
 			if(ret != FunkinLua.Function_Stop) {
+				gameOver = true; //just for notes to stop changing variables while gameOver does the funny
 				boyfriend.stunned = true;
 				deathCounter++;
 
@@ -4781,11 +4782,13 @@ class PlayState extends MusicBeatState
 			}
 		});
 
-		switch (daNote.noteType){
-			case '':
-				deathVariableTXT = 'Notes';
-			case 'HD Note':
-				deathVariableTXT = 'HD';
+		if (!gameOver){
+			switch (daNote.noteType){
+				case '':
+					deathVariableTXT = 'Notes';
+				case 'HD Note':
+					deathVariableTXT = 'HD';
+			}
 		}
 
 		combo = 0;
@@ -5052,8 +5055,8 @@ class PlayState extends MusicBeatState
 				if(!note.noMissAnimation)
 				{
 					switch(note.noteType) {
-						case 'Hurt Note': //Hurt note
-						if (canChange)
+						case 'Hurt Note' | 'HurtAgressive': //Hurt note
+						if (!gameOver)
 							{
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
@@ -5061,32 +5064,23 @@ class PlayState extends MusicBeatState
 							}
 							deathVariableTXT = 'Hurts';
 						}
-						case 'Invisible Hurt Note': //what you can't see but it still damage you lmao
-						if (canChange)
+						case 'Invisible Hurt Note' : //what you can't see but still damages you
+						if (!gameOver)
 							{
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
 							}
-							deathVariableTXT = 'Hurts';
-						}
-						case 'HurtAgressive': //agressive hurts that cause more damage
-						if (canChange)
-							{
-							if(boyfriend.animation.getByName('hurt') != null) {
-								boyfriend.playAnim('hurt', true);
-								boyfriend.specialAnim = true;
-							}
-							deathVariableTXT = 'Hurts';
+							deathVariableTXT = 'InvisibleHurts';
 						}
 						case 'Mimic Note': //hurts but similar to notes
-						if (canChange)
+						if (!gameOver)
 							{
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);
 								boyfriend.specialAnim = true;
 							}
-							deathVariableTXT = 'Hurts';
+							deathVariableTXT = 'Mimics';
 						}
 					}
 				}
@@ -5103,12 +5097,12 @@ class PlayState extends MusicBeatState
 			if (!note.hitCausesMiss){
 				switch(note.noteType) {
 					case 'Instakill Note': //Hurt note
-					if (canChange)
+					if (!gameOver)
 						{
 							deathVariableTXT = 'Instakill';
 					}
 					case 'Mine Note': //what you can't see but it still damage you lmao
-					if (canChange)
+					if (!gameOver)
 						{
 							deathVariableTXT = 'Mine';
 							FlxG.sound.play(Paths.sound('Edwhak/Mine'));
@@ -5126,7 +5120,7 @@ class PlayState extends MusicBeatState
 							health = health-0.8;
 					}
 					case 'Love Note': //agressive hurts that cause more damage
-					if (canChange)
+					if (!gameOver)
 						{
 							if (Note.edwhakIsPlayer){
 								drain = true;
@@ -5136,7 +5130,7 @@ class PlayState extends MusicBeatState
 							}
 					}
 					case 'Fire Note': //agressive hurts that cause more damage
-					if (canChange)
+					if (!gameOver)
 						{
 							if (Note.edwhakIsPlayer){
 								gain = false;
@@ -5146,7 +5140,7 @@ class PlayState extends MusicBeatState
 							}
 					}
 					case 'True Love Note': //agressive hurts that cause more damage
-					if (canChange)
+					if (!gameOver)
 						{
 							if (Note.edwhakIsPlayer){
 								tgain = true;
