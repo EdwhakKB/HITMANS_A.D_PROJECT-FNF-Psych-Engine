@@ -40,7 +40,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
         Std.int(FlxG.width * 0.6),
         FlxColor.WHITE,
         3,
-        12
+        18
     );
     //for small stuff in textBox (such as killed by and died to)
     var settingsTbox2:Settings = new Settings

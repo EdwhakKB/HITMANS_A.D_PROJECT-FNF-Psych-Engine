@@ -221,7 +221,7 @@ class PlayState extends MusicBeatState
 	var modChartDefaultStrumY:Array<Float> = [0,0,0,0,0,0,0,0];
 	var deathVariableTXT:String = 'Notes'; //game load the shit here too to make death screen works well lmao -Ed
 	var deathTimer:FlxTimer;
-	public var gameOver:Bool = true; //simple shit to allow or disable death screen variables when a special note was hit/miss
+	public var gameOver:Bool = false; //simple shit to allow or disable death screen variables when a special note was hit/miss
 	public var drain:Bool = false;
 	public var gain:Bool = false;
 
@@ -1630,7 +1630,7 @@ class PlayState extends MusicBeatState
 		}
 		playbackRate = value;
 		FlxAnimationController.globalSpeed = value;
-		trace('Anim speed: ' + FlxAnimationController.globalSpeed);
+		// trace('Anim speed: ' + FlxAnimationController.globalSpeed);
 		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000 * value;
 		setOnLuas('playbackRate', playbackRate);
 		return value;
@@ -4782,7 +4782,7 @@ class PlayState extends MusicBeatState
 			}
 		});
 
-		if (!gameOver){
+		if (!isDead){
 			switch (daNote.noteType){
 				case '':
 					deathVariableTXT = 'Notes';
@@ -5098,56 +5098,52 @@ class PlayState extends MusicBeatState
 				switch(note.noteType) {
 					case 'Instakill Note': //Hurt note
 					if (!gameOver)
-						{
-							deathVariableTXT = 'Instakill';
+					{
+						deathVariableTXT = 'Instakill';
 					}
 					case 'Mine Note': //what you can't see but it still damage you lmao
 					if (!gameOver)
-						{
-							deathVariableTXT = 'Mine';
-							FlxG.sound.play(Paths.sound('Edwhak/Mine'));
-							ratingsBumpScale();
-							if (!edwhakIsEnemy && !SONG.bossFight){
-								ratingsBumpScaleOP();
-								ratingsOP.animation.play("miss");
-							}
-							ratings.animation.play("miss");
-							songMisses++;
-							vocals.volume = 0;
-							// if(!practiceMode) 
-							songScore -= 10;
-							combo = 0;
-							health = health-0.8;
+					{
+						deathVariableTXT = 'Mine';
+						FlxG.sound.play(Paths.sound('Edwhak/Mine'));
+						ratingsBumpScale();
+						if (!edwhakIsEnemy && !SONG.bossFight){
+							ratingsBumpScaleOP();
+							ratingsOP.animation.play("miss");
+						}
+						ratings.animation.play("miss");
+						songMisses++;
+						vocals.volume = 0;
+						// if(!practiceMode) 
+						songScore -= 10;
+						combo = 0;
+						health = health-0.8;
 					}
 					case 'Love Note': //agressive hurts that cause more damage
 					if (!gameOver)
-						{
-							if (Note.edwhakIsPlayer){
-								drain = true;
-								deathVariableTXT = 'Love';
-							}else{
-								drain = false;
-							}
+					{
+						if (Note.edwhakIsPlayer){
+							drain = true;
+							deathVariableTXT = 'Love';
+						}else{
+							drain = false;
+						}
 					}
 					case 'Fire Note': //agressive hurts that cause more damage
 					if (!gameOver)
-						{
-							if (Note.edwhakIsPlayer){
-								gain = false;
-								deathVariableTXT = 'Fire';
-							}else{
-								gain = true;
-							}
+					{
+						if (Note.edwhakIsPlayer){
+							deathVariableTXT = 'Fire';
+						}
+						gain = Note.edwhakIsPlayer ? false : true;
 					}
 					case 'True Love Note': //agressive hurts that cause more damage
 					if (!gameOver)
-						{
-							if (Note.edwhakIsPlayer){
-								tgain = true;
-								deathVariableTXT = 'Tlove';
-							}else{
-								tgain = false;
-							}
+					{
+						if (Note.edwhakIsPlayer){
+							tgain = true;
+							deathVariableTXT = 'Tlove';
+						}
 					}
 				}
 			}

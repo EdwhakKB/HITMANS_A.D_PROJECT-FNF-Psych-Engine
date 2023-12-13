@@ -111,7 +111,7 @@ class ResultScreen extends MusicBeatSubstate
 		camRate = new FlxCamera();
 		FlxG.cameras.add(camRate, false);
         FlxCamera.defaultCameras = [camRate];
-		FlxG.cameras.setDefaultDrawTarget(camRate, true);
+		FlxG.cameras.setDefaultDrawTarget(camRate, false);
 
 		dascore = score;
 		daacc = acc;
@@ -398,85 +398,87 @@ class ResultScreen extends MusicBeatSubstate
 			}
 			if ((FlxG.keys.justPressed.ENTER || FlxG.mouse.justPressed) && !ended)
 			{
-				ended = true;
-				PlayState.deathCounter = 0;
-				PlayState.seenCutscene = false;
-				PlayState.changedDifficulty = false;
-				PlayState.inResultsScreen = false; //just to make sure it allows countDown again lmao
-				
-				if (PlayState.chartingMode)
-				{
-					persistentUpdate = false;
-					PlayState.instance.paused = true;
-					PlayState.cancelMusicFadeTween();
-					MusicBeatState.switchState(new ChartingState());
-					PlayState.chartingMode = true;
-				
-					#if desktop
-						DiscordClient.changePresence("Chart Editor", null, null, true);
-					#end
-					return;
-				}
-
 				FlxG.sound.play(Paths.sound('scrollMenu'));
-				PlayState.cancelMusicFadeTween();
-				if(PlayState.isStoryMode)
+				camRate.fade(FlxColor.BLACK, 0.5, false, function()
 				{
-					PlayState.campaignScore += PlayState.instance.songScore;
-					PlayState.campaignMisses += PlayState.weekMisses;
-
-					PlayState.storyPlaylist.remove(PlayState.storyPlaylist[0]);
-
-					if (PlayState.storyPlaylist.length <= 0)
+					ended = true;
+					PlayState.deathCounter = 0;
+					PlayState.seenCutscene = false;
+					PlayState.changedDifficulty = false;
+					PlayState.inResultsScreen = false; //just to make sure it allows countDown again lmao
+					
+					if (PlayState.chartingMode)
 					{
-						WeekData.loadTheFirstEnabledMod();
-						FlxG.sound.playMusic(Paths.music('bloodstained'));
-						#if desktop DiscordClient.resetClientID(); #end
+						persistentUpdate = false;
+						PlayState.instance.paused = true;
 						PlayState.cancelMusicFadeTween();
-						if(FlxTransitionableState.skipNextTransIn) {
-							CustomFadeTransition.nextCamera = null;
-						}
-						MusicBeatState.switchState(new StoryMenuState(), true, 0.75);
+						MusicBeatState.switchState(new ChartingState(), true, 0.75);
+						PlayState.chartingMode = true;
+					
+						#if desktop
+							DiscordClient.changePresence("Chart Editor", null, null, true);
+						#end
+						return;
+					}
 
-						if(!ClientPrefs.getGameplaySetting('practice', true) && !ClientPrefs.getGameplaySetting('botplay', true)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
-							StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
+					PlayState.cancelMusicFadeTween();
+					if(PlayState.isStoryMode)
+					{
+						PlayState.campaignScore += PlayState.instance.songScore;
+						PlayState.campaignMisses += PlayState.weekMisses;
 
-							if (PlayState.SONG.validScore)
-							{
-								Highscore.saveWeekScore(WeekData.getWeekFileName(), PlayState.campaignScore, PlayState.storyDifficulty);
+						PlayState.storyPlaylist.remove(PlayState.storyPlaylist[0]);
+
+						if (PlayState.storyPlaylist.length <= 0)
+						{
+							WeekData.loadTheFirstEnabledMod();
+							FlxG.sound.playMusic(Paths.music('bloodstained'));
+							#if desktop DiscordClient.resetClientID(); #end
+							PlayState.cancelMusicFadeTween();
+							if(FlxTransitionableState.skipNextTransIn) {
+								CustomFadeTransition.nextCamera = null;
 							}
+							MusicBeatState.switchState(new StoryMenuState(), true, 0.75);
 
-							FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
-							FlxG.save.flush();
+							if(!ClientPrefs.getGameplaySetting('practice', true) && !ClientPrefs.getGameplaySetting('botplay', true)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
+								StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
+
+								if (PlayState.SONG.validScore)
+								{
+									Highscore.saveWeekScore(WeekData.getWeekFileName(), PlayState.campaignScore, PlayState.storyDifficulty);
+								}
+
+								FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+								FlxG.save.flush();
+							}
+							PlayState.changedDifficulty = false;
 						}
-						PlayState.changedDifficulty = false;
+						else
+						{
+							var difficulty:String = CoolUtil.getDifficultyFilePath();
+
+							trace('LOADING NEXT SONG');
+							trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
+
+
+							FlxTransitionableState.skipNextTransIn = true;
+							FlxTransitionableState.skipNextTransOut = true;
+
+							PlayState.prevCamFollow = PlayState.instance.camFollow;
+							PlayState.prevCamFollowPos = PlayState.instance.camFollowPos;
+
+							PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
+							FlxG.sound.music.stop();
+
+							PlayState.cancelMusicFadeTween();
+							LoadingState.loadAndSwitchState(new PlayState(), true, 0.75);
+						}
+					}else{
+						FlxG.sound.playMusic(Paths.music('bloodstained'), 0);
+						FlxG.sound.music.fadeIn(4, 0, 0.7);
+						MusicBeatState.switchState(new FreeplayState(), true, 0.75);
 					}
-					else
-					{
-						var difficulty:String = CoolUtil.getDifficultyFilePath();
-
-						trace('LOADING NEXT SONG');
-						trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
-
-
-						FlxTransitionableState.skipNextTransIn = true;
-						FlxTransitionableState.skipNextTransOut = true;
-
-						PlayState.prevCamFollow = PlayState.instance.camFollow;
-						PlayState.prevCamFollowPos = PlayState.instance.camFollowPos;
-
-						PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
-						FlxG.sound.music.stop();
-
-						PlayState.cancelMusicFadeTween();
-						LoadingState.loadAndSwitchState(new PlayState(), true, 0.75);
-					}
-				}else{
-					FlxG.sound.playMusic(Paths.music('bloodstained'), 0);
-					FlxG.sound.music.fadeIn(4, 0, 0.7);
-					MusicBeatState.switchState(new FreeplayState(), true, 0.75);
-				}
-				ended = false;				
+				});	
 			}
 		}
 
