@@ -84,6 +84,7 @@ class FreeplayState extends MusicBeatState
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
 			var leSongs:Array<String> = [];
 			var leChars:Array<String> = [];
+			var leColors:Array<Int> = [];
 			var leModchartDiff:Array<Float> = [];
 			var leBossTier:Array<Bool> = [];
 
@@ -91,6 +92,10 @@ class FreeplayState extends MusicBeatState
 			{
 				leSongs.push(leWeek.songs[j][0]);
 				leChars.push(leWeek.songs[j][1]);
+
+				for (i in 0...leWeek.songs[j][2].length)
+					leColors.push(leWeek.songs[j][2][i]);
+
 				if (leWeek.songs[j][3] != null){
 					leModchartDiff.push(leWeek.songs[i][3][0]);
 					leBossTier.push(leWeek.songs[i][3][1]);
@@ -136,12 +141,27 @@ class FreeplayState extends MusicBeatState
 		{
 			var box:FlxSprite = new FlxSprite();
 			box.loadGraphic(Paths.image('freeplay/EmptyBox'));
-			// box.x=FlxG.width / 2 -(box.width/16);
-			box.x = FlxG.width / 2;
+
+			box.x = FlxG.width / 2 - (box.width / 2);
 			box.y = FlxG.height / 2 - (box.height / 2) + (i * 415);
 			box.antialiasing = ClientPrefs.globalAntialiasing;
 			box.ID = i;
-			//grupo.add(box);
+			grupo.add(box);
+
+			var imageShow:String = WeekData.weeksList[i];
+			var imagenPath:String = 'freeplay/weeks/';
+			var imagePH:String = 'placeHolder';
+			var imagen:FlxSprite = new FlxSprite();
+
+			imagen.loadGraphic(Paths.image(imagenPath+imageShow));
+			if(imagen.graphic == null) //if no graphic was loaded, then load the placeholder
+  			imagen.loadGraphic(Paths.image(imagenPath+imagePH));
+
+			imagen.x = FlxG.width / 2 - (imagen.width / 2);
+			imagen.y = FlxG.height / 2 - (imagen.height / 2) + (i * 415);
+			imagen.antialiasing = ClientPrefs.globalAntialiasing;
+			imagen.ID = i;
+			grupoImagen.add(imagen);
 		}
 		WeekData.setDirectoryFromWeek();
 
@@ -199,6 +219,8 @@ class FreeplayState extends MusicBeatState
 		changeSelection();
 		changeSong();
 		changeDiff();
+		setupSongsNWeek(true);
+		setupSongsNWeek(false);
 		super.create();
 	}
 
@@ -372,6 +394,7 @@ class FreeplayState extends MusicBeatState
 				rating.alpha = 0;
 				instPlaying = -1;
 				FlxG.sound.play(Paths.sound('cancelMenu'));
+				setupSongsNWeek(false);
 			}
 			else
 			{
@@ -416,6 +439,7 @@ class FreeplayState extends MusicBeatState
 			if (!weekOn)
 			{
 				weekOn = true;
+				setupSongsNWeek(true);
 				rating.alpha = 1;
 				FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 				changeDiff();
@@ -488,8 +512,6 @@ class FreeplayState extends MusicBeatState
 		vocals = null;
 	}
 
-	var imagenPath:String = 'freeplay/weeks/';
-	var imagePH:String = 'placeHolder';
 	var modchartDifficultyValue:Float = 1;
 	var modchartDiff:FlxBar = null;
 
@@ -504,38 +526,32 @@ class FreeplayState extends MusicBeatState
 				var itext = new FlxText(0, 0, 0, "");
 				itext.setFormat(Paths.font("kremlin.ttf"), 36, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				itext.borderSize = 2;
+				itext.alpha = 0;
 				itext.font = songText.font;
 				itext.text = songs[curSelected].songName[i].toUpperCase();
 				itext.ID = i;
 
-				itext.y = (FlxG.height / 2) - (songs[curSelected].songName.length * 80 / 2) + 50 * i;
+				itext.y = (FlxG.height / 2) - (songs[curSelected].songName.length * 70 / 2) + 70 * i;
 				//because new idea ig?
-				itext.x = 220;
+				itext.x = 175;
 				// itext.x = (FlxG.width / 4)- (songs[curSelected].songName.length * 110 / 2) + 70 * i;
 
 				var boxImage = new FlxSprite().loadGraphic(Paths.image('freeplay/SongNameBar'));
+				boxImage.alpha = 0;
 				boxImage.ID = i;
 
-				// if (!(songs[curSelected].songName.length > 1))
-				// {
-				// 	boxImage.x = ((FlxG.height / 2) - 280.8) + 20;
-				// 	boxImage.y = ((FlxG.width / 4) - 60.8) + 34.5;
-				// }
-				// else{
-				// 	boxImage.x = ((FlxG.height / 2) - 260.8) + 80 * i;
-				// 	boxImage.y = ((FlxG.width / 4) - 60.8) + 99.5 * i;
-				// }
+				boxImage.y = (FlxG.height / 2) - (songs[curSelected].songName.length * 70 / 2) + (70 * i) -35;
 
-				boxImage.x = ((FlxG.height / 2) - 280.8) + 20*i;
-				boxImage.y = ((FlxG.width / 4) - 60.8) + 34.5*i;
+				boxImage.x = 85;
 				boxImage.scale.set(1, 1);
 
 				modchartDifficultyValue = songs[curSelected].modchartDiff[i];
 	
-				modchartDiff = new FlxBar(boxImage.x - 20, boxImage.y + 64, RIGHT_TO_LEFT, 543, 40, this, 'modchartDifficultyValue',
+				modchartDiff = new FlxBar(boxImage.x, boxImage.y + 64, RIGHT_TO_LEFT, 525, 40, this, 'modchartDifficultyValue',
 				0, 10); //It's ten but I want it to be kept near 9.8 because the bar is full before reaching 10 as max.
 				modchartDiff.createFilledBar(FlxColor.BLACK, FlxColor.WHITE);
 				modchartDiff.updateBar();
+				modchartDiff.alpha = 0;
 				if (songs[curSelected].isBoss[i])
 				{
 					if (modchartDiff != null)
@@ -567,13 +583,6 @@ class FreeplayState extends MusicBeatState
 				if (modchartDifficultyValue < 0)
 					modchartDifficultyValue = 0;
 
-				if (itext.width > boxImage.width)
-				{
-					itext.scale.x = boxImage.width / itext.width;
-					itext.scale.y = boxImage.width / itext.width;
-					itext.offset.x = 0;
-				}
-
 				grupoBox.add(modchartDiff);
 				grupoBox.add(boxImage);
 				grupoTexto.add(itext);
@@ -581,7 +590,6 @@ class FreeplayState extends MusicBeatState
 		}
 		else
 		{
-			grupoImagen.clear();
 			grupoBox.clear();
 			grupoTexto.clear();
 		}
@@ -627,7 +635,7 @@ class FreeplayState extends MusicBeatState
 			if (spr.ID == curSelected)
 			{
 				FlxTween.tween(spr, {alpha: 1}, 0.1);
-				FlxTween.tween(spr.scale, {x: 0.58, y: 0.58}, 0.2, {ease: FlxEase.expoOut});
+				FlxTween.tween(spr.scale, {x: 1, y: 1}, 0.2, {ease: FlxEase.expoOut});
 			}
 			else
 			{
@@ -643,7 +651,7 @@ class FreeplayState extends MusicBeatState
 			if (spr.ID == curSelected)
 			{
 				FlxTween.tween(spr, {alpha: 1}, 0.1);
-				FlxTween.tween(spr.scale, {x: 0.58, y: 0.58}, 0.2, {ease: FlxEase.expoOut});
+				FlxTween.tween(spr.scale, {x: 1, y: 1}, 0.2, {ease: FlxEase.expoOut});
 			}
 			else
 			{
@@ -654,6 +662,7 @@ class FreeplayState extends MusicBeatState
 
 		songList(false);
 		songList(true);
+		
 	}
 
 	function changeSong(change:Int = 0, playSound:Bool = true)
@@ -673,13 +682,33 @@ class FreeplayState extends MusicBeatState
 		intendedRating = Highscore.getRating(songs[curSelected].songName[curSong], curDifficulty);
 		#end
 
+		grupoBox.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.cancelTweensOf(spr);
+
+			if (spr.ID == curSong)
+			{
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr, {x: 135}, 0.2, {ease: FlxEase.expoOut});
+			}
+			else
+			{
+				FlxTween.tween(spr, {alpha: 0.8}, 0.1);
+				FlxTween.tween(spr, {x: 85}, 0.2, {ease: FlxEase.expoOut});
+			}
+		});
+
 		grupoTexto.forEach(function(texto:FlxText)
 		{
 			FlxTween.cancelTweensOf(texto);
-			texto.alpha = 1;
 			if (texto.ID == curSong)
 			{
+				FlxTween.tween(texto, {alpha: 1}, 0.1);
+				FlxTween.tween(texto, {x: 225}, 0.2, {ease: FlxEase.expoOut});
+
+			}else{
 				FlxTween.tween(texto, {alpha: 0.5}, 0.5, {ease: FlxEase.expoOut});
+				FlxTween.tween(texto, {x: 175}, 0.2, {ease: FlxEase.expoOut});
 			}
 		});
 
@@ -727,6 +756,20 @@ class FreeplayState extends MusicBeatState
 		{
 			curDifficulty = newPos;
 		}
+	}
+
+	public function setupSongsNWeek(opened:Bool){
+		grupoBox.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.tween(spr, {alpha: opened ? 1 : 0}, 0.1);
+			FlxTween.tween(spr, {x: opened ? 135 : -135}, 0.2, {ease: FlxEase.expoOut});
+		});
+
+		grupoTexto.forEach(function(texto:FlxText)
+		{
+			FlxTween.tween(texto, {alpha: opened ? 1 : 0}, 0.1);
+			FlxTween.tween(texto, {x: opened ? 225 : -225}, 0.2, {ease: FlxEase.expoOut});
+		});
 	}
 
 	private function positionHighscore()
