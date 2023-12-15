@@ -219,7 +219,6 @@ class FreeplayState extends MusicBeatState
 		changeSelection();
 		changeSong();
 		changeDiff();
-		setupSongsNWeek(true);
 		setupSongsNWeek(false);
 		super.create();
 	}
@@ -707,7 +706,7 @@ class FreeplayState extends MusicBeatState
 				FlxTween.tween(texto, {x: 225}, 0.2, {ease: FlxEase.expoOut});
 
 			}else{
-				FlxTween.tween(texto, {alpha: 0.5}, 0.5, {ease: FlxEase.expoOut});
+				FlxTween.tween(texto, {alpha: 0.5}, 0.1, {ease: FlxEase.expoOut});
 				FlxTween.tween(texto, {x: 175}, 0.2, {ease: FlxEase.expoOut});
 			}
 		});
@@ -769,6 +768,40 @@ class FreeplayState extends MusicBeatState
 		{
 			FlxTween.tween(texto, {alpha: opened ? 1 : 0}, 0.1);
 			FlxTween.tween(texto, {x: opened ? 225 : -225}, 0.2, {ease: FlxEase.expoOut});
+		});
+
+		grupo.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.tween(spr.offset, {y: !opened ? (415 * curSelected) : (415 * curSelected) + 175}, 0.2, {ease: FlxEase.expoOut});
+			FlxTween.tween(spr, {x: opened ? FlxG.width-(spr.width-50) : FlxG.width / 2 - (spr.width / 2)}, 0.2, {ease: FlxEase.expoOut});
+
+			if (spr.ID == curSelected)
+			{
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr.scale, !opened ? {x: 1, y: 1} : {x: 0.58, y: 0.58}, 0.2, {ease: FlxEase.expoOut});
+			}
+			else
+			{
+				FlxTween.tween(spr, {alpha: !opened ? 0.8 : 0}, 0.1);
+				FlxTween.tween(spr.scale, {x: 0.465, y: 0.465}, 0.2, {ease: FlxEase.expoOut});
+			}
+		});
+
+		grupoImagen.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.tween(spr.offset, {y: !opened ? (415 * curSelected) : (415 * curSelected) + 175}, 0.2, {ease: FlxEase.expoOut});
+			FlxTween.tween(spr, {x: opened ? FlxG.width-(spr.width-50) : FlxG.width / 2 - (spr.width / 2)}, 0.2, {ease: FlxEase.expoOut});
+
+			if (spr.ID == curSelected)
+			{
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr.scale, !opened ? {x: 1, y: 1} : {x: 0.58, y: 0.58}, 0.2, {ease: FlxEase.expoOut});
+			}
+			else
+			{
+				FlxTween.tween(spr, {alpha: !opened ? 0.8 : 0}, 0.1);
+				FlxTween.tween(spr.scale, {x: 0.465, y: 0.465}, 0.2, {ease: FlxEase.expoOut});
+			}
 		});
 	}
 
