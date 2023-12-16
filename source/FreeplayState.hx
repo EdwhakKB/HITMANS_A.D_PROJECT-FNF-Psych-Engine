@@ -365,6 +365,7 @@ class FreeplayState extends MusicBeatState
 		{
 			diffText.visible = true;
 			scoreText.visible = true;
+			difficultySelectors.visible = true;
 
 			if (upP)
 			{
@@ -388,6 +389,7 @@ class FreeplayState extends MusicBeatState
 		{
 			scoreText.visible = false;
 			diffText.visible = false;
+			difficultySelectors.visible = false;
 
 			if (songs.length > 1)
 			{
@@ -866,7 +868,7 @@ class FreeplayState extends MusicBeatState
 	private function positionHighscore()
 	{
 		songText.x = FlxG.width / 2 - songText.width / 2;
-		diffText.x = FlxG.width - (diffText.width+230);
+		diffText.x = FlxG.width / 3.75 + (FlxG.width/2 - diffText.width / 2);
 		scoreText.x = diffText.x + diffText.width / 2 - (scoreText.width / 2);
 		leftArrow.x = diffText.x - 75;
 		rightArrow.x = diffText.x + (diffText.width-20);
