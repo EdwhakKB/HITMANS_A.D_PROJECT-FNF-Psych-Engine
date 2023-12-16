@@ -11,6 +11,7 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -62,6 +63,16 @@ class FreeplayState extends MusicBeatState
 
 	var grupoBox:FlxTypedGroup<FlxSprite>;
 
+	var grupoBars:FlxTypedGroup<FlxSprite>;
+	var grupoBarsBg:FlxTypedGroup<FlxSprite>;
+
+
+	var difficultySelectors:FlxGroup;
+	var leftArrow:FlxSprite;
+	var rightArrow:FlxSprite;
+
+	var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
+
 	override function create()
 	{
 		// Paths.clearStoredMemory();
@@ -93,16 +104,11 @@ class FreeplayState extends MusicBeatState
 				leSongs.push(leWeek.songs[j][0]);
 				leChars.push(leWeek.songs[j][1]);
 
-				for (i in 0...leWeek.songs[j][2].length)
-					leColors.push(leWeek.songs[j][2][i]);
+				for (b in 0...leWeek.songs[j][2].length)
+					leColors.push(leWeek.songs[j][2][b]);
 
-				if (leWeek.songs[j][3] != null){
-					leModchartDiff.push(leWeek.songs[i][3][0]);
-					leBossTier.push(leWeek.songs[i][3][1]);
-				}else{
-					leModchartDiff.push(0);
-					leBossTier.push(false);
-				}
+				leModchartDiff.push(leWeek.songs[j][3] == null ? 0 : leWeek.songs[j][3][0]);
+				leBossTier.push(leWeek.songs[j][3] == null ? false : leWeek.songs[j][3][1]);
 			}
 
 			WeekData.setDirectoryFromWeek(leWeek);
@@ -130,7 +136,13 @@ class FreeplayState extends MusicBeatState
 
 		grupo = new FlxTypedGroup<FlxSprite>();
 		add(grupo);
-		
+
+		grupoBarsBg = new FlxTypedGroup<FlxSprite>();
+		add(grupoBarsBg);
+
+		grupoBars = new FlxTypedGroup<FlxSprite>();
+		add(grupoBars);
+
 		grupoBox = new FlxTypedGroup<FlxSprite>();
 		add(grupoBox);
 
@@ -170,16 +182,20 @@ class FreeplayState extends MusicBeatState
 		songText.borderSize = 2;
 		add(songText);
 
-		diffText = new FlxText(0, songText.y + 70, 0, "", 18);
-		diffText.setFormat(Paths.font(""), 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		diffText = new FlxText(0, 0, 0, "", 18);
+		diffText.setFormat(Paths.font(""), 38, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		diffText.screenCenter(Y);
+		diffText.y += 100;
+		diffText.x += 310;
 		diffText.borderSize = 2;
 		diffText.font = songText.font;
 		add(diffText);
 
-		scoreText = new FlxText(0, diffText.y + 36, 0, "", 18);
-		scoreText.setFormat(Paths.font(""), 28, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		scoreText = new FlxText(0, diffText.y - 96, 0, "", 18);
+		scoreText.setFormat(Paths.font(""), 30, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreText.borderSize = 2;
 		scoreText.font = diffText.font;
+		scoreText.x = diffText.x + diffText.width / 2 - (scoreText.width / 2);
 
 		add(scoreText);
 
@@ -215,6 +231,28 @@ class FreeplayState extends MusicBeatState
 			lastDifficultyName = CoolUtil.defaultDifficulty;
 		}
 		curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
+
+		difficultySelectors = new FlxGroup();
+		add(difficultySelectors);
+
+		leftArrow = new FlxSprite(0, 0);
+		leftArrow.x = diffText.x - 75;
+		leftArrow.y = diffText.y - 25;
+		leftArrow.frames = ui_tex;
+		leftArrow.animation.addByPrefix('idle', "arrow left");
+		leftArrow.animation.addByPrefix('press', "arrow push left");
+		leftArrow.animation.play('idle');
+		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		difficultySelectors.add(leftArrow);
+
+		rightArrow = new FlxSprite(0, leftArrow.y);
+		rightArrow.x = diffText.x + diffText.width + 75;
+		rightArrow.frames = ui_tex;
+		rightArrow.animation.addByPrefix('idle', 'arrow right');
+		rightArrow.animation.addByPrefix('press', "arrow push right", 24, false);
+		rightArrow.animation.play('idle');
+		rightArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		difficultySelectors.add(rightArrow);
 
 		changeSelection();
 		changeSong();
@@ -511,8 +549,8 @@ class FreeplayState extends MusicBeatState
 		vocals = null;
 	}
 
-	var modchartDifficultyValue:Float = 1;
-	var modchartDiff:FlxBar = null;
+	var modchartDifficultyValue:Float = 0;
+	var barTween:FlxTween;
 
 	function songList(actualizar:Bool)
 	{
@@ -520,7 +558,6 @@ class FreeplayState extends MusicBeatState
 		{
 			for (i in 0...songs[curSelected].songName.length)
 			{
-				var imageShow:String = WeekData.weeksList[i];
 				
 				var itext = new FlxText(0, 0, 0, "");
 				itext.setFormat(Paths.font("kremlin.ttf"), 36, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -531,9 +568,7 @@ class FreeplayState extends MusicBeatState
 				itext.ID = i;
 
 				itext.y = (FlxG.height / 2) - (songs[curSelected].songName.length * 70 / 2) + 70 * i;
-				//because new idea ig?
 				itext.x = 175;
-				// itext.x = (FlxG.width / 4)- (songs[curSelected].songName.length * 110 / 2) + 70 * i;
 
 				var boxImage = new FlxSprite().loadGraphic(Paths.image('freeplay/SongNameBar'));
 				boxImage.alpha = 0;
@@ -546,49 +581,33 @@ class FreeplayState extends MusicBeatState
 
 				modchartDifficultyValue = songs[curSelected].modchartDiff[i];
 	
-				modchartDiff = new FlxBar(boxImage.x, boxImage.y + 64, RIGHT_TO_LEFT, 525, 40, this, 'modchartDifficultyValue',
-				0, 10); //It's ten but I want it to be kept near 9.8 because the bar is full before reaching 10 as max.
-				modchartDiff.createFilledBar(FlxColor.BLACK, FlxColor.WHITE);
-				modchartDiff.updateBar();
-				modchartDiff.alpha = 0;
-				if (songs[curSelected].isBoss[i])
-				{
-					if (modchartDiff != null)
-					{
-						new FlxTimer().start(0.5, function(tmr:FlxTimer)
-						{
-							modchartDiff.updateBar();
-							modchartDiff.createFilledBar(FlxColor.BLACK, FlxColor.RED);
-							modchartDiff.updateBar();
-						}, Std.int(Math.POSITIVE_INFINITY));
-						new FlxTimer().start(0.4, function(tmr:FlxTimer)
-						{
-							modchartDiff.updateBar();
-							modchartDiff.createFilledBar(FlxColor.BLACK, FlxColor.WHITE);
-							modchartDiff.updateBar();
-						}, Std.int(Math.POSITIVE_INFINITY));
-					}
-				}
-				modchartDiff.updateBar();
-				modchartDiff.scale.set(0.6, 0.6);
-				modchartDiff.flipX = true;
-				modchartDiff.ID = i;
+				var modchartDiffBg = new FlxSprite(boxImage.x+121, boxImage.y + 77).makeGraphic(304, 19, FlxColor.BLACK);
+				var modchartDiff = new FlxSprite(modchartDiffBg.x, modchartDiffBg.y).makeGraphic(304, 19, FlxColor.WHITE); //tried something new and different ig?
+				modchartDiffBg.origin.x = 0;
+				modchartDiff.origin.x = 0;
 
-				modchartDifficultyValue = songs[curSelected].modchartDiff[i];
-
-				if (modchartDifficultyValue > 10) //It's ten but I want it to be kept near 9.8 because the bar is full before reaching 10 as max.
+				if (modchartDifficultyValue > 10)
 					modchartDifficultyValue = 10;
 
 				if (modchartDifficultyValue < 0)
 					modchartDifficultyValue = 0;
 
-				grupoBox.add(modchartDiff);
+				modchartDiffBg.alpha = 0;
+				modchartDiff.alpha = 0;		
+				modchartDiff.scale.x = modchartDifficultyValue/10;
+				modchartDiffBg.ID = i;
+				modchartDiff.ID = i;
+
+				grupoBarsBg.add(modchartDiffBg);
+				grupoBars.add(modchartDiff);
 				grupoBox.add(boxImage);
 				grupoTexto.add(itext);
 			}
 		}
 		else
 		{
+			grupoBarsBg.clear();
+			grupoBars.clear();
 			grupoBox.clear();
 			grupoTexto.clear();
 		}
@@ -611,7 +630,7 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		PlayState.storyDifficulty = curDifficulty;
-		diffText.text = 'DIFFICULTY  ' + CoolUtil.difficultyString().toUpperCase();
+		diffText.text = CoolUtil.difficultyString().toUpperCase();
 		positionHighscore();
 	}
 
@@ -681,10 +700,39 @@ class FreeplayState extends MusicBeatState
 		intendedRating = Highscore.getRating(songs[curSelected].songName[curSong], curDifficulty);
 		#end
 
+		grupoBars.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.cancelTweensOf(spr);
+			if (spr.ID == curSong)
+			{
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr, {x: 245}, 0.2, {ease: FlxEase.expoOut});
+			}
+			else
+			{
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr, {x: 195}, 0.2, {ease: FlxEase.expoOut});
+			}
+		});
+
+		grupoBarsBg.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.cancelTweensOf(spr);
+			if (spr.ID == curSong)
+			{
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr, {x: 245}, 0.2, {ease: FlxEase.expoOut});
+			}
+			else
+			{
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr, {x: 195}, 0.2, {ease: FlxEase.expoOut});
+			}
+		});
+
 		grupoBox.forEach(function(spr:FlxSprite)
 		{
 			FlxTween.cancelTweensOf(spr);
-
 			if (spr.ID == curSong)
 			{
 				FlxTween.tween(spr, {alpha: 1}, 0.1);
@@ -692,7 +740,7 @@ class FreeplayState extends MusicBeatState
 			}
 			else
 			{
-				FlxTween.tween(spr, {alpha: 0.8}, 0.1);
+				FlxTween.tween(spr, {alpha: 1}, 0.1);
 				FlxTween.tween(spr, {x: 85}, 0.2, {ease: FlxEase.expoOut});
 			}
 		});
@@ -758,6 +806,16 @@ class FreeplayState extends MusicBeatState
 	}
 
 	public function setupSongsNWeek(opened:Bool){
+		grupoBars.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.tween(spr, {alpha: opened ? 1 : 0}, 0.1);
+		});
+
+		grupoBarsBg.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.tween(spr, {alpha: opened ? 1 : 0}, 0.1);
+		});
+
 		grupoBox.forEach(function(spr:FlxSprite)
 		{
 			FlxTween.tween(spr, {alpha: opened ? 1 : 0}, 0.1);
@@ -808,8 +866,10 @@ class FreeplayState extends MusicBeatState
 	private function positionHighscore()
 	{
 		songText.x = FlxG.width / 2 - songText.width / 2;
-		diffText.x = FlxG.width / 2 - diffText.width / 2;
+		diffText.x = FlxG.width - (diffText.width+230);
 		scoreText.x = diffText.x + diffText.width / 2 - (scoreText.width / 2);
+		leftArrow.x = diffText.x - 75;
+		rightArrow.x = diffText.x + (diffText.width-20);
 	}
 }
 
