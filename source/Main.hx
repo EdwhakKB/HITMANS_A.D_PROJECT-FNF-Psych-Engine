@@ -32,7 +32,7 @@ class Main extends Sprite
 {
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	var initialState:Class<FlxState> = WindowsState; // The FlxState the game starts with.
+	var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
@@ -91,7 +91,7 @@ class Main extends Sprite
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
 	
-		addChild(new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
+		addChild(new crashHandler.MainGame.FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
@@ -168,10 +168,11 @@ class Main extends Sprite
         	FlxG.signals.gameResized.add(fixCameraShaders);
 
 		#if CRASH_HANDLER
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
-		Application.current.window.onFocusIn.add(onWindowFocusIn);
-		Application.current.window.onFocusOut.add(onWindowFocusOut);
+		//Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		#end
+
+		lime.app.Application.current.window.onFocusIn.add(onWindowFocusIn);
+		lime.app.Application.current.window.onFocusOut.add(onWindowFocusOut);
 	}
 
 	public static function fixCameraShaders(w:Int, h:Int) //fixes shaders after resizing the window / fullscreening
@@ -242,73 +243,73 @@ class Main extends Sprite
 	// Code was entirely made by sqirra-rng for their fnf engine named "Izzy Engine", big props to them!!!
 	// very cool person for real they don't get enough credit for their work
 	#if CRASH_HANDLER
-	static final quotes:Array<String> = [
-        "Ha, a null object reference?", // Slushi
-		"What the fuck you did!?", //Edwhak
-		"It was Bolo!" //Glowsoony
-    ];
+	// static final quotes:Array<String> = [
+    //     "Ha, a null object reference?", // Slushi
+	// 	"What the fuck you did!?", //Edwhak
+	// 	"It was Bolo!" //Glowsoony
+    // ];
 
-	function onCrash(e:UncaughtErrorEvent):Void
-	{
-		var build = Sys.systemName();
-		var errMsg:String = "";
-		var path:String;
-		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
-		var dateNow:String = Date.now().toString();
+	// function onCrash(e:UncaughtErrorEvent):Void
+	// {
+	// 	var build = Sys.systemName();
+	// 	var errMsg:String = "";
+	// 	var path:String;
+	// 	var callStack:Array<StackItem> = CallStack.exceptionStack(true);
+	// 	var dateNow:String = Date.now().toString();
 
-		dateNow = dateNow.replace(" ", "_");
-		dateNow = dateNow.replace(":", "'");
+	// 	dateNow = dateNow.replace(" ", "_");
+	// 	dateNow = dateNow.replace(":", "'");
 
-		path = "./crash/" + "PsychEngine_" + dateNow + ".txt";
+	// 	path = "./crash/" + "PsychEngine_" + dateNow + ".txt";
 
-		for (stackItem in callStack)
-		{
-			switch (stackItem)
-			{
-				case FilePos(s, file, line, column):
-					errMsg += file + " (line " + line + ")\n";
-				default:
-					Sys.println(stackItem);
-			}
-		}
+	// 	for (stackItem in callStack)
+	// 	{
+	// 		switch (stackItem)
+	// 		{
+	// 			case FilePos(s, file, line, column):
+	// 				errMsg += file + " (line " + line + ")\n";
+	// 			default:
+	// 				Sys.println(stackItem);
+	// 		}
+	// 	}
 
-		errMsg += 
-            "\n---------------------"
-            + "\n" + quotes[Std.random(quotes.length)]
-            + "\n---------------------"
-            + "\n\nThis build is running in " + build + "\n(Hitmans AD V" + MainMenuState.psychEngineVersion +")" 
-             + "\nPlease report this error to Github page: https://github.com/EdwhakKB/HITMANS_A.D_PROJECT-FNF-Psych-Engine"     
-            + "\n\n"
-            + "Uncaught Error:\n"
-            + e.error;
+	// 	errMsg += 
+    //         "\n---------------------"
+    //         + "\n" + quotes[Std.random(quotes.length)]
+    //         + "\n---------------------"
+    //         + "\n\nThis build is running in " + build + "\n(Hitmans AD V" + MainMenuState.psychEngineVersion +")" 
+    //          + "\nPlease report this error to Github page: https://github.com/EdwhakKB/HITMANS_A.D_PROJECT-FNF-Psych-Engine"     
+    //         + "\n\n"
+    //         + "Uncaught Error:\n"
+    //         + e.error;
 
-		if (!FileSystem.exists("./crash/"))
-			FileSystem.createDirectory("./crash/");
+	// 	if (!FileSystem.exists("./crash/"))
+	// 		FileSystem.createDirectory("./crash/");
 
-		File.saveContent(path, errMsg + "\n");
+	// 	File.saveContent(path, errMsg + "\n");
 
-		Sys.println(errMsg);
-		Sys.println("Crash dump saved in " + Path.normalize(path));
+	// 	Sys.println(errMsg);
+	// 	Sys.println("Crash dump saved in " + Path.normalize(path));
 
-		var crashDialoguePath:String = "Hitmans-CrashDialog";
+	// 	var crashDialoguePath:String = "Hitmans-CrashDialog";
 
-        #if windows
-        crashDialoguePath += ".exe";
-        #end
+    //     #if windows
+    //     crashDialoguePath += ".exe";
+    //     #end
 
-        if (FileSystem.exists(crashDialoguePath))
-        {
-            Sys.println("Found crash dialog: " + crashDialoguePath);
-            new Process(crashDialoguePath, ["._. ", path]);
-        }
-        else
-        {
-            Sys.println("No crash dialog found! Making a simple alert instead...");
-            Application.current.window.alert(errMsg, "Error!");
-        }
+    //     if (FileSystem.exists(crashDialoguePath))
+    //     {
+    //         Sys.println("Found crash dialog: " + crashDialoguePath);
+    //         new Process(crashDialoguePath, ["._. ", path]);
+    //     }
+    //     else
+    //     {
+    //         Sys.println("No crash dialog found! Making a simple alert instead...");
+    //         Application.current.window.alert(errMsg, "Error!");
+    //     }
 
-        DiscordClient.shutdown();
-		Sys.exit(1);
-	}
+    //     DiscordClient.shutdown();
+	// 	Sys.exit(1);
+	// }
 	#end
 }
