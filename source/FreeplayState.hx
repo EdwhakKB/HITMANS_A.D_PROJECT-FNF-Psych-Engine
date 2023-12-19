@@ -499,7 +499,15 @@ class FreeplayState extends MusicBeatState
 					PlayState.storyDifficulty = curDifficulty;
 	
 					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-					LoadingState.loadAndSwitchState(new PlayState());
+
+					var bossTier:Bool = false;
+
+					for (i in 0...songs[curSelected].songName.length)
+						bossTier = songs[curSelected].isBoss[i];
+
+					trace('BOSS TIER: ' + bossTier);
+					
+					LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7, bossTier);
 
 					FlxG.sound.music.volume = 0;
 	
@@ -811,11 +819,13 @@ class FreeplayState extends MusicBeatState
 		grupoBars.forEach(function(spr:FlxSprite)
 		{
 			FlxTween.tween(spr, {alpha: opened ? 1 : 0}, 0.1);
+			FlxTween.tween(spr, {x: opened ? 195 : -195}, 0.2, {ease: FlxEase.expoOut});
 		});
 
 		grupoBarsBg.forEach(function(spr:FlxSprite)
 		{
 			FlxTween.tween(spr, {alpha: opened ? 1 : 0}, 0.1);
+			FlxTween.tween(spr, {x: opened ? 195 : -195}, 0.2, {ease: FlxEase.expoOut});
 		});
 
 		grupoBox.forEach(function(spr:FlxSprite)

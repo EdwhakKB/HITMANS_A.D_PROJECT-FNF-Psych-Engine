@@ -8,6 +8,8 @@ import flixel.FlxSprite;
 import flixel.ui.FlxBar;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxTimer;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.math.FlxMath;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
@@ -75,7 +77,7 @@ class AsyncAssetPreloader
                 }
             }
 
-			totalLoadCount = audio.length + characters.length; //do -1 because it will be behind at the end when theres a small freeze
+			totalLoadCount = audio.length + characters.length-1; //do -1 because it will be behind at the end when theres a small freeze
 		}
 	}
 
@@ -175,6 +177,10 @@ class LoadingState extends MusicBeatState
 	
 	// TO DO: Make this easier
 	
+	var continueInput:Bool = false;
+	var continueTween:FlxTween;
+	
+	var isBoss:Bool = false;
 	var target:FlxState;
 	var stopMusic = false;
 	var directory:String;
@@ -185,14 +191,22 @@ class LoadingState extends MusicBeatState
 	var loadTime:Float = 0;
 	var loadingText:FlxText;
 
+	var continueText:FlxText;
+
 	var targetShit:Float = 0;
 
-	public function new(target:FlxState, stopMusic:Bool, directory:String)
+	public var loaderStuff:Array<Dynamic> = [false, 0.7];
+
+	public function new(target:FlxState, stopMusic:Bool, directory:String, ?isBoss:Bool = false, ?isBlack:Bool = false, ?time:Float = 0.7)
 	{
 		super();
 		this.target = target;
 		this.stopMusic = stopMusic;
 		this.directory = directory;
+		this.isBoss = isBoss;
+
+		loaderStuff[0] = isBlack;
+		loaderStuff[1] = time;
 	}
 
 	var funkay:FlxSprite;
@@ -209,10 +223,27 @@ class LoadingState extends MusicBeatState
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
 
+		continueText = new FlxText((FlxG.width/2) +(FlxG.width/4), FlxG.height-25-30, 0, "PRESS ENTER TO CONTINUE");
+		continueText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		continueText.alpha = 1;
+		continueText.visible = false;
+		add(continueText);
+
 		loader = new AsyncAssetPreloader(function()
 		{
 			trace("Load time: " + loadTime);
-			onLoad();
+			if (!isBoss){
+				onLoad();
+			}else{
+				continueText.visible = true;
+				continueTween = FlxTween.color(continueText, 1, continueText.color, FlxColor.TRANSPARENT,
+					{
+						type: FlxTweenType.PINGPONG,
+						ease: FlxEase.cubeInOut
+					}
+				);
+				continueInput = true;
+			}
 		});
 		loader.load(true);
 
@@ -221,10 +252,10 @@ class LoadingState extends MusicBeatState
 		loadingBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
 		add(loadingBar);
 
-		loadingText = new FlxText(2, FlxG.height-25-26, 0, "Loading...");
+		loadingText = new FlxText(2, FlxG.height-25-30, 0, "Loading...");
 		loadingText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(loadingText);
-		
+
 		initSongsManifest().onComplete
 		(
 			function (lib)
@@ -285,6 +316,25 @@ class LoadingState extends MusicBeatState
 			lerpedPercent = FlxMath.lerp(lerpedPercent, loader.percent, elapsed*8);
 			loadingText.text = "Loading... (" + loader.loadedCount + "/" + (loader.totalLoadCount+1) + ")";
 		}
+		if (continueInput)
+		{
+			if (!isBoss)
+			{
+				if (controls.ACCEPT)
+				{
+					onLoad();
+					continueInput = false;
+				}
+			}else{
+				if (controls.ACCEPT)
+				{
+					new FlxTimer().start(5, function(tmr:FlxTimer) {
+						onLoad();
+					});
+					continueInput = false;
+				}
+			}
+		}
 	}
 	
 	function onLoad()
@@ -292,7 +342,7 @@ class LoadingState extends MusicBeatState
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 		
-		MusicBeatState.switchState(target);
+		MusicBeatState.switchState(target, loaderStuff[0], loaderStuff[1]);
 	}
 	
 	static function getSongPath()
@@ -305,12 +355,12 @@ class LoadingState extends MusicBeatState
 		return Paths.voices(PlayState.SONG.song);
 	}
 	
-	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false, ?isBlack:Bool = false, ?time:Float = 0.7)
+	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false, ?isBlack:Bool = false, ?time:Float = 0.7, ?isBoss:Bool = false)
 	{
-		MusicBeatState.switchState(getNextState(target, stopMusic), isBlack, time);
+		MusicBeatState.switchState(getNextState(target, stopMusic, isBoss, isBlack, time), isBlack, time);
 	}
 	
-	static function getNextState(target:FlxState, stopMusic = false):FlxState
+	static function getNextState(target:FlxState, stopMusic = false, ?isBoss:Bool = false, ?isBlack:Bool = false, ?time:Float = 0.7):FlxState
 	{
 		var directory:String = 'shared';
 		var weekDir:String = StageData.forceNextDirectory;
@@ -328,7 +378,7 @@ class LoadingState extends MusicBeatState
 		}
 		
 		if (!loaded)
-			return new LoadingState(target, stopMusic, directory);
+			return new LoadingState(target, stopMusic, directory, isBoss, isBlack, time);
 
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();

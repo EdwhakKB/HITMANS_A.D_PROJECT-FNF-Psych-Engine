@@ -17,8 +17,8 @@ class FlxGame extends BaseGame
 		{
             if(!alredyOpen)
                 {
-                    alredyOpen = true;
                     CrashHandler.symbolPrevent(error);
+                    alredyOpen = true;
                 }
 		}
 	}
@@ -33,8 +33,8 @@ class FlxGame extends BaseGame
         {
             if(!alredyOpen)
             {
-                alredyOpen = true;
                 CrashHandler.symbolPrevent(error);
+                alredyOpen = true;
             }
         }
 	}

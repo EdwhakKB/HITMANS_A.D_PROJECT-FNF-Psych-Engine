@@ -49,10 +49,10 @@ class CrashHandler
         "What the fuck you did!?", //Edwhak
 		"CAGASTE.", // Slushi
 		"It was Bolo!", //Glowsoony
-		"El pollo ardiente", // Edwhak -- wtf edwhak
+		"El pollo ardiente", // Edwhak
 	];
 
-	static function onUncaughtError(e:UncaughtErrorEvent):Void
+	static function onUncaughtError(e:Dynamic):Void
 	{	
 		var randomsMsg:String = "";
 		var errMsg:String = "";
