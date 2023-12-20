@@ -226,7 +226,7 @@ class LoadingState extends MusicBeatState
 		continueText = new FlxText((FlxG.width/2) +(FlxG.width/4), FlxG.height-25-30, 0, "PRESS ENTER TO CONTINUE");
 		continueText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		continueText.alpha = 1;
-		continueText.visible = false;
+		continueText.visible = isBoss;
 		add(continueText);
 
 		loader = new AsyncAssetPreloader(function()
@@ -235,13 +235,13 @@ class LoadingState extends MusicBeatState
 			if (!isBoss){
 				onLoad();
 			}else{
-				continueText.visible = true;
-				continueTween = FlxTween.color(continueText, 1, continueText.color, FlxColor.TRANSPARENT,
-					{
-						type: FlxTweenType.PINGPONG,
-						ease: FlxEase.cubeInOut
-					}
-				);
+				// continueText.visible = true;
+				// continueTween = FlxTween.color(continueText, 1, continueText.color, FlxColor.TRANSPARENT,
+				// 	{
+				// 		type: FlxTweenType.PINGPONG,
+				// 		ease: FlxEase.cubeInOut
+				// 	}
+				// );
 				continueInput = true;
 			}
 		});

@@ -65,6 +65,7 @@ class FreeplayState extends MusicBeatState
 
 	var grupoBars:FlxTypedGroup<FlxSprite>;
 	var grupoBarsBg:FlxTypedGroup<FlxSprite>;
+	var grupoBossBars:FlxTypedGroup<FlxSprite>;
 
 
 	var difficultySelectors:FlxGroup;
@@ -73,6 +74,7 @@ class FreeplayState extends MusicBeatState
 
 	var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
 
+	var bossTier:Bool = false;
 	override function create()
 	{
 		// Paths.clearStoredMemory();
@@ -142,6 +144,9 @@ class FreeplayState extends MusicBeatState
 
 		grupoBars = new FlxTypedGroup<FlxSprite>();
 		add(grupoBars);
+
+		grupoBossBars = new FlxTypedGroup<FlxSprite>();
+		add(grupoBossBars);
 
 		grupoBox = new FlxTypedGroup<FlxSprite>();
 		add(grupoBox);
@@ -500,11 +505,6 @@ class FreeplayState extends MusicBeatState
 	
 					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 
-					var bossTier:Bool = false;
-
-					for (i in 0...songs[curSelected].songName.length)
-						bossTier = songs[curSelected].isBoss[i];
-
 					trace('BOSS TIER: ' + bossTier);
 					
 					LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7, bossTier);
@@ -561,6 +561,7 @@ class FreeplayState extends MusicBeatState
 
 	var modchartDifficultyValue:Float = 0;
 	var barTween:FlxTween;
+	var modchartDiffTween:FlxTween;
 
 	function songList(actualizar:Bool)
 	{
@@ -590,11 +591,14 @@ class FreeplayState extends MusicBeatState
 				boxImage.scale.set(1, 1);
 
 				modchartDifficultyValue = songs[curSelected].modchartDiff[i];
-	
+
 				var modchartDiffBg = new FlxSprite(boxImage.x+121, boxImage.y + 77).makeGraphic(304, 19, FlxColor.BLACK);
 				var modchartDiff = new FlxSprite(modchartDiffBg.x, modchartDiffBg.y).makeGraphic(304, 19, FlxColor.WHITE); //tried something new and different ig?
+				var modchartBossTier = new FlxSprite(modchartDiffBg.x, modchartDiffBg.y).makeGraphic(304, 19, FlxColor.RED);
+
 				modchartDiffBg.origin.x = 0;
 				modchartDiff.origin.x = 0;
+				modchartBossTier.origin.x = 0;
 
 				if (modchartDifficultyValue > 10)
 					modchartDifficultyValue = 10;
@@ -607,9 +611,48 @@ class FreeplayState extends MusicBeatState
 				modchartDiff.scale.x = modchartDifficultyValue/10;
 				modchartDiffBg.ID = i;
 				modchartDiff.ID = i;
+				modchartBossTier.ID = i;
 
+				if (songs[curSelected].isBoss[i])
+				{
+					bossTier = true;
+					if (modchartBossTier != null)
+					{
+
+						if (modchartDiffTween != null)
+							modchartDiffTween.cancel();
+
+						var defaultAlpha:Float = 0;
+						barTween = FlxTween.num(defaultAlpha, 0, 3, {onUpdate: function(tween:FlxTween){
+							var thing = FlxMath.lerp(defaultAlpha, 1, tween.percent);
+							modchartBossTier.alpha = thing;
+						},ease:FlxEase.elasticOut, onComplete: function(tween:FlxTween) {
+							if (modchartDiffTween != null)
+								modchartDiffTween.start();
+							if (barTween != null)
+								barTween.cancel();
+						}});
+
+						var defaultAlpha2:Float = 1;
+						modchartDiffTween = FlxTween.num(defaultAlpha2, 0, 3, {onUpdate: function(tween:FlxTween){
+							var thing = FlxMath.lerp(defaultAlpha2, 0, tween.percent);
+							modchartBossTier.alpha = thing;
+						},ease:FlxEase.elasticOut, onComplete: function(tween:FlxTween) {
+							if (barTween != null)
+								barTween.start();
+							if (modchartDiffTween != null)
+								modchartDiffTween.cancel();
+						}});
+
+					}
+				}else{
+					bossTier = false;
+				}
+
+					
 				grupoBarsBg.add(modchartDiffBg);
 				grupoBars.add(modchartDiff);
+				grupoBossBars.add(modchartBossTier);
 				grupoBox.add(boxImage);
 				grupoTexto.add(itext);
 			}
@@ -618,6 +661,7 @@ class FreeplayState extends MusicBeatState
 		{
 			grupoBarsBg.clear();
 			grupoBars.clear();
+			grupoBossBars.clear();
 			grupoBox.clear();
 			grupoTexto.clear();
 		}
@@ -688,6 +732,8 @@ class FreeplayState extends MusicBeatState
 			}
 		});
 
+		if (barTween != null)
+			barTween.cancel();
 		songList(false);
 		songList(true);
 		
@@ -721,6 +767,19 @@ class FreeplayState extends MusicBeatState
 			else
 			{
 				FlxTween.tween(spr, {alpha: 1}, 0.1);
+				FlxTween.tween(spr, {x: 195}, 0.2, {ease: FlxEase.expoOut});
+			}
+		});
+
+		grupoBossBars.forEach(function(spr:FlxSprite)
+		{
+			FlxTween.cancelTweensOf(spr);
+			if (spr.ID == curSong)
+			{
+				FlxTween.tween(spr, {x: 245}, 0.2, {ease: FlxEase.expoOut});
+			}
+			else
+			{
 				FlxTween.tween(spr, {x: 195}, 0.2, {ease: FlxEase.expoOut});
 			}
 		});
@@ -816,9 +875,16 @@ class FreeplayState extends MusicBeatState
 	}
 
 	public function setupSongsNWeek(opened:Bool){
+
 		grupoBars.forEach(function(spr:FlxSprite)
 		{
 			FlxTween.tween(spr, {alpha: opened ? 1 : 0}, 0.1);
+			FlxTween.tween(spr, {x: opened ? 195 : -195}, 0.2, {ease: FlxEase.expoOut});
+		});
+
+		grupoBossBars.forEach(function(spr:FlxSprite)
+		{
+			spr.visible = opened;
 			FlxTween.tween(spr, {x: opened ? 195 : -195}, 0.2, {ease: FlxEase.expoOut});
 		});
 
@@ -873,6 +939,9 @@ class FreeplayState extends MusicBeatState
 				FlxTween.tween(spr.scale, {x: 0.465, y: 0.465}, 0.2, {ease: FlxEase.expoOut});
 			}
 		});
+
+		// if (!opened)
+		// 	FlxTween.cancelTweensOf(modchartDiff);
 	}
 
 	private function positionHighscore()
