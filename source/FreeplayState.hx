@@ -594,7 +594,7 @@ class FreeplayState extends MusicBeatState
 
 				var modchartDiffBg = new FlxSprite(boxImage.x+121, boxImage.y + 77).makeGraphic(304, 19, FlxColor.BLACK);
 				var modchartDiff = new FlxSprite(modchartDiffBg.x, modchartDiffBg.y).makeGraphic(304, 19, FlxColor.WHITE); //tried something new and different ig?
-				var modchartBossTier = new FlxSprite(modchartDiffBg.x, modchartDiffBg.y).makeGraphic(304, 19, FlxColor.RED);
+				var modchartBossTier = new FlxSprite(modchartDiffBg.x, modchartDiffBg.y).makeGraphic(304, 19, FlxColor.WHITE);
 
 				modchartDiffBg.origin.x = 0;
 				modchartDiff.origin.x = 0;
@@ -607,8 +607,12 @@ class FreeplayState extends MusicBeatState
 					modchartDifficultyValue = 0;
 
 				modchartDiffBg.alpha = 0;
-				modchartDiff.alpha = 0;		
+				modchartDiff.alpha = 0;	
+				modchartBossTier.alpha = 0;
+				modchartBossTier.visible = false;
+
 				modchartDiff.scale.x = modchartDifficultyValue/10;
+				modchartBossTier.scale.x = modchartDifficultyValue/10;
 				modchartDiffBg.ID = i;
 				modchartDiff.ID = i;
 				modchartBossTier.ID = i;
@@ -618,31 +622,12 @@ class FreeplayState extends MusicBeatState
 					bossTier = true;
 					if (modchartBossTier != null)
 					{
-
-						if (modchartDiffTween != null)
-							modchartDiffTween.cancel();
-
-						var defaultAlpha:Float = 0;
-						barTween = FlxTween.num(defaultAlpha, 0, 3, {onUpdate: function(tween:FlxTween){
-							var thing = FlxMath.lerp(defaultAlpha, 1, tween.percent);
-							modchartBossTier.alpha = thing;
-						},ease:FlxEase.elasticOut, onComplete: function(tween:FlxTween) {
-							if (modchartDiffTween != null)
-								modchartDiffTween.start();
-							if (barTween != null)
-								barTween.cancel();
-						}});
-
-						var defaultAlpha2:Float = 1;
-						modchartDiffTween = FlxTween.num(defaultAlpha2, 0, 3, {onUpdate: function(tween:FlxTween){
-							var thing = FlxMath.lerp(defaultAlpha2, 0, tween.percent);
-							modchartBossTier.alpha = thing;
-						},ease:FlxEase.elasticOut, onComplete: function(tween:FlxTween) {
-							if (barTween != null)
-								barTween.start();
-							if (modchartDiffTween != null)
-								modchartDiffTween.cancel();
-						}});
+						FlxTween.color(modchartBossTier, 0.3, modchartBossTier.color, FlxColor.RED,
+							{
+								type: FlxTweenType.PINGPONG,
+								ease: FlxEase.cubeInOut
+							}
+						);
 
 					}
 				}else{
@@ -773,7 +758,7 @@ class FreeplayState extends MusicBeatState
 
 		grupoBossBars.forEach(function(spr:FlxSprite)
 		{
-			FlxTween.cancelTweensOf(spr);
+			FlxTween.cancelTweensOf(spr, ['x']);
 			if (spr.ID == curSong)
 			{
 				FlxTween.tween(spr, {x: 245}, 0.2, {ease: FlxEase.expoOut});
