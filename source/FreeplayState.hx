@@ -75,6 +75,10 @@ class FreeplayState extends MusicBeatState
 	var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
 
 	var bossTier:Bool = false;
+	var bossLvl:Float = 0;
+	var bossChar:String = '';
+	var bossColor:Int = 0;
+
 	override function create()
 	{
 		// Paths.clearStoredMemory();
@@ -115,7 +119,7 @@ class FreeplayState extends MusicBeatState
 
 			WeekData.setDirectoryFromWeek(leWeek);
 
-			addSong(leSongs, leModchartDiff, leBossTier, i);
+			addSong(leSongs, leModchartDiff, leBossTier, i, leChars);
 		}
 		WeekData.loadTheFirstEnabledMod();
 
@@ -273,9 +277,9 @@ class FreeplayState extends MusicBeatState
 		super.closeSubState();
 	}
 
-	public function addSong(songName:Array<String>, modchartDiff:Array<Float>, isBoss:Array<Bool>, weekNum:Int)
+	public function addSong(songName:Array<String>, modchartDiff:Array<Float>, isBoss:Array<Bool>, weekNum:Int, characters:Array<String>)
 	{
-		songs.push(new SongMetadata(songName, modchartDiff, isBoss, weekNum));
+		songs.push(new SongMetadata(songName, modchartDiff, isBoss, weekNum, characters));
 	}
 
 	function weekIsLocked(name:String):Bool
@@ -503,10 +507,20 @@ class FreeplayState extends MusicBeatState
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = curDifficulty;
 	
+					bossTier = PlayState.SONG.bossFight;
+					bossChar = PlayState.SONG.player2;
+					// bossTier = PlayState.SONG.tier;
+
 					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 
 					trace('BOSS TIER: ' + bossTier);
 					
+					LoadingState.bossLevel = bossLvl;
+
+					trace('BOSS LEVEL: ' + bossLvl);
+
+					LoadingState.bossCharacter = bossChar;
+
 					LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7, bossTier);
 
 					FlxG.sound.music.volume = 0;
@@ -524,12 +538,12 @@ class FreeplayState extends MusicBeatState
 					missingText.visible = true;
 					missingTextBG.visible = true;
 
-					FlxTween.tween(missingText, {alpha: 0}, 1, {onComplete: function(twn:FlxTween)
+					FlxTween.tween(missingText, {alpha: 0}, 2, {onComplete: function(twn:FlxTween)
 						{
 							missingText.visible = false;
 							missingText.alpha = 0.6;
 						}});
-					FlxTween.tween(missingTextBG, {alpha: 0}, 1, {onComplete: function(twn:FlxTween)
+					FlxTween.tween(missingTextBG, {alpha: 0}, 2, {onComplete: function(twn:FlxTween)
 						{
 							missingTextBG.visible = false;
 							missingTextBG.alpha = 0.6;
@@ -591,6 +605,7 @@ class FreeplayState extends MusicBeatState
 				boxImage.scale.set(1, 1);
 
 				modchartDifficultyValue = songs[curSelected].modchartDiff[i];
+				bossLvl = songs[curSelected].modchartDiff[i];
 
 				var modchartDiffBg = new FlxSprite(boxImage.x+121, boxImage.y + 77).makeGraphic(304, 19, FlxColor.BLACK);
 				var modchartDiff = new FlxSprite(modchartDiffBg.x, modchartDiffBg.y).makeGraphic(304, 19, FlxColor.WHITE); //tried something new and different ig?
@@ -605,6 +620,12 @@ class FreeplayState extends MusicBeatState
 
 				if (modchartDifficultyValue < 0)
 					modchartDifficultyValue = 0;
+
+				if (bossLvl > 10)
+					bossLvl = 10;
+
+				if (bossLvl < 0)
+					bossLvl = 0;
 
 				modchartDiffBg.alpha = 0;
 				modchartDiff.alpha = 0;	
@@ -946,12 +967,14 @@ class SongMetadata
 	public var isBoss:Array<Bool> = [];
 	public var week:Int = 0;
 	public var folder:String = "";
+	public var character:Array<String> = [];
 
-	public function new(song:Array<String>, mcDiff:Array<Float>, bossBattle:Array<Bool>, week:Int)
+	public function new(song:Array<String>, mcDiff:Array<Float>, bossBattle:Array<Bool>, week:Int, char:Array<String>)
 	{
 		this.songName = song;
 		this.modchartDiff = mcDiff;
 		this.isBoss = bossBattle;
+		this.character = char;
 		this.week = week;
 		this.folder = Paths.currentModDirectory;
 		if (this.folder == null)

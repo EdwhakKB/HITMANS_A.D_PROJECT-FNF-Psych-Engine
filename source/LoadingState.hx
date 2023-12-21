@@ -1,5 +1,8 @@
 package;
 
+import flixel.addons.display.FlxBackdrop;
+import Shaders.GlitchyChromaticShader;
+import openfl.filters.ShaderFilter;
 import lime.app.Promise;
 import lime.app.Future;
 import flixel.FlxG;
@@ -177,6 +180,8 @@ class LoadingState extends MusicBeatState
 	
 	// TO DO: Make this easier
 	
+	public static var bossLevel:Float = 0.0;
+	public static var bossCharacter:String = 'default';
 	var continueInput:Bool = false;
 	var continueTween:FlxTween;
 	
@@ -194,6 +199,9 @@ class LoadingState extends MusicBeatState
 	var continueText:FlxText;
 
 	var targetShit:Float = 0;
+
+	var vcrShader = new GlitchyChromaticShader();
+	var iTime:Float = 0.0;
 
 	public var loaderStuff:Array<Dynamic> = [false, 0.7];
 
@@ -223,6 +231,14 @@ class LoadingState extends MusicBeatState
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
 
+		if (isBoss){
+			FlxG.sound.playMusic(Paths.sound('Edwhak/bosstier'), 0, true);
+			FlxG.sound.music.fadeIn(6, 0, 1);
+			new FlxTimer().start(12, function(tmr:FlxTimer) {
+				addShader();
+			});
+		}
+
 		continueText = new FlxText((FlxG.width/2) +(FlxG.width/4), FlxG.height-25-30, 0, "PRESS ENTER TO CONTINUE");
 		continueText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		continueText.alpha = 1;
@@ -232,18 +248,15 @@ class LoadingState extends MusicBeatState
 		loader = new AsyncAssetPreloader(function()
 		{
 			trace("Load time: " + loadTime);
+
 			if (!isBoss){
-				onLoad();
+				new FlxTimer().start(0.5, function(tmr:FlxTimer) {
+					onLoad();
+				});
 			}else{
-				// continueText.visible = true;
-				// continueTween = FlxTween.color(continueText, 1, continueText.color, FlxColor.TRANSPARENT,
-				// 	{
-				// 		type: FlxTweenType.PINGPONG,
-				// 		ease: FlxEase.cubeInOut
-				// 	}
-				// );
 				continueInput = true;
 			}
+			trace("continueInput: " + continueInput);
 		});
 		loader.load(true);
 
@@ -256,27 +269,28 @@ class LoadingState extends MusicBeatState
 		loadingText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(loadingText);
 
-		initSongsManifest().onComplete
-		(
-			function (lib)
-			{
-				callbacks = new MultiCallback(onLoad);
-				var introComplete = callbacks.add("introComplete");
-				/*if (PlayState.SONG != null) {
-					checkLoadSong(getSongPath());
-					if (PlayState.SONG.needsVoices)
-						checkLoadSong(getVocalPath());
-				}*/
-				checkLibrary("shared");
-				if(directory != null && directory.length > 0 && directory != 'shared') {
-					checkLibrary(directory);
-				}
+		if (!isBoss){
+			initSongsManifest().onComplete
+			(
+				function (lib)
+				{
+					callbacks = new MultiCallback(()->{});
+					var introComplete = callbacks.add("introComplete");
+					/*if (PlayState.SONG != null) {
+						checkLoadSong(getSongPath());
+						if (PlayState.SONG.needsVoices)
+							checkLoadSong(getVocalPath());
+					}*/
+					checkLibrary("shared");
+					if(directory != null && directory.length > 0 && directory != 'shared') {
+						checkLibrary(directory);
+					}
 
-				var fadeTime = 0.5;
-				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
-				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
-			}
-		);
+					var fadeTime = 0.5;
+					new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+				}
+			);
+		}
 	}
 	
 	function checkLoadSong(path:String)
@@ -310,6 +324,12 @@ class LoadingState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		if (isBoss){
+		 	iTime += elapsed;
+			vcrShader.iTime.value = [iTime];
+		}
+
 		if (loader != null)
 		{
 			loadTime += elapsed;
@@ -467,6 +487,128 @@ class LoadingState extends MusicBeatState
 		});
 
 		return promise.future;
+	}
+
+	function addShader(){
+		FlxG.camera.setFilters([new ShaderFilter(vcrShader)]);
+		vcrShader.GLITCH.value = [0.4];
+		new FlxTimer().start(2, function(tmr:FlxTimer) {
+			setupIntro(true);
+		});
+		new FlxTimer().start(4, function(tmr:FlxTimer) {
+			FlxG.camera.setFilters([]);
+			setupBossIntro(true);
+		});
+		new FlxTimer().start(20, function(tmr:FlxTimer) {
+			setupBossFight();
+			setupIntro(false);
+		});
+	}
+
+	function setupBossFight(){
+		var theEnemy = "none";
+		switch(bossCharacter.toLowerCase()){
+			case 'edwhak':
+				theEnemy = "edwhak";
+			case 'he':
+				theEnemy = "edwhak";
+			case 'edwhakbroken':
+				theEnemy = "edwhak";
+			case 'edkbmassacre':
+				theEnemy = "edwhak";
+			default:
+				theEnemy = bossCharacter.toLowerCase();
+		}
+		trace("Boss: " + theEnemy);
+		var vsCharacter = new FlxSprite(0, 0).loadGraphic(Paths.image('hitmans/vs/' + theEnemy));
+		if(vsCharacter.graphic == null) //if no graphic was loaded, then load the placeholder
+            vsCharacter.loadGraphic(Paths.image('hitmans/vs/placeHolder'));
+		vsCharacter.x = (FlxG.width - vsCharacter.width/2);
+		vsCharacter.y = (FlxG.height - vsCharacter.height/2);
+		vsCharacter.alpha = 0;
+		vsCharacter.color = 0x000000;
+
+		var vsText = new FlxText(0, 0, "VERSUS", 88).setFormat(Paths.font("DEADLY KILLERS.ttf"), 88, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		vsText.x = (FlxG.width/2 - vsText.width/2);
+		vsText.y = (FlxG.height/2 - vsText.height/2);
+
+		var vsBarBg = new FlxSprite(0, 0).loadGraphic(Paths.image('SimplyLoveHud/HealthBG'));
+		vsBarBg.x = (FlxG.width/2 - (vsBarBg.width/2) -100);
+		vsBarBg.y = (FlxG.height/2 - vsBarBg.height/2);
+
+		var vsBar = new FlxSprite(vsBarBg.x+4, vsBarBg.y+4).makeGraphic(280, 29, FlxColor.RED);
+		vsBar.origin.x = 0;
+		vsBar.scale.x = 0;
+
+		var vsBackGround = new FlxSprite(0, 0).loadGraphic(Paths.image('rating/background'));
+		vsBackGround.setGraphicSize(FlxG.width, FlxG.height);
+		vsBackGround.screenCenter();
+		vsBackGround.alpha = 0.25;
+
+		var vsBlackBG = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+
+		add(vsBlackBG);
+		add(vsBackGround);
+		add(vsCharacter);
+		add(vsText);
+		add(vsBarBg);
+		add(vsBar);
+	}
+
+	function setupIntro(enter:Bool = false){		
+		if(!enter){
+			var whiteFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
+			whiteFade.alpha = 1;
+			add(whiteFade);
+			FlxTween.tween(whiteFade, {alpha: 0}, 1, {ease: FlxEase.backInOut});
+		}else{
+			var blackFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+			blackFade.alpha = 0;
+			add(blackFade);
+
+			FlxTween.tween(blackFade, {alpha: 1 }, 2, {ease: FlxEase.quartOut});
+		}
+	}
+
+	function setupBossIntro(enter:Bool = false)
+	{
+		if(enter){
+			var bgBackDrop = new FlxBackdrop(Paths.image('bossCinematic/metal'));
+			bgBackDrop.screenCenter();
+			bgBackDrop.velocity.set(200,100);
+			bgBackDrop.alpha = 0;
+			add(bgBackDrop);
+
+			var tapeBackdrop = new FlxBackdrop(Paths.image('bossCinematic/tape'), X);
+			tapeBackdrop.screenCenter();
+			tapeBackdrop.velocity.x = 200;
+			tapeBackdrop.alpha = 0;
+			add(tapeBackdrop);
+
+			var alertVignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alert-vignette'));
+			alertVignette.setGraphicSize(FlxG.width, FlxG.height);
+			alertVignette.screenCenter();
+			alertVignette.alpha = 0;
+			add(alertVignette);
+
+			FlxTween.tween(bgBackDrop, {alpha: 0.35}, 4, 
+				{
+					type: FlxTweenType.PINGPONG,
+					ease: FlxEase.cubeInOut
+				}
+			);
+
+			FlxTween.tween(alertVignette, {alpha: 0.4}, 2, 
+				{
+					type: FlxTweenType.PINGPONG,
+					ease: FlxEase.cubeInOut
+				}
+			);
+
+
+			tapeBackdrop.y = (FlxG.height/2) - (tapeBackdrop.height/2);
+			FlxTween.tween(tapeBackdrop, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
+		}
 	}
 }
 
