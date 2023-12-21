@@ -507,8 +507,12 @@ class FreeplayState extends MusicBeatState
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = curDifficulty;
 	
-					bossTier = PlayState.SONG.bossFight;
+					var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
+
+					bossTier = !edwhakVariable.contains(PlayState.SONG.player2) ? PlayState.SONG.bossFight : true;
+
 					bossChar = PlayState.SONG.player2;
+
 					// bossTier = PlayState.SONG.tier;
 
 					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());

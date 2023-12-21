@@ -1,6 +1,7 @@
 package;
 
 import flixel.addons.display.FlxBackdrop;
+import flixel.addons.display.FlxTiledSprite;
 import Shaders.GlitchyChromaticShader;
 import openfl.filters.ShaderFilter;
 import lime.app.Promise;
@@ -234,7 +235,7 @@ class LoadingState extends MusicBeatState
 		if (isBoss){
 			FlxG.sound.playMusic(Paths.sound('Edwhak/bosstier'), 0, true);
 			FlxG.sound.music.fadeIn(6, 0, 1);
-			new FlxTimer().start(12, function(tmr:FlxTimer) {
+			new FlxTimer().start(12.5, function(tmr:FlxTimer) {
 				addShader();
 			});
 		}
