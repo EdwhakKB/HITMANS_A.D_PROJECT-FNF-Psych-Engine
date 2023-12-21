@@ -426,17 +426,18 @@ class Note extends FlxSkewedSprite{
 			if (quantizedNotes) rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalQuantRBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
+			if(!sustainRGB && isSustainNote){
+				rgbShader.enabled = false;
+			}else if(sustainRGB && isSustainNote){
+				rgbShader.enabled = true;
+			}
+			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
 
 			x += swagWidth * (noteData);
 			if(!isSustainNote && noteData > -1) { //Doing this 'if' check to fix the warnings on Senpai songs
 				var animToPlay:String = '';
 				animToPlay = colArray[noteData % colArray.length];
 				animation.play(animToPlay + 'Scroll');
-			}
-			if(!sustainRGB && isSustainNote){
-				rgbShader.enabled = false;
-			}else if(sustainRGB && isSustainNote){
-				rgbShader.enabled = true;
 			}
 		}
 

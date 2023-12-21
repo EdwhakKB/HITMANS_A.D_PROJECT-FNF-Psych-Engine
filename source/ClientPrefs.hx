@@ -162,7 +162,7 @@ class ClientPrefs {
         FlxG.save.data.countDownStyle = countDownStyle;
         FlxG.save.data.countDownSounds = countDownSounds;
         FlxG.save.data.ratingStyle = ratingStyle;
-		FlxG.save.data.noteSkin = noteSkin;
+		//FlxG.save.data.noteSkin = noteSkin;
 		FlxG.save.data.mineSkin = mineSkin;
 		FlxG.save.data.mimicNoteAlpha = mimicNoteAlpha;
 		FlxG.save.data.splashSkin = splashSkin;
@@ -275,9 +275,9 @@ class ClientPrefs {
         if (FlxG.save.data.ratingStyle != null) {
             ratingStyle = FlxG.save.data.ratingStyle;
         }
-		if(FlxG.save.data.noteSkin != null) {
+		/*if(FlxG.save.data.noteSkin != null) {
 			noteSkin = FlxG.save.data.noteSkin;
-		}
+		}*/
 		if(FlxG.save.data.mineSkin != null) {
 			mineSkin = FlxG.save.data.mineSkin;
 		}
