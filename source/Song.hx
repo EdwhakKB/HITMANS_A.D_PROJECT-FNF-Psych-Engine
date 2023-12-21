@@ -26,12 +26,15 @@ typedef SwagSong =
 	var gfVersion:String;
 	var stage:String;
 
-	var bossFight:Bool;
 	var arrowSkin:String;
 	var validScore:Bool;
-	var notITG:Bool;
-	var rightScroll:Bool;
-	var middleScroll:Bool;
+	
+	@:optional var notITG:Bool;
+	@:optional var bossFight:Bool;
+	@:optional var rightScroll:Bool;
+	@:optional var middleScroll:Bool;
+	@:optional var disableNoteRGB:Bool;
+	@:optional var modchartDifficulty:Float;
 }
 
 class Song
@@ -47,6 +50,14 @@ class Song
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
 	public var gfVersion:String = 'gf';
+
+	//Data Level
+	public var bossFight:Bool = false;
+	public var modchartDifficulty:Float = 0;
+	public var rightScroll:Bool = false;
+	public var middleScroll:Bool = false;
+	public var disableNoteRGB:Bool = false;
+	public var notITG:Bool = false;
 
 	private static function onLoadJson(songJson:Dynamic) // Convert old charts to newest format
 	{

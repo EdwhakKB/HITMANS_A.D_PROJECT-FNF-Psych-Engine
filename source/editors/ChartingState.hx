@@ -122,6 +122,7 @@ class ChartingState extends MusicBeatState
 	var _file:FileReference;
 
 	var UI_box:FlxUITabMenu;
+	var UI_box2:FlxUITabMenu;
 
 	public static var goToPlayState:Bool = false;
 	/**
@@ -360,51 +361,38 @@ class ChartingState extends MusicBeatState
 			{name: "Song", label: 'Song'},
 			{name: "Section", label: 'Section'},
 			{name: "Note", label: 'Note'},
-			{name: "Events", label: 'Events'},
 			{name: "Charting", label: 'Charting'},
 		];
 
+		var tabs2 = [
+			{name: "Events", label: 'Events'},
+			{name: "Tips", label: 'Tips'},
+			{name: "Data", label: 'Data'},
+		];
+
 		UI_box = new FlxUITabMenu(null, tabs, true);
+		UI_box2 = new FlxUITabMenu(null, tabs2, true);
 
 		UI_box.resize(300, 400);
-		UI_box.x = 640 + GRID_SIZE / 2;
-		UI_box.y = 25;
+		UI_box.x = -90 + GRID_SIZE / 2;
+		UI_box.y = 365;
 		UI_box.scrollFactor.set();
 
-		text =
-		"W/S or Mouse Wheel - Change Conductor's strum time
-		\nH - Go to the start of the chart
-		\nA/D - Go to the previous/next section
-		\nLeft/Right - Change Snap
-		\nUp/Down - Change Conductor's Strum Time with Snapping
-		\nLeft Bracket / Right Bracket - Change Song Playback Rate (SHIFT to go Faster)
-		\nALT + Left Bracket / Right Bracket - Reset Song Playback Rate
-		\nHold Shift - Move 4x faster Conductor's strum time
-		\nHold Control + click on an arrow - Select it
-		\nHold Control + Left/Right - Move selected arrow
+		UI_box2.resize(655, 650);
+		UI_box2.x = 640 + GRID_SIZE / 2;
+		UI_box2.y = 25;
+		UI_box2.scrollFactor.set();
 
-		\nZ/X - Zoom in/out
-		\nEsc - Test your chart inside Chart Editor
-		\nEnter - Play your chart
-		\nQ/E - Decrease/Increase Note Sustain Length
-		\nSpace - Stop/Resume song";
-
-		var tipTextArray:Array<String> = text.split('\n');
-		for (i in 0...tipTextArray.length) {
-			var tipText:FlxText = new FlxText(UI_box.x, UI_box.y + UI_box.height + 8, 0, tipTextArray[i], 14);
-			tipText.y += i * 9;
-			tipText.setFormat(Paths.font("vcr.ttf"), 14, FlxColor.WHITE, LEFT/*, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK*/);
-			//tipText.borderSize = 2;
-			tipText.scrollFactor.set();
-			add(tipText);
-		}
 		add(UI_box);
+		add(UI_box2);
 
 		addSongUI();
 		addSectionUI();
 		addNoteUI();
 		addEventsUI();
 		addChartingUI();
+		addDataUI();
+
 		updateHeads();
 		updateWaveform();
 		//UI_box.selected_tab = 4;
@@ -508,7 +496,7 @@ class ChartingState extends MusicBeatState
 			saveEvents();
 		});
 
-		var clear_events:FlxButton = new FlxButton(320, 310, 'Clear events', function()
+		var clear_events:FlxButton = new FlxButton(140, 310, 'Clear events', function()
 			{
 				openSubState(new Prompt('This action will clear current progress.\n\nProceed?', 0, clearEvents, null,ignoreWarnings));
 			});
@@ -522,7 +510,7 @@ class ChartingState extends MusicBeatState
 				startSong();
 			});
 
-		var clear_notes:FlxButton = new FlxButton(320, clear_events.y + 30, 'Clear notes', function()
+		var clear_notes:FlxButton = new FlxButton(140, clear_events.y + 30, 'Clear notes', function()
 			{
 				openSubState(new Prompt('This action will clear current progress.\n\nProceed?', 0, function(){for (sec in 0..._song.notes.length) {
 					_song.notes[sec].sectionNotes = [];
@@ -644,47 +632,6 @@ class ChartingState extends MusicBeatState
 		stageDropDown.selectedLabel = _song.stage;
 		blockPressWhileScrolling.push(stageDropDown);
 
-		var skin = PlayState.SONG.arrowSkin;
-		if(skin == null) skin = '';
-		noteSkinInputText = new FlxUIInputText(player2DropDown.x, player2DropDown.y + 50, 150, skin, 8);
-		blockPressWhileTypingOn.push(noteSkinInputText);
-
-		noteSplashesInputText = new FlxUIInputText(noteSkinInputText.x, noteSkinInputText.y + 35, 150, '', 8);
-		blockPressWhileTypingOn.push(noteSplashesInputText);
-
-		var reloadNotesButton:FlxButton = new FlxButton(noteSplashesInputText.x + 5, noteSplashesInputText.y + 20, 'Change Notes', function() {
-			_song.arrowSkin = noteSkinInputText.text;
-			updateGrid();
-		});
-
-		var bossFight = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y-50, null, null, "Boss Fight", 100);
-		bossFight.checked = _song.bossFight;
-		bossFight.callback = function()
-		{
-			_song.bossFight = bossFight.checked;
-		};
-
-		var notITGModchart = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y + 20, null, null, "NotITG modcharts", 100);
-		notITGModchart.checked = _song.notITG;
-		notITGModchart.callback = function()
-		{
-			_song.notITG = notITGModchart.checked;
-		};
-
-		var forceRightScroll = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y - 10, null, null, "Forced RightScroll", 100);
-		forceRightScroll.checked = _song.rightScroll;
-		forceRightScroll.callback = function()
-		{
-			_song.rightScroll = forceRightScroll.checked;
-		};
-
-		var forceMiddleScroll = new FlxUICheckBox(loadAutosaveBtn.x, noteSplashesInputText.y - 30, null, null, "Forced MiddleScroll", 100);
-		forceMiddleScroll.checked = _song.middleScroll;
-		forceMiddleScroll.callback = function()
-		{
-			_song.middleScroll = forceMiddleScroll.checked;
-		};
-
 		// Checks if all difficulties json files exists and removes difficulties that dont have a json file.
 		var availableDifficulties:Array<Int> = [];
 		var availableDifficultiesTexts:Array<String> = [];
@@ -728,10 +675,6 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(UI_songTitle);
 
 		tab_group_song.add(check_voices);
-		tab_group_song.add(bossFight);
-		tab_group_song.add(notITGModchart);
-		tab_group_song.add(forceMiddleScroll);
-		tab_group_song.add(forceRightScroll);
 		tab_group_song.add(clear_events);
 		tab_group_song.add(clear_notes);
 		tab_group_song.add(startHere);
@@ -743,9 +686,6 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(loadEventJson);
 		tab_group_song.add(stepperBPM);
 		tab_group_song.add(stepperSpeed);
-		tab_group_song.add(reloadNotesButton);
-		tab_group_song.add(noteSkinInputText);
-		tab_group_song.add(noteSplashesInputText);
 		tab_group_song.add(new FlxText(stepperBPM.x, stepperBPM.y - 15, 0, 'Song BPM:'));
 		tab_group_song.add(new FlxText(stepperBPM.x + 100, stepperBPM.y - 15, 0, 'Song Offset:'));
 		tab_group_song.add(new FlxText(stepperSpeed.x, stepperSpeed.y - 15, 0, 'Song Speed:'));
@@ -754,8 +694,6 @@ class ChartingState extends MusicBeatState
 		tab_group_song.add(new FlxText(player1DropDown.x, player1DropDown.y - 15, 0, 'Boyfriend:'));
 		tab_group_song.add(new FlxText(stageDropDown.x, stageDropDown.y - 15, 0, 'Stage:'));
 		tab_group_song.add(new FlxText(difficultyDropDown.x, difficultyDropDown.y - 15, 0, 'Difficulty:'));
-		tab_group_song.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
-		tab_group_song.add(new FlxText(noteSplashesInputText.x, noteSplashesInputText.y - 15, 0, 'Note Splashes Texture:'));
 		tab_group_song.add(player2DropDown);
 		tab_group_song.add(gfVersionDropDown);
 		tab_group_song.add(player1DropDown);
@@ -765,6 +703,7 @@ class ChartingState extends MusicBeatState
 		UI_box.addGroup(tab_group_song);
 
 		FlxG.camera.follow(camPos);
+		FlxG.camera.zoom = 0.9;
 	}
 
 	var stepperBeats:FlxUINumericStepper;
@@ -1124,7 +1063,7 @@ class ChartingState extends MusicBeatState
 	var selectedEventText:FlxText;
 	function addEventsUI():Void
 	{
-		var tab_group_event = new FlxUI(null, UI_box);
+		var tab_group_event = new FlxUI(null, UI_box2);
 		tab_group_event.name = 'Events';
 
 		#if LUA_ALLOWED
@@ -1269,7 +1208,7 @@ class ChartingState extends MusicBeatState
 		tab_group_event.add(value2InputText);
 		tab_group_event.add(eventDropDown);
 
-		UI_box.addGroup(tab_group_event);
+		UI_box2.addGroup(tab_group_event);
 	}
 
 	function changeEventSelected(change:Int = 0)
@@ -1470,6 +1409,80 @@ class ChartingState extends MusicBeatState
 		UI_box.addGroup(tab_group_chart);
 	}
 
+	var modchartDifficultyInputText:FlxUIInputText;
+	function addDataUI()
+	{
+		var tab_group_data = new FlxUI(null, UI_box2);
+		tab_group_data.name = 'Data';
+
+		//
+		modchartDifficultyInputText = new FlxUIInputText(10, 25, 150, _song.modchartDifficulty != null ? Std.string(_song.modchartDifficulty) : '0', 8);
+		blockPressWhileTypingOn.push(modchartDifficultyInputText);
+		//
+
+		var check_disableNoteRGB:FlxUICheckBox = new FlxUICheckBox(10, 170, null, null, "Disable Note RGB", 100);
+		check_disableNoteRGB.checked = (_song.disableNoteRGB == true);
+		check_disableNoteRGB.callback = function()
+		{
+			_song.disableNoteRGB = check_disableNoteRGB.checked;
+			updateGrid();
+			//Debug.logTrace('CHECKED!');
+		};
+
+		//
+		noteSkinInputText = new FlxUIInputText(10, 280, 150, _song.arrowSkin, 8);
+		blockPressWhileTypingOn.push(noteSkinInputText);
+
+		var reloadNotesButton:FlxButton = new FlxButton(noteSkinInputText.x + 5, noteSkinInputText.y + 55, 'Change Notes', function() {
+			_song.arrowSkin = noteSkinInputText.text;
+			updateGrid();
+		});
+		//
+
+		var notITGModchart = new FlxUICheckBox(reloadNotesButton.x + 160, reloadNotesButton.y - 70, null, null, "NotITG modcharts", 100);
+		notITGModchart.checked = _song.notITG;
+		notITGModchart.callback = function()
+		{
+			_song.notITG = notITGModchart.checked;
+			//Debug.logInfo('CHECKED!');
+		};
+
+		var forceRightScroll = new FlxUICheckBox(reloadNotesButton.x + 160, reloadNotesButton.y - 90, null, null, "Forced RightScroll", 100);
+		forceRightScroll.checked = _song.rightScroll;
+		forceRightScroll.callback = function()
+		{
+			_song.rightScroll = forceRightScroll.checked;
+		};
+
+		var forceMiddleScroll = new FlxUICheckBox(reloadNotesButton.x + 160, reloadNotesButton.y - 110, null, null, "Forced MiddleScroll", 100);
+		forceMiddleScroll.checked = _song.middleScroll;
+		forceMiddleScroll.callback = function()
+		{
+			_song.middleScroll = forceMiddleScroll.checked;
+		};
+
+		var bossFight = new FlxUICheckBox(reloadNotesButton.x + 160, reloadNotesButton.y - 130, null, null, "Boss Fight", 100);
+		bossFight.checked = _song.bossFight;
+		bossFight.callback = function()
+		{
+			_song.bossFight = bossFight.checked;
+		};
+
+		tab_group_data.add(modchartDifficultyInputText);
+		tab_group_data.add(check_disableNoteRGB);
+		tab_group_data.add(reloadNotesButton);
+		tab_group_data.add(forceMiddleScroll);
+		tab_group_data.add(forceRightScroll);
+		tab_group_data.add(bossFight);
+		tab_group_data.add(notITGModchart);
+		tab_group_data.add(noteSkinInputText);
+
+		tab_group_data.add(new FlxText(modchartDifficultyInputText.x, modchartDifficultyInputText.y - 15, 0, 'Modchart Difficulty Value:'));
+	
+		tab_group_data.add(new FlxText(noteSkinInputText.x, noteSkinInputText.y - 15, 0, 'Note Texture:'));
+		UI_box2.addGroup(tab_group_data);
+	}
+
 	function loadSong():Void
 	{
 		if (FlxG.sound.music != null)
@@ -1592,7 +1605,10 @@ class ChartingState extends MusicBeatState
 			}
 		}
 		else if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
-			if(curSelectedNote != null)
+			if(sender == modchartDifficultyInputText) {
+				_song.modchartDifficulty = Std.parseFloat(modchartDifficultyInputText.text);
+			}
+			else if(curSelectedNote != null)
 			{
 				if(sender == value1InputText) {
 					if(curSelectedNote[1][curEventSelected] != null)
