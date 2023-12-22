@@ -513,7 +513,7 @@ class FreeplayState extends MusicBeatState
 
 					bossChar = PlayState.SONG.player2;
 
-					// bossTier = PlayState.SONG.tier;
+					bossLvl = PlayState.SONG.modchartDifficulty;
 
 					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 
