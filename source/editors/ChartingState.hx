@@ -325,7 +325,7 @@ class ChartingState extends MusicBeatState
 		Conductor.bpm = _song.bpm;
 		Conductor.mapBPMChanges(_song);
 
-		bpmTxt = new FlxText(1000, 50, 0, "", 16);
+		bpmTxt = new FlxText(10, 50, 0, "", 16);
 		bpmTxt.scrollFactor.set();
 		add(bpmTxt);
 
