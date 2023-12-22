@@ -493,14 +493,14 @@ class LoadingState extends MusicBeatState
 	function addShader(){
 		FlxG.camera.setFilters([new ShaderFilter(vcrShader)]);
 		vcrShader.GLITCH.value = [0.4];
-		new FlxTimer().start(2, function(tmr:FlxTimer) {
+		new FlxTimer().start(1.5, function(tmr:FlxTimer) {
 			setupIntro(true);
 		});
-		new FlxTimer().start(4, function(tmr:FlxTimer) {
+		new FlxTimer().start(3.5, function(tmr:FlxTimer) {
 			FlxG.camera.setFilters([]);
 			setupBossIntro(true);
 		});
-		new FlxTimer().start(20, function(tmr:FlxTimer) {
+		new FlxTimer().start(19.5, function(tmr:FlxTimer) {
 			setupBossFight();
 			setupIntro(false);
 		});
@@ -583,8 +583,30 @@ class LoadingState extends MusicBeatState
 			var tapeBackdrop = new FlxBackdrop(Paths.image('bossCinematic/tape'), X);
 			tapeBackdrop.screenCenter();
 			tapeBackdrop.velocity.x = 200;
-			tapeBackdrop.alpha = 0;
+			tapeBackdrop.alpha = 1;
+			tapeBackdrop.color = 0x690000;
+			tapeBackdrop.y = -FlxG.height;
 			add(tapeBackdrop);
+
+			var tapeBackdrop2 = new FlxBackdrop(Paths.image('bossCinematic/tape'), X);
+			tapeBackdrop2.screenCenter();
+			tapeBackdrop2.velocity.x = 200;
+			tapeBackdrop2.alpha = 1;
+			tapeBackdrop2.color = 0x690000;
+			tapeBackdrop2.y = FlxG.height;
+			add(tapeBackdrop2);
+
+			var vignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/vignette'));
+			vignette.setGraphicSize(FlxG.width, FlxG.height);
+			vignette.screenCenter();
+			vignette.alpha = 1;
+			add(vignette);
+
+			var fearVignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/FearMe'));
+			fearVignette.setGraphicSize(FlxG.width, FlxG.height);
+			fearVignette.screenCenter();
+			fearVignette.alpha = 1;
+			add(fearVignette);
 
 			var alertVignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alert-vignette'));
 			alertVignette.setGraphicSize(FlxG.width, FlxG.height);
@@ -607,8 +629,10 @@ class LoadingState extends MusicBeatState
 			);
 
 
-			tapeBackdrop.y = (FlxG.height/2) - (tapeBackdrop.height/2);
-			FlxTween.tween(tapeBackdrop, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
+			new FlxTimer().start(2, function(tmr:FlxTimer) {
+				FlxTween.tween(tapeBackdrop, {y: (FlxG.height/2) - (tapeBackdrop.height/2) - 50}, 4, {ease: FlxEase.quartOut});
+				FlxTween.tween(tapeBackdrop2, {y: (FlxG.height/2) + (tapeBackdrop2.height/2) + 50}, 4, {ease: FlxEase.quartOut});
+			});
 		}
 	}
 }
