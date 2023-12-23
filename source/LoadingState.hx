@@ -580,21 +580,72 @@ class LoadingState extends MusicBeatState
 			bgBackDrop.alpha = 0;
 			add(bgBackDrop);
 
+			var darkerGraphic = new FlxSprite(0, 0).makeGraphic(FlxG.width, 130, FlxColor.BLACK);
+			darkerGraphic.screenCenter(X);
+			darkerGraphic.y = (FlxG.height/2) - (darkerGraphic.height/2);
+			darkerGraphic.alpha = 0;
+			add(darkerGraphic);
+
 			var tapeBackdrop = new FlxBackdrop(Paths.image('bossCinematic/tape'), X);
-			tapeBackdrop.screenCenter();
-			tapeBackdrop.velocity.x = 200;
+			tapeBackdrop.screenCenter(X);
+			tapeBackdrop.velocity.x = 400;
 			tapeBackdrop.alpha = 1;
-			tapeBackdrop.color = 0x690000;
-			tapeBackdrop.y = -FlxG.height;
+			tapeBackdrop.color = 0xAF0000;
+			tapeBackdrop.y -= tapeBackdrop.height;
 			add(tapeBackdrop);
 
 			var tapeBackdrop2 = new FlxBackdrop(Paths.image('bossCinematic/tape'), X);
-			tapeBackdrop2.screenCenter();
-			tapeBackdrop2.velocity.x = 200;
+			tapeBackdrop2.screenCenter(X);
+			tapeBackdrop2.velocity.x = 400;
 			tapeBackdrop2.alpha = 1;
-			tapeBackdrop2.color = 0x690000;
+			tapeBackdrop2.color = 0xAF0000;
 			tapeBackdrop2.y = FlxG.height;
 			add(tapeBackdrop2);
+
+			var alertAttackBG = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alertAttackBG'));
+			alertAttackBG.screenCenter();
+			alertAttackBG.alpha = 0;
+			alertAttackBG.color = 0x000000;
+			alertAttackBG.x -= 200;
+			alertAttackBG.scale.set(1.05,1.05);
+			add(alertAttackBG);
+
+			var alertAttack = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alertAttack'));
+			alertAttack.screenCenter();
+			alertAttack.alpha = 0;
+			alertAttack.color = 0x5C0000;
+			alertAttack.x -= 200;
+			add(alertAttack);
+
+			var warningText = new FlxText(0, 0, "!! CAUTION !!", 55).setFormat(Paths.font("DEADLY KILLERS.ttf"), 55, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			warningText.y = (FlxG.height/2) - (warningText.height/2) - 20;
+			warningText.x = alertAttack.x + 250;
+			warningText.borderSize = 2;
+			warningText.alpha = 0;
+			add(warningText);
+
+			var warningText2 = new FlxText(0, 0, "WE HAVE DETECTED A THREAT NEARBY", 22).setFormat(Paths.font("DEADLY KILLERS.ttf"), 22, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			warningText2.y = warningText.y + 65;
+			warningText2.x = alertAttack.x + 250;
+			warningText2.borderSize = 2;
+			warningText2.alpha = 0;
+			add(warningText2);
+
+			var warningText3 = new FlxText(0, 0, "INITIATING SECURITY PROTOCOL", 22).setFormat(Paths.font("DEADLY KILLERS.ttf"), 22, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			warningText3.y = warningText2.y + 25;
+			warningText3.x = alertAttack.x + 250;
+			warningText3.borderSize = 2;
+			warningText3.alpha = 0;
+			add(warningText3);
+
+			var hitmansEye = new FlxSprite(0, 0);
+			hitmansEye.frames = Paths.getSparrowAtlas('bossCinematic/InsanityEye');
+			hitmansEye.animation.addByPrefix('start', "InsanityEye attack_alert", 48, true);
+			hitmansEye.animation.addByPrefix('idle', "InsanityEye attack_alert0000", 24, false);
+			hitmansEye.animation.play('idle');
+			hitmansEye.screenCenter();
+			hitmansEye.alpha = 0;
+			add(hitmansEye);
 
 			var vignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/vignette'));
 			vignette.setGraphicSize(FlxG.width, FlxG.height);
@@ -602,19 +653,20 @@ class LoadingState extends MusicBeatState
 			vignette.alpha = 1;
 			add(vignette);
 
-			var fearVignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/FearMe'));
-			fearVignette.setGraphicSize(FlxG.width, FlxG.height);
-			fearVignette.screenCenter();
-			fearVignette.alpha = 1;
-			add(fearVignette);
-
 			var alertVignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alert-vignette'));
 			alertVignette.setGraphicSize(FlxG.width, FlxG.height);
 			alertVignette.screenCenter();
 			alertVignette.alpha = 0;
 			add(alertVignette);
 
-			FlxTween.tween(bgBackDrop, {alpha: 0.35}, 4, 
+			FlxTween.tween(hitmansEye, {alpha: 0.55}, 4, 
+				{
+					type: FlxTweenType.PINGPONG,
+					ease: FlxEase.cubeInOut
+				}
+			);
+
+			FlxTween.tween(bgBackDrop, {alpha: 0.55}, 4, 
 				{
 					type: FlxTweenType.PINGPONG,
 					ease: FlxEase.cubeInOut
@@ -630,8 +682,30 @@ class LoadingState extends MusicBeatState
 
 
 			new FlxTimer().start(2, function(tmr:FlxTimer) {
-				FlxTween.tween(tapeBackdrop, {y: (FlxG.height/2) - (tapeBackdrop.height/2) - 50}, 4, {ease: FlxEase.quartOut});
-				FlxTween.tween(tapeBackdrop2, {y: (FlxG.height/2) + (tapeBackdrop2.height/2) + 50}, 4, {ease: FlxEase.quartOut});
+				FlxTween.tween(tapeBackdrop, {y: (FlxG.height/2) - (tapeBackdrop.height/2) - 75}, 2, {ease: FlxEase.quartOut});
+				FlxTween.tween(tapeBackdrop2, {y: (FlxG.height/2) + (tapeBackdrop2.height/2) + 45}, 2, {ease: FlxEase.quartOut});
+				hitmansEye.animation.play('start');
+			});
+
+			new FlxTimer().start(3, function(tmr:FlxTimer) {
+				FlxTween.tween(darkerGraphic, {alpha: 0.6}, 2, {ease: FlxEase.quartOut});
+			});
+
+			new FlxTimer().start(4, function(tmr:FlxTimer) {
+				FlxTween.tween(alertAttack, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+				FlxTween.tween(alertAttackBG, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+			});
+
+			new FlxTimer().start(4, function(tmr:FlxTimer) {
+				FlxTween.tween(warningText, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+			});
+
+			new FlxTimer().start(6, function(tmr:FlxTimer) {
+				FlxTween.tween(warningText2, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+			});
+
+			new FlxTimer().start(6, function(tmr:FlxTimer) {
+				FlxTween.tween(warningText3, {alpha: 1}, 2, {ease: FlxEase.quartOut});
 			});
 		}
 	}
