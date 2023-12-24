@@ -431,7 +431,7 @@ class ResultScreen extends MusicBeatSubstate
 
 						if (PlayState.storyPlaylist.length <= 0)
 						{
-							WeekData.loadTheFirstEnabledMod();
+							Mods.loadTopMod();
 							FlxG.sound.playMusic(Paths.music('bloodstained'));
 							#if desktop DiscordClient.resetClientID(); #end
 							PlayState.cancelMusicFadeTween();

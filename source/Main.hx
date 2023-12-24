@@ -109,6 +109,11 @@ class Main extends Sprite
 		FlxG.mouse.visible = false;
 		#end
 
+		ClientPrefs.loadPrefs();
+
+		#if ACHIEVEMENTS_ALLOWED Achievements.load(); 
+		ClientPrefs.alreadyLoadedAchievements = true; #end
+
 		
 		FlxGraphic.defaultPersist = false;
 	        FlxG.signals.preStateSwitch.add(function()

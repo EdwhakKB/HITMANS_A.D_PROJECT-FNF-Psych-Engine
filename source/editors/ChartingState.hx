@@ -87,11 +87,7 @@ class ChartingState extends MusicBeatState
 		'RollNote',
 		'EndHit'
 	];
-	private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
-	private var noteTypeMap:Map<String, Null<Int>> = new Map<String, Null<Int>>();
-
-	private var susTypeIntMap:Map<Int, String> = new Map<Int, String>();
-	private var susTypeMap:Map<String, Null<Int>> = new Map<String, Null<Int>>();
+	var curNoteTypes:Array<String> = [];
 
 	public var ignoreWarnings = false;
 	var undos = [];
@@ -531,18 +527,21 @@ class ChartingState extends MusicBeatState
 		stepperSpeed.value = _song.speed;
 		stepperSpeed.name = 'song_speed';
 		blockPressWhileTypingOnStepper.push(stepperSpeed);
+
 		#if MODS_ALLOWED
-		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods(Paths.currentModDirectory + '/characters/'), Paths.getPreloadPath('characters/')];
-		for(mod in Paths.getGlobalMods())
+		var directories:Array<String> = [Paths.mods('data/characters/'), Paths.mods(Mods.currentModDirectory + '/data/characters/'), Paths.getPreloadPath('data/characters/')];
+		for(mod in Mods.getGlobalMods())
 			directories.push(Paths.mods(mod + '/characters/'));
 		#else
-		var directories:Array<String> = [Paths.getPreloadPath('characters/')];
+		var directories:Array<String> = [Paths.getPreloadPath('data/characters/')];
 		#end
 
-		var tempMap:Map<String, Bool> = new Map<String, Bool>();
-		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
-		for (i in 0...characters.length) {
-			tempMap.set(characters[i], true);
+		var tempArray:Array<String> = [];
+		var characters:Array<String> = Mods.mergeAllTextsNamed('data/characterList.txt', Paths.getPreloadPath());
+		for (character in characters)
+		{
+			if(character.trim().length > 0)
+				tempArray.push(character);
 		}
 
 		#if MODS_ALLOWED
@@ -553,8 +552,8 @@ class ChartingState extends MusicBeatState
 					var path = haxe.io.Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var charToCheck:String = file.substr(0, file.length - 5);
-						if(!charToCheck.endsWith('-dead') && !tempMap.exists(charToCheck)) {
-							tempMap.set(charToCheck, true);
+						if(charToCheck.trim().length > 0 && !charToCheck.endsWith('-dead') && !tempArray.contains(charToCheck)) {
+							tempArray.push(charToCheck);
 							characters.push(charToCheck);
 						}
 					}
@@ -588,22 +587,20 @@ class ChartingState extends MusicBeatState
 		blockPressWhileScrolling.push(player2DropDown);
 
 		#if MODS_ALLOWED
-		var directories:Array<String> = [Paths.mods('stages/'), Paths.mods(Paths.currentModDirectory + '/stages/'), Paths.getPreloadPath('stages/')];
-		for(mod in Paths.getGlobalMods())
+		var directories:Array<String> = [Paths.mods('stages/'), Paths.mods(Mods.currentModDirectory + '/stages/'), Paths.getPreloadPath('stages/')];
+		for(mod in Mods.getGlobalMods())
 			directories.push(Paths.mods(mod + '/stages/'));
 		#else
 		var directories:Array<String> = [Paths.getPreloadPath('stages/')];
 		#end
 
-		tempMap.clear();
-		var stageFile:Array<String> = CoolUtil.coolTextFile(Paths.txt('stageList'));
+		var stageFile:Array<String> = Mods.mergeAllTextsNamed('data/stageList.txt', Paths.getPreloadPath());
 		var stages:Array<String> = [];
-		for (i in 0...stageFile.length) { //Prevent duplicates
-			var stageToCheck:String = stageFile[i];
-			if(!tempMap.exists(stageToCheck)) {
-				stages.push(stageToCheck);
+		for (stage in stageFile) {
+			if(stage.trim().length > 0) {
+				stages.push(stage);
 			}
-			tempMap.set(stageToCheck, true);
+			tempArray.push(stage);
 		}
 		#if MODS_ALLOWED
 		for (i in 0...directories.length) {
@@ -613,8 +610,8 @@ class ChartingState extends MusicBeatState
 					var path = haxe.io.Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var stageToCheck:String = file.substr(0, file.length - 5);
-						if(!tempMap.exists(stageToCheck)) {
-							tempMap.set(stageToCheck, true);
+						if(stageToCheck.trim().length > 0 && !tempArray.contains(stageToCheck)) {
+							tempArray.push(stageToCheck);
 							stages.push(stageToCheck);
 						}
 					}
@@ -996,43 +993,32 @@ class ChartingState extends MusicBeatState
 		blockPressWhileTypingOn.push(strumTimeInputText);
 
 		var key:Int = 0;
-		var displayNameList:Array<String> = [];
 		while (key < noteTypeList.length) {
-			displayNameList.push(noteTypeList[key]);
-			noteTypeMap.set(noteTypeList[key], key);
-			noteTypeIntMap.set(key, noteTypeList[key]);
+			curNoteTypes.push(noteTypeList[key]);
 			key++;
 		}
 
-		#if LUA_ALLOWED
-		var directories:Array<String> = [];
-
-		#if MODS_ALLOWED
-		directories.push(Paths.mods('custom_notetypes/'));
-		directories.push(Paths.mods(Paths.currentModDirectory + '/custom_notetypes/'));
-		for(mod in Paths.getGlobalMods())
-			directories.push(Paths.mods(mod + '/custom_notetypes/'));
-		#end
-
-		for (i in 0...directories.length) {
-			var directory:String =  directories[i];
-			if(FileSystem.exists(directory)) {
-				for (file in FileSystem.readDirectory(directory)) {
-					var path = haxe.io.Path.join([directory, file]);
-					if (!FileSystem.isDirectory(path) && file.endsWith('.lua')) {
-						var fileToCheck:String = file.substr(0, file.length - 4);
-						if(!noteTypeMap.exists(fileToCheck)) {
-							displayNameList.push(fileToCheck);
-							noteTypeMap.set(fileToCheck, key);
-							noteTypeIntMap.set(key, fileToCheck);
-							key++;
-						}
+		#if sys
+		var foldersToCheck:Array<String> = Mods.directoriesWithFile(Paths.getPreloadPath(), 'custom_notetypes/');
+		for (folder in foldersToCheck)
+			for (file in FileSystem.readDirectory(folder))
+			{
+				var fileName:String = file.toLowerCase();
+				var wordLen:Int = 4;
+				if((#if LUA_ALLOWED fileName.endsWith('.lua') || #end
+					fileName.endsWith('.txt')) && fileName != 'readme.txt')
+				{
+					var fileToCheck:String = file.substr(0, file.length - wordLen);
+					if(!curNoteTypes.contains(fileToCheck))
+					{
+						curNoteTypes.push(fileToCheck);
+						key++;
 					}
 				}
 			}
-		}
 		#end
 
+		var displayNameList:Array<String> = curNoteTypes.copy();
 		for (i in 1...displayNameList.length) {
 			displayNameList[i] = i + '. ' + displayNameList[i];
 		}
@@ -1041,7 +1027,7 @@ class ChartingState extends MusicBeatState
 		{
 			currentType = Std.parseInt(character);
 			if(curSelectedNote != null && curSelectedNote[1] > -1) {
-				curSelectedNote[3] = noteTypeIntMap.get(currentType);
+				curSelectedNote[3] = curNoteTypes[currentType];
 				updateGrid();
 			}
 		});
@@ -1072,8 +1058,8 @@ class ChartingState extends MusicBeatState
 
 		#if MODS_ALLOWED
 		directories.push(Paths.mods('custom_events/'));
-		directories.push(Paths.mods(Paths.currentModDirectory + '/custom_events/'));
-		for(mod in Paths.getGlobalMods())
+		directories.push(Paths.mods(Mods.currentModDirectory + '/custom_events/'));
+		for(mod in Mods.getGlobalMods())
 			directories.push(Paths.mods(mod + '/custom_events/'));
 		#end
 
@@ -1739,7 +1725,7 @@ class ChartingState extends MusicBeatState
 						else if (FlxG.keys.pressed.ALT)
 						{
 							selectNote(note);
-							curSelectedNote[3] = noteTypeIntMap.get(currentType);
+							curSelectedNote[3] = curNoteTypes[currentType];
 							updateGrid();
 						}
 						else
@@ -2691,7 +2677,7 @@ class ChartingState extends MusicBeatState
 			if(curSelectedNote[2] != null) {
 				stepperSusLength.value = curSelectedNote[2];
 				if(curSelectedNote[3] != null) {
-					currentType = noteTypeMap.get(curSelectedNote[3]);
+					currentType = curNoteTypes.indexOf(curSelectedNote[3]);
 					if(currentType <= 0) {
 						noteTypeDropDown.selectedLabel = '';
 					} else {
@@ -2746,7 +2732,7 @@ class ChartingState extends MusicBeatState
 			}
 
 			if(i[3] != null && note.noteType != null && note.noteType.length > 0) {
-				var typeInt:Null<Int> = noteTypeMap.get(i[3]);
+				var typeInt:Null<Int> = curNoteTypes.indexOf(i[3]);
 				var theType:String = '' + typeInt;
 				if(typeInt == null) theType = '?';
 
@@ -2825,7 +2811,7 @@ class ChartingState extends MusicBeatState
 		if(daSus != null) { //Common note
 			if(!Std.isOfType(i[3], String)) //Convert old note type to new note type format
 			{
-				i[3] = noteTypeIntMap.get(i[3]);
+				i[3] = curNoteTypes[i[3]];
 			}
 			if(i.length > 3 && (i[3] == null || i[3].length < 1))
 			{
@@ -3022,7 +3008,7 @@ class ChartingState extends MusicBeatState
 
 		if(noteData > -1)
 		{
-			_song.notes[curSec].sectionNotes.push([noteStrum, noteData % 8, noteSus, noteTypeIntMap.get(daType)]);
+			_song.notes[curSec].sectionNotes.push([noteStrum, noteData % 8, noteSus, curNoteTypes[daType]]);
 			curSelectedNote = _song.notes[curSec].sectionNotes[_song.notes[curSec].sectionNotes.length - 1];
 		}
 		else
@@ -3038,7 +3024,7 @@ class ChartingState extends MusicBeatState
 
 		if (FlxG.keys.pressed.CONTROL && noteData > -1)
 		{
-			_song.notes[curSec].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus, noteTypeIntMap.get(daType)]);
+			_song.notes[curSec].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus, curNoteTypes[daType]]);
 		}
 
 		//trace(noteData + ', ' + noteStrum + ', ' + curSec);
