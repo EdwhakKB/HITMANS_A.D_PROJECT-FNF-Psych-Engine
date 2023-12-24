@@ -580,6 +580,15 @@ class LoadingState extends MusicBeatState
 			bgBackDrop.alpha = 0;
 			add(bgBackDrop);
 
+			var hitmansEye = new FlxSprite(0, 0);
+			hitmansEye.frames = Paths.getSparrowAtlas('bossCinematic/InsanityEye');
+			hitmansEye.animation.addByPrefix('start', "InsanityEye attack_alert", 30, true);
+			hitmansEye.animation.addByPrefix('idle', "InsanityEye attack_alert0000", 24, false);
+			hitmansEye.animation.play('idle');
+			hitmansEye.screenCenter();
+			hitmansEye.alpha = 0;
+			add(hitmansEye);
+
 			var darkerGraphic = new FlxSprite(0, 0).makeGraphic(FlxG.width, 130, FlxColor.BLACK);
 			darkerGraphic.screenCenter(X);
 			darkerGraphic.y = (FlxG.height/2) - (darkerGraphic.height/2);
@@ -638,15 +647,6 @@ class LoadingState extends MusicBeatState
 			warningText3.alpha = 0;
 			add(warningText3);
 
-			var hitmansEye = new FlxSprite(0, 0);
-			hitmansEye.frames = Paths.getSparrowAtlas('bossCinematic/InsanityEye');
-			hitmansEye.animation.addByPrefix('start', "InsanityEye attack_alert", 48, true);
-			hitmansEye.animation.addByPrefix('idle', "InsanityEye attack_alert0000", 24, false);
-			hitmansEye.animation.play('idle');
-			hitmansEye.screenCenter();
-			hitmansEye.alpha = 0;
-			add(hitmansEye);
-
 			var vignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/vignette'));
 			vignette.setGraphicSize(FlxG.width, FlxG.height);
 			vignette.screenCenter();
@@ -659,7 +659,7 @@ class LoadingState extends MusicBeatState
 			alertVignette.alpha = 0;
 			add(alertVignette);
 
-			FlxTween.tween(hitmansEye, {alpha: 0.55}, 4, 
+			FlxTween.tween(hitmansEye, {alpha: 1}, 4, 
 				{
 					type: FlxTweenType.PINGPONG,
 					ease: FlxEase.cubeInOut
@@ -682,30 +682,30 @@ class LoadingState extends MusicBeatState
 
 
 			new FlxTimer().start(2, function(tmr:FlxTimer) {
-				FlxTween.tween(tapeBackdrop, {y: (FlxG.height/2) - (tapeBackdrop.height/2) - 75}, 2, {ease: FlxEase.quartOut});
-				FlxTween.tween(tapeBackdrop2, {y: (FlxG.height/2) + (tapeBackdrop2.height/2) + 45}, 2, {ease: FlxEase.quartOut});
-				hitmansEye.animation.play('start');
+				FlxTween.tween(tapeBackdrop, {y: (FlxG.height/2) - (tapeBackdrop.height/2) - 75}, 2, {ease: FlxEase.cubeInOut});
+				FlxTween.tween(tapeBackdrop2, {y: (FlxG.height/2) + (tapeBackdrop2.height/2) + 45}, 2, {ease: FlxEase.cubeInOut});
 			});
 
 			new FlxTimer().start(3, function(tmr:FlxTimer) {
-				FlxTween.tween(darkerGraphic, {alpha: 0.6}, 2, {ease: FlxEase.quartOut});
+				FlxTween.tween(darkerGraphic, {alpha: 0.6}, 2, {ease: FlxEase.cubeInOut});
 			});
 
 			new FlxTimer().start(4, function(tmr:FlxTimer) {
-				FlxTween.tween(alertAttack, {alpha: 1}, 2, {ease: FlxEase.quartOut});
-				FlxTween.tween(alertAttackBG, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+				FlxTween.tween(alertAttack, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
+				FlxTween.tween(alertAttackBG, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
 			});
 
 			new FlxTimer().start(4, function(tmr:FlxTimer) {
-				FlxTween.tween(warningText, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+				FlxTween.tween(warningText, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
 			});
 
 			new FlxTimer().start(6, function(tmr:FlxTimer) {
-				FlxTween.tween(warningText2, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+				FlxTween.tween(warningText2, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
+				FlxTween.tween(warningText3, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
 			});
 
-			new FlxTimer().start(6, function(tmr:FlxTimer) {
-				FlxTween.tween(warningText3, {alpha: 1}, 2, {ease: FlxEase.quartOut});
+			new FlxTimer().start(8, function(tmr:FlxTimer) {
+				hitmansEye.animation.play('start');
 			});
 		}
 	}
