@@ -185,8 +185,6 @@ class ClientPrefs {
 		FlxG.save.data.noReset = noReset;
 		FlxG.save.data.healthBarAlpha = healthBarAlpha;
 		FlxG.save.data.comboOffset = comboOffset;
-		FlxG.save.data.achievementsMap = Achievements.achievementsMap;
-		FlxG.save.data.totalDeaths = Achievements.totalDeaths;
 
 		FlxG.save.data.ratingOffset = ratingOffset;
 		FlxG.save.data.marvelousWindow = marvelousWindow;
@@ -205,6 +203,8 @@ class ClientPrefs {
 
 		FlxG.save.data.developerMode = developerMode;
 		FlxG.save.data.edwhakMode = edwhakMode;
+
+		#if ACHIEVEMENTS_ALLOWED Achievements.save(); #end
 	
 		FlxG.save.flush();
 
@@ -215,7 +215,12 @@ class ClientPrefs {
 		FlxG.log.add("Settings saved!");
 	}
 
+	#if ACHIEVEMENTS_ALLOWED
+	public static var alreadyLoadedAchievements:Bool = false;
+	#end
+
 	public static function loadPrefs() {
+		#if ACHIEVEMENTS_ALLOWED if (!alreadyLoadedAchievements) Achievements.load(); #end
 		if(FlxG.save.data.downScroll != null) {
 			downScroll = FlxG.save.data.downScroll;
 		}
