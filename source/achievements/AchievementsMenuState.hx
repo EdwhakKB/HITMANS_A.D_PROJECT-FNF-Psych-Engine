@@ -261,7 +261,7 @@ class AchievementsMenuState extends MusicBeatState
 		}
 		else camFollow.setPosition(0, grpOptions.members[curSelected].getGraphicMidpoint().y - 100);
 
-		selector.y = grpOptions.members[curSelected].getGraphicMidpoint().y + (selector.height / 2);
+		selector.y = grpOptions.members[curSelected].getGraphicMidpoint().y;
 		selector.x = grpOptions.members[curSelected].getGraphicMidpoint().x - (selector.width / 2);
 
 		grpOptions.forEach(function(spr:FlxSprite) {
