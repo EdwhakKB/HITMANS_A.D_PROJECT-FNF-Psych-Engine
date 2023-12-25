@@ -92,15 +92,26 @@ class Paths
 		openfl.Assets.cache.clear("songs");
 	}
 
-	static public var currentModDirectory:String = '';
 	static public var currentLevel:String;
 	static public function setCurrentLevel(name:String)
 	{
 		currentLevel = name.toLowerCase();
 	}
 
-	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null)
+	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null, ?modsAllowed:Bool = false):String
 	{
+		#if MODS_ALLOWED
+		if(modsAllowed)
+		{
+			var customFile:String = file;
+			if (library != null)
+				customFile = '$library/$file';
+
+			var modded:String = modFolders(customFile);
+			if(FileSystem.exists(modded)) return modded;
+		}
+		#end
+
 		if (library != null)
 			return getLibraryPath(file, library);
 
@@ -126,9 +137,10 @@ class Paths
 		return if (library == "preload" || library == "default") getPreloadPath(file); else getLibraryPathForce(file, library);
 	}
 
-	inline static function getLibraryPathForce(file:String, library:String)
+	inline static function getLibraryPathForce(file:String, library:String, ?level:String)
 	{
-		var returnPath = '$library:assets/$library/$file';
+		if(level == null) level = library;
+		var returnPath = '$library:assets/$level/$file';
 		return returnPath;
 	}
 
@@ -270,6 +282,8 @@ class Paths
 				return File.getContent(levelPath);
 		}
 		#end
+		var path:String = getPath(key, TEXT);
+		if(OpenFlAssets.exists(path, TEXT)) return Assets.getText(path);
 		return Assets.getText(getPath(key, TEXT));
 	}
 
@@ -301,7 +315,7 @@ class Paths
 		}
 		#end
 
-		if(OpenFlAssets.exists(getPath(key, type, library))) {
+		if(OpenFlAssets.exists(getPath(key, type, library, false))) {
 			return true;
 		}
 		return false;
