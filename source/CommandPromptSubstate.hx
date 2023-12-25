@@ -424,14 +424,14 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										#end
 									});
 							case 'awards':
-								infoText.text = 'NOT IN DEMO';
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								// new FlxTimer().start(1, function(tmr:FlxTimer) 
-								// 	{
-								// 		infoText.text = " ";
-								// 		MusicBeatState.switchState(new StoryMenuState());
-								// 	});
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new achievements.AchievementsMenuState());
+									});
 							case 'login':
 								if (!changingUserName){
 									if (ClientPrefs.userName == 'Guess'){
