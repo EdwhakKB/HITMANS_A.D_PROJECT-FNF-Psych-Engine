@@ -1045,9 +1045,9 @@ class CharacterEditorState extends MusicBeatState
 
 		#if MODS_ALLOWED
 		characterList = [];
-		var directories:Array<String> = [Paths.mods('data/characters/'), Paths.mods(Mods.currentModDirectory + '/data/characters/'), Paths.getPreloadPath('data/characters/')];
+		var directories:Array<String> = [Paths.mods('characters/'), Paths.mods(Mods.currentModDirectory + 'characters/'), Paths.getPreloadPath('characters/')];
 		for(mod in Mods.getGlobalMods())
-			directories.push(Paths.mods(mod + '/data/characters/'));
+			directories.push(Paths.mods(mod + 'characters/'));
 		for (i in 0...directories.length) {
 			var directory:String = directories[i];
 			if(FileSystem.exists(directory)) {
