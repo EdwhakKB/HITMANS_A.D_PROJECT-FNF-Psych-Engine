@@ -36,7 +36,7 @@ class AchievementsMenuState extends MusicBeatState
 		Paths.clearUnusedMemory();
 
 		#if desktop
-		DiscordClient.changePresence("Achievements Menu", null);
+		DiscordClient.changePresence("Menu -Achievements", null);
 		#end
 		
 		// prepare achievement list
@@ -50,9 +50,9 @@ class AchievementsMenuState extends MusicBeatState
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 
-		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
+		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
 		menuBG.antialiasing = ClientPrefs.globalAntialiasing;
-		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
+		menuBG.setGraphicSize(FlxG.width, FlxG.height);
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
 		menuBG.scrollFactor.set();
@@ -108,9 +108,9 @@ class AchievementsMenuState extends MusicBeatState
 		add(box);
 
 		selector = new FlxSprite(0, 0).loadGraphic(Paths.image('awardsMenuShit/selector'));
+		selector.scale.set(0.86, 0.86);
 		selector.updateHitbox();
 		selector.scrollFactor.set();
-		selector.scale.set(0.86, 0.86);
 		add(selector);
 
 		nameText = new FlxText(50, box.y + 10, FlxG.width - 100, "", 32);
@@ -261,12 +261,16 @@ class AchievementsMenuState extends MusicBeatState
 		}
 		else camFollow.setPosition(0, grpOptions.members[curSelected].getGraphicMidpoint().y - 100);
 
-		/*selector.y = grpOptions.members[curSelected].y - (20 * curSelected / 2);
-		selector.x = grpOptions.members[curSelected].x - (10 * curSelected / 2);*/
+		selector.y = grpOptions.members[curSelected].getGraphicMidpoint().y + (selector.height / 2);
+		selector.x = grpOptions.members[curSelected].getGraphicMidpoint().x - (selector.width / 2);
 
 		grpOptions.forEach(function(spr:FlxSprite) {
 			spr.alpha = 0.6;
-			if(spr.ID == curSelected) spr.alpha = 1;
+			if(spr.ID == curSelected){
+				spr.alpha = 1;
+				// selector.y = spr.y;
+				// selector.x = spr.x;
+			}
 		});
 	}
 }
