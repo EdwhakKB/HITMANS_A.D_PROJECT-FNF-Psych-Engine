@@ -19,7 +19,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import lime.app.Application;
-import Achievements;
+import achievements.Achievements;
 import editors.MasterEditorMenu;
 import flixel.input.keyboard.FlxKey;
 
@@ -72,9 +72,9 @@ class CommandPromptSubstate extends MusicBeatSubstate
 	override function create()
 	{
 		#if MODS_ALLOWED
-		Paths.pushGlobalMods();
+		Mods.pushGlobalMods();
 		#end
-		WeekData.loadTheFirstEnabledMod();
+		Mods.loadTopMod();
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -424,14 +424,14 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										#end
 									});
 							case 'awards':
-								infoText.text = 'NOT IN DEMO';
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								// new FlxTimer().start(1, function(tmr:FlxTimer) 
-								// 	{
-								// 		infoText.text = " ";
-								// 		MusicBeatState.switchState(new StoryMenuState());
-								// 	});
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new achievements.AchievementsMenuState());
+									});
 							case 'login':
 								if (!changingUserName){
 									if (ClientPrefs.userName == 'Guess'){

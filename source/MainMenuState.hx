@@ -19,7 +19,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxStringUtil;
 import lime.app.Application;
 import flixel.FlxSubState;
-import Achievements;
 import editors.MasterEditorMenu;
 import flixel.input.keyboard.FlxKey;
 
@@ -78,19 +77,11 @@ class MainMenuState extends MusicBeatState
 	override function create()
 	{
 		#if MODS_ALLOWED
-		Paths.pushGlobalMods();
+		Mods.pushGlobalMods();
 		#end
-		WeekData.loadTheFirstEnabledMod();
+		Mods.loadTopMod();
 
 		debugKeys = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
-
-		camGame = new FlxCamera();
-		camAchievement = new FlxCamera();
-		camAchievement.bgColor.alpha = 0;
-
-		FlxG.cameras.reset(camGame);
-		FlxG.cameras.add(camAchievement, false);
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -228,6 +219,10 @@ class MainMenuState extends MusicBeatState
 				lastDifficultyName = CoolUtil.defaultDifficulty;
 			}
 			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
+
+		#if (ACHIEVEMENTS_ALLOWED && MODS_ALLOWED)
+		Achievements.reloadList();
+		#end
 
 		super.create();
 	}
@@ -402,9 +397,10 @@ class MainMenuState extends MusicBeatState
 									#if MODS_ALLOWED
 									case 'mods':
 										MusicBeatState.switchState(new ModsMenuState());
+									#end
+									#if ACHIEVEMENTS_ALLOWED
 									case 'awards':
-										MusicBeatState.switchState(new ModsMenuState());
-										// MusicBeatState.switchState(new AchievementsMenuState());
+										MusicBeatState.switchState(new AchievementsMenuState());
 									#end
 									case 'credits':
 										MusicBeatState.switchState(new CreditsState());

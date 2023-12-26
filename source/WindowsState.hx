@@ -107,10 +107,9 @@ class WindowsState extends MusicBeatState
 		Paths.clearUnusedMemory();
 
 		#if LUA_ALLOWED
-		Paths.pushGlobalMods();
+		Mods.pushGlobalMods();
 		#end
-		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
-		WeekData.loadTheFirstEnabledMod();
+		Mods.loadTopMod();
 
 		//trace(path, FileSystem.exists(path));
 
@@ -211,6 +210,7 @@ class WindowsState extends MusicBeatState
 
 		super.create();
 		trace(testing);
+
 		ClientPrefs.loadPrefs();
 
 		//changing states incase if nickname != null

@@ -90,7 +90,7 @@ class FreeplayState extends MusicBeatState
 			WeekData.setDirectoryFromWeek(leWeek);
 			addSong(leSongs, i);
 		}
-		WeekData.loadTheFirstEnabledMod();
+		Mods.loadTopMod();
 
 		bg = new FlxSprite().loadGraphic(Paths.image('freeplay/backgroundlool'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -400,7 +400,7 @@ class FreeplayState extends MusicBeatState
 				#if PRELOAD_ALL
 				destroyFreeplayVocals();
 				FlxG.sound.music.volume = 0;
-				Paths.currentModDirectory = songs[curSelected].folder;
+				Mods.currentModDirectory = songs[curSelected].folder;
 				var poop:String = Highscore.formatSong(songs[curSelected].songName[curSong].toLowerCase(), curDifficulty);
 				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName[curSong].toLowerCase());
 				if (PlayState.SONG.needsVoices)
@@ -615,7 +615,7 @@ class FreeplayState extends MusicBeatState
 			}
 		});
 
-		Paths.currentModDirectory = songs[curSelected].folder;
+		Mods.currentModDirectory = songs[curSelected].folder;
 		PlayState.storyWeek = songs[curSelected].week;
 
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
@@ -679,7 +679,7 @@ class SongMetadataCatagory2
 	{
 		this.songName = song;
 		this.week = week;
-		this.folder = Paths.currentModDirectory;
+		this.folder = Mods.currentModDirectory;
 		if (this.folder == null)
 			this.folder = '';
 	}
