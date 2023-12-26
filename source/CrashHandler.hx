@@ -1,9 +1,11 @@
-package crashHandler;
-
+package;
 
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
+
+import sys.FileSystem;
+import sys.io.File;
 
 import flixel.ui.FlxButton;
 import flixel.tweens.misc.NumTween;
@@ -13,35 +15,33 @@ import flixel.group.FlxGroup;
 import Sys;
 
 import flixel.FlxCamera;
-import flixel.util.FlxColor;
-import flixel.text.FlxText;
-import flixel.util.FlxTimer;
+
+import flixel.FlxGame;
+
 import flixel.FlxG;
 import flixel.FlxSprite;
-
-import lime.app.Application;
-import openfl.events.UncaughtErrorEvent;
-import haxe.CallStack;
-import haxe.io.Path;
-import Discord.DiscordClient;
-import sys.FileSystem;
-import sys.io.File;
-import sys.io.Process;
+import flixel.FlxState;
+import flixel.text.FlxText;
+import openfl.Lib;
+import flixel.util.FlxTimer;
+import flixel.util.FlxColor;
 
 using StringTools;
 
+/*
+ * Crash Handler in game by Edwhak_KillBot, Niz, and Slushi
+ */
+
 class CrashHandler 
 {
-
-    static var gitHubLink:String = "...";
-
 	public static function symbolPrevent(error:Dynamic)
 		{
 			onUncaughtError(error);
 		}
 
-	public static var noReturnToThisState:Bool = false;
-	static var engineEXEName:String = "Hitmans.exe";
+	public static function initCrashHandler() {
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
+	}
 
 	static final quotes:Array<String> = 
 	[
@@ -49,7 +49,7 @@ class CrashHandler
         "What the fuck you did!?", //Edwhak
 		"CAGASTE.", // Slushi
 		"It was Bolo!", //Glowsoony
-		"El pollo ardiente", // Edwhak
+		"El pollo ardiente" // Edwhak -- wtf edwhak
 	];
 
 	static function onUncaughtError(e:Dynamic):Void
@@ -97,6 +97,11 @@ class CrashHandler
 		Sys.println( "CRASH:\n\n" + callstackText);
 
 		crashHandlerTerminal(callstackText);
+
+		#if SPECIAL_EFFECTS_CPP
+		slushi.windows.WindowsFuncs.resetAllCPPFunctions();
+		#end
+		//Sys.exit(1);
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,19 +110,19 @@ class CrashHandler
     static var canContinue:Bool = false;
 	static var camCrashHandler:FlxCamera;
 
-	static var time:Float = 0.0;
-
-
 	@:noStack public static var assetGrp:FlxGroup;
 
-
     public static function crashHandlerTerminal(text:String = "") {
+
+		var actualState:String = Type.getClassName(Type.getClass(FlxG.state));
+
         lime.app.Application.current.window.title = "Hitmans Corporation Crash Handler Mode";
         Main.fpsVar.visible = false;
 		FlxG.mouse.useSystemCursor = false;
 		FlxG.mouse.visible = false;
-        lime.app.Application.current.window.resizable = false;
-		//noReturnToThisState = true;
+		FlxG.sound.music.stop();
+		
+		lime.app.Application.current.window.resizable = false;
 
 		camCrashHandler = new FlxCamera();
         camCrashHandler.bgColor.alpha = 0;
@@ -131,7 +136,6 @@ class CrashHandler
 		trace("Starting Crash Handler");
 
 		var contents:String = text;
-		//trace("\n[--newCrashHandler arg in use] TXT CONTENT:\n" + contents);
 
 		var split:Array<String> = contents.split("\n");
 
@@ -140,7 +144,7 @@ class CrashHandler
         assetGrp.add(bg);
 		bg.alpha = 0.7;
 
-		var watermark = new FlxText(10, 0, 0, "Hitmans Engine Crash Handler [v1.3] by Slushi ");
+		var watermark = new FlxText(10, 0, 0, "Hitmans Corporation Crash Handler [v1.3.5] by Slushi");
 		watermark.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		watermark.scrollFactor.set();
 		watermark.borderSize = 1.25;
@@ -186,6 +190,7 @@ class CrashHandler
 		#else
 		text2.text = "\n\nH/FNF> REBOOTING SYSTEM...";
 		#end
+		text2.color = FlxColor.RED;
         assetGrp.add(text2);
 		text2.visible = false;
 
@@ -205,11 +210,69 @@ class CrashHandler
                 {
 					crashtext.visible = true;
 					text2.visible = true;
-                    canContinue = true;
 					new FlxTimer().start(5, function(tmr:FlxTimer)
 						{
-							FlxG.resetGame();
+							Main.fpsVar.visible = ClientPrefs.showFPS;
+							lime.app.Application.current.window.resizable = true;
+							lime.app.Application.current.window.title = lime.app.Application.current.meta.get('name');
+							if(actualState == "PlayState")
+								{
+									if(!PlayState.isStoryMode)
+										{
+											MainGame.alredyOpen = false;
+											FlxG.switchState(new FreeplayState());
+										}
+									else
+										{
+											MainGame.alredyOpen = false;
+											FlxG.switchState(new StoryMenuState());
+										}
+								}
+							else{
+								MainGame.alredyOpen = false;
+								FlxG.switchState(Type.createInstance(Type.getClass(MainGame.oldState), []));
+							}
 						});	
                 });	
 			}
+}
+
+class MainGame extends FlxGame
+{
+	public static var oldState:FlxState;
+    public static var alredyOpen:Bool = false;
+
+	override public function switchState():Void
+	{
+		try
+		{
+			oldState = _state;
+			super.switchState();
+			alredyOpen = false;
+		}
+		catch (error)
+		{
+            if(!alredyOpen)
+                {
+                    CrashHandler.symbolPrevent(error);
+                    alredyOpen = true;
+                }
+		}
+	}
+
+	override public function update()
+	{
+		try
+        {
+            super.update();
+        }
+		catch(error)
+        {
+            if(!alredyOpen)
+            {
+                CrashHandler.symbolPrevent(error);
+                alredyOpen = true;
+            }
+        }
+	}
 }

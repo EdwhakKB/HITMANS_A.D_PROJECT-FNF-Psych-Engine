@@ -14,7 +14,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 
-import crashHandler.*;
 //crash handler stuff
 #if CRASH_HANDLER
 import lime.app.Application;
@@ -91,8 +90,10 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
+
+		CrashHandler.initCrashHandler();
 	
-		addChild(new MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
+		addChild(new CrashHandler.MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
@@ -315,39 +316,3 @@ class Main extends Sprite
 	#end
 }
 
-class MainGame extends FlxGame
-{
-	var alredyOpen:Bool = false;
-
-	override public function switchState():Void
-	{
-		try
-		{
-			super.switchState();
-		}
-		catch (error)
-		{
-			if(!alredyOpen)
-				{
-					CrashHandler.symbolPrevent(error);
-					alredyOpen = true;
-				}
-		}
-	}
-
-	override function update()
-	{
-		try
-		{
-			super.update();
-		}
-		catch(error)
-		{
-			if(!alredyOpen)
-			{
-				CrashHandler.symbolPrevent(error);
-				alredyOpen = true;
-			}
-		}
-	}
-}
