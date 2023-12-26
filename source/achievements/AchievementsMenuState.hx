@@ -1,5 +1,6 @@
 package achievements;
 
+import flixel.FlxCamera;
 import flixel.FlxObject;
 import flixel.util.FlxSort;
 import achievements.Bar;
@@ -27,6 +28,7 @@ class AchievementsMenuState extends MusicBeatState
 	public var selector:FlxSprite;
 
 	var camFollow:FlxObject;
+	var myCamera:FlxCamera;
 
 	var MAX_PER_ROW:Int = 4;
 
@@ -36,7 +38,7 @@ class AchievementsMenuState extends MusicBeatState
 		Paths.clearUnusedMemory();
 
 		#if desktop
-		DiscordClient.changePresence("Menu -Achievements", null);
+		DiscordClient.changePresence("Menu - Achievements", null);
 		#end
 		
 		// prepare achievement list
@@ -46,6 +48,11 @@ class AchievementsMenuState extends MusicBeatState
 			if(data.hidden != true || unlocked)
 				options.push(makeAchievement(achievement, data, unlocked, data.mod));
 		}
+
+		myCamera = new FlxCamera();
+		myCamera.bgColor.alpha = 0;
+		FlxG.cameras.reset(myCamera);
+		FlxG.cameras.setDefaultDrawTarget(myCamera, true);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
@@ -110,7 +117,7 @@ class AchievementsMenuState extends MusicBeatState
 		selector = new FlxSprite(0, 0).loadGraphic(Paths.image('awardsMenuShit/selector'));
 		selector.scale.set(0.86, 0.86);
 		selector.updateHitbox();
-		selector.scrollFactor.set();
+		selector.scrollFactor.x = 0;
 		add(selector);
 
 		nameText = new FlxText(50, box.y + 10, FlxG.width - 100, "", 32);
@@ -140,8 +147,8 @@ class AchievementsMenuState extends MusicBeatState
 
 		super.create();
 
-		FlxG.camera.follow(camFollow, null, 9);
-		FlxG.camera.scroll.y = -FlxG.height;
+		myCamera.follow(camFollow, null, 9);
+		myCamera.scroll.y = -FlxG.height;
 	}
 
 	function makeAchievement(achievement:String, data:Achievement, unlocked:Bool, mod:String = null)
@@ -261,7 +268,7 @@ class AchievementsMenuState extends MusicBeatState
 		}
 		else camFollow.setPosition(0, grpOptions.members[curSelected].getGraphicMidpoint().y - 100);
 
-		selector.y = grpOptions.members[curSelected].getGraphicMidpoint().y;
+		selector.y = grpOptions.members[curSelected].getGraphicMidpoint().y - (selector.height / 2) + 2;
 		selector.x = grpOptions.members[curSelected].getGraphicMidpoint().x - (selector.width / 2);
 
 		grpOptions.forEach(function(spr:FlxSprite) {
