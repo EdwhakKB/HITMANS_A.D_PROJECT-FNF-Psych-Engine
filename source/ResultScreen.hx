@@ -474,6 +474,7 @@ class ResultScreen extends MusicBeatSubstate
 							LoadingState.loadAndSwitchState(new PlayState(), true, 0.75);
 						}
 					}else{
+						Mods.loadTopMod();
 						FlxG.sound.playMusic(Paths.music('bloodstained'), 0);
 						FlxG.sound.music.fadeIn(4, 0, 0.7);
 						MusicBeatState.switchState(new FreeplayState(), true, 0.75);

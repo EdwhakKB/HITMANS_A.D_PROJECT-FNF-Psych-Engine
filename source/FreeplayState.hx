@@ -160,6 +160,8 @@ class FreeplayState extends MusicBeatState
 
 		for (i in 0...songs.length)
 		{
+			Mods.currentModDirectory = songs[i].folder;
+			
 			var box:FlxSprite = new FlxSprite();
 			box.loadGraphic(Paths.image('freeplay/EmptyBox'));
 
