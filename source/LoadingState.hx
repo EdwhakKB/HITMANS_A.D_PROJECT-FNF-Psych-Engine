@@ -582,7 +582,7 @@ class LoadingState extends MusicBeatState
 
 			var hitmansEye = new FlxSprite(0, 0);
 			hitmansEye.frames = Paths.getSparrowAtlas('bossCinematic/InsanityEye');
-			hitmansEye.animation.addByPrefix('start', "InsanityEye attack_alert", 30, true);
+			hitmansEye.animation.addByPrefix('start', "InsanityEye attack_alert", 22, true);
 			hitmansEye.animation.addByPrefix('idle', "InsanityEye attack_alert0000", 24, false);
 			hitmansEye.animation.play('idle');
 			hitmansEye.screenCenter();
@@ -666,7 +666,7 @@ class LoadingState extends MusicBeatState
 				}
 			);
 
-			FlxTween.tween(bgBackDrop, {alpha: 0.55}, 4, 
+			FlxTween.tween(bgBackDrop, {alpha: 0.25}, 4, 
 				{
 					type: FlxTweenType.PINGPONG,
 					ease: FlxEase.cubeInOut
