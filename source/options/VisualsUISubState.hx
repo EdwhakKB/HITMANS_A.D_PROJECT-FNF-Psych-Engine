@@ -44,13 +44,6 @@ class VisualsUISubState extends BaseOptionsMenu
 		['Classic', 'HITMANS']);
 		addOption(option);
 
-		var option:Option = new Option('Note Quantization',
-		"Notes will change their color based on the beats.",
-		'quantization',
-		'bool',
-		false);
-		addOption(option);
-
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
 			'hideHud',

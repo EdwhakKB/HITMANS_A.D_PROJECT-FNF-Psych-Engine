@@ -4,6 +4,7 @@ import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
 
+
 import sys.FileSystem;
 import sys.io.File;
 
@@ -49,7 +50,8 @@ class CrashHandler
         "What the fuck you did!?", //Edwhak
 		"CAGASTE.", // Slushi
 		"It was Bolo!", //Glowsoony
-		"El pollo ardiente" // Edwhak -- wtf edwhak
+		"El pollo ardiente", // Edwhak -- wtf edwhak
+		"FUE GLOW"
 	];
 
 	static function onUncaughtError(e:Dynamic):Void
