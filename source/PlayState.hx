@@ -324,8 +324,6 @@ class PlayState extends MusicBeatState
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
 
-	public var iconP1:HealthIcon;
-	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
 	public var camInterfaz:FlxCamera;
 	public var camInterfaz2:FlxCamera;
@@ -2500,7 +2498,7 @@ class PlayState extends MusicBeatState
 		if (health > 0 && !paused)
 		{
 			if (!inResultsScreen){
-				DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", hitmansHUD.iconP2.getCharacter());
 			}
 		}
 		#end
@@ -2923,7 +2921,6 @@ class PlayState extends MusicBeatState
 			if(startedCountdown)
 			{
 				var fakeCrochet:Float = (60 / SONG.bpm) * 1000;
-				var rollNote:FlxTimer;
 				var isHolding:Bool = false;
 				notes.forEachAlive(function(daNote:Note)
 				{
@@ -3008,29 +3005,6 @@ class PlayState extends MusicBeatState
 							goodNoteHit(daNote);
 						}
 					}
-
-					switch (daNote.noteType)
-                    {
-                        case 'RollNote':
-                            if (daNote.isSustainNote)
-                            {
-                                isHolding = true;
-                            }
-                            if (daNote.mustPress && daNote.canBeHit)
-                            {
-                                daNote.isSustainNote = true;
-                                isHolding = false;
-                            }
-                            else if (daNote.mustPress && daNote.isSustainNote && daNote.canBeHit && !isHolding)
-                            {
-                                if (rollNote != null)
-                                    rollNote.cancel();
-                                rollNote = new FlxTimer().start(0.1, function(tmr){
-                                    daNote.isSustainNote = false;
-                                    daNote.active = false;
-                                });
-                            }
-                    }
 
 					var center:Float = strumY + Note.swagWidth / 2;
 					if(strumGroup.members[daNote.noteData].sustainReduce && daNote.isSustainNote && (daNote.mustPress || !daNote.ignoreNote) &&
@@ -3140,7 +3114,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		if (!inResultsScreen){
-			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			DiscordClient.changePresence(detailsPausedText, SONG.song + " (" + storyDifficultyText + ")", hitmansHUD.iconP2.getCharacter());
 		}
 		#end
 	}
@@ -3280,7 +3254,7 @@ class PlayState extends MusicBeatState
 
 				#if desktop
 				// Game Over doesn't get his own variable because it's only used here
-				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence("Game Over - " + detailsText, SONG.song + " (" + storyDifficultyText + ")", hitmansHUD.iconP2.getCharacter());
 				#end
 				isDead = true;
 				return true;
@@ -3852,7 +3826,7 @@ class PlayState extends MusicBeatState
 		inResultsScreen = true;
 
 		#if desktop
-			DiscordClient.changePresence("Results - " + detailsText, SONG.song + " (" + storyDifficultyText +")" + "Score:" + Math.round(songScore), iconP2.getCharacter());
+			DiscordClient.changePresence("Results - " + detailsText, SONG.song + " (" + storyDifficultyText +")" + "Score:" + Math.round(songScore), hitmansHUD.iconP2.getCharacter());
 		#end
 
 		var ret:Dynamic = callOnLuas('onRating', [], false);

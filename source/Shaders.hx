@@ -170,10 +170,17 @@ class GlitchyChromaticShader extends FlxShader
 class GlitchTVEffect extends ShaderEffectNew
 {
     public var shader:GlitchedTVShader = new GlitchedTVShader();
+    var iTime:Float = 0;
 
-    override public function update(elapsed:Float)
+    public function new():Void
     {
-        shader.iTime.value[0] += elapsed;
+        shader.iTime.value = [0.0];
+    }
+
+    override public function update(elapsed:Float):Void
+    {
+        iTime += elapsed;
+        shader.iTime.value = [iTime];
     }
 }
 
