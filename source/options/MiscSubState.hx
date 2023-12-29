@@ -54,6 +54,13 @@ class MiscSubState extends BaseOptionsMenu
 		option.changeValue = 0.1;
 		addOption(option);
 
+		var option:Option = new Option('Note Quantization',
+		"Notes will change their color based on the beats.",
+		'quantization',
+		'bool',
+		false);
+		addOption(option);
+
 		super();
 	}
 }

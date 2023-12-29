@@ -77,6 +77,8 @@ class Huds extends FlxGroup
 
 	var hudadded:Bool = false;
 
+	var skinUsed:String = ClientPrefs.hudStyle; //so it grabs the hud you want and stuff (for now only like this, in a future it will be way complex)
+
 	public function new()
 	{
 		super();
