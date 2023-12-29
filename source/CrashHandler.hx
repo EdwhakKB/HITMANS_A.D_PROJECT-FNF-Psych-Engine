@@ -110,13 +110,14 @@ class CrashHandler
     static var canContinue:Bool = false;
 	static var camCrashHandler:FlxCamera;
 
+	public static var noReOpenTheCrashHandler:Bool = false;
+
 	@:noStack public static var assetGrp:FlxGroup;
 
     public static function crashHandlerTerminal(text:String = "") {
-
-		var actualState:String = Type.getClassName(Type.getClass(FlxG.state));
-
-        lime.app.Application.current.window.title = "Hitmans Corporation Crash Handler Mode";
+		if (!noReOpenTheCrashHandler) {
+			noReOpenTheCrashHandler = true; // DEJA DE ABRIR ESTO OTRA VEZ MALDITO FlxGame NO JODAAAAAA -- Slushi
+        lime.app.Application.current.window.title = "Hitmans Corporation: Crash Handler Mode";
         Main.fpsVar.visible = false;
 		FlxG.mouse.useSystemCursor = false;
 		FlxG.mouse.visible = false;
@@ -215,25 +216,35 @@ class CrashHandler
 							Main.fpsVar.visible = ClientPrefs.showFPS;
 							lime.app.Application.current.window.resizable = true;
 							lime.app.Application.current.window.title = lime.app.Application.current.meta.get('name');
-							if(actualState == "PlayState")
+							if(Type.getClass(FlxG.state) == PlayState)
 								{
 									if(!PlayState.isStoryMode)
 										{
 											MainGame.alredyOpen = false;
+											Main.fpsVar.visible = ClientPrefs.showFPS;
+											lime.app.Application.current.window.resizable = true;
+											lime.app.Application.current.window.title = lime.app.Application.current.meta.get('name');
 											FlxG.switchState(new FreeplayState());
 										}
 									else
 										{
 											MainGame.alredyOpen = false;
+											Main.fpsVar.visible = ClientPrefs.showFPS;
+											lime.app.Application.current.window.resizable = true;
+											lime.app.Application.current.window.title = lime.app.Application.current.meta.get('name');
 											FlxG.switchState(new StoryMenuState());
 										}
 								}
 							else{
 								MainGame.alredyOpen = false;
+								Main.fpsVar.visible = ClientPrefs.showFPS;
+								lime.app.Application.current.window.resizable = true;
+								lime.app.Application.current.window.title = lime.app.Application.current.meta.get('name');
 								FlxG.switchState(Type.createInstance(Type.getClass(MainGame.oldState), []));
 							}
 						});	
                 });	
+			}
 			}
 }
 
@@ -249,6 +260,7 @@ class MainGame extends FlxGame
 			oldState = _state;
 			super.switchState();
 			alredyOpen = false;
+			CrashHandler.noReOpenTheCrashHandler = false;
 		}
 		catch (error)
 		{
