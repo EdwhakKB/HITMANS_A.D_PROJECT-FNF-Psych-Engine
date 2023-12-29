@@ -217,7 +217,7 @@ class CrashHandler
 							Main.fpsVar.visible = ClientPrefs.showFPS;
 							lime.app.Application.current.window.resizable = true;
 							lime.app.Application.current.window.title = lime.app.Application.current.meta.get('name');
-							if(actualState == "PlayState")
+							if(Type.getClass(FlxG.state) == PlayState)
 								{
 									if(!PlayState.isStoryMode)
 										{
