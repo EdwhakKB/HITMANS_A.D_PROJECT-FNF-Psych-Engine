@@ -123,7 +123,9 @@ class CrashHandler
         Main.fpsVar.visible = false;
 		FlxG.mouse.useSystemCursor = false;
 		FlxG.mouse.visible = false;
-		FlxG.sound.music.stop();
+		
+		if (FlxG.sound.music!=null)
+			FlxG.sound.music.stop();
 		
 		lime.app.Application.current.window.resizable = false;
 

@@ -26,6 +26,13 @@ using StringTools;
  *	the way it currently is, while also transferring some PlayState stuff to here aside from the
  *	actual hud -BeastlyGhost
 **/
+
+/*
+	so this is going to be OPT ig?
+	i don't like how it currently looks so i'll try to improve it
+	so if you want to add something to it, feel free to make this easier ed
+	-Edwhak
+*/
 class Huds extends FlxGroup
 {
 	// health
