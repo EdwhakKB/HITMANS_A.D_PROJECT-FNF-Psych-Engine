@@ -1,0 +1,11 @@
+makes a glitch effect whenever using
+Value 1: a,b
+
+a = what type of chroma is (ease/set)
+b = value of the chroma (if set, its intant)
+value 2: a,b,c,d
+
+a = time it takes to went to 0 (if set)
+b = ease "a" will use
+c = time it takes to went to 0 (if ease)
+d = ease "c" will use (works only with ease)

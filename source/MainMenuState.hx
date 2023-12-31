@@ -30,7 +30,7 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.3.5'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.4.0'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 	public static var enable:Bool = false;
 
@@ -102,6 +102,7 @@ class MainMenuState extends MusicBeatState
 		storyMode.scale.x = 0.7;
 		storyMode.scale.y = 0.7;
 		storyMode.updateHitbox();
+		storyMode.alpha = 0.4;
 		storyMode.antialiasing = ClientPrefs.globalAntialiasing;
 		add(storyMode);
 
@@ -122,6 +123,7 @@ class MainMenuState extends MusicBeatState
 		mods.scale.x = 0.7;
 		mods.scale.y = 0.7;
 		mods.updateHitbox();
+		mods.alpha = 0.4;
 		mods.antialiasing = ClientPrefs.globalAntialiasing;
 		add(mods);
 
@@ -282,19 +284,19 @@ class MainMenuState extends MusicBeatState
 				}
 			}
 			if (FlxG.mouse.overlaps(storyMode)) {
-				if (FlxG.mouse.justPressed) {
-					new FlxTimer().start(1, function(tmrS:FlxTimer)
-					{
-						MusicBeatState.switchState(new StoryMenuState());
-					});
-					folder.alpha = 0;
-					inFolder = true;
-					storyMode.animation.play('selected');
-					freeplay.animation.play('normal');
-					mods.animation.play('normal');
-					credits.animation.play('normal');
-					settings.animation.play('normal');
-				}
+				// if (FlxG.mouse.justPressed) {
+				// 	new FlxTimer().start(1, function(tmrS:FlxTimer)
+				// 	{
+				// 		MusicBeatState.switchState(new StoryMenuState());
+				// 	});
+				// 	folder.alpha = 0;
+				// 	inFolder = true;
+				// 	storyMode.animation.play('selected');
+				// 	freeplay.animation.play('normal');
+				// 	mods.animation.play('normal');
+				// 	credits.animation.play('normal');
+				// 	settings.animation.play('normal');
+				// }
 			}
 			if (FlxG.mouse.overlaps(freeplay)) {
 				if (FlxG.mouse.justPressed) {
@@ -312,21 +314,21 @@ class MainMenuState extends MusicBeatState
 				}
 			}
 			if (FlxG.mouse.overlaps(mods)) {
-				if (FlxG.mouse.justPressed) {
-					#if MODS_ALLOWED
-					new FlxTimer().start(1, function(tmrA:FlxTimer)
-						{
-							MusicBeatState.switchState(new ModsMenuState());
-						});
-					#end
-					folder.alpha = 0;
-					inFolder = true;
-					mods.animation.play('selected');
-					storyMode.animation.play('normal');
-					freeplay.animation.play('normal');
-					credits.animation.play('normal');
-					settings.animation.play('normal');
-				}
+				// if (FlxG.mouse.justPressed) {
+				// 	#if MODS_ALLOWED
+				// 	new FlxTimer().start(1, function(tmrA:FlxTimer)
+				// 		{
+				// 			MusicBeatState.switchState(new ModsMenuState());
+				// 		});
+				// 	#end
+				// 	folder.alpha = 0;
+				// 	inFolder = true;
+				// 	mods.animation.play('selected');
+				// 	storyMode.animation.play('normal');
+				// 	freeplay.animation.play('normal');
+				// 	credits.animation.play('normal');
+				// 	settings.animation.play('normal');
+				// }
 			}
 			if (FlxG.mouse.overlaps(credits)) {
 				if (FlxG.mouse.justPressed) {
@@ -391,16 +393,19 @@ class MainMenuState extends MusicBeatState
 								switch (daChoice)
 								{
 									case 'story_mode':
-										MusicBeatState.switchState(new StoryMenuState());
+										// MusicBeatState.switchState(new StoryMenuState());
+										MusicBeatState.switchState(new FreeplayState());
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
 									#if MODS_ALLOWED
 									case 'mods':
-										MusicBeatState.switchState(new ModsMenuState());
+										// MusicBeatState.switchState(new ModsMenuState());
+										MusicBeatState.switchState(new CreditsState());
 									#end
 									#if ACHIEVEMENTS_ALLOWED
 									case 'awards':
-										MusicBeatState.switchState(new AchievementsMenuState());
+										MusicBeatState.switchState(new CreditsState());
+										// MusicBeatState.switchState(new AchievementsMenuState());
 									#end
 									case 'credits':
 										MusicBeatState.switchState(new CreditsState());

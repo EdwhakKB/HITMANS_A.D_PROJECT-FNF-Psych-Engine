@@ -39,22 +39,22 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 
 	override public function destroy()
 	{
-		if (subStates != null)
-		{
-			while (subStates.length > 5)
-			{
-				var subState:MusicBeatSubstate = subStates[0];
-				if (subState != null)
-				{
-					trace('Destroying Substates!');
-					subStates.remove(subState);
-					subState.destroy();
-				}
-				subState = null;
-			}
+		// if (subStates != null)
+		// {
+		// 	while (subStates.length > 5)
+		// 	{
+		// 		var subState:MusicBeatSubstate = subStates[0];
+		// 		if (subState != null)
+		// 		{
+		// 			trace('Destroying Substates!');
+		// 			subStates.remove(subState);
+		// 			subState.destroy();
+		// 		}
+		// 		subState = null;
+		// 	}
 
-			subStates.resize(0);
-		}
+		// 	subStates.resize(0);
+		// }
 
 		super.destroy();
 	}
@@ -66,6 +66,10 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 		camBeat = FlxG.camera;
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		#if MODS_ALLOWED Mods.updatedOnState = false; #end
+
+		var mousecursor:FlxSprite = new FlxSprite().loadGraphic(Paths.image('mouse', 'shared'));
+		mousecursor.scale.set(0.5, 0.5);
+        FlxG.mouse.load(mousecursor.pixels);
 
 		// var pcInterfas:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('MenuShit/PCInterfas'));
 		// pcInterfas.updateHitbox();

@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="hallway.png">
+<SubTexture name="hallway-dark0000" x="0" y="0" width="860" height="491" frameX="0" frameY="0" frameWidth="860" frameHeight="491" />
+<SubTexture name="hallway-normal0000" x="860" y="0" width="860" height="491" frameX="0" frameY="0" frameWidth="860" frameHeight="491" />
+</TextureAtlas>

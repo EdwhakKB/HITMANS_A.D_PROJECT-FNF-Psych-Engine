@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="TV.png">
+<SubTexture name="TV-Alert0000" x="0" y="0" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-Alert0001" x="658" y="0" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-Alert0002" x="0" y="494" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-Alert0003" x="658" y="494" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-Alert0004" x="1316" y="0" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-Alert0005" x="1316" y="494" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-ready0000" x="0" y="988" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-ready0001" x="658" y="988" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-tutorial0000" x="1316" y="988" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-tutorial0001" x="1974" y="0" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+<SubTexture name="TV-neutral0000" x="1974" y="494" width="658" height="494" frameX="-882" frameY="-147" frameWidth="2560" frameHeight="1400" />
+</TextureAtlas>

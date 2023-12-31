@@ -1,0 +1,68 @@
+{
+	"storyName": "The demo build",
+	"difficulties": "heavy, oni",
+	"hideFreeplay": false,
+	"weekBackground": "stage",
+	"freeplayColor": [
+		146,
+		113,
+		253
+	],
+	"weekBefore": "week 7",
+	"startUnlocked": true,
+	"weekCharacters": [
+		"",
+		"",
+		""
+	],
+	"songs": [
+		[
+			"Operating",
+			"andrea",
+			[
+				0,
+				115,
+				0
+			]
+		],
+		[
+			"hallucination",
+			"johan",
+			[
+				146,
+				113,
+				253
+			]
+		],
+		[
+			"duality",
+			"mia",
+			[
+				146,
+				113,
+				253
+			]
+		],
+		[
+			"herNameIs",
+			"lady",
+			[
+				146,
+				113,
+				253
+			]
+		],
+		[
+			"Icebeat",
+			"anby",
+			[
+				146,
+				113,
+				253
+			]
+		]
+	],
+	"hideStoryMode": false,
+	"weekName": "DemoBuild",
+	"hiddenUntilUnlocked": false
+}

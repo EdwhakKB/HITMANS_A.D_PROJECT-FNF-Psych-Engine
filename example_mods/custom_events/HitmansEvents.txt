@@ -1,0 +1,8 @@
+This event enable the mechanic of every character in the mod
+1 lady      7 medo
+2 mia       8 alice
+3 johan     9 mary
+4 chip      10 virus
+5 violette  11 demency
+6 anby      12 unnamed 0
+      13 killbot

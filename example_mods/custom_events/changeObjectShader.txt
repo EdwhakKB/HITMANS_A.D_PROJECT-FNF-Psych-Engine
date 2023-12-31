@@ -1,0 +1,4 @@
+Changes a object's shader
+
+Value 1: Shader to use ("none" to reset)
+Value 2: Object to shade

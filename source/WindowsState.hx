@@ -88,6 +88,7 @@ class WindowsState extends MusicBeatState
 	private var devNameEnabled:Bool = false; //so if you add one of those developer mode will be enabled if password match
 	private var currentDEVName:String = '';
 	private var developerImage:FlxSprite;
+
 	/*
 	Idea:
 	Game talks +helps to customize stuff

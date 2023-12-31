@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="bg.png">
+<SubTexture name="kbBACK-pulse0000" x="0" y="0" width="1296" height="740" frameX="0" frameY="0" frameWidth="1286" frameHeight="730" />
+<SubTexture name="kbBACK-pulse0001" x="1296" y="0" width="1296" height="740" frameX="0" frameY="0" frameWidth="1286" frameHeight="730" />
+<SubTexture name="kbBACK-pulse0002" x="0" y="740" width="1296" height="740" frameX="0" frameY="0" frameWidth="1286" frameHeight="730" />
+<SubTexture name="kbBACK-pulse0003" x="1296" y="740" width="1296" height="740" frameX="0" frameY="0" frameWidth="1286" frameHeight="730" />
+<SubTexture name="kbBACK-pulse0004" x="0" y="1480" width="1296" height="740" frameX="0" frameY="0" frameWidth="1286" frameHeight="730" />
+<SubTexture name="kbBACK-pulse0005" x="0" y="1480" width="1296" height="740" frameX="0" frameY="0" frameWidth="1286" frameHeight="730" />
+</TextureAtlas>

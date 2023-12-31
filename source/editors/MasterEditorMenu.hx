@@ -131,13 +131,15 @@ class MasterEditorMenu extends MusicBeatState
 				case 'Dialogue Editor':
 					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
 				case 'Chart Editor'://felt it would be cool maybe
-				if (PlayState.SONG.song != null){
-					if (hitmansSongs.contains(PlayState.SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
-						antiCheat();
+					if (PlayState.SONG.song != null){
+						if (hitmansSongs.contains(PlayState.SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+							antiCheat();
+						}else{
+							LoadingState.loadAndSwitchState(new ChartingState(), false);
+						}
 					}else{
-						LoadingState.loadAndSwitchState(new ChartingState(), false);
+						return;
 					}
-				}
 			}
 			FlxG.sound.music.volume = 0;
 			#if PRELOAD_ALL

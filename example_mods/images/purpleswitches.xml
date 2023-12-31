@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="purpleswitches.png">
+	<!-- Created with Adobe Animate version 21.0.5.40714 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="blue0003" x="2" y="158" width="154" height="157" frameX="164" frameY="0" frameWidth="652" frameHeight="160"/>
+	<SubTexture name="blue0002" x="2" y="2" width="149" height="153" frameX="109" frameY="-3" frameWidth="322" frameHeight="157"/>
+	<SubTexture name="blue0001" x="153" y="2" width="148" height="152" frameX="54" frameY="-4" frameWidth="322" frameHeight="157"/>
+	<SubTexture name="blue0000" x="303" y="2" width="158" height="154" frameX="0" frameY="-1" frameWidth="322" frameHeight="157"/>
+	<SubTexture name="green0003" x="2" y="158" width="154" height="157" frameX="330" frameY="0" frameWidth="652" frameHeight="160"/>
+	<SubTexture name="green0002" x="463" y="2" width="153" height="151" frameX="220" frameY="-2" frameWidth="487" frameHeight="162"/>
+	<SubTexture name="green0001" x="618" y="2" width="155" height="151" frameX="110" frameY="-5" frameWidth="487" frameHeight="162"/>
+	<SubTexture name="green0000" x="775" y="2" width="157" height="154" frameX="0" frameY="-8" frameWidth="487" frameHeight="162"/>
+	<SubTexture name="red0003" x="2" y="158" width="154" height="157" frameX="497" frameY="0" frameWidth="652" frameHeight="160"/>
+	<SubTexture name="red0002" x="158" y="158" width="144" height="124" frameX="332" frameY="-18" frameWidth="652" frameHeight="160"/>
+	<SubTexture name="red0001" x="304" y="158" width="145" height="124" frameX="116" frameY="-18" frameWidth="652" frameHeight="160"/>
+	<SubTexture name="red0000" x="451" y="158" width="155" height="157" frameX="0" frameY="-3" frameWidth="652" frameHeight="160"/>
+</TextureAtlas>

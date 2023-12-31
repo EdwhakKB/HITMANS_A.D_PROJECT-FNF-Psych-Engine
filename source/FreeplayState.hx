@@ -511,7 +511,8 @@ class FreeplayState extends MusicBeatState
 	
 					var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
 
-					bossTier = PlayState.SONG.bossFight;
+					// bossTier = PlayState.SONG.bossFight;
+					bossTier = false;
 
 					bossChar = PlayState.SONG.player2;
 

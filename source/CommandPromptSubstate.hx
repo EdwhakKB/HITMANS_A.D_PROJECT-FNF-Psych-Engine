@@ -165,12 +165,12 @@ class CommandPromptSubstate extends MusicBeatSubstate
 		add(helpText);
 
 		debugText = new FlxText(0, 0, FlxG.width, 
-		    "-Modchart bug fixes and recharted songs\n
-        -Improved performance for 60+ FPS players\n
-        -Better tutorial (as you may saw when opening game)\n
-        -Command prompt became a fully substate\n
-        -Better result screen\n
-        -Note RGB improved", 12);
+		    "-Improved songs such as HerNameIs and Hallucination\n
+        -Added more songs\n
+        -Main menu and freeplay rework\n
+        -Notes Options are now in a different exclusive state\n
+        -Better GameOver state\n
+        -Performance improvements", 12);
 		debugText.setFormat(Paths.font("pixel.otf"), 12, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		debugText.scrollFactor.set();
 		debugText.screenCenter(X);
@@ -365,7 +365,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
-										infoText.text = 'HITMANS A.D PROJECT V (0.3.5H)';
+										infoText.text = 'HITMANS A.D PROJECT V (0.4.0)';
 										debugText.alpha = 1;
 									});
 							}
@@ -393,14 +393,14 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										MusicBeatState.switchState(new FreeplayState());
 									});
 							case 'storymode':
-								infoText.text = 'EXECUTING...';
+								infoText.text = 'NOT IN DEMO';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										MusicBeatState.switchState(new StoryMenuState());
-									});
+								// new FlxTimer().start(1, function(tmr:FlxTimer) 
+								// 	{
+								// 		infoText.text = " ";
+								// 		MusicBeatState.switchState(new StoryMenuState());
+								// 	});
 							case 'credits':
 								infoText.text = 'EXECUTING...';
 								wordText.text = '';
@@ -411,27 +411,27 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										MusicBeatState.switchState(new CreditsState());
 									});
 							case 'mods':
-								infoText.text = 'EXECUTING...';
+								infoText.text = 'NOT IN DEMO';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										#if MODS_ALLOWED
-										infoText.text = " ";
-										MusicBeatState.switchState(new ModsMenuState());
-										#else
-										infoText.text = "SYSTEM DON'T SUPPORT ANY MODIFICATION";
-										#end
-									});
+								// new FlxTimer().start(1, function(tmr:FlxTimer) 
+								// 	{
+								// 		#if MODS_ALLOWED
+								// 		infoText.text = " ";
+								// 		MusicBeatState.switchState(new ModsMenuState());
+								// 		#else
+								// 		infoText.text = "SYSTEM DON'T SUPPORT ANY MODIFICATION";
+								// 		#end
+								// 	});
 							case 'awards':
-								infoText.text = 'EXECUTING...';
+								infoText.text = 'NOT IN DEMO';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										infoText.text = " ";
-										MusicBeatState.switchState(new achievements.AchievementsMenuState());
-									});
+								// new FlxTimer().start(1, function(tmr:FlxTimer) 
+								// 	{
+								// 		infoText.text = " ";
+								// 		MusicBeatState.switchState(new achievements.AchievementsMenuState());
+								// 	});
 							case 'login':
 								if (!changingUserName){
 									if (ClientPrefs.userName == 'Guess'){
@@ -502,33 +502,33 @@ class CommandPromptSubstate extends MusicBeatSubstate
 											});
 									});
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							case 'reset data --debug':
-								infoText.text = 'Reseting(safeMode)...';
-								wordText.text = '';
-								ClientPrefs.userName = '';
-								ClientPrefs.isLogged = false;
-								new FlxTimer().start(1, function(tmr:FlxTimer) 
-									{
-										FlxG.sound.music.fadeOut(0.3);
-										if(FreeplayState.vocals != null)
-										{
-											FreeplayState.vocals.fadeOut(0.3);
-											FreeplayState.vocals = null;
-										}
-										FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
-									});
-								new FlxTimer().start(1.5, function(tmr:FlxTimer) 
-									{
-										ClientPrefs.saveSettings();
-										infoText.text = " ";
-										// TitleState.initialized = false;
-										// TitleState.closedState = false;
-										WindowsState.initialized = false;
-										WindowsState.closedState = false;
-										WindowsState.testing = true;
-										MusicBeatState.switchState(new WindowsState());
-									});
-								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
+							// case 'reset data --debug':
+							// 	infoText.text = 'Reseting(safeMode)...';
+							// 	wordText.text = '';
+							// 	ClientPrefs.userName = '';
+							// 	ClientPrefs.isLogged = false;
+							// 	new FlxTimer().start(1, function(tmr:FlxTimer) 
+							// 		{
+							// 			FlxG.sound.music.fadeOut(0.3);
+							// 			if(FreeplayState.vocals != null)
+							// 			{
+							// 				FreeplayState.vocals.fadeOut(0.3);
+							// 				FreeplayState.vocals = null;
+							// 			}
+							// 			FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
+							// 		});
+							// 	new FlxTimer().start(1.5, function(tmr:FlxTimer) 
+							// 		{
+							// 			ClientPrefs.saveSettings();
+							// 			infoText.text = " ";
+							// 			// TitleState.initialized = false;
+							// 			// TitleState.closedState = false;
+							// 			WindowsState.initialized = false;
+							// 			WindowsState.closedState = false;
+							// 			WindowsState.testing = true;
+							// 			MusicBeatState.switchState(new WindowsState());
+							// 		});
+							// 	FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 							case 'restart':
 								infoText.text = 'Restarting...';
 								wordText.text = '';

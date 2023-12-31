@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -41,6 +42,7 @@ class Main extends Sprite
 
 	public static var focused:Bool = true; //pause stuff
 
+	var mouseCursor:FlxSprite;
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
 	public static function main():Void
@@ -95,6 +97,12 @@ class Main extends Sprite
 	
 		addChild(new CrashHandler.MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
+		mouseCursor = new FlxSprite().loadGraphic(Paths.getPreloadPath('images/mouse'));
+        // } 
+        FlxG.mouse.load(mouseCursor.pixels);
+        FlxG.mouse.enabled = true;
+        FlxG.mouse.visible = false;
+		
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
