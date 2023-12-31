@@ -204,6 +204,8 @@ class FunkinLua {
 		set('botPlay', PlayState.instance.cpuControlled);
 		set('practice', PlayState.instance.practiceMode);
 		set('modchart', PlayState.instance.notITGMod);
+		set('chaosMod', PlayState.instance.chaosMod);
+		set('chaosDiff', PlayState.instance.chaosDifficulty);
 
 		for (i in 0...4) {
 			set('defaultPlayerStrumX' + i, 0);

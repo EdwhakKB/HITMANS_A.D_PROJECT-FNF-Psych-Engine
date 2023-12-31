@@ -200,7 +200,7 @@ class HurtsSubState extends MusicBeatSubstate
 		hexTypeLine.visible = false;
 		add(hexTypeLine);
 
-		switch (ClientPrefs.noteSkin[1])
+		switch (ClientPrefs.notesSkin[1])
 		{
 			case 'MIMIC':
 				noteSkinInt = 0;
@@ -626,7 +626,7 @@ class HurtsSubState extends MusicBeatSubstate
 		if (curNum >= skins.length)
 			curNum = 0;
 
-		ClientPrefs.noteSkin[1] = skins[curNum];
+		ClientPrefs.notesSkin[1] = skins[curNum];
 		skinIndicator.text = skins[curNum];
 	}
 	
@@ -700,7 +700,7 @@ class HurtsSubState extends MusicBeatSubstate
 		}
 
 		bigNote = new Note(0, 0, false, true);
-		if (ClientPrefs.noteSkin[1] != 'MIMIC')
+		if (ClientPrefs.notesSkin[1] != 'MIMIC')
 			bigNote.noteType = 'HurtAgressive';
 		bigNote.setPosition(250, 325);
 		bigNote.setGraphicSize(250);

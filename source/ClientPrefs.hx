@@ -24,7 +24,7 @@ class ClientPrefs {
     public static var countDownSounds:Array<String> = ["intro3", "intro2", "intro1", "introGo"];
     public static var ratingStyle:Array<Dynamic> = ["", null];
     public static var memoryDisplay:Bool = true;
-	public static var noteSkin:Array<String> = ['HITMANS', 'MIMIC'];
+	public static var notesSkin:Array<String> = ['HITMANS', 'MIMIC'];
 	public static var mineSkin:String = 'HITMANS';
 	public static var splashSkin:String = 'HITMANS';
 	public static var userName:String = '';
@@ -95,7 +95,8 @@ class ClientPrefs {
 		'modchart' => true,
 		'practice' => false,
 		'botplay' => false,
-		'opponentplay' => false
+		'chaosmode' => false,
+		'chaosdifficulty' => 1.0
 	];
 
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
@@ -162,7 +163,7 @@ class ClientPrefs {
         FlxG.save.data.countDownStyle = countDownStyle;
         FlxG.save.data.countDownSounds = countDownSounds;
         FlxG.save.data.ratingStyle = ratingStyle;
-		//FlxG.save.data.noteSkin = noteSkin;
+		FlxG.save.data.notesSkin = notesSkin;
 		FlxG.save.data.mineSkin = mineSkin;
 		FlxG.save.data.mimicNoteAlpha = mimicNoteAlpha;
 		FlxG.save.data.splashSkin = splashSkin;
@@ -280,9 +281,9 @@ class ClientPrefs {
         if (FlxG.save.data.ratingStyle != null) {
             ratingStyle = FlxG.save.data.ratingStyle;
         }
-		/*if(FlxG.save.data.noteSkin != null) {
-			noteSkin = FlxG.save.data.noteSkin;
-		}*/
+		if(FlxG.save.data.notesSkin != null) {
+			notesSkin = FlxG.save.data.notesSkin;
+		}
 		if(FlxG.save.data.mineSkin != null) {
 			mineSkin = FlxG.save.data.mineSkin;
 		}

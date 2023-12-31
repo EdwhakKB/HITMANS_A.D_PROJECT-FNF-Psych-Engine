@@ -84,7 +84,7 @@ class Huds extends FlxGroup
 
 	var hudadded:Bool = false;
 
-	var skinUsed:String = ClientPrefs.hudStyle; //so it grabs the hud you want and stuff (for now only like this, in a future it will be way complex)
+	var hudUsed:String = ClientPrefs.hudStyle.toLowerCase(); //so it grabs the hud you want and stuff (for now only like this, in a future it will be way complex)
 
 	public function new()
 	{
@@ -277,6 +277,7 @@ class Huds extends FlxGroup
     
             botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
             botplayTxt.setFormat(Paths.font("DEADLY KILLERS.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			botplayTxt.font = (hudUsed == 'hitmans') ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf");
             botplayTxt.scrollFactor.set();
             botplayTxt.borderSize = 1.25;
             botplayTxt.visible = PlayState.instance.cpuControlled;
@@ -308,14 +309,9 @@ class Huds extends FlxGroup
 			iconP2.scale.set(mult, mult);
 			iconP2.updateHitbox();
     
-            if (ClientPrefs.hudStyle == 'HITMANS'){
-                iconP1.x = (FlxG.width - 160);
-                iconP2.x = (0);
-            }
-            if (ClientPrefs.hudStyle == 'Classic'){
-                iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-                iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
-            }
+			iconP1.x = (hudUsed == 'hitmans') ? (FlxG.width - 160) : healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+			iconP2.x = (hudUsed == 'hitmans') ? (0) : healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+			
             if (ClientPrefs.hudStyle == 'Classic'){
                 if (healthBar.percent < 20)
                     iconP1.animation.curAnim.curFrame = 1;

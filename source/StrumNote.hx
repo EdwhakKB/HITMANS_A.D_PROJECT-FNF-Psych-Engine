@@ -55,7 +55,7 @@ class StrumNote extends FlxSkewedSprite
 		super(x, y);
 
 		myLibrary = library;
-		var skin = 'Skins/Notes/'+ClientPrefs.noteSkin[0]+'/NOTE_assets';
+		var skin = 'Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets';
 		if(PlayState.SONG != null && PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		if (daTexture != null) texture = daTexture else texture = skin;
 		// texture = skin; //Load texture and anims

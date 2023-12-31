@@ -64,9 +64,11 @@ class ModchartFile
         data = loadFromJson(PlayState.SONG.song.toLowerCase(), CoolUtil.difficultyString().toLowerCase() == null ? CoolUtil.difficulties[PlayState.storyDifficulty] : CoolUtil.difficultyString().toLowerCase());
         this.renderer = renderer;
         renderer.modchart = this;
-        loadPlayfields();
-        loadModifiers();
-        loadEvents();
+        if (!ClientPrefs.getGameplaySetting('chaosmode', false)){
+            loadPlayfields();
+            loadModifiers();
+            loadEvents();
+        }
     }
 
     public function loadFromJson(folder:String, difficulty:String):ModchartJson //load da shit

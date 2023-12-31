@@ -653,7 +653,7 @@ class EditorPlayState extends MusicBeatState
 			resyncVocals();
 		}
 		for (i in 0... animSkins.length){
-			if (ClientPrefs.noteSkin[0].contains(animSkins[i])){
+			if (ClientPrefs.notesSkin[0].contains(animSkins[i])){
 				if (curStep % 4 == 0){
 					for (this2 in opponentStrums)
 					{

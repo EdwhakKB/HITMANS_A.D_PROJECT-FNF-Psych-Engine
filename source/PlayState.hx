@@ -320,6 +320,8 @@ class PlayState extends MusicBeatState
 	public var cpuControlled:Bool = false;
 	public var practiceMode:Bool = false;
 	public var notITGMod:Bool = true;
+	public var chaosMod:Bool = false;
+	public var chaosDifficulty:Float = 1;
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
@@ -608,6 +610,8 @@ class PlayState extends MusicBeatState
 		notITGMod = ClientPrefs.getGameplaySetting('modchart', true);
 		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
+		chaosMod = ClientPrefs.getGameplaySetting('chaosmode', false);
+		chaosDifficulty = ClientPrefs.getGameplaySetting('chaosdifficulty', 1);
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
@@ -5093,7 +5097,7 @@ class PlayState extends MusicBeatState
 			return;
 		}
 		for (i in 0... animSkins.length){
-			if (ClientPrefs.noteSkin[0].contains(animSkins[i])){
+			if (ClientPrefs.notesSkin[0].contains(animSkins[i])){
 				if (curStep % 4 == 0){
 					for (this2 in opponentStrums)
 					{

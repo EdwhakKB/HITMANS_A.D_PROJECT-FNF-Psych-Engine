@@ -914,7 +914,7 @@ class WindowsState extends MusicBeatState
 		{
 			var targetAlpha:Float = 1;
 
-			var babyArrow:StrumNote = new StrumNote(STRUM_X_MIDDLESCROLL, strumLine.y, i, player, 'Skins/Notes/'+ClientPrefs.noteSkin[0]+'/NOTE_assets', 'shared');
+			var babyArrow:StrumNote = new StrumNote(STRUM_X_MIDDLESCROLL, strumLine.y, i, player, 'Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets', 'shared');
 			babyArrow.alpha = 0;
 			FlxTween.tween(babyArrow, {alpha: targetAlpha}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
 

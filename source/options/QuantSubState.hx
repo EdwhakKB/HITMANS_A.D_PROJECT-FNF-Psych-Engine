@@ -128,7 +128,7 @@ class QuantSubState extends MusicBeatSubstate
 		text.setScale(0.4);
 		add(text);
 
-		skinIndicator = new FlxText(260, 20, 0, ClientPrefs.noteSkin[0], 56);
+		skinIndicator = new FlxText(260, 20, 0, ClientPrefs.notesSkin[0], 56);
 		skinIndicator.setFormat(Paths.font("DEADLY KILLERS.ttf"), 56, 0xffffffff, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		skinIndicator.borderSize = 2;
 		add(skinIndicator);
