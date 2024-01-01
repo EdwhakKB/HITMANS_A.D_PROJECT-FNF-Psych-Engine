@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="hitmans-ratings.png">
+<SubTexture name="Fantastic0000" x="240" y="0" width="192" height="52" frameX="-34" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Excellent late0000" x="0" y="0" width="240" height="60" frameX="-20" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Excellent early0000" x="0" y="60" width="240" height="60" frameX="0" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Great late0000" x="240" y="52" width="164" height="52" frameX="-58" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Great early0000" x="240" y="104" width="164" height="52" frameX="-38" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="a Decent late0000" x="240" y="156" width="144" height="52" frameX="-68" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Decent early0000" x="0" y="240" width="144" height="52" frameX="-48" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Way off late0000" x="0" y="120" width="232" height="60" frameX="-22" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Way off early0000" x="0" y="180" width="228" height="60" frameX="-6" frameY="-16" frameWidth="250" frameHeight="75" />
+<SubTexture name="Miss0000" x="144" y="240" width="184" height="52" frameX="-38" frameY="-16" frameWidth="250" frameHeight="75" />
+</TextureAtlas>

@@ -129,14 +129,6 @@ class FreeplayState extends MusicBeatState
 		bg.setGraphicSize(1280, 720);
 		add(bg);
 
-		sliceBar2 = new FlxSprite(0, -10).loadGraphic(Paths.image(''));
-		sliceBar2.antialiasing = ClientPrefs.globalAntialiasing;
-		add(sliceBar2);
-
-		sliceBar = new FlxSprite(0, -10).loadGraphic(Paths.image(''));
-		sliceBar.antialiasing = ClientPrefs.globalAntialiasing;
-		add(sliceBar);
-
 		grupoImagen = new FlxTypedGroup<FlxSprite>();
 		add(grupoImagen);
 
@@ -210,7 +202,7 @@ class FreeplayState extends MusicBeatState
 
 		add(scoreText);
 
-		rating = new FlxSprite(872.1,535.2);
+		rating = new FlxSprite(872.1,505.2);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
 		rating.animation.addByPrefix('PERFECT', 'Rating-H', 24, true);
 		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
@@ -512,8 +504,7 @@ class FreeplayState extends MusicBeatState
 	
 					var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
 
-					// bossTier = PlayState.SONG.bossFight;
-					bossTier = false;
+					bossTier = PlayState.SONG.bossFight;
 
 					bossChar = PlayState.SONG.player2;
 

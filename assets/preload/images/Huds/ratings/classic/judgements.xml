@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="Ratings-FNF.png">
+<SubTexture name="Fantastic0000" x="240" y="0" width="346" height="139" frameX="-31" frameY="-27" frameWidth="400" frameHeight="200" />
+<SubTexture name="Excellent early0000" x="0" y="142" width="373" height="139" frameX="-4" frameY="-27" frameWidth="400" frameHeight="200" />
+<SubTexture name="Excellent late0000" x="0" y="281" width="366" height="139" frameX="-31" frameY="-27" frameWidth="400" frameHeight="200" />
+<SubTexture name="Great early0000" x="0" y="420" width="338" height="139" frameX="-3" frameY="-27" frameWidth="400" frameHeight="200" />
+<SubTexture name="Great late0000" x="586" y="0" width="339" height="139" frameX="-31" frameY="-27" frameWidth="400" frameHeight="200" />
+<SubTexture name="Decent early0000" x="586" y="385" width="300" height="108" frameX="-35" frameY="-40" frameWidth="400" frameHeight="200" />
+<SubTexture name="Decent late0000" x="0" y="559" width="288" height="108" frameX="-75" frameY="-40" frameWidth="400" frameHeight="200" />
+<SubTexture name="Way off early0000" x="586" y="139" width="222" height="123" frameX="-69" frameY="-38" frameWidth="400" frameHeight="200" />
+<SubTexture name="Way off late0000" x="586" y="262" width="234" height="123" frameX="-104" frameY="-38" frameWidth="400" frameHeight="200" />
+<SubTexture name="Miss0000" x="0" y="0" width="240" height="142" frameX="-79" frameY="-45" frameWidth="400" frameHeight="200" />
+</TextureAtlas>
