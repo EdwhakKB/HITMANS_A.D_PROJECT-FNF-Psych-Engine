@@ -53,6 +53,11 @@ class CoolUtil
 		return difficulties[PlayState.storyDifficulty].toUpperCase();
 	}
 
+	public static function difficultyStringLowerCased():String
+	{
+		return difficulties[PlayState.storyDifficulty].toLowerCase();
+	}
+
 	public static function difficultyString2():String
 	{
 		return defaultDifficulties[PlayState.storyDifficulty].toLowerCase();
