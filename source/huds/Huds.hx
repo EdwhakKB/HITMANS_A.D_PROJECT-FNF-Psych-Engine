@@ -491,10 +491,10 @@ class Huds extends FlxGroup
 		// 	},
 		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
 		// });
-		if (ClientPrefs.hudStyle == 'HITMANS'){
+		// if (ClientPrefs.hudStyle == 'HITMANS'){
 			ratings.visible = true;
 			noteScore.visible = true;
-		}
+		//}
 	}
 
 	public function ratingsBumpScaleOP() {
@@ -542,10 +542,10 @@ class Huds extends FlxGroup
 		// 	},
 		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
 		// });
-		if (ClientPrefs.hudStyle == 'HITMANS'){
+		//if (ClientPrefs.hudStyle == 'HITMANS'){
 			ratingsOP.visible = true;
 			noteScoreOp.visible = true;
-		}
+		//}
 	}
 
 	public function setRatingAnimation(rat:Float){
