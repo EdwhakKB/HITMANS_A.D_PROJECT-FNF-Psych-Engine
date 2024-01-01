@@ -103,7 +103,7 @@ class Huds extends FlxGroup
             //Hitmans Ratings (Kinda Better LOL, sorry if separated i can't use array due keyboard bug)
             //570 x and 200 y (just in case)
             ratings = new FlxSprite(850, 230);
-            ratings.frames = Paths.getSparrowAtlas('Huds/Ratings/'+ClientPrefs.hudStyle.toLowerCase()+'/judgements');
+            ratings.frames = Paths.getSparrowAtlas('Huds/ratings/'+ClientPrefs.hudStyle.toLowerCase()+'/judgements');
             ratings.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
             ratings.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
             ratings.animation.addByPrefix('excellent Early', 'Excellent early', 1, true);
@@ -121,7 +121,7 @@ class Huds extends FlxGroup
             add(ratings);
 
             ratingsOP = new FlxSprite(180, 230);
-            ratingsOP.frames = Paths.getSparrowAtlas('Huds/Ratings/'+ClientPrefs.hudStyle.toLowerCase()+'/judgements');
+            ratingsOP.frames = Paths.getSparrowAtlas('Huds/ratings/'+ClientPrefs.hudStyle.toLowerCase()+'/judgements');
             ratingsOP.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
             ratingsOP.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
             ratingsOP.animation.addByPrefix('excellent Early', 'Excellent early', 1, true);
@@ -140,7 +140,7 @@ class Huds extends FlxGroup
 
             noteScoreOp = new FlxText(ratingsOP.x, 0, FlxG.width, '', 36);
             noteScoreOp.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
-			noteScoreOp.font = (hudUsed == 'hitmans') ? Paths.font("vcr.ttf") : Paths.font("Phantomuff.ttf");
+			noteScoreOp.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
             noteScoreOp.borderSize = 2;
             noteScoreOp.scrollFactor.set();
             noteScoreOp.visible = false;
@@ -148,7 +148,7 @@ class Huds extends FlxGroup
 
             noteScore = new FlxText(ratings.x, 0, FlxG.width, '', 36);
             noteScore.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
-			noteScore.font = (hudUsed == 'hitmans') ? Paths.font("vcr.ttf") : Paths.font("Phantomuff.ttf");
+			noteScore.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
             noteScore.borderSize = 2;
             noteScore.scrollFactor.set();
             noteScore.visible = false;
