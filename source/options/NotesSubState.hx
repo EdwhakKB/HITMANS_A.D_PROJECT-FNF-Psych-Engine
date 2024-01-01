@@ -257,6 +257,8 @@ class NotesSubState extends MusicBeatSubstate
 		var qHold = FlxG.keys.pressed.Q;
 		var eHold = FlxG.keys.pressed.E;
 
+		var ctrlPress = FlxG.keys.justPressed.CONTROL;
+
 		if(qPress)
 		{
 			onChangeSkin(-1);
@@ -273,6 +275,13 @@ class NotesSubState extends MusicBeatSubstate
 
 		if(ePress)
 		{
+			onChangeSkin(1);
+			spawnNotes();
+			updateNotes(true);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+		}
+
+		if (ctrlPress) {
 			onChangeSkin(1);
 			spawnNotes();
 			updateNotes(true);

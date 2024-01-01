@@ -247,6 +247,7 @@ class HurtsSubState extends MusicBeatSubstate
 		var qHold = FlxG.keys.pressed.Q;
 		var eHold = FlxG.keys.pressed.E;
 
+		var ctrlPress = FlxG.keys.justPressed.CONTROL;
 		if(qPress)
 		{
 			onChangeSkin(-1);
@@ -273,6 +274,13 @@ class HurtsSubState extends MusicBeatSubstate
 			rightArrow.animation.play('press');
 		}else{
 			rightArrow.animation.play('idle');
+		}
+
+		if (ctrlPress) {
+			onChangeSkin(1);
+			spawnNotes();
+			updateNotes(true);
+			FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
 		}
 
 		if (FlxG.mouse.overlaps(rightArrow)) {

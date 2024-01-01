@@ -411,27 +411,27 @@ class CommandPromptSubstate extends MusicBeatSubstate
 										MusicBeatState.switchState(new CreditsState());
 									});
 							case 'mods':
-								infoText.text = 'NOT IN DEMO';
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								// new FlxTimer().start(1, function(tmr:FlxTimer) 
-								// 	{
-								// 		#if MODS_ALLOWED
-								// 		infoText.text = " ";
-								// 		MusicBeatState.switchState(new ModsMenuState());
-								// 		#else
-								// 		infoText.text = "SYSTEM DON'T SUPPORT ANY MODIFICATION";
-								// 		#end
-								// 	});
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										#if MODS_ALLOWED
+										infoText.text = " ";
+										MusicBeatState.switchState(new ModsMenuState());
+										#else
+										infoText.text = "SYSTEM DON'T SUPPORT ANY MODIFICATION";
+										#end
+									});
 							case 'awards':
-								infoText.text = 'NOT IN DEMO';
+								infoText.text = 'EXECUTING...';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-								// new FlxTimer().start(1, function(tmr:FlxTimer) 
-								// 	{
-								// 		infoText.text = " ";
-								// 		MusicBeatState.switchState(new achievements.AchievementsMenuState());
-								// 	});
+								new FlxTimer().start(1, function(tmr:FlxTimer) 
+									{
+										infoText.text = " ";
+										MusicBeatState.switchState(new achievements.AchievementsMenuState());
+									});
 							case 'login':
 								if (!changingUserName){
 									if (ClientPrefs.userName == 'Guess'){

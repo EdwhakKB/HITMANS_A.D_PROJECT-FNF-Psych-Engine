@@ -4,6 +4,7 @@ package options;
 import Discord.DiscordClient;
 #end
 import flash.text.TextField;
+import flixel.text.FlxText;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
@@ -31,7 +32,7 @@ using StringTools;
 class OptionsState extends MusicBeatState
 {
 	var options:Array<String> = ['Note Options', 'KeyBinds', 'Delay and Combo', 'Graphics', 'Visuals and UI', 'Gameplay'];
-	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var grpOptions:FlxTypedGroup<FlxText>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 
@@ -63,8 +64,8 @@ class OptionsState extends MusicBeatState
 		}
 	}
 
-	var selectorLeft:Alphabet;
-	var selectorRight:Alphabet;
+	var selectorLeft:FlxText;
+	var selectorRight:FlxText;
 
 	override function create() {
 		#if desktop
@@ -77,20 +78,28 @@ class OptionsState extends MusicBeatState
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
 		
-		grpOptions = new FlxTypedGroup<Alphabet>();
+		grpOptions = new FlxTypedGroup<FlxText>();
 		add(grpOptions);
 
 		for (i in 0...options.length)
 		{
-			var optionText:Alphabet = new Alphabet(0, 0, options[i], true);
-			optionText.screenCenter();
-			optionText.y += (100 * (i - (options.length / 2))) + 50;
+			var optionText:FlxText = new FlxText(0, 0, FlxG.width, options[i], 70);
+			optionText.setFormat(Paths.font("kremlin.ttf"), 70, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			optionText.screenCenter(X);
+			optionText.borderSize = 4;
+			optionText.ID = i;
+			optionText.y = (FlxG.height / 2) - (35 * options.length) + 70 * i;
 			grpOptions.add(optionText);
 		}
 
-		selectorLeft = new Alphabet(0, 0, '>', true);
+		selectorLeft = new FlxText(0, 0,FlxG.width ,'>', 70);
+		selectorLeft.setFormat(Paths.font("kremlin.ttf"), 70, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		selectorLeft.borderSize = 4;
 		add(selectorLeft);
-		selectorRight = new Alphabet(0, 0, '<', true);
+
+		selectorRight = new FlxText(0, 0,FlxG.width ,'<',70);
+		selectorRight.setFormat(Paths.font("kremlin.ttf"), 70, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		selectorRight.borderSize = 4;
 		add(selectorRight);
 
 		changeSelection();
@@ -139,19 +148,30 @@ class OptionsState extends MusicBeatState
 
 		var bullShit:Int = 0;
 
-		for (item in grpOptions.members) {
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-
+		grpOptions.forEach(function(item:FlxText)
+		{
 			item.alpha = 0.6;
-			if (item.targetY == 0) {
+			if (item.ID == curSelected){
 				item.alpha = 1;
 				selectorLeft.x = item.x - 63;
 				selectorLeft.y = item.y;
 				selectorRight.x = item.x + item.width + 15;
 				selectorRight.y = item.y;
 			}
-		}
+		});
+		// for (item in grpOptions.members) {
+		// 	item.y = bullShit - (curSelected);
+		// 	bullShit++;
+
+		// 	item.alpha = 0.6;
+		// 	if (item.y == 0) {
+		// 		item.alpha = 1;
+		// 		selectorLeft.x = item.x - 63;
+		// 		selectorLeft.y = item.y;
+		// 		selectorRight.x = item.x + item.width + 15;
+		// 		selectorRight.y = item.y;
+		// 	}
+		// }
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 }

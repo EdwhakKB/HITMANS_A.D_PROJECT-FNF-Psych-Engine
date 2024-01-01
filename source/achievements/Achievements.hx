@@ -32,23 +32,23 @@ typedef Achievement =
 class Achievements {
 	public static function init()
 	{
-		createAchievement('guard',		{name: "Guard of safety", description: "Clear the tutorial.", hidden: true});
-		createAchievement('practice',			{name: "Practice Makes Perfect", description: "Clear any song with practice mode."});
-		createAchievement('first_hitman',			{name: "No way back", description: "Encounter the first hitman."});
+		createAchievement('guard',			{name: "Guard of safety", description: "Clear the tutorial.", hidden: true});
+		createAchievement('practice',		{name: "Practice Makes Perfect", description: "Clear any song with practice mode."});
+		createAchievement('first_hitman',	{name: "No way back", description: "Encounter the first hitman."});
 		createAchievement('depths',			{name: "Down Depth", description: "Encounter one of the hitmans secrets."});
 		createAchievement('lady',			{name: "Lady Killer", description: "Clear any Lady song."});
-		createAchievement('massochist',			{name: "Massochist", description: "Clear any song with a chaos modifier."});
-		createAchievement('senceless',			{name: "Senceless", description: "Clear any song with hard mode."});
+		createAchievement('massochist',		{name: "Massochist", description: "Clear any song with the chaos modifier."});
+		createAchievement('senceless',		{name: "Senceless", description: "Clear any song with hard mode."});
 		createAchievement('steps',			{name: "Follow My Steps", description: "Isn't it familiar?.", hidden: true});
-		createAchievement('massacred',					{name: "Masscred Man", description: "Clear a Song with a rating lower than 20%."});
-		createAchievement('hitman',				{name: "Like A True Hitman!", description: "Clear a Song with a rating of 100%."});
-		createAchievement('inmortal',	{name: "Inmortal", description: "Die over than 100 times.", maxScore: 100, maxDecimals: 0});
-		createAchievement('headache', 			{name: "Headache", description: "Clear any song with a playback higher than 1.5"});
-		createAchievement('him',					{name: "HIM", description: "Beat him on one of his songs.", hidden: true});
-		createAchievement('top',				{name: "Over The Top", description: "Survive a song with all modifiers."});
-		createAchievement('killbot',				{name: "THE KILLBOT", description: "Beat the last Edwhak battle song", hidden: true});
-		createAchievement('love',				{name: "Love Is Fake", description: "Clear any Edwhak song without love notes help"});
-		createAchievement('project',				{name: "The A.D Project", description: "Clear the impossible song (Artificial Massacre)", hidden: true});
+		createAchievement('massacred',		{name: "Massacred Man", description: "Clear a Song with a rating lower than 20%."});
+		createAchievement('hitman',			{name: "Like A True Hitman!", description: "Clear a Song with a rating of 100%."});
+		createAchievement('inmortal',		{name: "Inmortal", description: "Die over than 100 times.", maxScore: 100, maxDecimals: 0});
+		createAchievement('headache', 		{name: "Headache", description: "Clear any song with a playback higher than 1.5"});
+		createAchievement('him',			{name: "HIM", description: "Beat Edwhak in one of his songs.", hidden: true});
+		createAchievement('top',			{name: "Over The Top", description: "Survive a song with all modifiers."});
+		createAchievement('killbot',		{name: "THE KILLBOT", description: "Beat the last Edwhak battle song", hidden: true});
+		createAchievement('love',			{name: "Love Is Fake", description: "Clear any Edwhak song without love notes help"});
+		createAchievement('project',		{name: "The A.D Project", description: "Clear the impossible song (Artificial Massacre)", hidden: true});
 
 		//dont delete this thing below
 		_originalLength = _sortID + 1;
