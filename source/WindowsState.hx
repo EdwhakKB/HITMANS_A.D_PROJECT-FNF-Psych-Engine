@@ -82,7 +82,7 @@ class WindowsState extends MusicBeatState
 	var allowedNums:Array<String> = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'ZERO', 'SPACE']; //mhm
     var allowedSpecials:Array<String> = ['PERIOD', 'COMMA', 'LBRACKET', 'RBRACKET', 'NUMPADMINUS', '_', 'NUMPADMULTIPLY', 'EQUAL', 'NUMPADPLUS', 'SLASH']; //hitmans will need this so, lmao
 
-	private var specialGuest:Array<String> = ['AnbyFox', 'Hazard24', 'Luna', 'EdwhakKB', 'Glowsoony', 'Slushi']; //this is to enable some extra functions
+	private var specialGuests:Array<String> = ['AnbyFox', 'Hazard24', 'Luna', 'EdwhakKB', 'Glowsoony', 'Slushi']; //this is to enable some extra functions
 	private var passWords:Array<String> = ['FoxOs', 'InhumanOs', 'POFT', '4NN1HILAT3', 'MISCECONMODCHART', 'S2LUZE9ASHI']; //TF WITH THE PASSWORDS LMAO -Ed
 	private var neededPassword:String = ''; //so when you try access it ask for dev password and NEED be the dev password
 	private var devNameEnabled:Bool = false; //so if you add one of those developer mode will be enabled if password match
@@ -786,15 +786,20 @@ class WindowsState extends MusicBeatState
 				if (FlxG.keys.justPressed.ENTER)
 					{
 						if(wordText.text.length > 2 && wordText.text != ''){
-							if (!testing){
+							if (!testing && !specialGuests.contains(wordText.text.toLowerCase())){
 								gameNickname = wordText.text;
 								ClientPrefs.userName = wordText.text;
 								ClientPrefs.isLogged = true;
 								ClientPrefs.saveSettings();
 							}
-							FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
-							playerStep += 1;
-							gameTalks();
+							if (!specialGuests.contains(wordText.text.toLowerCase())){
+								FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
+								playerStep += 1;
+								gameTalks();
+							}else{
+								wordText.text = '';
+								FlxG.sound.play(Paths.sound('cancelMenu'), 0.6);
+							}
 						} else {
 							wordText.text = '';
 							FlxG.sound.play(Paths.sound('cancelMenu'), 0.6);

@@ -77,24 +77,10 @@ class HurtsSubState extends MusicBeatSubstate
 	public function new() {
 		super();
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.scale.x = 0.6;
-		bg.scale.y = 0.6;
 		bg.updateHitbox();
-
 		bg.screenCenter();
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
-		var staticBG:FlxSprite;
-		staticBG = new FlxSprite();
-		staticBG.frames = Paths.getSparrowAtlas('menuPause');
-        staticBG.animation.addByPrefix('glitch', 'glitch', 48, true);	
-        staticBG.antialiasing = ClientPrefs.globalAntialiasing;
-        staticBG.scale.y = 2;
-        staticBG.scale.x = 2;				
-        staticBG.screenCenter();
-        staticBG.alpha = 0.5;
-        staticBG.animation.play("glitch");
-        add(staticBG);
 
 		modeBG = new FlxSprite(215, 85).makeGraphic(315, 115, FlxColor.BLACK);
 		modeBG.visible = false;

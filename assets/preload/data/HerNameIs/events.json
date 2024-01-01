@@ -1,0 +1,966 @@
+{
+	"song": {
+		"events": [
+			[
+				545.454545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				1090.90909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				1636.36363636364,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				2181.81818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				2727.27272727273,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				3272.72727272727,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				3818.18181818182,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				4363.63636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				4909.09090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				5454.54545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				6000,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				6545.45454545455,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				7090.90909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				7636.36363636364,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				8181.81818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				8727.27272727273,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				9272.72727272727,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				9818.18181818182,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				10363.6363636364,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				10909.0909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				11454.5454545455,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				12000,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				12545.4545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				13090.9090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				13636.3636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				14181.8181818182,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				14727.2727272727,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				15272.7272727273,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				15818.1818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				16363.6363636364,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				16909.0909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				17454.5454545455,
+				[
+					[
+						"pink toggle",
+						"true",
+						""
+					]
+				]
+			],
+			[
+				25636.3636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				34909.0909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				43636.3636363637,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				65590.9090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				73772.7272727273,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				74318.1818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				83045.4545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				87409.0909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				88500,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				89590.9090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				90681.8181818182,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				91772.7272727273,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				92863.6363636363,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				93954.5454545454,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				95045.4545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"0.25,backOut"
+					]
+				]
+			],
+			[
+				95454.5454545454,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				96136.3636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				97227.2727272727,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				98318.1818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				99409.0909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				100500,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				101590.909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				102681.818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				103772.727272727,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				104863.636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"0.01,backOut"
+					]
+				]
+			],
+			[
+				105000,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"15,backOut"
+					]
+				]
+			],
+			[
+				113454.545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut"
+					]
+				]
+			],
+			[
+				115840.909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.2,backOut"
+					]
+				]
+			],
+			[
+				115977.272727273,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.2,backOut"
+					]
+				]
+			],
+			[
+				116113.636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.2,backOut"
+					]
+				]
+			],
+			[
+				122181.818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut"
+					]
+				]
+			],
+			[
+				135409.090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				143590.909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				144136.363636364,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				152863.636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				157227.272727273,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				165409.090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				165954.545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				174681.818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				182863.636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				183409.090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				191045.454545454,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				191318.181818182,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				198681.818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				199772.727272727,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				200863.636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				201954.545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				203045.454545454,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				204136.363636363,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				205227.272727272,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				206181.818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				206727.272727272,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.5,backOut,0,linear"
+					]
+				]
+			],
+			[
+				207409.090909091,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				208500,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				209590.909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				210681.818181818,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				211772.727272727,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				212863.636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				213954.545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0.015",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				215045.454545454,
+				[
+					[
+						"Chromatic Aberration",
+						"ease,0",
+						"1,backOut"
+					]
+				]
+			],
+			[
+				215454.545454545,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.1,backOut,0,linear"
+					]
+				]
+			],
+			[
+				215590.909090909,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.1,backOut,0,linear"
+					]
+				]
+			],
+			[
+				215727.272727272,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.1,backOut,0,linear"
+					]
+				]
+			],
+			[
+				215863.636363636,
+				[
+					[
+						"Chromatic Aberration",
+						"set,0.025",
+						"0.1,backOut,0,linear"
+					]
+				]
+			]
+		]
+	}
+}

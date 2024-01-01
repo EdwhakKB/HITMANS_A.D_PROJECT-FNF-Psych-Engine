@@ -210,7 +210,7 @@ class FreeplayState extends MusicBeatState
 
 		add(scoreText);
 
-		rating = new FlxSprite(72.1,435.2);
+		rating = new FlxSprite(872.1,535.2);
 		rating.frames = Paths.getSparrowAtlas('rating/ratings');
 		rating.animation.addByPrefix('PERFECT', 'Rating-H', 24, true);
 		rating.animation.addByPrefix('S', 'Rating-S', 24, true);
@@ -221,6 +221,7 @@ class FreeplayState extends MusicBeatState
         rating.animation.addByPrefix('E', 'Rating-E', 24, true);
         rating.animation.addByPrefix('F', 'Rating-F', 24, true);
 		rating.antialiasing = true;
+		rating.scale.set(0.75, 0.75);
 		rating.alpha = 0;
 		rating.updateHitbox();
 		rating.scrollFactor.set();
