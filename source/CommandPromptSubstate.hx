@@ -659,14 +659,14 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								infoText.text = 'Balls everywhere!';
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
-							case 'log24':
-								infoText.text = 'Loading "Forgotten" project...';
+							case 'love':
+								infoText.text = "Loading Edwhak's secret folder...";
 								wordText.text = '';
 								FlxG.sound.play(Paths.sound('scrollMenu'), 0.2);
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-										PlayState.SONG = Song.loadFromJson('forgotten-oni', 'forgotten');
+										PlayState.SONG = Song.loadFromJson('mylove', 'mylove');
 								        PlayState.isStoryMode = false;
 								        PlayState.storyDifficulty = 1;
 
@@ -689,7 +689,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 								new FlxTimer().start(1, function(tmr:FlxTimer) 
 									{
 										persistentUpdate = false;
-										PlayState.SONG = Song.loadFromJson('c18h27no3-demo-heavy', 'c18h27no3-demo');
+										PlayState.SONG = Song.loadFromJson('c18h27no3-demo', 'c18h27no3-demo');
 								        PlayState.isStoryMode = false;
 								        PlayState.storyDifficulty = 1;
 

@@ -39,7 +39,8 @@ class NoteOffsetState extends MusicBeatState
 
 	private static var curSelected:Int = 0;
 	private static var curSelecPrefx:Int = 0;
-	var currentSelected:Array<String> = ['Offset&Beat', 'HudEditor', 'ChangeSickWindow'];
+	// var currentSelected:Array<String> = ['Offset&Beat', 'HudEditor', 'ChangeSickWindow'];
+	var currentSelected:Array<String> = ['Offset&Beat', 'ChangeSickWindow'];
 	var option:Array<String> = ['HudName', 'HealthBarStyle', 'CountDownStyle', 'CountDownSounds', 'RatingStyle', 'GameOverStyle'];
 
 	public var square:FlxSprite;
@@ -144,12 +145,12 @@ class NoteOffsetState extends MusicBeatState
 			if (hudJson.GameOverStyle != "")
 				hudJson.GameOverStyle = gameoverType;
 	
-			ClientPrefs.hudStyle = customHudName;
-			ClientPrefs.healthBarStyle = healthType;
-			ClientPrefs.countDownStyle = countdownType;
-			ClientPrefs.countDownSounds = countdownsoundsType;
-			ClientPrefs.ratingStyle = ratingType;
-			ClientPrefs.goStyle = gameoverType;
+			// ClientPrefs.hudStyle = customHudName;
+			// ClientPrefs.healthBarStyle = healthType;
+			// ClientPrefs.countDownStyle = countdownType;
+			// ClientPrefs.countDownSounds = countdownsoundsType;
+			// ClientPrefs.ratingStyle = ratingType;
+			// ClientPrefs.goStyle = gameoverType;
 
 		// Cameras
 		camGame = new FlxCamera();
@@ -513,16 +514,16 @@ class NoteOffsetState extends MusicBeatState
 		}
 
 		if (curSelecPrefx == 0){
-			onComboMenu = false;
-			onHudMenu = true;
+			onComboMenu = true;
+			onHudMenu = false;
 			onBeatOffMenu = false;
 		}else if (curSelecPrefx == 1){
 			onComboMenu = false;
 			onHudMenu = false;
 			onBeatOffMenu = true;
 		}else if (curSelecPrefx == 2){
-			onComboMenu = true;
-			onHudMenu = false;
+			onComboMenu = false;
+			onHudMenu = true;
 			onBeatOffMenu = false;
 		}
 

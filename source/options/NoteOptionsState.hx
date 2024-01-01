@@ -61,24 +61,10 @@ class NoteOptionsState extends MusicBeatState
 		#end
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.scale.x = 0.6;
-		bg.scale.y = 0.6;
 		bg.updateHitbox();
-
 		bg.screenCenter();
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
-		var staticBG:FlxSprite;
-		staticBG = new FlxSprite();
-		staticBG.frames = Paths.getSparrowAtlas('menuPause');
-        staticBG.animation.addByPrefix('glitch', 'glitch', 48, true);	
-        staticBG.antialiasing = ClientPrefs.globalAntialiasing;
-        staticBG.scale.y = 2;
-        staticBG.scale.x = 2;				
-        staticBG.screenCenter();
-        staticBG.alpha = 0.5;
-        staticBG.animation.play("glitch");
-        add(staticBG);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		add(grpOptions);

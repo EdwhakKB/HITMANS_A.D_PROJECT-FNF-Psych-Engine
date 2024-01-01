@@ -103,7 +103,7 @@ using StringTools;
 
 class PlayState extends MusicBeatState
 {
-	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating']; // Anti cheat system goes brrrrr
+	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating', 'sweet-dreams', 'mylove']; // Anti cheat system goes brrrrr
 
 	public var filters:Array<BitmapFilter> = [];
 	public var filterList:Array<BitmapFilter> = [];
@@ -2793,6 +2793,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (health > 2) health = 2;
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 

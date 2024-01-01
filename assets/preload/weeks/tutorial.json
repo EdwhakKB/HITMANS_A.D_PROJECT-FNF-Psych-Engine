@@ -1,7 +1,7 @@
 {
 	"storyName": "welcome to hitmans corp!",
 	"difficulties": "begginer, heavy",
-	"hideFreeplay": false,
+	"hideFreeplay": true,
 	"weekBackground": "stage",
 	"weekBefore": "tutorial",
 	"startUnlocked": true,

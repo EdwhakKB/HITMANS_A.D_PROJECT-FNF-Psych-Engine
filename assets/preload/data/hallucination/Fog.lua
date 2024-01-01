@@ -1,63 +1,24 @@
-local shaderName = "vcrglitch"
+function onCreate()
+    setProperty('hallway.alpha', 0)
+    setProperty('camHUD.alpha', 0)
+end
+
 function onCreatePost()
-	shaderCoordFix() -- initialize a fix for textureCoord when resizing game window
-	makeLuaSprite("tempShader0") --xtra cam support
-	applyShader()
-    setFloat(4)
+    summongHxShader('vcr', 'VCRDistortionEffect')
+    setShaderProperty('vcr', 'glitchFactor', 0.1)
+    setShaderProperty('vcr', 'distortion', true)
+    setShaderProperty('vcr', 'perspectiveOn', true)
+    setShaderProperty('vcr', 'vignetteMoving', true)
+    setCameraShader('camHUD', 'vcr')
 end
 
-function onUpdate()
-	setShaderFloat("tempShader0", "iTime", os.clock())
+function onSongStart()
+    doTweenAlpha('helloHud', 'camHUD', 1, 2, 'cubeOut')
+    doTweenAlpha('hello', 'hallway', 1, 40, 'cubeOut')
 end
 
-function setFloat(value)
-    runHaxeCode([[
-        shader0.setFloat('tempShader0',]]..value..[[);
-    ]])
-end
-
-function shaderCoordFix()
-    runHaxeCode([[
-        resetCamCache = function(?spr) {
-            if (spr == null || spr.filters == null) return;
-            spr.__cacheBitmap = null;
-            spr.__cacheBitmapData = null;
-        }
-        
-        fixShaderCoordFix = function(?_) {
-            resetCamCache(game.camGame.flashSprite);
-            resetCamCache(game.camHUD.flashSprite);
-            resetCamCache(game.camOther.flashSprite);
-        }
-    
-        FlxG.signals.gameResized.add(fixShaderCoordFix);
-        fixShaderCoordFix();
-        return;
-    ]])
-    
-    local temp = onDestroy
-    function onDestroy()
-        runHaxeCode([[
-            FlxG.signals.gameResized.remove(fixShaderCoordFix);
-            return;
-        ]])
-        if (temp) then temp() end
+function onBeatHit()
+    if curBeat == 704 then
+        doTweenAlpha('cya', 'hallway', 0, 4, 'cubeOut')
     end
-end
-
-function applyShader()
-
-    runHaxeCode([[
-        var shaderName = "]] .. shaderName .. [[";
-        
-        game.initLuaShader(shaderName);
-
-		var shader0 = game.createRuntimeShader(shaderName);
-        game.camHUD.setFilters([new ShaderFilter(shader0)]);
-        //game.camOther.setFilters([new ShaderFilter(shader0)]);
-        game.camGame.setFilters([]);
-
-        game.getLuaObject("tempShader0").shader = shader0; // setting it into temporary sprite so luas can set its shader uniforms/properties
-        return;
-    ]])
 end
