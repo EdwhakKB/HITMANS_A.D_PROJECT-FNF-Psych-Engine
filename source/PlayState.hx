@@ -1026,10 +1026,12 @@ class PlayState extends MusicBeatState
 		hitmansHUD.healthBarBG.cameras = [camInterfaz];
 		hitmansHUD.healthBarHit.cameras = [camInterfaz2];
 		hitmansHUD.healthHitBar.cameras = [camInterfaz2];
+
 		hitmansHUD.ratings.cameras = [camInterfaz2];
 		hitmansHUD.ratingsOP.cameras = [camInterfaz2];
 		hitmansHUD.noteScore.cameras = [camInterfaz2];
 		hitmansHUD.noteScoreOp.cameras = [camInterfaz2];
+
 		if (ClientPrefs.hudStyle == 'HITMANS'){
 			hitmansHUD.iconP1.cameras = [camInterfaz2];
 			hitmansHUD.iconP2.cameras = [camInterfaz2];	
@@ -1037,6 +1039,7 @@ class PlayState extends MusicBeatState
 			hitmansHUD.iconP1.cameras = [camInterfaz];
 			hitmansHUD.iconP2.cameras = [camInterfaz];
 		}
+
 		hitmansHUD.scoreTxt.cameras = [camInterfaz];
 		hitmansHUD.scoreTxtHit.cameras = [camInterfaz2];
 		hitmansHUD.botplayTxt.cameras = [camInterfaz2];
@@ -3258,6 +3261,7 @@ class PlayState extends MusicBeatState
 				#if ACHIEVEMENTS_ALLOWED
 				var kills = Achievements.addScore("inmortal");
 				FlxG.log.add('Deaths: $kills');
+				trace('Deaths: ' + kills);
 				#end
 
 				#if desktop
@@ -3890,6 +3894,10 @@ class PlayState extends MusicBeatState
 
 		deathCounter = 0;
 		seenCutscene = false;
+
+		#if ACHIEVEMENTS_ALLOWED
+		checkForAchievement(['massacred', 'hitman', 'massochist', 'headache', 'top', 'practice']);
+		#end
 
 		var ret:Dynamic = callOnLuas('onEndSong', [], false);
 		if(ret != FunkinLua.Function_Stop && !transitioning) {
@@ -5178,13 +5186,17 @@ class PlayState extends MusicBeatState
 				switch(name)
 				{
 					case 'massacred':
-						if(ratingPercent < 0.2 && !practiceMode) {
-							unlock = true;
-						}
+						unlock = (ratingPercent < 0.2 && !usedPractice);
 					case 'hitman':
-						if(ratingPercent >= 1 && !usedPractice) {
-							unlock = true;
-						}
+						unlock = (ratingPercent >= 1 && !usedPractice);
+					case 'massochist':
+						unlock = (chaosDifficulty >= 3 && chaosMod && !usedPractice);
+					case 'headache':
+						unlock = (playbackRate >= 1.5 && !usedPractice);
+					case 'top':
+						unlock = (chaosDifficulty == 5 && chaosMod && !usedPractice);
+					case 'practice':
+						unlock = (usedPractice && !cpuControlled); //idk how but it works LMAO
 					// case 'inmortal':
 					// 	if(Achievements.totalDeaths >= 100) {
 					// 		unlock = true;

@@ -85,6 +85,9 @@ class Huds extends FlxGroup
 	var hudadded:Bool = false;
 
 	var hudUsed:String = ClientPrefs.hudStyle.toLowerCase(); //so it grabs the hud you want and stuff (for now only like this, in a future it will be way complex)
+	var ratingsScaleMultiplier:Float = 1.0;
+	var comboOffset:Array<Float> = [0,0];
+	var ratingsPoss:Array<Float> = [0,0];
 	// var hudRating:String = ClientPrefs.hudStyle.toLowerCase();
 
 	public function new()
@@ -100,9 +103,30 @@ class Huds extends FlxGroup
 			// set up the Time Bar
 			songName = PlayState.SONG.song.replace("-", " ").replace("_", " ");
 
+
+			switch(hudUsed){
+				case 'hitmans':
+					ratingsScaleMultiplier = 1;
+					comboOffset[0] = 0;
+					comboOffset[1] = 0;
+					ratingsPoss[0] = 850;
+					ratingsPoss[1] = 230;
+				case 'classic':
+					ratingsScaleMultiplier = 0.5;
+					comboOffset[0] = 65;
+					comboOffset[1] = 50;
+					ratingsPoss[0] = 780;
+					ratingsPoss[1] = 180;
+				default:
+					ratingsScaleMultiplier = 1;
+					comboOffset[0] = 0;
+					comboOffset[1] = 0;
+					ratingsPoss[0] = 850;
+					ratingsPoss[1] = 230;
+			}
             //Hitmans Ratings (Kinda Better LOL, sorry if separated i can't use array due keyboard bug)
             //570 x and 200 y (just in case)
-            ratings = new FlxSprite(850, 230);
+            ratings = new FlxSprite(ratingsPoss[0], ratingsPoss[1]);
             ratings.frames = Paths.getSparrowAtlas('Huds/ratings/'+hudUsed+'/judgements');
             ratings.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
             ratings.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -115,13 +139,12 @@ class Huds extends FlxGroup
             ratings.animation.addByPrefix('way Off Late', 'Way off late', 1, true);
             ratings.animation.addByPrefix('miss', 'Miss', 1, true);
             ratings.antialiasing = true;
-			if(hudUsed == 'classic') ratings.setGraphicSize(Std.int(ratings.width * 0.3), Std.int(ratings.height * 0.3));
             ratings.updateHitbox();
             ratings.scrollFactor.set();
             ratings.visible = false;
             add(ratings);
 
-            ratingsOP = new FlxSprite(180, 230);
+            ratingsOP = new FlxSprite(ratings.x - 700, ratings.y);
             ratingsOP.frames = Paths.getSparrowAtlas('Huds/ratings/'+hudUsed+'/judgements');
             ratingsOP.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
             ratingsOP.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -134,7 +157,6 @@ class Huds extends FlxGroup
             ratingsOP.animation.addByPrefix('way Off Late', 'Way off late', 1, true);
             ratingsOP.animation.addByPrefix('miss', 'Miss', 1, true);
             ratingsOP.antialiasing = true;
-			if(hudUsed == 'classic') ratingsOP.setGraphicSize(Std.int(ratingsOP.width * 0.3), Std.int(ratingsOP.height * 0.3));
             ratingsOP.updateHitbox();
             ratingsOP.scrollFactor.set();
             ratingsOP.visible = false;
@@ -143,6 +165,7 @@ class Huds extends FlxGroup
             noteScoreOp = new FlxText(ratingsOP.x, 0, FlxG.width, '', 36);
             noteScoreOp.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
 			noteScoreOp.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
+			noteScoreOp.size = (hudUsed == 'hitmans') ? 36 : 72;
             noteScoreOp.borderSize = 2;
             noteScoreOp.scrollFactor.set();
             noteScoreOp.visible = false;
@@ -151,6 +174,7 @@ class Huds extends FlxGroup
             noteScore = new FlxText(ratings.x, 0, FlxG.width, '', 36);
             noteScore.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
 			noteScore.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
+			noteScore.size = (hudUsed == 'hitmans') ? 36 : 72;
             noteScore.borderSize = 2;
             noteScore.scrollFactor.set();
             noteScore.visible = false;
@@ -360,11 +384,11 @@ class Huds extends FlxGroup
                     noteScoreOp.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
             }
 
-            noteScore.x = ratings.x-510;
-            noteScoreOp.x = ratingsOP.x-510;
+            noteScore.x = (ratings.x-510) + comboOffset[0];
+            noteScoreOp.x = (ratingsOP.x-510) + comboOffset[0];
 
-            noteScore.y = ratings.y+100;
-            noteScoreOp.y = ratingsOP.y+100;
+            noteScore.y = (ratings.y+100) + comboOffset[1];
+            noteScoreOp.y = (ratingsOP.y+100) + comboOffset[1];
 
 			if (updateTime)
 			{
@@ -462,9 +486,9 @@ class Huds extends FlxGroup
 		if(noteRatingTween != null) {
 			noteRatingTween.cancel(); // like scoreTxt scale tween
 		}
-		ratings.scale.x = hudUsed.contains('hitmans') ? 1.5 : 1.1;
-		ratings.scale.y = hudUsed.contains('hitmans') ? 1.5 : 1.1;
-		ratingsBumpTween = FlxTween.tween(ratings.scale, {x: 1.3, y: 1.3}, 0.1, {ease:FlxEase.circOut,
+		ratings.scale.x = 1.5 * ratingsScaleMultiplier;
+		ratings.scale.y = 1.5 * ratingsScaleMultiplier;
+		ratingsBumpTween = FlxTween.tween(ratings.scale, {x: 1.3 * ratingsScaleMultiplier, y: 1.3 * ratingsScaleMultiplier}, 0.1, {ease:FlxEase.circOut,
 			onComplete: function(twn:FlxTween) {
 				ratingsBumpTween = null;
 				ratingsBumpTimer = new FlxTimer().start(1, function(flxTimer:FlxTimer){
@@ -493,10 +517,10 @@ class Huds extends FlxGroup
 		// 	},
 		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
 		// });
-		if (ClientPrefs.hudStyle == 'HITMANS'){
+		// if (ClientPrefs.hudStyle == 'HITMANS'){
 			ratings.visible = true;
 			noteScore.visible = true;
-		}
+		// }
 	}
 
 	public function ratingsBumpScaleOP() {
@@ -513,9 +537,9 @@ class Huds extends FlxGroup
 		if(noteRatingTweenOp != null) {
 			noteRatingTweenOp.cancel(); // like scoreTxt scale tween
 		}
-		ratingsOP.scale.x = hudUsed.contains('hitmans') ? 1.5 : 1.1;
-		ratingsOP.scale.y = hudUsed.contains('hitmans') ? 1.5 : 1.1;
-		ratingsOPBumpTween = FlxTween.tween(ratingsOP.scale, {x: 1.3, y: 1.3}, 0.1, {ease:FlxEase.circOut,
+		ratingsOP.scale.x = 1.5 * ratingsScaleMultiplier;
+		ratingsOP.scale.y = 1.5 * ratingsScaleMultiplier;
+		ratingsOPBumpTween = FlxTween.tween(ratingsOP.scale, {x: 1.3 * ratingsScaleMultiplier, y: 1.3 * ratingsScaleMultiplier}, 0.1, {ease:FlxEase.circOut,
 			onComplete: function(twn:FlxTween) {
 				ratingsOPBumpTween = null;
 				ratingsOPBumpTimer = new FlxTimer().start(1, function(flxTimer:FlxTimer){
@@ -544,10 +568,10 @@ class Huds extends FlxGroup
 		// 	},
 		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
 		// });
-		if (ClientPrefs.hudStyle == 'HITMANS'){
+		// if (ClientPrefs.hudStyle == 'HITMANS'){
 			ratingsOP.visible = true;
 			noteScoreOp.visible = true;
-		}
+		// }
 	}
 
 	public function setRatingAnimation(rat:Float){
