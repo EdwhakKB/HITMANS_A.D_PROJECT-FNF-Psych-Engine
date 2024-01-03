@@ -3198,7 +3198,7 @@ class FunkinLua {
 			trace('what the x, ' + x + ', y, ' + y + ', noteData, ' + noteData + ', daSkin, ' + daSkin);
 
 			var spriteCopy:ExclusiveCopy = new ExclusiveCopy(noteData, x, y, isStrum, cameraFromString(camera), daSkin);
-			spriteCopy.screenCenter(XY);
+			// spriteCopy.screenCenter(XY);
 			getInstance().add(spriteCopy);
 			PlayState.instance.modchartSprites.set(tag, spriteCopy);
         });
@@ -4073,6 +4073,7 @@ class ExclusiveCopy extends FlxSkewedSprite
 		defaultRGB();
 
 		if (daSkin != '') frames = Paths.getSparrowAtlas(daSkin, 'shared');
+		else frames = Paths.getSparrowAtlas('Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets', 'shared');
 		if (frames != null)
 		{
 			addNoteAnims();
