@@ -140,7 +140,7 @@ class PlayState extends MusicBeatState
 	public var gfMap:Map<String, Character> = new Map<String, Character>();
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
-	public var modchartSprites:Map<String, ModchartSprite> = new Map<String, ModchartSprite>();
+	public var modchartSprites:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
 	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
 	public var modchartTexts:Map<String, ModchartText> = new Map<String, ModchartText>();
@@ -3079,6 +3079,7 @@ class PlayState extends MusicBeatState
 			}
 
 		callOnLuas('onUpdatePost', [elapsed]);
+		//code by someguywhouhhhh on discord
 		var sustainScale = (((120 / PlayState.SONG.bpm) * (songSpeed * 1.278414)) * (PlayState.isPixelStage ? (PlayState.daPixelZoom * 1.222222222) : 1)) + (0.000014 * songSpeed);
 		set_smoothNotes(unspawnNotes, sustainScale);
 		set_smoothNotes(notes.members, sustainScale);

@@ -68,6 +68,9 @@ import Discord;
 import shaders.CustomShader;
 import lime.app.Application;
 
+import RGBPalette;
+import RGBPalette.RGBShaderReference;
+
 using StringTools;
 
 typedef LuaCamera =
@@ -1531,8 +1534,13 @@ class FunkinLua {
 			return PlayState.instance.health;
 		});
 
-		Lua_helper.add_callback(lua, "getColorFromHex", function(color:String) {
-			if(!color.startsWith('0x')) color = '0xff' + color;
+		//Identical functions
+		Lua_helper.add_callback(lua, "FlxColor", function(color:String) return FlxColor.fromString(color));
+		Lua_helper.add_callback(lua, "getColorFromName", function(color:String) return FlxColor.fromString(color));
+		Lua_helper.add_callback(lua, "getColorFromString", function(color:String) return FlxColor.fromString(color));
+		Lua_helper.add_callback(lua, "getColorFromHex", function(color:String) return FlxColor.fromString('#$color'));
+		Lua_helper.add_callback(lua, "getColorFromParsedInt", function(color:String) {
+			if(!color.startsWith('0x')) color = '0xFF' + color;
 			return Std.parseInt(color);
 		});
 
@@ -3159,6 +3167,58 @@ class FunkinLua {
             }
         });
 
+		//SHADER PROPERTY FROM LUA BRUH
+		Lua_helper.add_callback(lua, "getLuaShaderProperty", function(shaderName:String, prop:String) {
+            var shad = PlayState.instance.runtimeShaders.get(shaderName);
+
+            if(shad != null)
+            {
+                Reflect.getProperty(shad, prop);
+                //trace('set shader prop');
+            }else if (shad == null){
+				return;
+			}
+        });
+
+		Lua_helper.add_callback(lua, "setLuaShaderProperty", function(shaderName:String, prop:String, value:Dynamic) {
+            var shad = PlayState.instance.runtimeShaders.get(shaderName);
+
+            if(shad != null)
+            {
+                Reflect.setProperty(shad, prop, value);
+                //trace('set shader prop');
+            }else if (shad == null){
+				return;
+			}
+        });
+
+		Lua_helper.add_callback(lua, "makeArrowCopy", function(tag:String = '', x:Float = 0, y:Float = 0, noteData:Int = 0, isStrum:Bool = false, camera:String = '', daSkin:String = '') {
+			tag = tag.replace('.', '');
+			resetSpriteTag(tag);
+			trace('what the x, ' + x + ', y, ' + y + ', noteData, ' + noteData + ', daSkin, ' + daSkin);
+
+			var spriteCopy:ExclusiveCopy = new ExclusiveCopy(noteData, x, y, isStrum, cameraFromString(camera), daSkin);
+			spriteCopy.screenCenter(XY);
+			getInstance().add(spriteCopy);
+			PlayState.instance.modchartSprites.set(tag, spriteCopy);
+        });
+
+		Lua_helper.add_callback(lua, "objectPlayLoopNoteAnimation", function(obj:String, name:String, forced:Bool = false, ?startFrame:Int = 0, ?isStrum:Bool = false) {
+			// luaTrace("objectPlayAnimation is deprecated! Use playAnim instead", false, true)
+
+			var spr:Dynamic = PlayState.instance.modchartSprites.get(obj);
+
+			if(spr != null) {
+				spr.animation.play(name, forced, false, startFrame);
+				spr.animation.finishCallback = function(na:String)
+				{
+					spr.animation.play(name, forced, false, startFrame);
+				}
+				return true;
+			}
+			return false;
+		});
+
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		
 		try{
@@ -3981,3 +4041,86 @@ class HScript
 	}
 }
 #end
+
+class ExclusiveCopy extends FlxSkewedSprite
+{
+	public var noteData:Int = 0;
+
+	public var rgbShader:RGBShaderReference;
+	public static var globalRgbShaders:Array<RGBPalette> = [];
+
+	public var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
+	public var dirArray:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+
+	public var swagWidth:Float = 160 * 0.7;
+
+	public var isStrum:Bool = true;
+	public var usedCamera:FlxCamera = null;
+
+	public function new(noteData:Int, x:Float, y:Float, isStrum:Bool, usedCamera:FlxCamera, daSkin:String)
+	{
+		super(x, y);
+		// x += (ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
+		// if (noteData > -1) x += swagWidth * (noteData);
+		// y -= 2000;
+		this.isStrum = isStrum;
+		this.camera = usedCamera;
+		this.noteData = noteData;
+
+		rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
+		if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
+
+		defaultRGB();
+
+		if (daSkin != '') frames = Paths.getSparrowAtlas(daSkin, 'shared');
+		if (frames != null)
+		{
+			addNoteAnims();
+			playAnims();
+		}
+		antialiasing = ClientPrefs.globalAntialiasing;
+	}
+
+	public function addNoteAnims() { 
+		if (isStrum)
+			animation.addByPrefix(colArray[noteData], 'arrow' + dirArray[noteData], 24, true);
+		else animation.addByPrefix(colArray[noteData] + 'Scroll', colArray[noteData] + '0', 24, true);
+		setGraphicSize(Std.int(width * 0.65));
+		updateHitbox();
+	}
+	public function playAnims() {
+		if (isStrum)
+			animation.play(colArray[noteData % colArray.length], true);
+		else animation.play(colArray[noteData % colArray.length] + 'Scroll', true);
+	}
+
+	public function defaultRGB() 
+	{
+		var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+
+		if (noteData > -1 && noteData <= arr.length)
+		{
+			rgbShader.r = arr[0];
+			rgbShader.g = arr[1];
+			rgbShader.b = arr[2];
+		}	
+	}
+
+	public static function initializeGlobalRGBShader(noteData:Int)
+	{
+		if(globalRgbShaders[noteData] == null)
+		{
+			var newRGB:RGBPalette = new RGBPalette();
+			globalRgbShaders[noteData] = newRGB;
+
+			var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+			if (noteData > -1 && noteData <= arr.length)
+			{
+				newRGB.r = arr[0];
+				newRGB.g = arr[1];
+				newRGB.b = arr[2];
+			}
+		}
+		return globalRgbShaders[noteData];
+	}
+}
