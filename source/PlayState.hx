@@ -5038,6 +5038,7 @@ class PlayState extends MusicBeatState
 		lastBeatHit = curBeat;
 
 		setOnLuas('curBeat', curBeat); //DAWGG?????
+		setOnLuas('curAccBeat', curBeat2);
 		callOnLuas('onBeatHit', []);
 	}
 

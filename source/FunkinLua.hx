@@ -107,6 +107,8 @@ class FunkinLua {
 		lua_Cameras.set("game", {cam: PlayState.instance.camGame, shaders: [], shaderNames: []});
 		lua_Cameras.set("interfaz", {cam: PlayState.instance.camInterfaz, shaders: [], shaderNames: []});
 		lua_Cameras.set("interfaz2", {cam: PlayState.instance.camInterfaz2, shaders: [], shaderNames: []});
+		lua_Cameras.set("notecameras1", {cam: PlayState.instance.noteCameras1, shaders: [], shaderNames: []});
+		lua_Cameras.set("notecameras0", {cam: PlayState.instance.noteCameras0, shaders: [], shaderNames: []});
 		lua_Cameras.set("hud", {cam: PlayState.instance.camHUD, shaders: [], shaderNames: []});
         lua_Cameras.set("other", {cam: PlayState.instance.camOther, shaders: [], shaderNames: []});
 
@@ -3613,6 +3615,8 @@ class FunkinLua {
 		{
 			switch(cam.toLowerCase()) {
 				case 'camhud' | 'hud': return PlayState.instance.camHUD;
+				case 'notecameras0' | 'notes0': return PlayState.instance.noteCameras0;
+				case 'notecameras1' | 'notes1': return PlayState.instance.noteCameras1;
 				case 'camother' | 'other': return PlayState.instance.camOther;
 				case 'caminterfaz' | 'interfaz': return PlayState.instance.camInterfaz;
 				case 'caminterfaz2' | 'interfaz2': return PlayState.instance.camInterfaz;
@@ -3635,6 +3639,8 @@ class FunkinLua {
         switch(id.toLowerCase())
         {
             case 'camhud' | 'hud': return lua_Cameras.get("hud");
+			case 'notecameras0' | 'notes0': return lua_Cameras.get("notecameras0");
+			case 'notecameras1' | 'notes1': return lua_Cameras.get("notecameras1");
 			case 'camother' | 'other': return lua_Cameras.get("other");
 			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
 			case 'caminterfaz2' | 'interfaz2': return lua_Cameras.get("interfaz2");
@@ -4076,6 +4082,7 @@ class ExclusiveCopy extends FlxSkewedSprite
 		defaultRGB();
 
 		if (daSkin != '') frames = Paths.getSparrowAtlas(daSkin, 'shared');
+		else frames = Paths.getSparrowAtlas('Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets', 'shared');
 		if (frames != null)
 		{
 			addNoteAnims();
