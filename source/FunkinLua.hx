@@ -3198,7 +3198,6 @@ class FunkinLua {
 			trace('what the x, ' + x + ', y, ' + y + ', noteData, ' + noteData + ', daSkin, ' + daSkin);
 
 			var spriteCopy:ExclusiveCopy = new ExclusiveCopy(noteData, x, y, isStrum, cameraFromString(camera), daSkin);
-			// spriteCopy.screenCenter(XY);
 			getInstance().add(spriteCopy);
 			PlayState.instance.modchartSprites.set(tag, spriteCopy);
         });
@@ -4057,6 +4056,8 @@ class ExclusiveCopy extends FlxSkewedSprite
 	public var isStrum:Bool = true;
 	public var usedCamera:FlxCamera = null;
 
+	public var useRGBShader:Bool = true;
+
 	public function new(noteData:Int, x:Float, y:Float, isStrum:Bool, usedCamera:FlxCamera, daSkin:String)
 	{
 		super(x, y);
@@ -4068,12 +4069,13 @@ class ExclusiveCopy extends FlxSkewedSprite
 		this.noteData = noteData;
 
 		rgbShader = new RGBShaderReference(this, initializeGlobalRGBShader(noteData));
-		if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
+		if (isStrum) rgbShader.enabled = false;
+		if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB && isStrum) useRGBShader = false;
+		if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB && !isStrum) rgbShader.enabled = false;
 
 		defaultRGB();
 
 		if (daSkin != '') frames = Paths.getSparrowAtlas(daSkin, 'shared');
-		else frames = Paths.getSparrowAtlas('Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets', 'shared');
 		if (frames != null)
 		{
 			addNoteAnims();
@@ -4090,6 +4092,7 @@ class ExclusiveCopy extends FlxSkewedSprite
 		updateHitbox();
 	}
 	public function playAnims() {
+		// if(useRGBShader && isStrum) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != colArray[noteData % colArray.length]);
 		if (isStrum)
 			animation.play(colArray[noteData % colArray.length], true);
 		else animation.play(colArray[noteData % colArray.length] + 'Scroll', true);
