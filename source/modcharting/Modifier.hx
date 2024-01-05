@@ -293,6 +293,13 @@ class ReverseModifier extends Modifier
 
 class SplitModifier extends Modifier 
 {
+    override function setupSubValues()
+    {
+        baseValue = 0.0;
+        currentValue = 1.0;
+        subValues.set('VarA', new ModifierSubValue(0.0));
+        subValues.set('VarB', new ModifierSubValue(0.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         var scrollSwitch = 520;
@@ -301,26 +308,46 @@ class SplitModifier extends Modifier
                 scrollSwitch *= -1;
 
         var laneThing = lane % NoteMovement.keyCount;
+
         if (laneThing > 1)
-            noteData.y += scrollSwitch * currentValue;
+            noteData.y += scrollSwitch * subValues.get('VarA').value;
+
+        if (laneThing < 2)
+            noteData.y += scrollSwitch * subValues.get('VarB').value;
     }
     override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
     {
         var laneThing = lane % NoteMovement.keyCount;
+
         if (laneThing > 1)
-            return noteDist * (1-(currentValue*2));
+            return noteDist * (1-(subValues.get('VarA').value*2));
+
+        if (laneThing < 2)
+            return noteDist * (1-(subValues.get('VarB').value*2));
+
         return noteDist;
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
-        var laneThing = lane % NoteMovement.keyCount;
-        if (laneThing > 1)
-            noteMath(noteData, lane, 0, pf); //just reuse same thing
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+    override function reset()
+    {
+        super.reset();
+        baseValue = 0.0;
+        currentValue = 1.0;
     }
 }
 
 class CrossModifier extends Modifier 
 {
+    override function setupSubValues()
+    {
+        baseValue = 0.0;
+        currentValue = 1.0;
+        subValues.set('VarA', new ModifierSubValue(0.0));
+        subValues.set('VarB', new ModifierSubValue(0.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         var scrollSwitch = 520;
@@ -329,47 +356,80 @@ class CrossModifier extends Modifier
                 scrollSwitch *= -1;
 
         var laneThing = lane % NoteMovement.keyCount;
+
         if (laneThing > 0 && laneThing < 3)
-            noteData.y += scrollSwitch * currentValue;
+            noteData.y += scrollSwitch * subValues.get('VarA').value;
+
+        if (laneThing == 0 || laneThing == 3)
+            noteData.y += scrollSwitch * subValues.get('VarB').value;
     }
     override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
     {
         var laneThing = lane % NoteMovement.keyCount;
+
         if (laneThing > 0 && laneThing < 3)
-            return noteDist * (1-(currentValue*2));
+            return noteDist * (1-(subValues.get('VarA').value*2));
+
+        if (laneThing == 0 || laneThing == 3)
+            return noteDist * (1-(subValues.get('VarB').value*2));
+
         return noteDist;
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
-        var laneThing = lane % NoteMovement.keyCount;
-        if (laneThing > 0 && laneThing < 3)
-            noteMath(noteData, lane, 0, pf); //just reuse same thing
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+    override function reset()
+    {
+        super.reset();
+        baseValue = 0.0;
+        currentValue = 1.0;
     }
 }
 
 class AlternateModifier extends Modifier 
 {
+    override function setupSubValues()
+    {
+        baseValue = 0.0;
+        currentValue = 1.0;
+        subValues.set('VarA', new ModifierSubValue(0.0));
+        subValues.set('VarB', new ModifierSubValue(0.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         var scrollSwitch = 520;
         if (instance != null)
             if (ModchartUtil.getDownscroll(instance))
                 scrollSwitch *= -1;
-        if ((lane)%2 == 1)
-            noteData.y += scrollSwitch * currentValue;
+        if (lane%2 == 1)
+            noteData.y += scrollSwitch * subValues.get('VarA').value;
+
+        if (lane%2 == 0)
+            noteData.y += scrollSwitch * subValues.get('VarB').value;
     }
     override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
     {
-        if ((lane)%2 == 1)
-            return noteDist * (1-(currentValue*2));
+        if (lane%2 == 1)
+            return noteDist * (1-(subValues.get('VarA').value*2));
+
+        if (lane%2 == 0)
+            return noteDist * (1-(subValues.get('VarB').value*2));
+
         return noteDist;
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
-        if ((lane)%2 == 1)
-            noteMath(noteData, lane, 0, pf); //just reuse same thing
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
+    }
+    override function reset()
+    {
+        super.reset();
+        baseValue = 0.0;
+        currentValue = 1.0;
     }
 }
+
 
 class IncomingAngleModifier extends Modifier 
 {
@@ -917,6 +977,33 @@ class BrakeModifier extends Modifier
         return curPos+yOffset;
     }
 }
+
+class BoomerangModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    { 
+        noteData.y += (FlxMath.fastSin(curPos/-700) * 400 + (curPos/3.5)) * (-currentValue);
+        noteData.alpha *= FlxMath.bound(1-(curPos/-600-3.5), 0, 1);
+    }
+    override function curPosMath(lane:Int, curPos:Float, pf:Int)
+    {
+        return curPos * 0.75;
+    }
+}
+
+class WaveingModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    { 
+        var distance = curPos * 0.01;
+        noteData.y += (FlxMath.fastSin(distance*0.3)*50) * currentValue; //don't mind me i just figured it out
+    }
+    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    {
+        return noteDist * (0.4+((FlxMath.fastSin(curPos*0.007)*0.1) * currentValue));
+    }
+}
+
 class JumpModifier extends Modifier //custom thingy i made
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
@@ -1259,6 +1346,12 @@ class SkewModifier extends Modifier
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
         noteMath(noteData, lane, 0, pf);
+    }
+    override function reset()
+    {
+        super.reset();
+        baseValue = 0.0;
+        currentValue = 1.0;
     }
 }
 
@@ -1734,7 +1827,7 @@ class TanDrunkAngleModifier extends Modifier
     }
 }
 
-class ShakeNotesWIModifierX extends Modifier
+class ShakyNotesModifier extends Modifier
 {
     override function setupSubValues()
     {

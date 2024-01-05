@@ -223,7 +223,7 @@ class ModchartEditorState extends MusicBeatState
         TanWaveXModifier, TanWaveYModifier, TanWaveZModifier, TanWaveAngleModifier,
         //Scroll Modifiers
         ReverseModifier, CrossModifier, SplitModifier, AlternateModifier,
-        SpeedModifier, BoostModifier, BrakeModifier,
+        SpeedModifier, BoostModifier, BrakeModifier, BoomerangModifier, WaveingModifier,
         TwirlModifier, RollModifier,
         //Stealth Modifiers
         StealthModifier, NoteStealthModifier, LaneStealthModifier,
@@ -242,6 +242,7 @@ class ModchartEditorState extends MusicBeatState
         //Misc Modifiers
         StrumsModifier, InvertModifier, FlipModifier, JumpModifier,
         StrumAngleModifier, EaseXModifier, EaseYModifier, EaseZModifier,
+        ShakyNotesModifier,
         ArrowPath
     ];
     public static var easeList:Array<String> = [
@@ -1698,6 +1699,10 @@ class ModchartEditorState extends MusicBeatState
 		explainString = "Modifier used to make notes come faster to target";
             case 'BrakeModifier':
 		explainString = "Modifier used to make notes come slower to target";
+            case 'BoomerangModifier':
+		explainString = "Modifier used to make notes come in reverse to target";
+            case 'WaveingModifier':
+		explainString = "Modifier used to make notes come faster and slower to target";
             case 'JumpModifier':
 		explainString = "Modifier used to make notes and target jump";
             case 'WaveXModifier':
@@ -1770,6 +1775,8 @@ class ModchartEditorState extends MusicBeatState
         explainString = "Modifier similar to Wave but in angle";
             case 'TanWaveAngleModifier':
         explainString = "Modifier similar to TanWave but in angle";
+            case 'ShakyNotesModifier':
+        explainString = "Modifier used to make notes shake in their on possition";
             case 'ArrowPath':
         explainString = "This modifier its able to make custom paths for the mods so this should be a very helpful tool";
         }
