@@ -3030,7 +3030,7 @@ class FunkinLua {
 			}
         });
 
-        Lua_helper.add_callback(lua,"tweenShaderProperty", function(shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear") {
+        Lua_helper.add_callback(lua,"tweenShaderProperty", function(shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear", ?tag:String = 'shader') {
             var shad = lua_Shaders.get(shaderName);
             var ease = getFlxEaseByString(easeStr);
 
@@ -3038,12 +3038,19 @@ class FunkinLua {
             {
                 var startVal = Reflect.getProperty(shad, prop);
 
-                PlayState.tweenManager.num(startVal, value, time/playbackRate, {onUpdate: function(tween:FlxTween){
-					var ting = FlxMath.lerp(startVal,value, ease(tween.percent));
-                    Reflect.setProperty(shad, prop, ting);
-				}, ease: ease, onComplete: function(tween:FlxTween) {
-					Reflect.setProperty(shad, prop, value);
-				}});
+				PlayState.instance.modchartTweens.set(tag, 
+                    PlayState.tweenManager.num(startVal, value, time, {
+                    ease: ease,
+                    onUpdate: function(tween:FlxTween) {
+                        var ting = FlxMath.lerp(startVal,value, ease(tween.percent));
+                        Reflect.setProperty(shad, prop, ting);
+                    }, 
+                    onComplete: function(tween:FlxTween) {
+                        Reflect.setProperty(shad, prop, value);
+                        PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+                        PlayState.instance.modchartTweens.remove(tag);
+                    }})
+                );
                 //trace('set shader prop');
 			}else if(shad == null){
 				return;

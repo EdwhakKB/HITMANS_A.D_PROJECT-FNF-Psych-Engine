@@ -27,6 +27,109 @@ class ShaderEffectNew
     }
 }
 
+class ScrollWarpEffect extends ShaderEffectNew
+{
+    public var shader:ScrollShader = new ScrollShader();
+    public var timeMulti(default, set):Float = 0.2;
+    public var xSpeed(default, set):Float = 0.5;
+    public var ySpeed(default, set):Float = 0.0;
+    var iTime:Float = 0;
+
+    public function new()
+    {
+        shader.iTime.value = [iTime];
+        shader.timeMulti.value = [timeMulti];
+        shader.xSpeed.value = [xSpeed];
+        shader.ySpeed.value = [ySpeed];
+    }
+
+    override public function update(elapsed:Float)
+    {
+        iTime += elapsed;
+        shader.iTime.value = [iTime];
+        shader.timeMulti.value = [timeMulti];
+        shader.xSpeed.value = [xSpeed];
+        shader.ySpeed.value = [ySpeed];
+    }
+
+    function set_timeMulti(value:Float)
+    {
+        timeMulti = value;
+        shader.timeMulti.value = [timeMulti];
+        return value;
+    }
+    function set_xSpeed(value:Float)
+    {
+        xSpeed = value;
+        shader.xSpeed.value = [xSpeed];
+        return value;
+    }
+    function set_ySpeed(value:Float)
+    {
+        ySpeed = value;
+        shader.ySpeed.value = [ySpeed];
+        return value;
+    }
+}
+
+class ScrollShader extends FlxShader
+{
+    @:glFragmentSource('
+    //SHADERTOY PORT FIX
+    #pragma header
+    vec2 uv = openfl_TextureCoordv.xy;
+    vec2 fragCoord = openfl_TextureCoordv*openfl_TextureSize;
+    vec2 iResolution = openfl_TextureSize;
+    uniform float iTime;
+    uniform float timeMulti;
+    uniform float xSpeed;
+    uniform float ySpeed;
+    #define iChannel0 bitmap
+    #define texture flixel_texture2D
+    #define fragColor gl_FragColor
+    #define mainImage main
+    #define time iTime
+    //SHADERTOY PORT FIX
+    
+    // https://www.shadertoy.com/view/WtGGRt
+    
+    void mainImage()
+    {
+        // Normalized pixel coordinates (from 0 to 1)
+        //vec2 uv = fragCoord/iResolution.xy;
+        
+        float time = iTime * timeMulti;
+        
+        // no floor makes it squiqqly
+        float xCoord = floor(fragCoord.x + time * xSpeed * iResolution.x);
+        float yCoord = floor(fragCoord.y + time * ySpeed * iResolution.y);
+        
+        vec2 coord = vec2(xCoord, yCoord);
+        coord = mod(coord, iResolution.xy);
+     
+        
+        
+        vec2 uv = coord/iResolution.xy;
+        // Time varying pixel color
+        //vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+        float col = texture(iChannel0, uv).x;
+    
+    
+        vec3 color = vec3(col);
+        
+        
+        
+        // Output to screen
+        fragColor = vec4(color,1.0) * texture(iChannel0, uv) + texture(iChannel0, uv);
+    }
+    ')
+
+    public function new()
+    {
+        super();
+    }
+}
+
 class GlitchyChromatic extends ShaderEffectNew
 {
     public var shader:GlitchyChromaticShader = new GlitchyChromaticShader();
