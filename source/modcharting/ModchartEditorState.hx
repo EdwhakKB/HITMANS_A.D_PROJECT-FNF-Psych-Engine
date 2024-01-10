@@ -307,6 +307,7 @@ class ModchartEditorState extends MusicBeatState
     public static var EVENT_REPEATBEATGAP = ModchartFile.EVENT_REPEATBEATGAP; //how many beats in between each repeat
 
     public var camHUD:FlxCamera;
+    public var camUI:FlxCamera;
 	public var camGame:FlxCamera;
     public var notes:FlxTypedGroup<Note>;
     private var strumLine:FlxSprite;
@@ -346,10 +347,15 @@ class ModchartEditorState extends MusicBeatState
     override public function create()
     {
         camGame = new FlxCamera();
+
+        camUI = new FlxCamera();
+        camUI.bgColor.alpha = 0;
+
 		camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 
 		FlxG.cameras.reset(camGame);
+        FlxG.cameras.add(camUI, false);
 		FlxG.cameras.add(camHUD, false);
 
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
@@ -493,6 +499,7 @@ class ModchartEditorState extends MusicBeatState
 		UI_box.x = 100;
 		UI_box.y = gridSize*2;
 		UI_box.scrollFactor.set();
+        UI_box.cameras = [camUI];
         add(UI_box);
 
         add(debugText);
@@ -522,13 +529,8 @@ class ModchartEditorState extends MusicBeatState
         var hideUI:FlxButton = new FlxButton(FlxG.width, FlxG.height, 'Show/Hide UI', function ()
         {
             hidenHud = !hidenHud;
-            if (hidenHud){
-                UI_box.visible = false;
-                debugText.alpha = 0; 
-            }else{
-                UI_box.visible = true;
-                debugText.alpha = 1;
-            }
+            camUI.visible = !hidenHud; //smart asf
+            debugText.alpha = hidenHud ? 0 : 1;
             //camGame.visible = !camGame.visible;
         });
         hideUI.y -= hideUI.height;
