@@ -72,7 +72,7 @@ class MainMenuState extends MusicBeatState
 
 	//made this for the variables for "folders" (won't be used once i make the fix for mouse and things) -Ed
 	var inFolder:Bool = false;
-	var inCMD:Bool = false;
+	public static var inCMD:Bool = false;
 
 	override function create()
 	{
@@ -249,7 +249,7 @@ class MainMenuState extends MusicBeatState
 		#if desktop
 		// Updating Discord Rich Presence
 		if (!inCMD){
-			DiscordClient.changePresence("USER MENU", null);
+			DiscordClient.changePresence("Desktop", null);
 		}
 		#end
 
