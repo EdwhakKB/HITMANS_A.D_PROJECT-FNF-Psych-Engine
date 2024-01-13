@@ -1204,7 +1204,7 @@ class PlayState extends MusicBeatState
 		if(timeToStart > 0){						
 			clearNotesBefore(timeToStart);
 		}
-		
+
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
