@@ -137,6 +137,42 @@ class NoteMovement
         return col;
     }
 
+    public static function getDefaultStrumPosFromEditor(game:editors.EditorPlayState)
+    {
+        defaultStrumX = []; //reset
+        defaultStrumY = []; 
+        defaultSkewX = [];
+        defaultSkewY = []; 
+        defaultScale = [];
+        arrowSizes = [];
+        keyCount = #if (LEATHER || KADE) editors.EditorPlayState.strumLineNotes.length-editors.EditorPlayState.playerStrums.length #else game.strumLineNotes.length-game.playerStrums.length #end; //base game doesnt have opponent strums as group
+        playerKeyCount = #if (LEATHER || KADE) editors.EditorPlayState.playerStrums.length #else game.playerStrums.length #end;
 
+        for (i in #if (LEATHER || KADE) 0...editors.EditorPlayState.strumLineNotes.members.length #else 0...game.strumLineNotes.members.length #end)
+        {
+            #if (LEATHER || KADE) 
+            var strum = editors.EditorPlayState.strumLineNotes.members[i];
+            #else 
+            var strum = game.strumLineNotes.members[i];
+            #end
+            defaultSkewX.push(strum.skew.x);
+            defaultSkewY.push(strum.skew.y);
+            defaultStrumX.push(strum.x);
+            defaultStrumY.push(strum.y);
+            #if LEATHER
+            var localKeyCount = (i < keyCount ? keyCount : playerKeyCount);
+            var s = Std.parseFloat(game.ui_settings[0]) * (Std.parseFloat(game.ui_settings[2]) - (Std.parseFloat(game.mania_size[localKeyCount-1])));
+            #else
+            var s = 0.7;
+            #end
+
+            defaultScale.push(s);
+            arrowSizes.push(160*s);
+        }
+        #if LEATHER
+        leatherEngineOffsetStuff.clear();
+        #end
+        totalKeyCount = keyCount + playerKeyCount;
+    }
 }
 

@@ -57,6 +57,9 @@ class PauseSubState extends MusicBeatSubstate
 	var missingText:FlxText;
 	public static var songName:String = '';
 
+	public static var goToModifiers:Bool = false;
+    public static var goBackToPause:Bool = false;
+
 	public function new(x:Float, y:Float)
 	{
 		super();
@@ -406,7 +409,8 @@ class PauseSubState extends MusicBeatSubstate
 					goToOptions = true;
                     close();
 				case 'Gameplay Modifiers':
-					openSubState(new GameplayChangersSubstate());
+					goToModifiers = true;
+					close();
 				case "Exit to menu":
 					#if desktop DiscordClient.resetClientID(); #end
 					PlayState.deathCounter = 0;

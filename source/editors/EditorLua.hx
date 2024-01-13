@@ -42,6 +42,8 @@ class EditorLua {
 	public var lua:State = null;
 	#end
 
+	public var scriptName:String = null;
+
 	public function new(script:String) {
 		#if LUA_ALLOWED
 		lua = LuaL.newstate();
@@ -50,6 +52,8 @@ class EditorLua {
 
 		//trace('Lua version: ' + Lua.version());
 		//trace("LuaJIT version: " + Lua.versionJIT());
+
+		this.scriptName = script.trim();
 
 		var result:Dynamic = LuaL.dofile(lua, script);
 		var resultStr:String = Lua.tostring(lua, result);

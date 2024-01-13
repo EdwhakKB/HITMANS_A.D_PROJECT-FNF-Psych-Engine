@@ -53,6 +53,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     public var notes:FlxTypedGroup<Note>;
     public var instance:ModchartMusicBeatState;
     public var playStateInstance:PlayState;
+    public var editorPlayStateInstance:editors.EditorPlayState;
     public var playfields:Array<Playfield> = []; //adding an extra playfield will add 1 for each player
 
     public var eventManager:ModchartEventManager;
@@ -68,6 +69,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
     public var modifiers(get, default):Map<String, Modifier>;
 
+    public var isEditor:Bool = false;
+
     private function get_modifiers() : Map<String, Modifier>
     {
         return modifierTable.modifiers; //back compat with lua modcharts
@@ -82,6 +85,11 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         this.instance = instance;
         if (Std.isOfType(instance, PlayState))
             playStateInstance = cast instance; //so it just casts once
+        if (Std.isOfType(instance, editors.EditorPlayState))
+        {
+            editorPlayStateInstance = cast instance; //so it just casts once
+            isEditor = true;
+        }
 
         strumGroup.visible = false; //drawing with renderer instead
         notes.visible = false;
@@ -460,7 +468,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (inEditor)
             return PlayState.SONG.speed; //just use this while in editor so the instance shit works
         else
-            return ModchartUtil.getScrollSpeed(playStateInstance);
+            return ModchartUtil.getScrollSpeed(isEditor ? null : playStateInstance);
         return 1.0; 
     }
 

@@ -19,7 +19,7 @@ import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import openfl.events.KeyboardEvent;
-import FunkinLua;
+import editors.EditorLua;
 
 using StringTools;
 
@@ -70,6 +70,8 @@ class EditorPlayState extends MusicBeatState
 	var col3:FlxColor = 0xFFFFD700;
 	var col2:FlxColor = 0xFFFFD700;
 
+	public var luaArray:Array<EditorLua> = [];
+
 	override function create()
 	{
 		instance = this;
@@ -78,6 +80,8 @@ class EditorPlayState extends MusicBeatState
 		bg.scrollFactor.set();
 		bg.color = FlxColor.fromHSB(FlxG.random.int(0, 359), FlxG.random.float(0, 0.8), FlxG.random.float(0.3, 1));
 		add(bg);
+
+		modcharting.ModchartFuncs.editor = true;
 
 		keysArray = [
 			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
@@ -100,6 +104,7 @@ class EditorPlayState extends MusicBeatState
 
 		generateStaticArrows(0);
 		generateStaticArrows(1);
+		modcharting.NoteMovement.getDefaultStrumPosFromEditor(this);
 		/*if(ClientPrefs.middleScroll) {
 			opponentStrums.forEachAlive(function (note:StrumNote) {
 				note.visible = false;
@@ -112,15 +117,17 @@ class EditorPlayState extends MusicBeatState
 			vocals = new FlxSound();
 
 		generateSong();
+
+		if (PlayState.SONG.notITG){
+			playfieldRenderer = new modcharting.PlayfieldRenderer(strumLineNotes, notes, this);
+			playfieldRenderer.camera = this.camera;
+			add(playfieldRenderer);
+		}
 		#if (LUA_ALLOWED && MODS_ALLOWED)
 		for (notetype in noteTypeMap.keys()) {
 			var luaToLoad:String = Paths.modFolders('custom_notetypes/' + notetype + '.lua');
 			if(sys.FileSystem.exists(luaToLoad)) {
-				var lua:editors.EditorLua = new editors.EditorLua(luaToLoad);
-				new FlxTimer().start(0.1, function (tmr:FlxTimer) {
-					lua.stop();
-					lua = null;
-				});
+				luaArray.push(new EditorLua(luaToLoad));
 			}
 		}
 		#end
@@ -159,6 +166,23 @@ class EditorPlayState extends MusicBeatState
 		add(tipText);
 		FlxG.mouse.visible = false;
 
+		#if LUA_ALLOWED
+		for (folder in Mods.directoriesWithFile(Paths.getPreloadPath(), 'data/' + PlayState.SONG.song + '/'))
+		{
+			if(sys.FileSystem.exists(folder))
+			{
+				for (file in sys.FileSystem.readDirectory(folder))
+				{
+					if(file.toLowerCase().endsWith('.lua'))
+						luaArray.push(new EditorLua(folder + file));
+				}
+			}
+		}
+		#end
+
+		if (PlayState.SONG.notITG)
+			modcharting.ModchartFuncs.loadLuaEditorFunctions();
+
 		//sayGo();
 		if(!ClientPrefs.controllerMode)
 		{
@@ -168,6 +192,7 @@ class EditorPlayState extends MusicBeatState
 		if (ClientPrefs.quantization)
 			doNoteQuant();
 		super.create();
+		callOnLuas('onCreatePost', []);
 	}
 
 	public function doNoteQuant()
@@ -424,6 +449,9 @@ class EditorPlayState extends MusicBeatState
 			LoadingState.loadAndSwitchState(new editors.ChartingState());
 		}
 
+		callOnLuas('onUpdate', [elapsed]);
+		callOnLuas('update', [elapsed]);
+
 		if (startingSong) {
 			timerToStart -= elapsed * 1000;
 			Conductor.songPosition = startPos - timerToStart;
@@ -433,6 +461,9 @@ class EditorPlayState extends MusicBeatState
 		} else {
 			Conductor.songPosition += elapsed * 1000;
 		}
+
+		setOnLuas('curDecBeat', curDecBeat);
+		setOnLuas('curDecStep', curDecStep);
 
 		if (unspawnNotes[0] != null)
 		{
@@ -606,6 +637,9 @@ class EditorPlayState extends MusicBeatState
 		if (ClientPrefs.quantization)
 			noteQuantUpdatePost();
 
+		callOnLuas('onUpdatePost', [elapsed]);
+		callOnLuas('updatePost', [elapsed]);
+
 		super.update(elapsed);
 	}
 	
@@ -641,6 +675,9 @@ class EditorPlayState extends MusicBeatState
 		{
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
+		setOnLuas('curBeat', curBeat);
+		callOnLuas('onBeatHit', [curBeat]);
+		callOnLuas('beatHit', [curBeat]);
 	}
 
 	var animSkins:Array<String> = ['ITHIT', 'MANIAHIT', 'STEPMANIA', 'NOTITG'];
@@ -687,6 +724,9 @@ class EditorPlayState extends MusicBeatState
 				}
 			}
 		}
+		setOnLuas('curStep', curStep);
+		callOnLuas('onStepHit', [curStep]);
+		callOnLuas('stepHit', [curStep]);
 	}
 
 	function resyncVocals():Void
@@ -1157,6 +1197,11 @@ class EditorPlayState extends MusicBeatState
 	}
 
 	override function destroy() {
+		for (lua in luaArray) {
+			lua.call('onDestroy', []);
+			lua.stop();
+		}
+		luaArray = [];
 		FlxG.sound.music.stop();
 		vocals.stop();
 		vocals.destroy();
@@ -1167,5 +1212,36 @@ class EditorPlayState extends MusicBeatState
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
 		super.destroy();
+	}
+
+	public function setOnLuas(variable:String, arg:Dynamic) {
+		#if LUA_ALLOWED
+		for (i in 0...luaArray.length) {
+			luaArray[i].set(variable, arg);
+		}
+		#end
+	}
+
+	public function callOnLuas(event:String, args:Array<Dynamic>, ignoreStops = true, exclusions:Array<String> = null):Dynamic {
+		var returnVal:Dynamic = EditorLua.Function_Continue;
+		#if LUA_ALLOWED
+		if(exclusions == null) exclusions = [];
+		for (script in luaArray) {
+			if(exclusions.contains(script.scriptName))
+				continue;
+
+			var ret:Dynamic = script.call(event, args);
+			if(ret == EditorLua.Function_Stop && !ignoreStops)
+				break;
+			
+			// had to do this because there is a bug in haxe where Stop != Continue doesnt work
+			var bool:Bool = ret == EditorLua.Function_Continue;
+			if(!bool && ret != 0) {
+				returnVal = cast ret;
+			}
+		}
+		#end
+		//trace(event, returnVal);
+		return returnVal;
 	}
 }

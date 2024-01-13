@@ -506,6 +506,8 @@ class PlayState extends MusicBeatState
 	{
 		//trace('Playback Rate: ' + playbackRate);
 
+		ModchartFuncs.editor = false;
+
 		tweenManager = new FlxTweenManager();
 		timerManager = new FlxTimerManager();
 
@@ -2415,7 +2417,23 @@ class PlayState extends MusicBeatState
 		
 		if (PauseSubState.goToOptions){
 			MusicBeatState.switchState(new options.OptionsState(true)); // isInPause yes!
-		}else if (paused){
+		}else if (PauseSubState.goToModifiers)
+		{
+			trace("pause thingyt");
+			if (PauseSubState.goBackToPause)
+			{
+				trace("pause thingyt");
+				PauseSubState.goToModifiers = false;
+
+				openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				PauseSubState.goBackToPause = false;
+			}
+			else
+			{
+				openSubState(new GameplayChangersSubstate(true));
+			}
+		}
+		else if (paused){
 				
 			if (FlxG.sound.music != null && !startingSong)
 			{

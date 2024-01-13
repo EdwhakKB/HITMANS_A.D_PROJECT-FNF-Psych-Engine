@@ -5703,3 +5703,204 @@ class BloomNewShader extends FlxShader // Taken from BBPanzu anime mod hueh
 		data.funbrightness.value = [brightness];
 	}
 }
+
+class ScrollEffect extends ShaderEffectNew
+{
+    public var shader:ScrollShader = new ScrollShader();
+    public var iTime:Float = 0;
+    public var timeMulti:Float = 0;
+    public var xSpeed:Float = 0;
+    public var ySpeed:Float = 0;
+
+    public function new()
+    {
+        shader.iTime.value = [iTime];
+        shader.timeMulti.value = [timeMulti];
+        shader.xSpeed.value = [xSpeed];
+        shader.ySpeed.value = [ySpeed];
+    }
+
+    override public function update(elapsed:Float)
+    {
+        iTime += elapsed;
+        shader.iTime.value = [iTime];
+        shader.timeMulti.value = [timeMulti];
+        shader.xSpeed.value = [xSpeed];
+        shader.ySpeed.value = [ySpeed];
+    }
+}
+
+class ScrollShader extends FlxShader
+{
+    @:glFragmentSource('
+    //SHADERTOY PORT FIX
+    #pragma header
+    vec2 uv = openfl_TextureCoordv.xy;
+    vec2 fragCoord = openfl_TextureCoordv*openfl_TextureSize;
+    vec2 iResolution = openfl_TextureSize;
+    uniform float iTime;
+    uniform float timeMulti = 0.2;
+    uniform float xSpeed = 0.5;
+    uniform float ySpeed = 0.00;
+    #define iChannel0 bitmap
+    #define texture flixel_texture2D
+    #define fragColor gl_FragColor
+    #define mainImage main
+    #define time iTime
+    //SHADERTOY PORT FIX
+    
+    // https://www.shadertoy.com/view/WtGGRt
+    
+    void mainImage()
+    {
+        // Normalized pixel coordinates (from 0 to 1)
+        //vec2 uv = fragCoord/iResolution.xy;
+        
+        float time = iTime * timeMulti;
+        
+        // no floor makes it squiqqly
+        float xCoord = floor(fragCoord.x + time * xSpeed * iResolution.x);
+        float yCoord = floor(fragCoord.y + time * ySpeed * iResolution.y);
+        
+        vec2 coord = vec2(xCoord, yCoord);
+        coord = mod(coord, iResolution.xy);
+     
+        
+        
+        vec2 uv = coord/iResolution.xy;
+        // Time varying pixel color
+        //vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+        float col = texture(iChannel0, uv).x;
+    
+    
+        vec3 color = vec3(col);
+        
+        
+        
+        // Output to screen
+        fragColor = vec4(color,1.0) * texture(iChannel0, uv) + texture(iChannel0, uv);
+    }
+    ')
+
+    public function new()
+    {
+        super();
+    }
+}
+
+class TunnelFractEffect extends ShaderEffectNew
+{
+    public var shader:TunnelFractShader = new TunnelFractShader();
+
+    public var valuemult:Float = 0;
+    var iTime:Float = 0;
+
+    public function new()
+    {
+        shader.iTime.value = [0.0];
+        shader.valuemult.value = [valuemult];
+    }
+
+    override public function update(elapsed:Float)
+    {
+        iTime += elapsed;
+        shader.iTime.value = [iTime];
+        shader.valuemult.value = [valuemult];
+    }
+}
+
+class TunnelFractShader extends FlxShader
+{
+    @:glFragmentSource('
+    //SHADERTOY PORT FIX
+    #pragma header
+    vec2 uv = openfl_TextureCoordv.xy;
+    vec2 fragCoord = openfl_TextureCoordv*openfl_TextureSize;
+    vec2 iResolution = openfl_TextureSize;
+    uniform float iTime;
+    #define iChannel0 bitmap
+    #define texture flixel_texture2D
+    #define fragColor gl_FragColor
+    #define mainImage main
+    //****MAKE SURE TO remove the parameters from mainImage.
+    //SHADERTOY PORT FIXin vec2 TexCoord;
+    struct TextureData {
+        vec2 scaledCoord;
+        float scale;
+    };
+    
+    vec2 rotateUV(vec2 uv, float angle) {
+        float s = sin(angle);
+        float c = cos(angle);
+        mat2 rotationMatrix = mat2(c, -s, s, c);
+        return rotationMatrix * uv;
+    }
+    
+    uniform float valuemult;
+    
+    void main()
+    {
+        int numDuplicates = 5; // Number of times to duplicate the texture
+        if (numDuplicates == 0 || valuemult == 0){
+            fragColor = texture(bitmap,uv);
+            return;
+        }
+    
+        TextureData textures[5]; // Array to hold texture data
+        for (int i = 0; i < numDuplicates; ++i) {
+            float mult = -2 * valuemult; // Scale factor for each iteration
+            float scale = 1.0 - float(i) * mult;
+            
+            float period = -mult*numDuplicates;
+            
+            // Adjust the 0.1 factor to control the speed of the tunnelling effect
+            float scaletunnel = mod(scale - iTime*4*valuemult, period);
+            
+            // Reset back to the 4th iteration scale (0.7) once it reaches the period
+            if (scaletunnel >= period) {
+                scaletunnel = 0.7;
+            }
+            
+            textures[i].scale = scaletunnel;
+            
+            // Calculate offset based on scale to keep textures centered
+            vec2 offset = vec2((1.0 - (scaletunnel-valuemult)) * 0.5);
+            float angle = sin(scaletunnel/4 + iTime) * 0.15;
+            vec2 rotatedUV = rotateUV(uv, angle);
+    
+            textures[i].scaledCoord = uv - 0.5 + rotatedUV * (scaletunnel-valuemult) + offset;
+        }
+    
+        // Sort the textures array based on scale (from smallest to largest scale)
+        for (int i = 0; i < numDuplicates; ++i) {
+            for (int j = i + 1; j < numDuplicates; ++j) {
+                if (textures[i].scale < textures[j].scale) {
+                    TextureData temp = textures[i];
+                    textures[i] = textures[j];
+                    textures[j] = temp;
+                }
+            }
+        }
+    
+        vec4 finalColor = vec4(0.0);
+    
+        for (int i = 0; i < numDuplicates; ++i) {
+            // Check if the current sampling coordinate is within the valid UV range (0.0 to 1.0)
+            if (textures[i].scaledCoord.x >= 0.0 && textures[i].scaledCoord.x <= 1.0 &&
+                textures[i].scaledCoord.y >= 0.0 && textures[i].scaledCoord.y <= 1.0) {
+                // Sample the texture
+                vec4 texColor = texture2D(bitmap, textures[i].scaledCoord);
+                // Apply alpha blending
+                finalColor = texColor + (1.0 - texColor.a) * finalColor;
+            }
+        }
+    
+        fragColor = finalColor;
+    }
+    ')
+
+    public function new()
+    {
+        super();
+    }
+}
