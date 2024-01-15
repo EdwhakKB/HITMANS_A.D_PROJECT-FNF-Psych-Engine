@@ -3233,6 +3233,7 @@ class PlayState extends MusicBeatState
 	function doDeathCheck(?skipHealthCheck:Bool = false) {
 		if (((skipHealthCheck && instakillOnMiss) || health <= 0) && !practiceMode && !isDead)
 		{
+			canPause = false;
 			var ret:Dynamic = callOnLuas('onGameOver', [], false);
 			if(ret != FunkinLua.Function_Stop) {
 				gameOver = true; //just for notes to stop changing variables while gameOver does the funny
@@ -3258,8 +3259,6 @@ class PlayState extends MusicBeatState
                     playbackRate = thing;
 				},ease:FlxEase.elasticOut, onComplete: function(tween:FlxTween) {
 					playbackRate = 1;
-					vocals.stop();
-					FlxG.sound.music.stop();
 				}});
 				FlxTween.tween(staticDeath, {alpha: 1}, 3, {ease:FlxEase.sineIn, onComplete:function(daTween:FlxTween){
 					FlxG.sound.play(Paths.sound('Edwhak/deathSound'), 1, false);
@@ -3269,6 +3268,8 @@ class PlayState extends MusicBeatState
                 	offEffect.animation.play('play');
 					new FlxTimer().start(1, function(tmr2:FlxTimer)
 					{
+						vocals.stop();
+						FlxG.sound.music.stop();
 						openSubState(new NewHitmansGameOver(deathVariableTXT,this));	
 					});
 				}});
