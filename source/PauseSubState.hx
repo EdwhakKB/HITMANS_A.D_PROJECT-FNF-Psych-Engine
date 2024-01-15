@@ -93,6 +93,7 @@ class PauseSubState extends MusicBeatSubstate
 			var pauseSong:String = getPauseSong();
 			if(pauseSong != null) pauseMusic.loadEmbedded(Paths.music(pauseSong), true, true);
 
+			pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
 			FlxG.sound.list.add(pauseMusic);
 		} catch(e:Dynamic) {}
 
@@ -285,6 +286,12 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				case "Resume":
 					hideCameraOverlay(true);
+					if (pauseMusic != null)
+					{
+						pauseMusic.stop();
+						pauseMusic.destroy();
+						pauseMusic = null;
+					}
 					unPauseTimer = new FlxTimer().start(Conductor.crochet / 1000, function(hmmm:FlxTimer)
 					{
 						if (unPauseTimer.loopsLeft == 4)
@@ -308,12 +315,6 @@ class PauseSubState extends MusicBeatSubstate
 							PlayState.instance.modchartTimers.remove('hmmm');
 							if (PlayState.SONG.song.toLowerCase() == "cyber" && PlayState.storyDifficulty != 0)
 								PlayWindow.reset();
-							if (pauseMusic != null)
-							{
-								pauseMusic.stop();
-								pauseMusic.destroy();
-								pauseMusic = null;
-							}
 							close();
 						}
 					}, 5);
