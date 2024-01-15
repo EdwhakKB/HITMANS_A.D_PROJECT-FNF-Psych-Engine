@@ -82,18 +82,19 @@ class PauseSubState extends MusicBeatSubstate
 		}
 		difficultyChoices.push('BACK');
 
-		if (!goBackToPause){
-			pauseMusic = new FlxSound();
-			if(songName != null) {
-				pauseMusic.loadEmbedded(Paths.music(songName), true, true);
-			} else if (songName != 'None') {
-				pauseMusic.loadEmbedded(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic)), true, true);
-			}
-			pauseMusic.volume = 0;
-			pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
+		if (pauseMusic != null)
+		{
+			pauseMusic = null;
+		}
+
+		pauseMusic = new FlxSound();
+		try
+		{
+			var pauseSong:String = getPauseSong();
+			if(pauseSong != null) pauseMusic.loadEmbedded(Paths.music(pauseSong), true, true);
 
 			FlxG.sound.list.add(pauseMusic);
-		}
+		} catch(e:Dynamic) {}
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
@@ -179,18 +180,23 @@ class PauseSubState extends MusicBeatSubstate
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 	}
 
+	function getPauseSong()
+	{
+		var formattedSongName:String = (songName != null ? Paths.formatToSongPath(songName) : '');
+		var formattedPauseMusic:String = Paths.formatToSongPath(ClientPrefs.pauseMusic);
+		if(formattedSongName == 'none' || (formattedSongName != 'none' && formattedPauseMusic == 'none')) return null;
+
+		return (formattedSongName != '') ? formattedSongName : formattedPauseMusic;
+	}
+
 	var holdTime:Float = 0;
 	var cantUnpause:Float = 0.1;
 	override function update(elapsed:Float)
 	{
 		cantUnpause -= elapsed;
-		if (!goBackToPause){
-			if (pauseMusic != null)
-			{
-				if (pauseMusic.volume < 0.5)
-					pauseMusic.volume += 0.01 * elapsed;
-			}
-		}
+		if (pauseMusic != null)
+			if (pauseMusic.volume < 0.5)
+				pauseMusic.volume += 0.01 * elapsed;
 
 		super.update(elapsed);
 		updateSkipTextStuff();
@@ -299,10 +305,15 @@ class PauseSubState extends MusicBeatSubstate
 						}
 						else if (unPauseTimer.finished && unPauseTimer.loopsLeft == 0)
 						{
-							PlayState.instance.modchartTimers.remove('unPauseTimer');
+							PlayState.instance.modchartTimers.remove('hmmm');
 							if (PlayState.SONG.song.toLowerCase() == "cyber" && PlayState.storyDifficulty != 0)
 								PlayWindow.reset();
-							pauseMusic.stop();
+							if (pauseMusic != null)
+							{
+								pauseMusic.stop();
+								pauseMusic.destroy();
+								pauseMusic = null;
+							}
 							close();
 						}
 					}, 5);
@@ -485,7 +496,8 @@ class PauseSubState extends MusicBeatSubstate
 
 	override function destroy()
 	{
-		pauseMusic.destroy();
+		if (pauseMusic != null)
+			pauseMusic.destroy();
 
 		super.destroy();
 	}
