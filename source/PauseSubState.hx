@@ -35,11 +35,6 @@ class PauseSubState extends MusicBeatSubstate
 	var skipTimeText:FlxText;
 	var skipTimeTracker:Alphabet;
 	var curTime:Float = Math.max(0, Conductor.songPosition);
-	var crtFilter:FlxSprite;
-	var whiteAnimeshoun:FlxSprite;
-	var camAnimeshoun:FlxSprite;
-	var staticAnimeshoun:FlxSprite;
-	var constantstaticAnimeshoun:FlxSprite;
 
 	var countdownGet:FlxSprite;
 	var countdownReady:FlxSprite;
@@ -87,17 +82,18 @@ class PauseSubState extends MusicBeatSubstate
 		}
 		difficultyChoices.push('BACK');
 
+		if (!goBackToPause){
+			pauseMusic = new FlxSound();
+			if(songName != null) {
+				pauseMusic.loadEmbedded(Paths.music(songName), true, true);
+			} else if (songName != 'None') {
+				pauseMusic.loadEmbedded(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic)), true, true);
+			}
+			pauseMusic.volume = 0;
+			pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
 
-		pauseMusic = new FlxSound();
-		if(songName != null) {
-			pauseMusic.loadEmbedded(Paths.music(songName), true, true);
-		} else if (songName != 'None') {
-			pauseMusic.loadEmbedded(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic)), true, true);
+			FlxG.sound.list.add(pauseMusic);
 		}
-		pauseMusic.volume = 0;
-		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
-
-		FlxG.sound.list.add(pauseMusic);
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
@@ -166,66 +162,6 @@ class PauseSubState extends MusicBeatSubstate
 
 		grpMenuShit = new FlxTypedGroup<Alphabet>();
 		add(grpMenuShit);
-		CoolUtil.precacheImage("overlays/ctr","image");
-		if (ClientPrefs.downScroll)
-			{
-				CoolUtil.precacheImage("overlays/white_scanline-ds","image");
-			}
-			else if (!ClientPrefs.downScroll)
-			{
-				CoolUtil.precacheImage("overlays/white_scanline","image");
-			}
-		CoolUtil.precacheImage("overlays/cam_fuck","image");
-		CoolUtil.precacheImage("static/static","image");
-		crtFilter = new FlxSprite().loadGraphic(Paths.image('overlays/crt'));
-				crtFilter.scrollFactor.set();
-				crtFilter.antialiasing = true;
-				crtFilter.screenCenter();
-
-				whiteAnimeshoun = new FlxSprite();
-				if (ClientPrefs.downScroll)
-				{
-					whiteAnimeshoun.frames = Paths.getSparrowAtlas('overlays/white_scanline-ds');
-				}
-				else if (!ClientPrefs.downScroll)
-				{
-					whiteAnimeshoun.frames = Paths.getSparrowAtlas('overlays/white_scanline');
-				}
-				whiteAnimeshoun.animation.addByPrefix('idle', 'scanline', 24, true);
-				whiteAnimeshoun.screenCenter();
-				whiteAnimeshoun.scrollFactor.set();
-				whiteAnimeshoun.antialiasing = true;
-				whiteAnimeshoun.animation.play('idle');
-
-				camAnimeshoun = new FlxSprite();
-				camAnimeshoun.frames = Paths.getSparrowAtlas('overlays/cam_fuck');
-				camAnimeshoun.animation.addByPrefix('idle', 'cam-idle', 24, true);
-				camAnimeshoun.screenCenter();
-				camAnimeshoun.scrollFactor.set();
-				camAnimeshoun.antialiasing = false;
-				camAnimeshoun.animation.play('idle', true);
-
-				staticAnimeshoun = new FlxSprite();
-				staticAnimeshoun.frames = Paths.getSparrowAtlas('static/static');
-				staticAnimeshoun.animation.addByPrefix('idle', 'idle', 24, true);
-				staticAnimeshoun.screenCenter();
-				staticAnimeshoun.scrollFactor.set();
-				staticAnimeshoun.animation.play('idle');
-				staticAnimeshoun.visible = false;
-
-				constantstaticAnimeshoun = new FlxSprite();
-				constantstaticAnimeshoun.frames = Paths.getSparrowAtlas('static/static');
-				constantstaticAnimeshoun.animation.addByPrefix('idle', 'idle', 24, true);
-				constantstaticAnimeshoun.screenCenter();
-				constantstaticAnimeshoun.scrollFactor.set();
-				constantstaticAnimeshoun.animation.play('idle');
-				constantstaticAnimeshoun.visible = false;
-
-				add(constantstaticAnimeshoun);
-				add(staticAnimeshoun);
-				add(whiteAnimeshoun);
-				add(camAnimeshoun);
-				add(crtFilter);
 
 		missingTextBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		missingTextBG.alpha = 0.6;
@@ -238,6 +174,7 @@ class PauseSubState extends MusicBeatSubstate
 		missingText.visible = false;
 		add(missingText);
 
+		addCameraOverlay();
 		regenMenu();
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 	}
@@ -247,8 +184,13 @@ class PauseSubState extends MusicBeatSubstate
 	override function update(elapsed:Float)
 	{
 		cantUnpause -= elapsed;
-		if (pauseMusic.volume < 0.5)
-			pauseMusic.volume += 0.01 * elapsed;
+		if (!goBackToPause){
+			if (pauseMusic != null)
+			{
+				if (pauseMusic.volume < 0.5)
+					pauseMusic.volume += 0.01 * elapsed;
+			}
+		}
 
 		super.update(elapsed);
 		updateSkipTextStuff();
@@ -336,7 +278,7 @@ class PauseSubState extends MusicBeatSubstate
 			switch (daSelected)
 			{
 				case "Resume":
-					removePauseShit();
+					hideCameraOverlay(true);
 					unPauseTimer = new FlxTimer().start(Conductor.crochet / 1000, function(hmmm:FlxTimer)
 					{
 						if (unPauseTimer.loopsLeft == 4)
@@ -626,14 +568,5 @@ class PauseSubState extends MusicBeatSubstate
 	function updateSkipTimeText()
 	{
 		skipTimeText.text = FlxStringUtil.formatTime(Math.max(0, Math.floor(curTime / 1000)), false) + ' / ' + FlxStringUtil.formatTime(Math.max(0, Math.floor(FlxG.sound.music.length / 1000)), false);
-	}
-
-	function removePauseShit()
-	{
-		constantstaticAnimeshoun.visible = false;
-		staticAnimeshoun.visible = false;
-		whiteAnimeshoun.visible = false;
-		camAnimeshoun.visible = false;
-		crtFilter.visible = false;
 	}
 }

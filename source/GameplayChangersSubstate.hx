@@ -179,7 +179,10 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		changeSelection();
 		reloadCheckboxes();
 
-		if (isInPause) cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+		if (isInPause){
+			addCameraOverlay();
+			cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+		}
 	}
 
 	var nextAccept:Int = 5;
@@ -197,7 +200,11 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		}
 
 		if (controls.BACK) {
-			if (isInPause) PauseSubState.goBackToPause = true;
+			if (isInPause) 
+			{
+				PauseSubState.goBackToPause = true;
+				hideCameraOverlay();
+			}
 			close();
 			ClientPrefs.saveSettings();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
