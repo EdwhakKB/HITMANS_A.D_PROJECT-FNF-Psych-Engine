@@ -93,9 +93,9 @@ class PauseSubState extends MusicBeatSubstate
 			var pauseSong:String = getPauseSong();
 			if(pauseSong != null) pauseMusic.loadEmbedded(Paths.music(pauseSong), true, true);
 
-			pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
 			FlxG.sound.list.add(pauseMusic);
 		} catch(e:Dynamic) {}
+		FlxG.sound.list.add(pauseMusic);
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
@@ -192,12 +192,18 @@ class PauseSubState extends MusicBeatSubstate
 
 	var holdTime:Float = 0;
 	var cantUnpause:Float = 0.1;
+
+	var stoppedUpdatingMusic:Bool = false;
 	override function update(elapsed:Float)
 	{
 		cantUnpause -= elapsed;
-		if (pauseMusic != null)
-			if (pauseMusic.volume < 0.5)
+		if (!stoppedUpdatingMusic){ //Reason to no put != null outside is to not confuse the game to not "stop" when intended.
+			if (pauseMusic != null && pauseMusic.volume < 0.5)
 				pauseMusic.volume += 0.01 * elapsed;
+		}else{
+			if (pauseMusic != null)
+				pauseMusic.volume = 0;
+		}
 
 		super.update(elapsed);
 		updateSkipTextStuff();
@@ -318,8 +324,12 @@ class PauseSubState extends MusicBeatSubstate
 							close();
 						}
 					}, 5);
+					pauseMusic.volume = 0;
+					pauseMusic.destroy();
+					pauseMusic = null;
 					menuItems = [];
 					deleteSkipTimeText();
+					stoppedUpdatingMusic = true;
 					regenMenu();
 				case 'Change Difficulty':
 					menuItems = difficultyChoices;
@@ -360,6 +370,9 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.instance.botplayTxt.alpha = 1;
 					PlayState.instance.botplaySine = 0;
 				case 'Options':
+					stoppedUpdatingMusic = true;
+					pauseMusic.volume = 0;
+					pauseMusic.destroy();
 					goToOptions = true;
                     close();
 				case 'Gameplay Modifiers':
@@ -369,6 +382,10 @@ class PauseSubState extends MusicBeatSubstate
 					#if desktop DiscordClient.resetClientID(); #end
 					PlayState.deathCounter = 0;
 					PlayState.seenCutscene = false;
+
+					stoppedUpdatingMusic = true;
+					pauseMusic.volume = 0;
+					pauseMusic.destroy();
 
 					Mods.loadTopMod();
 					if(PlayState.isStoryMode) {
