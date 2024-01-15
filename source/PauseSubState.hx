@@ -92,9 +92,9 @@ class PauseSubState extends MusicBeatSubstate
 		{
 			var pauseSong:String = getPauseSong();
 			if(pauseSong != null) pauseMusic.loadEmbedded(Paths.music(pauseSong), true, true);
-
-			FlxG.sound.list.add(pauseMusic);
 		} catch(e:Dynamic) {}
+		pauseMusic.volume = 0;
+		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
 		FlxG.sound.list.add(pauseMusic);
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
@@ -292,12 +292,6 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				case "Resume":
 					hideCameraOverlay(true);
-					if (pauseMusic != null)
-					{
-						pauseMusic.stop();
-						pauseMusic.destroy();
-						pauseMusic = null;
-					}
 					unPauseTimer = new FlxTimer().start(Conductor.crochet / 1000, function(hmmm:FlxTimer)
 					{
 						if (unPauseTimer.loopsLeft == 4)
