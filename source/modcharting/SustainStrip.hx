@@ -83,6 +83,4 @@ class SustainStrip extends FlxStrip
         }
         vertices = new DrawData(12, true, verts);
     }
-
-
 }
