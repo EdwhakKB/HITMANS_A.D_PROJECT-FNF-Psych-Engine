@@ -92,12 +92,12 @@ class OptionsState extends MusicBeatState
 		for (i in 0...options.length)
 		{
 			var optionText:FlxText = new FlxText(0, 0, FlxG.width, options[i], 70);
-			optionText.setFormat(Paths.font("kremlin.ttf"), 70, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			optionText.screenCenter(X);
+			optionText.setFormat(Paths.font("kremlin.ttf"), 70, 0xffffffff, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			// optionText.screenCenter(XY);
 			optionText.borderSize = 4;
 			optionText.ID = i;
 			optionText.y = (FlxG.height / 2) - (35 * options.length) + 70 * i;
-			optionText.x = (FlxG.width / 2) - (185 * options.length) + 180 * i;
+			optionText.x = (FlxG.width / 2) - (FlxG.width / 4) - 255;
 			optionText.size = 26;
 			grpOptions.add(optionText);
 		}

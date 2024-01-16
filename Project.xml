@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': Hitmans!" file="Hitmans" packageName="com.edwhak.hitmans" package="com.edwhak.hitmans" main="Main" version="0.2.8" company="HitmansCorporation" />
+	<app title="Hitmans: The Annihilate and Destroy Project" file="Hitmans" packageName="com.edwhak.hitmans" package="com.edwhak.hitmans" main="Main" version="0.2.8" company="HitmansCorporation" />
 
 	<define name="PSYCH" />
 
