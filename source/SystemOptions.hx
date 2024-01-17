@@ -440,6 +440,14 @@ class HudStyleOption extends SystemOptions
 			description = desc + " (RESTART REQUIRED)";
 		else
 			description = desc;
+
+		switch (ClientPrefs.hudStyle)
+		{
+			case 'Classic':
+				intMoved = 0;
+			case 'HITMANS':
+				intMoved = 1;
+		}
 	}
 
     var hudStyle = ['Classic', 'HITMANS'];
@@ -509,6 +517,17 @@ class TimeBarOption extends SystemOptions
 			description = desc + " (RESTART REQUIRED)";
 		else
 			description = desc;
+		switch (ClientPrefs.timeBarType)
+		{
+			case 'Time Left':
+				intMoved = 0;
+			case 'Time Elapsed':
+				intMoved = 1;
+			case 'Song Name':
+				intMoved = 2;
+			case 'Disabled':
+				intMoved = 3;
+		}
 	}
 
     var timeBar = ['Time Left', 'Time Elapsed', 'Song Name', 'Disabled'];
@@ -699,6 +718,19 @@ class PauseMusicOption extends SystemOptions
 		else
 			description = desc;
 		changedMusic = true;
+		switch (ClientPrefs.pauseMusic)
+		{
+			case 'None':
+				intMoved = 0;
+			case 'Breakfast':
+				intMoved = 1;
+			case 'Tea Time':
+				intMoved = 2;
+			case 'Relaxing':
+				intMoved = 3;
+			case 'Bloodstained':
+				intMoved = 4;
+		}
 	}
 
     var pauseMusic = ['None', 'Breakfast', 'Tea Time', 'Relaxing', 'Bloodstained'];
