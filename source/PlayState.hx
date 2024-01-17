@@ -2416,7 +2416,17 @@ class PlayState extends MusicBeatState
 	{
 		
 		if (PauseSubState.goToOptions){
-			MusicBeatState.switchState(new options.OptionsState(true)); // isInPause yes!
+			if (PauseSubState.goBack)
+			{
+				PauseSubState.goToOptions = false;
+
+				openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				PauseSubState.goBack = false;
+			}
+			else
+			{
+				openSubState(new OptionsMenu(true));
+			}
 		}else if (PauseSubState.goToModifiers)
 		{
 			trace("pause thingyt");

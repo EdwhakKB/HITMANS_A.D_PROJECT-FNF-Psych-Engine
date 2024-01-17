@@ -30,7 +30,7 @@ class PauseSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 	var unPauseTimer:FlxTimer;
 
-	var pauseMusic:FlxSound;
+	public static var pauseMusic:FlxSound;
 	var practiceText:FlxText;
 	var skipTimeText:FlxText;
 	var skipTimeTracker:Alphabet;

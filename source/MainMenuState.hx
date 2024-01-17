@@ -349,7 +349,7 @@ class MainMenuState extends MusicBeatState
 				if (FlxG.mouse.justPressed) {
 					new FlxTimer().start(1, function(tmrSe:FlxTimer)
 						{
-							LoadingState.loadAndSwitchState(new options.OptionsState());
+							LoadingState.loadAndSwitchState(new options.OptionsMenuState());
 						});
 					folder.alpha = 0;
 					inFolder = true;
@@ -407,7 +407,7 @@ class MainMenuState extends MusicBeatState
 									case 'credits':
 										MusicBeatState.switchState(new CreditsState());
 									case 'options':
-										LoadingState.loadAndSwitchState(new options.OptionsState());
+										LoadingState.loadAndSwitchState(new options.OptionsMenuState());
 								}
 							});
 						}

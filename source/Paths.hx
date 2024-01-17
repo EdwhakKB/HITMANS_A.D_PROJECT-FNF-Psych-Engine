@@ -13,6 +13,7 @@ import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 import lime.utils.Assets;
 import flixel.FlxSprite;
+import flixel.graphics.frames.FlxBitmapFont;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -157,6 +158,16 @@ class Paths
 	inline static public function txt(key:String, ?library:String)
 	{
 		return getPath('data/$key.txt', TEXT, library);
+	}
+
+	inline static public function bitmapFont(key:String, ?library:String):FlxBitmapFont
+	{
+		return FlxBitmapFont.fromAngelCode(image(key, library), fontXML(key, library));
+	}
+
+	inline static public function fontXML(key:String, ?library:String):Xml
+	{
+		return Xml.parse(OpenFlAssets.getText(getPath('images/$key.fnt', TEXT, library)));
 	}
 
 	inline static public function xml(key:String, ?library:String)
