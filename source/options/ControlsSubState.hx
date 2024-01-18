@@ -129,6 +129,8 @@ class ControlsSubState extends MusicBeatSubstate {
 			if (controls.BACK) {
 				ClientPrefs.reloadControls();
 				close();
+				MainMenuState.inFolder = true;
+				FlxG.state.openSubState(new OptionsMenu());
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 			}
 

@@ -951,19 +951,19 @@ class ShadersOption extends SystemOptions
     }
 }
 
-/*class DFJKOption extends Option
+class HotkeysOption extends SystemOptions
 {
-	public function new()
+	public function new(desc:String)
 	{
 		super();
-		description = "Edit your keybindings";
+		description = desc;
 		acceptType = true;
 	}
 
 	public override function press():Bool
 	{
-		OptionsMenu.instance.selectedCatIndex = 5;
-		OptionsMenu.instance.switchCat(OptionsMenu.instance.options[5], true);
+		FlxG.state.closeSubState();
+		FlxG.state.openSubState(new options.ControlsSubState());
 		return false;
 	}
 
@@ -973,7 +973,7 @@ class ShadersOption extends SystemOptions
 	}
 }
 
-class UpKeybind extends Option
+/*class UpKeybind extends Option
 {
 	public function new(desc:String)
 	{

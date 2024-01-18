@@ -14,6 +14,7 @@ import flixel.FlxSprite;
 import SystemOptions;
 import flixel.FlxG;
 import CoolUtil;
+import flixel.FlxCamera;
 
 using StringTools;
 
@@ -146,6 +147,8 @@ class OptionText extends CoolText
 
 class OptionsMenu extends MusicBeatSubstate
 {
+	private var camOptions:FlxCamera;
+
 	public static var instance:OptionsMenu = null;
 
 	public var background:FlxSprite;
@@ -182,12 +185,22 @@ class OptionsMenu extends MusicBeatSubstate
 	{
 		super();
 
+		camOptions = new FlxCamera();
+		camOptions.bgColor.alpha = 0;
+
+		FlxG.cameras.add(camOptions, false);
+
+		camOptions.setScale(0.75, 0.75);
+
 		isInPause = pauseMenu;
 
         ClientPrefs.loadPrefs();
 
+		if(boyfriend == null)
+			// reloadBoyfriend();
+
 		options = [
-			new OptionCata(50, 40, "Gameplay", [
+			new OptionCata(50, 100, "Gameplay", [
                 new ControllerModeOption("If you want to play with a controller instead of using your Keyboard."),
                 new DownscrollOption("Notes go Down instead of Up, simple enough."),
                 new MiddleScrollOption("Your notes get centered."),
@@ -196,8 +209,9 @@ class OptionsMenu extends MusicBeatSubstate
                 new GhostTappingOption("You won't get misses from pressing keys while there are no notes able to be hit."),
                 new DisableResetOption("Pressing Reset won't do anything."),
                 new HitsoundVolumeOption("Funny notes does \"Tick!\" when you hit them."),
+				new HotkeysOption("Change your keyblinds ig?"),
 			]),
-			new OptionCata(345, 40, "Appearance", [
+			new OptionCata(345, 100, "Appearance", [
                 new HudStyleOption("What HUD you like more?"),
                 new HideHudOption("Hides most HUD elements."),
 				new TimeBarOption("What should the Time Bar display?"),
@@ -205,7 +219,7 @@ class OptionsMenu extends MusicBeatSubstate
                 new ScoreZoomOption("Disables the Score text zooming everytime you hit a note."),
 				new HealthBarVisibility("Toggles health bar transperancy"),
 			]),
-			new OptionCata(640, 40, "Misc", [
+			new OptionCata(640, 100, "Misc", [
 				new FlashingLightsOption("If you're sensitive to flashing lights!"),
 				new PauseMusicOption("What song do you prefer for the Pause Screen?"),
 				new RatingOffsetOption('Changes how late/early you have to hit for a "Sick!" Higher values mean you have to hit later.'),
@@ -214,7 +228,7 @@ class OptionsMenu extends MusicBeatSubstate
                 new AntiAliasOption("Disables anti-aliasing, increases performance at the cost of sharper visuals."),
 				new ShadersOption("Disables shaders. It\'s used for some visual effects, and also CPU intensive for weaker PCs."),
 			]),
-			new OptionCata(935, 40, "Performance", [
+			new OptionCata(935, 100, "Performance", [
 				new FPSOption("Toggle the FPS Counter"),
 				new Framerate("Pretty self explanatory, isn't it?"),
 				#if desktop
@@ -248,10 +262,7 @@ class OptionsMenu extends MusicBeatSubstate
 			menu.add(bg);
 
 			descBack.alpha = 0.3;
-			background.alpha = 0.5;
 			bg.alpha = 0.6;
-
-			cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 		}
 
 		descText = new CoolText(65, 648, 20, 20, Paths.bitmapFont('fonts/vcr'));
@@ -262,6 +273,8 @@ class OptionsMenu extends MusicBeatSubstate
 		descText.borderSize = 2;
 
 		openCallback = refresh;
+
+		cameras = [camOptions];
 	}
 
 	public var menu:FlxTypedGroup<FlxSprite>;
@@ -298,9 +311,6 @@ class OptionsMenu extends MusicBeatSubstate
 		}
 
 		switchCat(selectedCat);
-
-		if(boyfriend == null)
-			reloadBoyfriend();
 
         ClientPrefs.saveSettings();
 
@@ -557,8 +567,8 @@ class OptionsMenu extends MusicBeatSubstate
 						onComplete: function(twn:FlxTween)
 						{
 							close();
+							MainMenuState.inFolder = false;
                             ClientPrefs.saveSettings();
-							MusicBeatState.switchState(new MainMenuState());
 						}
 					});
 				}
@@ -755,28 +765,28 @@ class OptionsMenu extends MusicBeatSubstate
 			}
 		}
 
-		#if !mobile
-		if (!isInPause)
-		{
-			for (i in 0...options.length - 1)
-			{
-				if (i <= 4)
-				{
-					clickedCat = ((FlxG.mouse.overlaps(options[i].titleObject) || FlxG.mouse.overlaps(options[i]))
-						&& FlxG.mouse.justPressed);
-					if (clickedCat)
-					{
-						FlxG.sound.play(Paths.sound('scrollMenu'));
-						selectedCatIndex = i;
-						switchCat(options[i]);
-						selectedOptionIndex = 0;
-						isInCat = false;
-						selectOption(selectedCat.options[0]);
-					}
-				}
-			}
-		}
-		#end
+		// #if !mobile
+		// if (!isInPause)
+		// {
+		// 	for (i in 0...options.length - 1)
+		// 	{
+		// 		if (i <= 4)
+		// 		{
+		// 			clickedCat = ((FlxG.mouse.overlaps(options[i].titleObject) || FlxG.mouse.overlaps(options[i]))
+		// 				&& FlxG.mouse.justPressed);
+		// 			if (clickedCat)
+		// 			{
+		// 				FlxG.sound.play(Paths.sound('scrollMenu'));
+		// 				selectedCatIndex = i;
+		// 				switchCat(options[i]);
+		// 				selectedOptionIndex = 0;
+		// 				isInCat = false;
+		// 				selectOption(selectedCat.options[0]);
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// #end
 	}
 
 	override function close():Void

@@ -178,7 +178,7 @@ class PauseSubState extends MusicBeatSubstate
 
 		addCameraOverlay();
 		regenMenu();
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.indexOf(PlayState.instance.camOther)]];
 	}
 
 	function getPauseSong()

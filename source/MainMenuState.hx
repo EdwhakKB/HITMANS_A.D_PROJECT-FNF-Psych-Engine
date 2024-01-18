@@ -71,7 +71,7 @@ class MainMenuState extends MusicBeatState
 	var versionShit1:FlxText;
 
 	//made this for the variables for "folders" (won't be used once i make the fix for mouse and things) -Ed
-	var inFolder:Bool = false;
+	public static var inFolder:Bool = false;
 	public static var inCMD:Bool = false;
 
 	override function create()
@@ -274,8 +274,6 @@ class MainMenuState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('cancelMenu'));
 					MusicBeatState.switchState(new TitleState());
 				}else{
-					folder.alpha = 0;
-					inFolder = false;
 					storyMode.animation.play('normal');
 					freeplay.animation.play('normal');
 					mods.animation.play('normal');
@@ -289,8 +287,6 @@ class MainMenuState extends MusicBeatState
 					{
 						MusicBeatState.switchState(new StoryMenuState());
 					});
-					folder.alpha = 0;
-					inFolder = true;
 					storyMode.animation.play('selected');
 					freeplay.animation.play('normal');
 					mods.animation.play('normal');
@@ -304,8 +300,6 @@ class MainMenuState extends MusicBeatState
 						{
 							MusicBeatState.switchState(new FreeplayState());
 						});
-					folder.alpha = 0;
-					inFolder = true;
 					freeplay.animation.play('selected');
 					storyMode.animation.play('normal');
 					mods.animation.play('normal');
@@ -321,8 +315,6 @@ class MainMenuState extends MusicBeatState
 							MusicBeatState.switchState(new ModsMenuState());
 						});
 					#end
-					folder.alpha = 0;
-					inFolder = true;
 					mods.animation.play('selected');
 					storyMode.animation.play('normal');
 					freeplay.animation.play('normal');
@@ -336,8 +328,6 @@ class MainMenuState extends MusicBeatState
 						{
 							MusicBeatState.switchState(new CreditsState());
 						});
-					folder.alpha = 0;
-					inFolder = true;
 					credits.animation.play('selected');
 					storyMode.animation.play('normal');
 					freeplay.animation.play('normal');
@@ -349,9 +339,8 @@ class MainMenuState extends MusicBeatState
 				if (FlxG.mouse.justPressed) {
 					new FlxTimer().start(1, function(tmrSe:FlxTimer)
 						{
-							LoadingState.loadAndSwitchState(new options.OptionsMenuState());
+							openSubState(new OptionsMenu());
 						});
-					folder.alpha = 0;
 					inFolder = true;
 					settings.animation.play('selected');
 					storyMode.animation.play('normal');
@@ -361,68 +350,64 @@ class MainMenuState extends MusicBeatState
 				}
 			}
 
-			if (controls.ACCEPT && !inCMD)
-			{
-				if (optionShit[curSelected] == 'donate')
-				{
-					// CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
-				}
-				else
-				{
-					selectedSomethin = true;
-					FlxG.sound.play(Paths.sound('confirmMenu'));
+			// if (controls.ACCEPT && !inCMD && !inFolder)
+			// {
+			// 	if (optionShit[curSelected] == 'donate')
+			// 	{
+			// 		// CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
+			// 	}
+			// 	else
+			// 	{
+			// 		selectedSomethin = true;
+			// 		FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					menuItems.forEach(function(spr:FlxSprite)
-					{
-						if (curSelected != spr.ID)
-						{
-							FlxTween.tween(spr, {alpha: 0}, 0.4, {
-								ease: FlxEase.quadOut,
-								onComplete: function(twn:FlxTween)
-								{
-									spr.kill();
-								}
-							});
-						}
-						else
-						{
-							FlxFlicker.flicker(spr, 0.05, 0.05, false, false, function(flick:FlxFlicker)
-							{
-								var daChoice:String = optionShit[curSelected];
+			// 		menuItems.forEach(function(spr:FlxSprite)
+			// 		{
+			// 			if (curSelected != spr.ID)
+			// 			{
+			// 				FlxTween.tween(spr, {alpha: 0}, 0.4, {
+			// 					ease: FlxEase.quadOut,
+			// 					onComplete: function(twn:FlxTween)
+			// 					{
+			// 						spr.kill();
+			// 					}
+			// 				});
+			// 			}
+			// 			else
+			// 			{
+			// 				FlxFlicker.flicker(spr, 0.05, 0.05, false, false, function(flick:FlxFlicker)
+			// 				{
+			// 					var daChoice:String = optionShit[curSelected];
 
-								switch (daChoice)
-								{
-									case 'story_mode':
-										MusicBeatState.switchState(new StoryMenuState());
-									case 'freeplay':
-										MusicBeatState.switchState(new FreeplayState());
-									#if MODS_ALLOWED
-									case 'mods':
-										MusicBeatState.switchState(new ModsMenuState());
-									#end
-									#if ACHIEVEMENTS_ALLOWED
-									case 'awards':
-										MusicBeatState.switchState(new AchievementsMenuState());
-									#end
-									case 'credits':
-										MusicBeatState.switchState(new CreditsState());
-									case 'options':
-										LoadingState.loadAndSwitchState(new options.OptionsMenuState());
-								}
-							});
-						}
-					});
-				}
-			}
+			// 					switch (daChoice)
+			// 					{
+			// 						case 'story_mode':
+			// 							MusicBeatState.switchState(new StoryMenuState());
+			// 						case 'freeplay':
+			// 							MusicBeatState.switchState(new FreeplayState());
+			// 						#if MODS_ALLOWED
+			// 						case 'mods':
+			// 							MusicBeatState.switchState(new ModsMenuState());
+			// 						#end
+			// 						#if ACHIEVEMENTS_ALLOWED
+			// 						case 'awards':
+			// 							MusicBeatState.switchState(new AchievementsMenuState());
+			// 						#end
+			// 						case 'credits':
+			// 							MusicBeatState.switchState(new CreditsState());
+			// 						case 'options':
+			// 							LoadingState.loadAndSwitchState(new options.OptionsMenuState());
+			// 					}
+			// 				});
+			// 			}
+			// 		});
+			// 	}
+			// }
 			if (FlxG.keys.justPressed.CONTROL && !selectedSomethin && !inCMD)
-				{
-					inCMD = true;
-					openSubState(new CommandPromptSubstate());
-				}
-			if (FlxG.keys.justPressed.ESCAPE && inCMD)
-				{
-					inCMD = false;
-				}
+			{
+				inCMD = true;
+				openSubState(new CommandPromptSubstate());
+			}
 			#if desktop
 			else if (FlxG.keys.anyJustPressed(debugKeys))
 			{
