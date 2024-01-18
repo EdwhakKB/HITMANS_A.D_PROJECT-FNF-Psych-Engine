@@ -228,6 +228,8 @@ class QuantSubState extends MusicBeatSubstate
 			FlxG.mouse.visible = false;
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			close();
+			MainMenuState.inFolder = true;
+			FlxG.state.openSubState(new OptionsMenu());
 			return;
 		}
 
