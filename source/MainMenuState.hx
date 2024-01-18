@@ -339,7 +339,7 @@ class MainMenuState extends MusicBeatState
 				if (FlxG.mouse.justPressed) {
 					new FlxTimer().start(1, function(tmrSe:FlxTimer)
 						{
-							openSubState(new OptionsMenu());
+							MusicBeatState.switchState(new options.OptionsMenuState());
 						});
 					inFolder = true;
 					settings.animation.play('selected');

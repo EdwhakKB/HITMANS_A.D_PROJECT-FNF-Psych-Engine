@@ -7,3 +7,7 @@ import achievements.*;
 #if MODS_ALLOWED
 import Mods;
 #end
+
+#if flxanimate
+import flxanimate.*;
+#end

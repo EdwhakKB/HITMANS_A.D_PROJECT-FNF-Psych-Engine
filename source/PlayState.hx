@@ -2394,13 +2394,6 @@ class PlayState extends MusicBeatState
 
 			if(carTimer != null) carTimer.active = false;
 
-			var chars:Array<Character> = [boyfriend, gf, dad];
-			for (char in chars) {
-				if(char != null && char.colorTween != null) {
-					char.colorTween.active = false;
-				}
-			}
-
 			for (tween in modchartTweens) {
 				tween.active = false;
 			}
@@ -2458,14 +2451,6 @@ class PlayState extends MusicBeatState
 				songSpeedTween.active = true;
 
 			if(carTimer != null) carTimer.active = true;
-
-			var chars:Array<Character> = [boyfriend, gf, dad];
-			for (char in chars) {
-				if(char != null && char.colorTween != null) {
-					char.colorTween.active = true;
-				}
-			}
-
 			for (tween in modchartTweens) {
 				tween.active = true;
 			}
