@@ -177,7 +177,7 @@ class OptionsMenu extends MusicBeatSubstate
 
 	var holdTime:Float = 0;
 
-	public var boyfriend:Character = null;
+	public static var boyfriend:Character = null;
 
 	public static var changedAntialising:Bool = false;
 
@@ -196,6 +196,9 @@ class OptionsMenu extends MusicBeatSubstate
 		isInPause = pauseMenu;
 		
 		ClientPrefs.loadPrefs();
+
+		if(boyfriend == null)
+			reloadBoyfriend();
 
 		options = [
 			new OptionCata(50, 100, "Gameplay", [
@@ -216,6 +219,12 @@ class OptionsMenu extends MusicBeatSubstate
                 new CamZoomOption("The camera won't zoom in on a beat hit."),
                 new ScoreZoomOption("Disables the Score text zooming everytime you hit a note."),
 				new HealthBarVisibility("Toggles health bar transperancy"),
+				new NoteOption("Change your notes options (skin/color)"),
+				new HurtOption("Change your hurts options (skin/color)"),
+				new QuantizationOption("Allow note quantization"),
+				new QuantOption("Change the Quantize colors"),
+				new MineSkin("Change the Mine Note Skin"),
+				new MimicNoteOption("Change the Mimic note alpha"),
 			]),
 			new OptionCata(640, 100, "Misc", [
 				new FlashingLightsOption("If you're sensitive to flashing lights!"),
