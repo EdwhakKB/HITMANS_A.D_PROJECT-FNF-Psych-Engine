@@ -135,7 +135,7 @@ class PlayState extends MusicBeatState
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
 
-	public var boyfriendMap:Map<String, Boyfriend> = new Map<String, Boyfriend>();
+	public var boyfriendMap:Map<String, Character> = new Map<String, Character>();
 	public var dadMap:Map<String, Character> = new Map<String, Character>();
 	public var gfMap:Map<String, Character> = new Map<String, Character>();
 	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -227,7 +227,7 @@ class PlayState extends MusicBeatState
 
 	public var dad:Character = null;
 	public var gf:Character = null;
-	public var boyfriend:Boyfriend = null;
+	public var boyfriend:Character = null;
 
 	public var notes:FlxTypedGroup<Note>;
 	public var unspawnNotes:Array<Note> = [];
@@ -878,7 +878,7 @@ class PlayState extends MusicBeatState
 		dadGroup.add(dad);
 		startCharacterLua(dad.curCharacter);
 
-		boyfriend = new Boyfriend(0, 0, SONG.player1);
+		boyfriend = new Character(0, 0, SONG.player1);
 		startCharacterPos(boyfriend);
 		boyfriendGroup.add(boyfriend);
 		startCharacterLua(boyfriend.curCharacter);
@@ -1406,7 +1406,7 @@ class PlayState extends MusicBeatState
 		switch(type) {
 			case 0:
 				if(!boyfriendMap.exists(newCharacter)) {
-					var newBoyfriend:Boyfriend = new Boyfriend(0, 0, newCharacter);
+					var newBoyfriend:Character = new Character(0, 0, newCharacter);
 					boyfriendMap.set(newCharacter, newBoyfriend);
 					boyfriendGroup.add(newBoyfriend);
 					startCharacterPos(newBoyfriend);

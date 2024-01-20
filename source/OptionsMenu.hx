@@ -188,16 +188,14 @@ class OptionsMenu extends MusicBeatSubstate
 		camOptions = new FlxCamera();
 		camOptions.bgColor.alpha = 0;
 
-		FlxG.cameras.add(camOptions, false);
+		FlxG.cameras.reset(camOptions);
+		FlxG.cameras.setDefaultDrawTarget(camOptions, true);
 
 		camOptions.setScale(0.75, 0.75);
 
 		isInPause = pauseMenu;
-
-        ClientPrefs.loadPrefs();
-
-		if(boyfriend == null)
-			// reloadBoyfriend();
+		
+		ClientPrefs.loadPrefs();
 
 		options = [
 			new OptionCata(50, 100, "Gameplay", [
@@ -274,7 +272,10 @@ class OptionsMenu extends MusicBeatSubstate
 
 		openCallback = refresh;
 
-		cameras = [camOptions];
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
+		
+		if(boyfriend == null)
+			reloadBoyfriend();
 	}
 
 	public var menu:FlxTypedGroup<FlxSprite>;
@@ -283,7 +284,7 @@ class OptionsMenu extends MusicBeatSubstate
 	public var descBack:FlxSprite;
 
 	override function create()
-	{
+	{	
 		instance = this;
 
 		menu.add(background);
@@ -431,8 +432,6 @@ class OptionsMenu extends MusicBeatSubstate
 
 	override function update(elapsed:Float)
 	{
-		super.update(elapsed);
-
 		#if desktop
 		if (isInPause)
 		{
@@ -566,9 +565,9 @@ class OptionsMenu extends MusicBeatSubstate
 						ease: FlxEase.smootherStepInOut,
 						onComplete: function(twn:FlxTween)
 						{
-							close();
 							MainMenuState.inFolder = false;
                             ClientPrefs.saveSettings();
+							close();
 						}
 					});
 				}
@@ -787,6 +786,8 @@ class OptionsMenu extends MusicBeatSubstate
 		// 	}
 		// }
 		// #end
+
+		super.update(elapsed);
 	}
 
 	override function close():Void
@@ -869,7 +870,8 @@ class OptionsMenu extends MusicBeatSubstate
 		boyfriend.setGraphicSize(Std.int(boyfriend.width * 0.75));
 		boyfriend.updateHitbox();
 		boyfriend.dance();
-		//boyfriend.antialiasing = changedAntialising;
+		boyfriend.cameras = [camOptions];
+		boyfriend.antialiasing = changedAntialising;
 		insert(1, boyfriend);
 		boyfriend.visible = wasVisible;
 	}

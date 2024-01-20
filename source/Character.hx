@@ -100,7 +100,6 @@ class Character extends FlxSprite
 		curCharacter = character;
 		this.isPlayer = isPlayer;
 		antialiasing = ClientPrefs.globalAntialiasing;
-		var library:String = null;
 		switch (curCharacter)
 		{
 			//case 'your character name in case you want to hardcode them instead':
@@ -109,16 +108,15 @@ class Character extends FlxSprite
 				//Finally a easier way to try-catch characters!
 				// Load the data from JSON and cast it to a struct we can easily read.
 				var characterPath:String = 'characters/$curCharacter.json';
-				var path:String = Paths.getPath(characterPath, TEXT, null, true);
 
+				var path:String = Paths.getPath(characterPath, TEXT, null, true);
 				#if MODS_ALLOWED
 				if (!FileSystem.exists(path))
 				#else
 				if (!Assets.exists(path))
 				#end
 				{
-					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json');
-					// If a character couldn't be found, change him to BF just to prevent a crash
+					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
 					color = FlxColor.BLACK;
 					alpha = 0.6;
 				}
@@ -156,7 +154,7 @@ class Character extends FlxSprite
 		isAnimateAtlas = false;
 
 		#if flxanimate
-		var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT, null, true);
+		var animToFind:String = Paths.getContentFromFile('images/' + json.image + '/Animation.json');
 		if (#if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind))
 			isAnimateAtlas = true;
 		#end
@@ -166,25 +164,14 @@ class Character extends FlxSprite
 
 		if(!isAnimateAtlas)
 		{
-			final atlasToFindXmlAndSparrow:String = Paths.getPath('images/' + json.image + '.xml', TEXT, null, true);
-			final atlasToFindPacker:String = Paths.getPath('images/' + json.image + '.txt', TEXT, null, true);
-			final atlasToFindJson:String = Paths.getPath('images/' + json.image + '.json', TEXT, null, true);
+			frames = Paths.getAtlas(json.image, 'shared');
 
-			#if MODS_ALLOWED
-			if (FileSystem.exists(atlasToFindXmlAndSparrow) && !FileSystem.exists(atlasToFindPacker)  && !FileSystem.exists(atlasToFindJson))
-				frames = Paths.getSparrowAtlas(json.image);
-			else if (!FileSystem.exists(atlasToFindXmlAndSparrow) && FileSystem.exists(atlasToFindPacker) && !FileSystem.exists(atlasToFindJson))
-				frames = Paths.getPackerAtlas(json.image);
-			else if (!FileSystem.exists(atlasToFindXmlAndSparrow) && !FileSystem.exists(atlasToFindPacker) && FileSystem.exists(atlasToFindJson))
-				frames = Paths.getJsonAtlas(json.image);
-			#else
-			if (Assets.exists(atlasToFindXmlAndSparrow) && !Assets.exists(atlasToFindPacker)  && !Assets.exists(atlasToFindJson))
-				frames = Paths.getSparrowAtlas(json.image);
-			else if (!Assets.exists(atlasToFindXmlAndSparrow) && Assets.exists(atlasToFindPacker) && !Assets.exists(atlasToFindJson))
-				frames = Paths.getPackerAtlas(json.image);
-			else if (!Assets.exists(atlasToFindXmlAndSparrow) && !Assets.exists(atlasToFindPacker) && Assets.exists(atlasToFindJson))
-				frames = Paths.getJsonAtlas(json.image);
-			#end
+			trace(frames + ', TIENE XML');
+
+			if (frames == null)
+			{
+				trace('QUE PASO??');
+			}
 		}
 		#if flxanimate
 		else
@@ -290,6 +277,7 @@ class Character extends FlxSprite
 			super.update(elapsed);
 			return;
 		}
+
 		if(heyTimer > 0)
 		{
 			heyTimer -= elapsed * PlayState.instance.playbackRate;
@@ -327,6 +315,12 @@ class Character extends FlxSprite
 					animationNotes.shift();
 				}
 				if(isAnimationFinished()) playAnim(getAnimationName(), false, false, animation.curAnim.frames.length - 3);
+		}
+
+		if(isPlayer)
+		{
+			if (getAnimationName().startsWith('sing')) holdTimer += elapsed;
+			else holdTimer = 0;
 		}
 
 		if (!isPlayer)
@@ -403,20 +397,20 @@ class Character extends FlxSprite
 	 */
 	public function dance()
 	{
-		if (debugMode || skipDance || specialAnim)
-			return;
-
-		if(danceIdle)
+		if (!debugMode && !skipDance && !specialAnim)
 		{
-			danced = !danced;
+			if(danceIdle)
+			{
+				danced = !danced;
 
-			if (danced)
-				playAnim('danceRight' + idleSuffix);
-			else
-				playAnim('danceLeft' + idleSuffix);
-		}
-		else if(animation.getByName('idle' + idleSuffix) != null) {
-				playAnim('idle' + idleSuffix);
+				if (danced)
+					playAnim('danceRight' + idleSuffix);
+				else
+					playAnim('danceLeft' + idleSuffix);
+			}
+			else if(animation.getByName('idle' + idleSuffix) != null) {
+					playAnim('idle' + idleSuffix);
+			}
 		}
 	}
 
@@ -541,18 +535,16 @@ class Character extends FlxSprite
 		}
 	}
 
+	public override function destroy()
+	{
+		super.destroy();
+		destroyAtlas();
+	}
+
 	public function destroyAtlas()
 	{
 		if (atlas != null)
 			atlas = FlxDestroyUtil.destroy(atlas);
 	}
 	#end
-
-	public override function destroy()
-	{
-		super.destroy();
-		#if flxanimate
-		destroyAtlas();
-		#end
-	}
 }
