@@ -168,11 +168,12 @@ class Character extends FlxSprite
 		{
 			frames = Paths.getAtlas(json.image, 'shared');
 
-			trace(frames + ', TIENE XML');
+			// trace(frames + ', TIENE XML');
 
 			if (frames == null)
 			{
 				trace('QUE PASO??');
+				trace('AHORA QUE HIZO GLOW!?');
 			}
 		}
 		#if flxanimate
