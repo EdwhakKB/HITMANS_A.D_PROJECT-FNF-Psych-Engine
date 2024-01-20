@@ -52,7 +52,8 @@ class CrashHandler
 		"It was Bolo!", //Glowsoony
 		"El pollo ardiente", // Edwhak -- wtf edwhak
 		"FUE GLOW", // Edwhak
-		"Player pressed enter, it crashed the game" //Edwhak
+		"Player pressed enter, it crashed the game", //Edwhak
+		"AHORA QUE CHUCHA HIZO GLOW!?", // Edwhak
 	];
 
 	static function onUncaughtError(e:Dynamic):Void

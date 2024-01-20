@@ -32,7 +32,7 @@ class StrumNote extends FlxSkewedSprite
 		return value;
 	}
 	public var useRGBShader:Bool = true;
-	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String, ?quantizedNotes:Bool) {
+	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String = 'shared', ?quantizedNotes:Bool) {
 		rgbShader = new RGBShaderReference(this, !quantizedNotes ? Note.initializeGlobalRGBShader(leData) : 
 																Note.initializeGlobalQuantRBShader(leData));
 		rgbShader.enabled = false;
@@ -56,6 +56,7 @@ class StrumNote extends FlxSkewedSprite
 
 		myLibrary = library;
 		var skin = 'Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets';
+		daTexture = daTexture != null ? daTexture : skin;
 		if(PlayState.SONG != null && PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		if (daTexture != null) texture = daTexture else texture = skin;
 		// texture = skin; //Load texture and anims

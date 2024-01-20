@@ -66,6 +66,7 @@ class MainMenuState extends MusicBeatState
 	var mods:FlxSprite;
 	var credits:FlxSprite;
 	var settings:FlxSprite;
+	var notes:FlxSprite;
 	public var folder:FlxSprite;
 
 	var versionShit1:FlxText;
@@ -146,6 +147,17 @@ class MainMenuState extends MusicBeatState
 		settings.updateHitbox();
 		settings.antialiasing = ClientPrefs.globalAntialiasing;
 		add(settings);
+
+		notes = new FlxSprite(FlxG.width - 150, 20);
+		notes.frames = Paths.getSparrowAtlas('MenuShit/notes');
+        notes.animation.addByPrefix('normal', 'notes normal', 48, true);
+		notes.animation.addByPrefix('selected', 'notes selected', 48, true);
+		notes.scale.x = 0.7;
+		notes.scale.y = 0.7;
+		notes.updateHitbox();
+		// storyMode.alpha = 0.4;
+		notes.antialiasing = ClientPrefs.globalAntialiasing;
+		// add(notes);
 
 		folder = new FlxSprite(200, 40).loadGraphic(Paths.image('MenuShit/folder'));
 		folder.updateHitbox();
@@ -279,6 +291,7 @@ class MainMenuState extends MusicBeatState
 					mods.animation.play('normal');
 					credits.animation.play('normal');
 					settings.animation.play('normal');
+					notes.animation.play('normal');
 				}
 			}
 			if (FlxG.mouse.overlaps(storyMode)) {
@@ -292,6 +305,7 @@ class MainMenuState extends MusicBeatState
 					mods.animation.play('normal');
 					credits.animation.play('normal');
 					settings.animation.play('normal');
+					notes.animation.play('normal');
 				}
 			}
 			if (FlxG.mouse.overlaps(freeplay)) {
@@ -305,6 +319,7 @@ class MainMenuState extends MusicBeatState
 					mods.animation.play('normal');
 					credits.animation.play('normal');
 					settings.animation.play('normal');
+					notes.animation.play('normal');
 				}
 			}
 			if (FlxG.mouse.overlaps(mods)) {
@@ -320,6 +335,7 @@ class MainMenuState extends MusicBeatState
 					freeplay.animation.play('normal');
 					credits.animation.play('normal');
 					settings.animation.play('normal');
+					notes.animation.play('normal');
 				}
 			}
 			if (FlxG.mouse.overlaps(credits)) {
@@ -333,13 +349,14 @@ class MainMenuState extends MusicBeatState
 					freeplay.animation.play('normal');
 					mods.animation.play('normal');
 					settings.animation.play('normal');
+					notes.animation.play('normal');
 				}
 			}
 			if (FlxG.mouse.overlaps(settings)) {
 				if (FlxG.mouse.justPressed) {
 					new FlxTimer().start(1, function(tmrSe:FlxTimer)
 						{
-							MusicBeatState.switchState(new options.OptionsMenuState());
+							openSubState(new OptionsMenu());
 						});
 					inFolder = true;
 					settings.animation.play('selected');
@@ -347,8 +364,24 @@ class MainMenuState extends MusicBeatState
 					freeplay.animation.play('normal');
 					mods.animation.play('normal');
 					credits.animation.play('normal');
+					notes.animation.play('normal');
 				}
 			}
+			// if (FlxG.mouse.overlaps(notes)) {
+			// 	if (FlxG.mouse.justPressed) {
+			// 		new FlxTimer().start(1, function(tmrSe:FlxTimer)
+			// 			{
+			// 				LoadingState.loadAndSwitchState(new options.NoteOptionsState());
+			// 			});
+			// 		inFolder = true;
+			// 		notes.animation.play('selected');
+			// 		settings.animation.play('normal');
+			// 		storyMode.animation.play('normal');
+			// 		freeplay.animation.play('normal');
+			// 		mods.animation.play('normal');
+			// 		credits.animation.play('normal');
+			// 	}
+			// }
 
 			// if (controls.ACCEPT && !inCMD && !inFolder)
 			// {

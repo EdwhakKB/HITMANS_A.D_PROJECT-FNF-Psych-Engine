@@ -433,6 +433,7 @@ class RatingOffsetOption extends SystemOptions
 //Apperance
 class HudStyleOption extends SystemOptions
 {
+	var intMoved:Int = 0;
     public function new(desc:String)
 	{
 		super();
@@ -449,9 +450,7 @@ class HudStyleOption extends SystemOptions
 				intMoved = 1;
 		}
 	}
-
     var hudStyle = ['Classic', 'HITMANS'];
-    var intMoved:Int = 0;
 	override function right():Bool
 	{
 		intMoved += 1;
@@ -498,7 +497,7 @@ class HideHudOption extends SystemOptions
 
 	override function left():Bool
 	{
-		left();
+		right();
 		return true;
 	}
 
@@ -578,7 +577,7 @@ class FlashingLightsOption extends SystemOptions
 
 	override function left():Bool
 	{
-		left();
+		right();
 		return true;
 	}
 
@@ -607,7 +606,7 @@ class CamZoomOption extends SystemOptions
 
 	override function left():Bool
 	{
-		left();
+		right();
 		return true;
 	}
 
@@ -636,7 +635,7 @@ class ScoreZoomOption extends SystemOptions
 
 	override function left():Bool
 	{
-		left();
+		right();
 		return true;
 	}
 

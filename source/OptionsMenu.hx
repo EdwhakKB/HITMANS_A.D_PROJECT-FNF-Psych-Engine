@@ -183,22 +183,20 @@ class OptionsMenu extends MusicBeatSubstate
 
 	public function new(pauseMenu:Bool = false)
 	{
+		Paths.setCurrentLevel('shared'); //LMAO LMAO
+		
 		super();
 
 		camOptions = new FlxCamera();
 		camOptions.bgColor.alpha = 0;
 
-		FlxG.cameras.reset(camOptions);
-		FlxG.cameras.setDefaultDrawTarget(camOptions, true);
+		FlxG.cameras.add(camOptions, false);
 
 		camOptions.setScale(0.75, 0.75);
 
 		isInPause = pauseMenu;
 		
 		ClientPrefs.loadPrefs();
-
-		if(boyfriend == null)
-			reloadBoyfriend();
 
 		options = [
 			new OptionCata(50, 100, "Gameplay", [
@@ -281,10 +279,7 @@ class OptionsMenu extends MusicBeatSubstate
 
 		openCallback = refresh;
 
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-		
-		if(boyfriend == null)
-			reloadBoyfriend();
+		cameras = [camOptions];
 	}
 
 	public var menu:FlxTypedGroup<FlxSprite>;
@@ -325,6 +320,9 @@ class OptionsMenu extends MusicBeatSubstate
         ClientPrefs.saveSettings();
 
 		super.create();
+
+		if(boyfriend == null)
+			reloadBoyfriend();
 	}
 
 	function refresh()
@@ -576,6 +574,7 @@ class OptionsMenu extends MusicBeatSubstate
 						{
 							MainMenuState.inFolder = false;
                             ClientPrefs.saveSettings();
+							Paths.setCurrentLevel(''); //LMAO LMAO
 							close();
 						}
 					});
@@ -584,6 +583,7 @@ class OptionsMenu extends MusicBeatSubstate
 				{
 					ClientPrefs.saveSettings();
 					PauseSubState.goBack = true;
+					Paths.setCurrentLevel(''); //LMAO LMAO
 					close();
 				}
 			}
@@ -880,7 +880,7 @@ class OptionsMenu extends MusicBeatSubstate
 		boyfriend.updateHitbox();
 		boyfriend.dance();
 		boyfriend.cameras = [camOptions];
-		boyfriend.antialiasing = changedAntialising;
+		//boyfriend.antialiasing = changedAntialising;
 		insert(1, boyfriend);
 		boyfriend.visible = wasVisible;
 	}
