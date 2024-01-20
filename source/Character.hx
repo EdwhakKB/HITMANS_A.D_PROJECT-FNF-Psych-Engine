@@ -154,9 +154,11 @@ class Character extends FlxSprite
 		isAnimateAtlas = false;
 
 		#if flxanimate
-		var animToFind:String = Paths.getContentFromFile('images/' + json.image + '/Animation.json');
-		if (#if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind))
-			isAnimateAtlas = true;
+		var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT, 'shared', true);
+		var animToLook:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT, null, true);
+		if (#if MODS_ALLOWED FileSystem.exists(animToFind) || #end Assets.exists(animToFind)) isAnimateAtlas = true;
+		else if (#if MODS_ALLOWED FileSystem.exists(animToLook) || #end Assets.exists(animToLook)) isAnimateAtlas = true;
+		else isAnimateAtlas = false;
 		#end
 
 		scale.set(1, 1);
@@ -184,7 +186,7 @@ class Character extends FlxSprite
 			}
 			catch(e:Dynamic)
 			{
-				FlxG.log.warn('Could not load atlas ${json.image}: $e');
+				trace('Could not load atlas ${json.image}: $e');
 			}
 		}
 		#end
@@ -417,7 +419,6 @@ class Character extends FlxSprite
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
 		specialAnim = false;
-		animation.play(AnimName, Force, Reversed, Frame);
 
 		if(!isAnimateAtlas) animation.play(AnimName, Force, Reversed, Frame);
 		#if flxanimate else atlas.anim.play(AnimName, Force, Reversed, Frame); #end

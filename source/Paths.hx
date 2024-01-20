@@ -652,20 +652,20 @@ class Paths
 		spr.loadAtlasEx(folderOrImg, spriteJson, animationJson);
 	}
 
-	static public function getContentFromFile(path:String):String
+	static public function getContentFromFile(pathImage:String):String
 	{
 		var onAssets:Bool = false;
-		var path:String = Paths.getPath(path, TEXT, 'shared', true);
+		var path:String = Paths.getPath(pathImage, TEXT, 'shared', true);
+		var path2:String = Paths.getPath(pathImage, TEXT, null, true);
 		if(FileSystem.exists(path) || (onAssets = true && Assets.exists(path, TEXT)))
 		{
 			//trace('Found text: $path');
 			return !onAssets ? File.getContent(path) : Assets.getText(path);
-		}else{
-			path = Paths.getPath(path, TEXT, null, true);
-			if(FileSystem.exists(path) || (onAssets = true && Assets.exists(path, TEXT)))
+		}else if (FileSystem.exists(path2) || (onAssets = true && Assets.exists(path2, TEXT))){
+			if(FileSystem.exists(path2) || (onAssets = true && Assets.exists(path2, TEXT)))
 			{
 				//trace('Found text: $path');
-				return !onAssets ? File.getContent(path) : Assets.getText(path);
+				return !onAssets ? File.getContent(path2) : Assets.getText(path2);
 			}
 		}
 		return null;
