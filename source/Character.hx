@@ -236,7 +236,7 @@ class Character extends FlxSprite
 				var animAnim:String = '' + anim.anim;
 				var animName:String = '' + anim.name;
 				var animFps:Int = anim.fps;
-				var animLoop:Bool = !!anim.loop; // Bruh
+				var animLoop:Bool = !anim.loop; // Bruh
 				var animIndices:Array<Int> = anim.indices;
 				if(!isAnimateAtlas)
 				{
