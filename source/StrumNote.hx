@@ -60,7 +60,7 @@ class StrumNote extends FlxSkewedSprite
 		if(PlayState.SONG != null && PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		if (daTexture != null) texture = daTexture else texture = skin;
 		// texture = skin; //Load texture and anims
-		trace('Using $daTexture found in $library path');
+		//trace('Using $daTexture found in $library path');
 
 		scrollFactor.set();
 	}

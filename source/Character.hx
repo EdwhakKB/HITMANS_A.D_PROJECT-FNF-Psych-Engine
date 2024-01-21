@@ -255,11 +255,8 @@ class Character extends FlxSprite
 				}
 				#end
 
-				var offsets:Array<Int> = anim.offsets;
-				var swagOffsets:Array<Int> = offsets;
-
-				if (swagOffsets != null && swagOffsets.length > 1)
-					addOffset(anim.anim, swagOffsets[0], swagOffsets[1]);
+				if(anim.offsets != null && anim.offsets.length > 1) addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+				else addOffset(anim.anim, 0, 0);
 			}
 		}
 		else
@@ -274,8 +271,9 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		#if flxanimate if(isAnimateAtlas) atlas.update(elapsed); #end
-		if(debugMode || (!isAnimateAtlas && animation.curAnim == null) #if flxanimate || (isAnimateAtlas && atlas.anim.curSymbol == null) #end)
+		if(isAnimateAtlas) atlas.update(elapsed);
+
+		if(debugMode || (!isAnimateAtlas && animation.curAnim == null) || (isAnimateAtlas && atlas.anim.curSymbol == null))
 		{
 			super.update(elapsed);
 			return;
@@ -320,48 +318,36 @@ class Character extends FlxSprite
 				if(isAnimationFinished()) playAnim(getAnimationName(), false, false, animation.curAnim.frames.length - 3);
 		}
 
-		if(isPlayer)
+		if (getAnimationName().startsWith('sing')) holdTimer += elapsed;
+		else if(isPlayer) holdTimer = 0;
+
+		if (!isPlayer && holdTimer >= Conductor.stepCrochet * (0.0011 #if FLX_PITCH / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1) #end) * singDuration)
 		{
-			if (getAnimationName().startsWith('sing')) holdTimer += elapsed;
-			else holdTimer = 0;
+			dance();
+			holdTimer = 0;
 		}
 
-		if (!isPlayer)
-		{
-			if (getAnimationName().startsWith('sing'))
-			{
-				holdTimer += elapsed;
-			}
-
-			if (holdTimer >= Conductor.stepCrochet * (0.0011 / (FlxG.sound.music != null ? FlxG.sound.music.pitch : 1)) * singDuration)
-			{
-				dance();
-				holdTimer = 0;
-			}
-		}
-
-		if(isAnimationFinished() && animation.getByName(animation.curAnim.name + '-loop') != null)
-		{
-			playAnim(animation.curAnim.name + '-loop');
-		}
+		var name:String = getAnimationName();
+		if(isAnimationFinished() && animOffsets.exists('$name-loop'))
+			playAnim('$name-loop');
 		super.update(elapsed);
 	}
 
 	inline public function isAnimationNull():Bool
-		return #if flxanimate !isAnimateAtlas ? (animation.curAnim == null) : (atlas.anim.curSymbol == null); #else (animation.curAnim == null); #end
+		return !isAnimateAtlas ? (animation.curAnim == null) : (atlas.anim.curSymbol == null);
 
 	inline public function getAnimationName():String
 	{
 		var name:String = '';
 		@:privateAccess
-		if(!isAnimationNull()) name = #if flxanimate !isAnimateAtlas ? animation.curAnim.name : atlas.anim.lastPlayedAnim; #else animation.curAnim.name; #end
+		if(!isAnimationNull()) name = !isAnimateAtlas ? animation.curAnim.name : atlas.anim.lastPlayedAnim;
 		return (name != null) ? name : '';
 	}
 
 	public function isAnimationFinished():Bool
 	{
 		if(isAnimationNull()) return false;
-		return #if flxanimate !isAnimateAtlas ? animation.curAnim.finished : atlas.anim.finished; #else animation.curAnim.finished; #end
+		return !isAnimateAtlas ? animation.curAnim.finished : atlas.anim.finished;
 	}
 
 	public function finishAnimation():Void
@@ -369,26 +355,24 @@ class Character extends FlxSprite
 		if(isAnimationNull()) return;
 
 		if(!isAnimateAtlas) animation.curAnim.finish();
-		#if flxanimate else atlas.anim.curFrame = atlas.anim.length - 1; #end
+		else atlas.anim.curFrame = atlas.anim.length - 1;
 	}
 
 	public var animPaused(get, set):Bool;
 	private function get_animPaused():Bool
 	{
 		if(isAnimationNull()) return false;
-		return #if flxanimate !isAnimateAtlas ? animation.curAnim.paused : atlas.anim.isPlaying; #else animation.curAnim.paused; #end
+		return !isAnimateAtlas ? animation.curAnim.paused : atlas.anim.isPlaying;
 	}
 	private function set_animPaused(value:Bool):Bool
 	{
 		if(isAnimationNull()) return value;
 		if(!isAnimateAtlas) animation.curAnim.paused = value;
-		#if flxanimate
 		else
 		{
 			if(value) atlas.anim.pause();
 			else atlas.anim.resume();
 		} 
-		#end
 
 		return value;
 	}
@@ -411,9 +395,8 @@ class Character extends FlxSprite
 				else
 					playAnim('danceLeft' + idleSuffix);
 			}
-			else if(animation.getByName('idle' + idleSuffix) != null) {
-					playAnim('idle' + idleSuffix);
-			}
+			else if(animOffsets.exists('idle' + idleSuffix))
+				playAnim('idle' + idleSuffix);
 		}
 	}
 
@@ -422,7 +405,7 @@ class Character extends FlxSprite
 		specialAnim = false;
 
 		if(!isAnimateAtlas) animation.play(AnimName, Force, Reversed, Frame);
-		#if flxanimate else atlas.anim.play(AnimName, Force, Reversed, Frame); #end
+		else atlas.anim.play(AnimName, Force, Reversed, Frame);
 
 		var daOffset = animOffsets.get(AnimName);
 		if (animOffsets.exists(AnimName))

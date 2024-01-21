@@ -434,6 +434,7 @@ class RatingOffsetOption extends SystemOptions
 class HudStyleOption extends SystemOptions
 {
 	var intMoved:Int = 0;
+	var hudStyle = ['Classic', 'HITMANS'];
     public function new(desc:String)
 	{
 		super();
@@ -442,15 +443,12 @@ class HudStyleOption extends SystemOptions
 		else
 			description = desc;
 
-		switch (ClientPrefs.hudStyle)
-		{
-			case 'Classic':
-				intMoved = 0;
-			case 'HITMANS':
-				intMoved = 1;
-		}
+		if (ClientPrefs.hudStyle.toLowerCase() == 'classic')
+			intMoved = 0;
+		else
+			intMoved = 1;
 	}
-    var hudStyle = ['Classic', 'HITMANS'];
+
 	override function right():Bool
 	{
 		intMoved += 1;
@@ -1067,6 +1065,8 @@ class QuantizationOption extends SystemOptions
 
 class MineSkin extends SystemOptions
 {
+	var mineSkins = ['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'NOTITG', 'ITHIT'];
+    var intMoved:Int = 0;
     public function new(desc:String)
 	{
 		super();
@@ -1074,8 +1074,7 @@ class MineSkin extends SystemOptions
 			description = desc + " (RESTART REQUIRED)";
 		else
 			description = desc;
-		changedMusic = true;
-		switch (ClientPrefs.mineSkin)
+		switch (FlxG.save.data.mineSkin)
 		{
 			case 'HITMANS':
 				intMoved = 0;
@@ -1091,9 +1090,6 @@ class MineSkin extends SystemOptions
 				intMoved = 5;
 		}
 	}
-
-    var mineSkins = ['HITMANS', 'FNF', 'INHUMAN', 'STEPMANIA', 'NOTITG', 'ITHIT'];
-    var intMoved:Int = 0;
 	override function right():Bool
 	{
 		intMoved += 1;
