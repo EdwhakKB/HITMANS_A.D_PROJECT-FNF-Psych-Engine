@@ -4373,7 +4373,7 @@ class PlayState extends MusicBeatState
 
 	function opponentNoteHit(note:Note):Void
 	{
-		if (Paths.formatToSongPath(SONG.song) != 'tutorial')
+		// if (Paths.formatToSongPath(SONG.song) != 'tutorial')
 			camZooming = true;
 		//Edwhak HealthDrain but in source so people can't nerf how his songs works!
 		if (SONG.bossFight || edwhakIsEnemy){

@@ -424,7 +424,7 @@ class OptionsMenu extends MusicBeatSubstate
 			updateOptColors();
 
 			if (selectedOption.blocked)
-				descText.color = FlxColor.YELLOW;
+				descText.color = FlxColor.RED;
 			else
 				descText.color = FlxColor.WHITE;
 
@@ -857,7 +857,7 @@ class OptionsMenu extends MusicBeatSubstate
 			opt.updateBlocks();
 
 			if (opt.blocked)
-				optObject.color = FlxColor.YELLOW;
+				optObject.color = FlxColor.RED;
 			else
 				optObject.color = FlxColor.WHITE;
 

@@ -648,7 +648,10 @@ class HealthBarVisibility extends SystemOptions
     public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause)
+			description = desc + " (RESTART REQUIRED)";
+		else
+			description = desc;
 		acceptValues = true;
 	}
 
@@ -796,7 +799,10 @@ class LowQualityOption extends SystemOptions
     public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause)
+			description = desc + " (RESTART REQUIRED)";
+		else
+			description = desc;
 	}
 
     public override function left():Bool
@@ -823,7 +829,10 @@ class AntiAliasOption extends SystemOptions
     public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause)
+			description = desc + " (RESTART REQUIRED)";
+		else
+			description = desc;
 		showBoyfriend = true;
 	}
 
@@ -926,7 +935,10 @@ class ShadersOption extends SystemOptions
     public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause)
+			description = desc + " (RESTART REQUIRED)";
+		else
+			description = desc;
 	}
 
     public override function left():Bool
@@ -953,7 +965,13 @@ class HotkeysOption extends SystemOptions
 	public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause){
+			blocked = true;
+			description = desc + "(NOT WORKING IN PAUSE MENU";
+		}else{
+			blocked = false;
+			description = desc;
+		}
 		acceptType = true;
 	}
 
@@ -975,7 +993,13 @@ class NoteOption extends SystemOptions
 	public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause){
+			blocked = true;
+			description = desc + "(NOT WORKING IN PAUSE MENU";
+		}else{
+			blocked = false;
+			description = desc;
+		}
 		acceptType = true;
 	}
 
@@ -997,7 +1021,13 @@ class HurtOption extends SystemOptions
 	public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause){
+			blocked = true;
+			description = desc + "(NOT WORKING IN PAUSE MENU";
+		}else{
+			blocked = false;
+			description = desc;
+		}
 		acceptType = true;
 	}
 
@@ -1019,7 +1049,13 @@ class QuantOption extends SystemOptions
 	public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause){
+			blocked = true;
+			description = desc + "(NOT WORKING IN PAUSE MENU";
+		}else{
+			blocked = false;
+			description = desc;
+		}
 		acceptType = true;
 	}
 
@@ -1041,7 +1077,10 @@ class QuantizationOption extends SystemOptions
     public function new(desc:String)
 	{
 		super();
-		description = desc;
+		if (OptionsMenu.isInPause)
+			description = desc + " (RESTART REQUIRED)";
+		else
+			description = desc;
 	}
 
     public override function left():Bool
