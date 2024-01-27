@@ -99,6 +99,18 @@ import VideoHandler as VideoHandler;
 #end
 import flash.system.System;
 
+typedef ThreadBeatList = {
+	var beat:Float;
+	var func:Void->Void;
+}
+
+typedef ThreadUpdateList = {
+	var startbeat:Float;
+	var endbeat:Float;
+	var func:Void->Void;
+	var oncompletefunc:Void->Void;
+}
+
 using StringTools;
 
 class PlayState extends MusicBeatState
@@ -2008,6 +2020,26 @@ class PlayState extends MusicBeatState
 		callOnLuas('onSongStart', []);
 	}
 
+	public var threadbeat:Array<ThreadBeatList> = [];
+	public function threadBeat(setbeat:Float, complete:Void->Void)
+	{
+		threadbeat.push({
+			beat: setbeat,
+			func: complete,
+		});
+	}
+
+	public var threadupdate:Array<ThreadUpdateList> = [];
+	public function threadUpdate(startBeat:Float, endBeat:Float, funcAfter:Void->Void, onCompleteFunc:Void->Void)
+	{
+		threadupdate.push({
+			startbeat: startBeat,
+			endbeat: endBeat,
+			func: funcAfter,
+			oncompletefunc: onCompleteFunc
+		});
+	}
+
 	var debugNum:Int = 0;
 	private var noteTypeMap:Map<String, Bool> = new Map<String, Bool>();
 	private var eventPushedMap:Map<String, Bool> = new Map<String, Bool>();
@@ -2867,6 +2899,24 @@ class PlayState extends MusicBeatState
 			}
 		}
 		#end
+
+		if (threadbeat != null)
+			for (i in 0...threadbeat.length)
+				if (curDecBeat >= threadbeat[i].beat)
+				{
+					threadbeat[i].func();
+					threadbeat[i] = null;
+				}
+
+		if (threadupdate != null)
+			for (i in 0...threadupdate.length)
+				if (curDecBeat >= threadupdate[i].startbeat && curDecBeat < threadupdate[i].endbeat)
+					threadupdate[i].func();
+				else if (curDecBeat >= threadupdate[i].endbeat)
+				{
+					if (threadupdate[i].oncompletefunc != null) threadupdate[i].oncompletefunc();
+					threadupdate[i] = null;
+				}
 		
 		if (camZooming)
 		{
