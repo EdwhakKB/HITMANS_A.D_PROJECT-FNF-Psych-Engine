@@ -14,7 +14,8 @@ import llua.Convert;
 import states.PlayState;
 import game.Conductor;
 #end
-
+import flixel.FlxG;
+import SSHScript as FunkinHScript;
 import modcharting.Modifier;
 import modcharting.PlayfieldRenderer;
 import modcharting.NoteMovement;
@@ -160,7 +161,7 @@ class ModchartFuncs
         #end
     }
 
-     public static function loadHScriptFunctions(parent:FunkinHScript)
+    public static function loadHScriptFunctions(parent:FunkinHScript)
     {
         #if HSCRIPT_ALLOWED
         parent.set('startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
