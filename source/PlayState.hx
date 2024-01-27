@@ -100,18 +100,17 @@ import VideoHandler as VideoHandler;
 import flash.system.System;
 
 typedef ThreadBeatList = {
-	var beat:Float;
-	var func:Void->Void;
+	beat:Float,
+	func:Void->Void
 }
 
 typedef ThreadUpdateList = {
-	var startbeat:Float;
-	var endbeat:Float;
-	var func:Void->Void;
-	var oncompletefunc:Void->Void;
+	startbeat:Float,
+	endbeat:Float,
+	func:Void->Void,
+	oncompletefunc:Void->Void
 }
 
-using StringTools;
 
 class PlayState extends MusicBeatState
 {
@@ -2020,24 +2019,27 @@ class PlayState extends MusicBeatState
 		callOnLuas('onSongStart', []);
 	}
 
-	public var threadbeat:Array<ThreadBeatList> = [];
-	public function threadBeat(setbeat:Float, complete:Void->Void)
+	public var threadbeat:ThreadBeatList = null;
+	public var threadBeatStarted:Bool = false;
+
+	public function threadBeat(beat:Float, func:Void->Void)
 	{
-		threadbeat.push({
-			beat: setbeat,
-			func: complete,
-		});
+		threadbeat = {
+			beat: beat,
+			func: func,
+		}
 	}
 
-	public var threadupdate:Array<ThreadUpdateList> = [];
-	public function threadUpdate(startBeat:Float, endBeat:Float, funcAfter:Void->Void, onCompleteFunc:Void->Void)
+	public var threadupdate:ThreadUpdateList = null;
+
+	public function threadUpdate(startBeat:Float, endBeat:Float, func:Void->Void, onCompleteFunc:Void->Void)
 	{
-		threadupdate.push({
+		threadupdate = {
 			startbeat: startBeat,
 			endbeat: endBeat,
-			func: funcAfter,
+			func: func,
 			oncompletefunc: onCompleteFunc
-		});
+		}
 	}
 
 	var debugNum:Int = 0;
@@ -2901,22 +2903,21 @@ class PlayState extends MusicBeatState
 		#end
 
 		if (threadbeat != null)
-			for (i in 0...threadbeat.length)
-				if (curDecBeat >= threadbeat[i].beat)
-				{
-					threadbeat[i].func();
-					threadbeat[i] = null;
-				}
+			if (curDecBeat >= threadbeat.beat)
+			{
+				threadBeatStarted = false;
+				threadbeat.func();
+				threadbeat = null;
+			}
 
 		if (threadupdate != null)
-			for (i in 0...threadupdate.length)
-				if (curDecBeat >= threadupdate[i].startbeat && curDecBeat < threadupdate[i].endbeat)
-					threadupdate[i].func();
-				else if (curDecBeat >= threadupdate[i].endbeat)
-				{
-					if (threadupdate[i].oncompletefunc != null) threadupdate[i].oncompletefunc();
-					threadupdate[i] = null;
-				}
+			if (curDecBeat >= threadupdate.startbeat && curDecBeat < threadupdate.endbeat)
+				threadupdate.func();
+			else if (curDecBeat >= threadupdate.endbeat)
+			{
+				if (threadupdate.oncompletefunc != null) threadupdate.oncompletefunc();
+				threadupdate = null;
+			}
 		
 		if (camZooming)
 		{
