@@ -233,7 +233,7 @@ class ModchartFile
                     if(file.endsWith('.hx')) //custom mods!!!!
                     {
                         var scriptStr = File.getContent(folderShit + file);
-                        var script = new SSHscript(null, scriptStr, null, true);
+                        var script = new SSHScript(null, scriptStr, null, true);
                         customModifiers.set(file.replace(".hx", ""), script);
                         trace('loaded custom mod: ' + file);
                     }
