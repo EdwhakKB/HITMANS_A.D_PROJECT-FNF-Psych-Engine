@@ -101,14 +101,14 @@ import flash.system.System;
 
 typedef ThreadBeatList = {
 	beat:Float,
-	func:Void->Void
+	func:Dynamic
 }
 
 typedef ThreadUpdateList = {
 	startbeat:Float,
 	endbeat:Float,
-	func:Void->Void,
-	oncompletefunc:Void->Void
+	func:Dynamic,
+	oncompletefunc:Dynamic
 }
 
 
@@ -1190,6 +1190,20 @@ class PlayState extends MusicBeatState
 
 		// camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
 
+		// threadBeat(10, () -> {
+		// 	trace('Working Thread #10 (beat 10)');
+		// });
+		// threadBeat(20, () -> {
+		// 	trace('Working Thread #20 (beat 20)');
+		// });
+		// threadBeat(30, () -> {
+		// 	trace('Working Thread #30 (beat 30)');
+		// });
+		// threadBeat(40, () -> {
+		// 	trace('Working Thread #40 (beat 40)');
+		// });
+
+
 		if (ClientPrefs.quantization)
 			doNoteQuant();
 
@@ -2019,27 +2033,28 @@ class PlayState extends MusicBeatState
 		callOnLuas('onSongStart', []);
 	}
 
-	public var threadbeat:ThreadBeatList = null;
-	public var threadBeatStarted:Bool = false;
+	public static var threadbeat:Array<ThreadBeatList> = [];
 
-	public function threadBeat(beat:Float, func:Void->Void)
+	public static function threadBeat(beat:Float, func:Dynamic)
 	{
-		threadbeat = {
+		threadbeat.push(
+		{
 			beat: beat,
-			func: func,
-		}
+			func: func
+		});
 	}
 
-	public var threadupdate:ThreadUpdateList = null;
+	public static var threadupdate:Array<ThreadUpdateList> = [];
 
-	public function threadUpdate(startBeat:Float, endBeat:Float, func:Void->Void, onCompleteFunc:Void->Void)
+	public static function threadUpdate(startBeat:Float, endBeat:Float, func:Dynamic, onCompleteFunc:Dynamic)
 	{
-		threadupdate = {
+		threadupdate.push(
+		{
 			startbeat: startBeat,
 			endbeat: endBeat,
 			func: func,
 			oncompletefunc: onCompleteFunc
-		}
+		});
 	}
 
 	var debugNum:Int = 0;
@@ -2902,22 +2917,19 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
-		if (threadbeat != null)
-			if (curDecBeat >= threadbeat.beat)
-			{
-				threadBeatStarted = false;
-				threadbeat.func();
-				threadbeat = null;
-			}
+		while (threadbeat.length > 0 && threadbeat[0] != null && curDecBeat >= threadbeat[0].beat) {
+			threadbeat[0].func();
+			threadbeat.splice(0, 1);
+		}
 
-		if (threadupdate != null)
-			if (curDecBeat >= threadupdate.startbeat && curDecBeat < threadupdate.endbeat)
-				threadupdate.func();
-			else if (curDecBeat >= threadupdate.endbeat)
-			{
-				if (threadupdate.oncompletefunc != null) threadupdate.oncompletefunc();
-				threadupdate = null;
+		while (threadupdate.length > 0 && threadupdate[0] != null) {
+			if (curDecBeat >= threadupdate[0].startbeat && curDecBeat < threadupdate[0].endbeat)
+				threadupdate[0].func();
+			else if (curDecBeat >= threadupdate[0].endbeat){
+				if (threadupdate[0].oncompletefunc != null) threadupdate[0].oncompletefunc();
+				threadupdate.splice(0, 1);
 			}
+		}
 		
 		if (camZooming)
 		{

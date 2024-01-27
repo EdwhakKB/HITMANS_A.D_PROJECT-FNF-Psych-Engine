@@ -3228,11 +3228,11 @@ class FunkinLua {
 		});
 
 		Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
-			PlayState.instance.threadBeat(beat, func);
+			PlayState.threadBeat(beat, func);
 		});
 
 		Lua_helper.add_callback(lua, "threadUpdate", function(beatStart:Float, beatEnd:Float, func:Dynamic, onComp:Dynamic) {
-			PlayState.instance.threadUpdate(beatStart, beatEnd, func, onComp);
+			PlayState.threadUpdate(beatStart, beatEnd, func, onComp);
 		});
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
