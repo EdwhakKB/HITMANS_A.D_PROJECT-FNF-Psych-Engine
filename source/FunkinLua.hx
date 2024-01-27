@@ -3237,12 +3237,46 @@ class FunkinLua {
 		});
 
 		Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
-			PlayState.threadBeat(beat, func);
-		});
+            PlayState.threadBeat(beat, () -> {func;});
+            // var retVal:Dynamic = null;
+
+            // #if hscript
+            // initHaxeModule();
+            // try {
+            //     retVal = hscript.execute('game.threadBeat($beat, () -> {$func});');
+            // }
+            // catch (e:Dynamic) {
+            //     luaTrace(scriptName + ": threadBeat("+ beat +") failed: " + e, false, false, FlxColor.RED);
+            // }
+            // #else
+            // luaTrace("threadBeat: doesn't work in this platform!", false, false, FlxColor.RED);
+            // #end
+
+            // if(retVal != null && !isOfTypes(retVal, [Bool, Int, Float, String, Array])) retVal = null;
+            // if(retVal == null) Lua.pushnil(lua);
+            // return retVal;
+        });
 
 		Lua_helper.add_callback(lua, "threadUpdate", function(beatStart:Float, beatEnd:Float, func:Dynamic, onComp:Dynamic) {
-			PlayState.threadUpdate(beatStart, beatEnd, func, onComp);
-		});
+            PlayState.threadUpdate(beatStart, beatEnd, () -> {func;}, () -> {onComp;});
+            // var retVal:Dynamic = null;
+
+            // #if hscript
+            // initHaxeModule();
+            // try {
+            //     retVal = hscript.execute('game.threadUpdate($beatStart,$beatEnd, () -> {$func}, () -> {$onComp});');
+            // }
+            // catch (e:Dynamic) {
+            //     luaTrace(scriptName + ": threadUpdate("+ beatStart +"," + beatEnd + ") failed: " + e, false, false, FlxColor.RED);
+            // }
+            // #else
+            // luaTrace("threadUpdate: doesn't work in this platform!", false, false, FlxColor.RED);
+            // #end
+
+            // if(retVal != null && !isOfTypes(retVal, [Bool, Int, Float, String, Array])) retVal = null;
+            // if(retVal == null) Lua.pushnil(lua);
+            // return retVal;
+        });
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		#if HSCRIPT_ALLOWED SSHScript.implement(this); #end
