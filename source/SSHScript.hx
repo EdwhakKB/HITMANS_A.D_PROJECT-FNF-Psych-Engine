@@ -240,7 +240,7 @@ class SSHScript extends SScript
 		//if (PlayState.instance != null && PlayState.SONG != null && !isHxStage && PlayState.SONG.notITG && PlayState.instance.notITGMod)
 		#end
 
-		//modcharting.ModchartFuncs.loadHScriptFunctions(this);
+		modcharting.ModchartFuncs.loadHScriptFunctions(this);
 
 		if(PlayState.instance == FlxG.state)
 		{

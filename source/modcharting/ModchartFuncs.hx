@@ -160,6 +160,53 @@ class ModchartFuncs
         #end
     }
 
+     public static function loadHScriptFunctions(parent:FunkinHScript)
+    {
+        #if HSCRIPT_ALLOWED
+        parent.set('startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
+            startMod(name, modClass, type, pf);
+
+            if (PlayState.instance == FlxG.state && PlayState.instance.playfieldRenderer != null)
+            {
+                PlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
+            }
+        });
+        parent.set('setMod', function(name:String, value:Float){
+            setMod(name, value);
+        });
+        parent.set('setSubMod', function(name:String, subValName:String, value:Float){
+            setSubMod(name, subValName,value);
+        });
+        parent.set('setModTargetLane', function(name:String, value:Int){
+            setModTargetLane(name, value);
+        });
+        parent.set('setModPlayfield', function(name:String, value:Int){
+            setModPlayfield(name,value);
+        });
+        parent.set('addPlayfield', function(?x:Float = 0, ?y:Float = 0, ?z:Float = 0){
+            addPlayfield(x,y,z);
+        });
+        parent.set('removePlayfield', function(idx:Int){
+            removePlayfield(idx);
+        });
+        parent.set('tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
+            tweenModifier(modifier,val,time,ease);
+        });
+        parent.set('tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
+            tweenModifierSubValue(modifier,subValue,val,time,ease);
+        });
+        parent.set('setModEaseFunc', function(name:String, ease:String){
+            setModEaseFunc(name,ease);
+        });
+        parent.set('setModValue', function(beat:Float, argsAsString:String){
+            set(beat, argsAsString);
+        });
+        parent.set('easeModValue', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+            ease(beat, time, easeStr, argsAsString);
+        });
+        #end
+    }
+
     public static function startMod(name:String, modClass:String, type:String = '', pf:Int = -1, ?instance:ModchartMusicBeatState = null)
     {
         if (instance == null)
