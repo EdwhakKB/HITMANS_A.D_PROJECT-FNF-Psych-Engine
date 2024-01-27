@@ -11,3 +11,5 @@ import Mods;
 #if flxanimate
 import flxanimate.*;
 #end
+
+using StringTools;
