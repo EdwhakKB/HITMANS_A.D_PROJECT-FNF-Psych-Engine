@@ -12,4 +12,10 @@ import Mods;
 import flxanimate.*;
 #end
 
+import SSHScript;
+
+#if HSCRIPT_ALLOWED
+import tea.SScript;
+#end
+
 using StringTools;

@@ -19,17 +19,37 @@ import flixel.system.FlxAssets;
 import flixel.graphics.tile.FlxGraphicsShader;
 using StringTools;
 
+class ShadersSubValue 
+{
+    public var value:Dynamic = 0.0;
+    public var baseValue:Dynamic = 0.0;
+    public function new(value:Dynamic = 0.0)
+    {
+        this.value = value;
+        baseValue = value;
+    }
+}
+
 class ShaderEffectNew
 {
+    public var subValues:Map<String, ShadersSubValue> = new Map<String, ShadersSubValue>();
+
 	public function update(elapsed:Float)
     {
         // nothing yet
     }
+
+    public dynamic function setupSubValues() {}
 }
 
 class TunnelFractEffect extends ShaderEffectNew
 {
     public var shader:TunnelFractShader = new TunnelFractShader();
+
+    override public function setupSubValues()
+    {
+        subValues.set('valuemult', new ShadersSubValue(0));
+    }
 
     public var valuemult:Float = 0;
     var iTime:Float = 0;
@@ -37,14 +57,14 @@ class TunnelFractEffect extends ShaderEffectNew
     public function new()
     {
         shader.iTime.value = [0.0];
-        shader.valuemult.value = [valuemult];
+        shader.valuemult.value = [subValues.get('valuemult') != null ? subValues.get('valuemult').value : valuemult];
     }
 
     override public function update(elapsed:Float)
     {
         iTime += elapsed;
         shader.iTime.value = [iTime];
-        shader.valuemult.value = [valuemult];
+        shader.valuemult.value = [subValues.get('valuemult') != null ? subValues.get('valuemult').value : valuemult];
     }
 }
 

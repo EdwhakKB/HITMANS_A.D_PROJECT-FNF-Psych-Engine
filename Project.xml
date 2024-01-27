@@ -58,6 +58,7 @@
 	<define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE WATERMARKS/DEV NAMES ON TITLE SCREEN -->
 	<define name="TITLE_SCREEN_EASTER_EGG" if="officialBuild"/> <!-- DELETE THE if="officialBuild" for enabling this on an unofficial build -->
 	<define name="CRASH_HANDLER" if="desktop release" />
+	<define name="HSCRIPT_ALLOWED" if="desktop" />
 
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
 	<assets path="assets/preload" rename="assets" exclude="*.mp3"  unless="web"/>
@@ -138,8 +139,9 @@
 	<!--In case you want to use the addons package-->
 	<haxelib name="flixel-addons" />
 	<haxelib name="hscript" />
-	<define name="hscriptPos" />
 	<haxelib name="flxanimate" />
+
+	<haxelib name="SScript" if="HSCRIPT_ALLOWED"/>
 
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />

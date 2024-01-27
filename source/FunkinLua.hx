@@ -81,9 +81,12 @@ typedef LuaCamera =
 }
 
 class FunkinLua {
-	public static var Function_Stop:Dynamic = 1;
-	public static var Function_Continue:Dynamic = 0;
-	public static var Function_StopLua:Dynamic = 2;
+	public static var Function_Stop:Dynamic = "##PSYCHLUA_FUNCTIONSTOP";
+	public static var Function_Continue:Dynamic = "##PSYCHLUA_FUNCTIONCONTINUE";
+	public static var Function_StopLua:Dynamic = "##PSYCHLUA_FUNCTIONSTOPLUA";
+
+	public static var Function_StopHScript:Dynamic = "##PSYCHLUA_FUNCTIONSTOPHSCRIPT";
+	public static var Function_StopAll:Dynamic = "##PSYCHLUA_FUNCTIONSTOPALL";
 
 	//public var errorHandler:String->Void;
 	#if LUA_ALLOWED
@@ -96,6 +99,11 @@ class FunkinLua {
 	#if hscript
 	public static var hscript:HScript = null;
 	#end
+
+	#if HSCRIPT_ALLOWED
+	public var ssHscript:SSHScript = null;
+	#end
+	public var callbacks:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var playbackRate:Float = ClientPrefs.getGameplaySetting('songspeed', 1); //so i can make this auto instead of do it every lua ig?
 
 	public static var lua_Cameras:Map<String, LuaCamera> = [];
@@ -138,7 +146,8 @@ class FunkinLua {
 		// 	trace(e);
 		// 	return;
 		// }
-		scriptName = script;
+		this.scriptName = script.trim();
+		PlayState.instance.luaArray.push(this);
 		initHaxeModule();
 
 		// trace('lua file loaded succesfully:' + script);
@@ -3236,6 +3245,7 @@ class FunkinLua {
 		});
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
+		#if HSCRIPT_ALLOWED SSHScript.implement(this); #end
 		
 		try{
 			var isString:Bool = !FileSystem.exists(scriptName);
@@ -3718,7 +3728,7 @@ class FunkinLua {
 			return group;
 		}
 
-	public function luaTrace(text:String, ignoreCheck:Bool = false, deprecated:Bool = false, color:FlxColor = FlxColor.WHITE) {
+	public static function luaTrace(text:String, ignoreCheck:Bool = false, deprecated:Bool = false, color:FlxColor = FlxColor.WHITE) {
 		#if LUA_ALLOWED
 		if(ignoreCheck || getBool('luaDebugMode')) {
 			if(deprecated && !getBool('luaDeprecatedWarnings')) {
@@ -3872,8 +3882,14 @@ class FunkinLua {
 		#end
 	}
 
+	public function addLocalCallback(name:String, myFunction:Dynamic)
+	{
+		callbacks.set(name, myFunction);
+		Lua_helper.add_callback(lua, name, null); //just so that it gets called
+	}
+
 	#if LUA_ALLOWED
-	public function getBool(variable:String) {
+	public static function getBool(variable:String) {
 		if(lastCalledScript == null) return false;
 
 		var lua:State = lastCalledScript.lua;
@@ -3905,6 +3921,18 @@ class FunkinLua {
 
 		Lua.close(lua);
 		lua = null;
+
+		#if HSCRIPT_ALLOWED
+		if(ssHscript != null)
+		{
+			#if (SScript > "6.1.80" || SScript != "6.1.80")
+			ssHscript.destroy();
+			#else
+			ssHscript.kill();
+			#end
+			ssHscript = null;
+		}
+		#end
 		#end
 	}
 
@@ -3942,7 +3970,7 @@ class ModchartText extends FlxText
 
 class DebugLuaText extends FlxText
 {
-	private var disableTime:Float = 6;
+	public var disableTime:Float = 6;
 	public var parentGroup:FlxTypedGroup<DebugLuaText>;
 	public function new(text:String, parentGroup:FlxTypedGroup<DebugLuaText>, color:FlxColor) {
 		this.parentGroup = parentGroup;
