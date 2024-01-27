@@ -55,7 +55,7 @@ class ModchartFile
     public var data:ModchartJson = null;
     private var renderer:PlayfieldRenderer;
     public var scriptListen:Bool = false;
-    public var customModifiers:Map<String, CustomModifierScript> = new Map<String, CustomModifierScript>();
+    public var customModifiers:Map<String, SSHScript> = new Map<String, SSHScript>();
     public var hasDifficultyModchart:Bool = false; //so it loads false as default!
     
     public function new(renderer:PlayfieldRenderer)
@@ -233,7 +233,7 @@ class ModchartFile
                     if(file.endsWith('.hx')) //custom mods!!!!
                     {
                         var scriptStr = File.getContent(folderShit + file);
-                        var script = new SSHscript(scriptStr);
+                        var script = new SSHscript(null, scriptStr, null, true);
                         customModifiers.set(file.replace(".hx", ""), script);
                         trace('loaded custom mod: ' + file);
                     }
