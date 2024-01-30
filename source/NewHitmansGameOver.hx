@@ -756,7 +756,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
             {
                 camHUD.fade(FlxColor.BLACK, 2, false, function()
                 {
-                    MusicBeatState.resetState();
+                    MusicBeatState.switchState(new PlayState());
                 });
             });
             PlayState.instance.callOnLuas('onGameOverConfirm', [true]);

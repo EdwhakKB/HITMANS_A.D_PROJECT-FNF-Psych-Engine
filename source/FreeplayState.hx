@@ -513,14 +513,12 @@ class FreeplayState extends MusicBeatState
 					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 
 					trace('BOSS TIER: ' + bossTier);
-					
-					LoadingState.bossLevel = bossLvl;
-
 					trace('BOSS LEVEL: ' + bossLvl);
 
-					LoadingState.bossCharacter = bossChar;
-
-					LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7, bossTier);
+					if (!bossTier)
+						LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7);
+					else
+						openSubState(new BossTierSubstate(bossChar, bossLvl));
 
 					FlxG.sound.music.volume = 0;
 	

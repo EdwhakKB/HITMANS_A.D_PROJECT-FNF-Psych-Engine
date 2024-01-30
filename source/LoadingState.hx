@@ -2,7 +2,6 @@ package;
 
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxTiledSprite;
-import Shaders.GlitchyChromaticShader;
 import openfl.filters.ShaderFilter;
 import lime.app.Promise;
 import lime.app.Future;
@@ -180,13 +179,6 @@ class LoadingState extends MusicBeatState
 	// I'd recommend doing it on both actually lol
 	
 	// TO DO: Make this easier
-	
-	public static var bossLevel:Float = 0.0;
-	public static var bossCharacter:String = 'default';
-	var continueInput:Bool = false;
-	var continueTween:FlxTween;
-	
-	var isBoss:Bool = false;
 	var target:FlxState;
 	var stopMusic = false;
 	var directory:String;
@@ -201,18 +193,14 @@ class LoadingState extends MusicBeatState
 
 	var targetShit:Float = 0;
 
-	var vcrShader = new GlitchyChromaticShader();
-	var iTime:Float = 0.0;
-
 	public var loaderStuff:Array<Dynamic> = [false, 0.7];
 
-	public function new(target:FlxState, stopMusic:Bool, directory:String, ?isBoss:Bool = false, ?isBlack:Bool = false, ?time:Float = 0.7)
+	public function new(target:FlxState, stopMusic:Bool, directory:String, ?isBlack:Bool = false, ?time:Float = 0.7)
 	{
 		super();
 		this.target = target;
 		this.stopMusic = stopMusic;
 		this.directory = directory;
-		this.isBoss = isBoss;
 
 		loaderStuff[0] = isBlack;
 		loaderStuff[1] = time;
@@ -232,32 +220,12 @@ class LoadingState extends MusicBeatState
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
 
-		if (isBoss){
-			FlxG.sound.playMusic(Paths.sound('Edwhak/bosstier'), 0, true);
-			FlxG.sound.music.fadeIn(6, 0, 1);
-			new FlxTimer().start(12.5, function(tmr:FlxTimer) {
-				addShader();
-			});
-		}
-
-		continueText = new FlxText((FlxG.width/2) +(FlxG.width/4), FlxG.height-25-30, 0, "PRESS ENTER TO CONTINUE");
-		continueText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		continueText.alpha = 1;
-		continueText.visible = isBoss;
-		add(continueText);
-
 		loader = new AsyncAssetPreloader(function()
 		{
 			trace("Load time: " + loadTime);
-
-			if (!isBoss){
-				new FlxTimer().start(0.5, function(tmr:FlxTimer) {
-					onLoad();
-				});
-			}else{
-				continueInput = true;
-			}
-			trace("continueInput: " + continueInput);
+			new FlxTimer().start(0.5, function(tmr:FlxTimer) {
+				onLoad();
+			});
 		});
 		loader.load(true);
 
@@ -270,28 +238,26 @@ class LoadingState extends MusicBeatState
 		loadingText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(loadingText);
 
-		if (!isBoss){
-			initSongsManifest().onComplete
-			(
-				function (lib)
-				{
-					callbacks = new MultiCallback(()->{});
-					var introComplete = callbacks.add("introComplete");
-					/*if (PlayState.SONG != null) {
-						checkLoadSong(getSongPath());
-						if (PlayState.SONG.needsVoices)
-							checkLoadSong(getVocalPath());
-					}*/
-					checkLibrary("shared");
-					if(directory != null && directory.length > 0 && directory != 'shared') {
-						checkLibrary(directory);
-					}
-
-					var fadeTime = 0.5;
-					new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+		initSongsManifest().onComplete
+		(
+			function (lib)
+			{
+				callbacks = new MultiCallback(()->{});
+				var introComplete = callbacks.add("introComplete");
+				/*if (PlayState.SONG != null) {
+					checkLoadSong(getSongPath());
+					if (PlayState.SONG.needsVoices)
+						checkLoadSong(getVocalPath());
+				}*/
+				checkLibrary("shared");
+				if(directory != null && directory.length > 0 && directory != 'shared') {
+					checkLibrary(directory);
 				}
-			);
-		}
+
+				var fadeTime = 0.5;
+				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+			}
+		);
 	}
 	
 	function checkLoadSong(path:String)
@@ -326,35 +292,11 @@ class LoadingState extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		if (isBoss){
-		 	iTime += elapsed;
-			vcrShader.iTime.value = [iTime];
-		}
-
 		if (loader != null)
 		{
 			loadTime += elapsed;
 			lerpedPercent = FlxMath.lerp(lerpedPercent, loader.percent, elapsed*8);
 			loadingText.text = "Loading... (" + loader.loadedCount + "/" + (loader.totalLoadCount+1) + ")";
-		}
-		if (continueInput)
-		{
-			if (!isBoss)
-			{
-				if (controls.ACCEPT)
-				{
-					onLoad();
-					continueInput = false;
-				}
-			}else{
-				if (controls.ACCEPT)
-				{
-					new FlxTimer().start(5, function(tmr:FlxTimer) {
-						onLoad();
-					});
-					continueInput = false;
-				}
-			}
 		}
 	}
 	
@@ -376,12 +318,12 @@ class LoadingState extends MusicBeatState
 		return Paths.voices(PlayState.SONG.song);
 	}
 	
-	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false, ?isBlack:Bool = false, ?time:Float = 0.7, ?isBoss:Bool = false)
+	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false, ?isBlack:Bool = false, ?time:Float = 0.7)
 	{
-		MusicBeatState.switchState(getNextState(target, stopMusic, isBoss, isBlack, time), isBlack, time);
+		MusicBeatState.switchState(getNextState(target, stopMusic, isBlack, time), isBlack, time);
 	}
 	
-	static function getNextState(target:FlxState, stopMusic = false, ?isBoss:Bool = false, ?isBlack:Bool = false, ?time:Float = 0.7):FlxState
+	static function getNextState(target:FlxState, stopMusic = false, ?isBlack:Bool = false, ?time:Float = 0.7):FlxState
 	{
 		var directory:String = 'shared';
 		var weekDir:String = StageData.forceNextDirectory;
@@ -399,7 +341,7 @@ class LoadingState extends MusicBeatState
 		}
 		
 		if (!loaded)
-			return new LoadingState(target, stopMusic, directory, isBoss, isBlack, time);
+			return new LoadingState(target, stopMusic, directory, isBlack, time);
 
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
@@ -488,226 +430,6 @@ class LoadingState extends MusicBeatState
 		});
 
 		return promise.future;
-	}
-
-	function addShader(){
-		FlxG.camera.setFilters([new ShaderFilter(vcrShader)]);
-		vcrShader.GLITCH.value = [0.4];
-		new FlxTimer().start(1.5, function(tmr:FlxTimer) {
-			setupIntro(true);
-		});
-		new FlxTimer().start(3.5, function(tmr:FlxTimer) {
-			FlxG.camera.setFilters([]);
-			setupBossIntro(true);
-		});
-		new FlxTimer().start(19.5, function(tmr:FlxTimer) {
-			setupBossFight();
-			setupIntro(false);
-		});
-	}
-
-	function setupBossFight(){
-		var theEnemy = "none";
-		switch(bossCharacter.toLowerCase()){
-			case 'edwhak':
-				theEnemy = "edwhak";
-			case 'he':
-				theEnemy = "edwhak";
-			case 'edwhakbroken':
-				theEnemy = "edwhak";
-			case 'edkbmassacre':
-				theEnemy = "edwhak";
-			default:
-				theEnemy = bossCharacter.toLowerCase();
-		}
-		trace("Boss: " + theEnemy);
-		var vsCharacter = new FlxSprite(0, 0).loadGraphic(Paths.image('hitmans/vs/' + theEnemy));
-		if(vsCharacter.graphic == null) //if no graphic was loaded, then load the placeholder
-            vsCharacter.loadGraphic(Paths.image('hitmans/vs/placeHolder'));
-		vsCharacter.x = (FlxG.width - vsCharacter.width/2);
-		vsCharacter.y = (FlxG.height - vsCharacter.height/2);
-		vsCharacter.alpha = 0;
-		vsCharacter.color = 0x000000;
-
-		var vsText = new FlxText(0, 0, "VERSUS", 88).setFormat(Paths.font("DEADLY KILLERS.ttf"), 88, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		vsText.x = (FlxG.width/2 - vsText.width/2);
-		vsText.y = (FlxG.height/2 - vsText.height/2);
-
-		var vsBarBg = new FlxSprite(0, 0).loadGraphic(Paths.image('SimplyLoveHud/HealthBG'));
-		vsBarBg.x = (FlxG.width/2 - (vsBarBg.width/2) -100);
-		vsBarBg.y = (FlxG.height/2 - vsBarBg.height/2);
-
-		var vsBar = new FlxSprite(vsBarBg.x+4, vsBarBg.y+4).makeGraphic(280, 29, FlxColor.RED);
-		vsBar.origin.x = 0;
-		vsBar.scale.x = 0;
-
-		var vsBackGround = new FlxSprite(0, 0).loadGraphic(Paths.image('rating/background'));
-		vsBackGround.setGraphicSize(FlxG.width, FlxG.height);
-		vsBackGround.screenCenter();
-		vsBackGround.alpha = 0.25;
-
-		var vsBlackBG = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-
-		add(vsBlackBG);
-		add(vsBackGround);
-		add(vsCharacter);
-		add(vsText);
-		add(vsBarBg);
-		add(vsBar);
-	}
-
-	function setupIntro(enter:Bool = false){		
-		if(!enter){
-			var whiteFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
-			whiteFade.alpha = 1;
-			add(whiteFade);
-			FlxTween.tween(whiteFade, {alpha: 0}, 1, {ease: FlxEase.backInOut});
-		}else{
-			var blackFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-			blackFade.alpha = 0;
-			add(blackFade);
-
-			FlxTween.tween(blackFade, {alpha: 1 }, 2, {ease: FlxEase.quartOut});
-		}
-	}
-
-	function setupBossIntro(enter:Bool = false)
-	{
-		if(enter){
-			var bgBackDrop = new FlxBackdrop(Paths.image('bossCinematic/metal'));
-			bgBackDrop.screenCenter();
-			bgBackDrop.velocity.set(200,100);
-			bgBackDrop.alpha = 0;
-			add(bgBackDrop);
-
-			var hitmansEye = new FlxSprite(0, 0);
-			hitmansEye.frames = Paths.getSparrowAtlas('bossCinematic/InsanityEye');
-			hitmansEye.animation.addByPrefix('start', "InsanityEye attack_alert", 22, true);
-			hitmansEye.animation.addByPrefix('idle', "InsanityEye attack_alert0000", 24, false);
-			hitmansEye.animation.play('idle');
-			hitmansEye.screenCenter();
-			hitmansEye.alpha = 0;
-			add(hitmansEye);
-
-			var darkerGraphic = new FlxSprite(0, 0).makeGraphic(FlxG.width, 130, FlxColor.BLACK);
-			darkerGraphic.screenCenter(X);
-			darkerGraphic.y = (FlxG.height/2) - (darkerGraphic.height/2);
-			darkerGraphic.alpha = 0;
-			add(darkerGraphic);
-
-			var tapeBackdrop = new FlxBackdrop(Paths.image('bossCinematic/tape'), X);
-			tapeBackdrop.screenCenter(X);
-			tapeBackdrop.velocity.x = 400;
-			tapeBackdrop.alpha = 1;
-			tapeBackdrop.color = 0xAF0000;
-			tapeBackdrop.y -= tapeBackdrop.height;
-			add(tapeBackdrop);
-
-			var tapeBackdrop2 = new FlxBackdrop(Paths.image('bossCinematic/tape'), X);
-			tapeBackdrop2.screenCenter(X);
-			tapeBackdrop2.velocity.x = 400;
-			tapeBackdrop2.alpha = 1;
-			tapeBackdrop2.color = 0xAF0000;
-			tapeBackdrop2.y = FlxG.height;
-			add(tapeBackdrop2);
-
-			var alertAttackBG = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alertAttackBG'));
-			alertAttackBG.screenCenter();
-			alertAttackBG.alpha = 0;
-			alertAttackBG.color = 0x000000;
-			alertAttackBG.x -= 200;
-			alertAttackBG.scale.set(1.05,1.05);
-			add(alertAttackBG);
-
-			var alertAttack = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alertAttack'));
-			alertAttack.screenCenter();
-			alertAttack.alpha = 0;
-			alertAttack.color = 0x5C0000;
-			alertAttack.x -= 200;
-			add(alertAttack);
-
-			var warningText = new FlxText(0, 0, "!! CAUTION !!", 55).setFormat(Paths.font("DEADLY KILLERS.ttf"), 55, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			warningText.y = (FlxG.height/2) - (warningText.height/2) - 20;
-			warningText.x = alertAttack.x + 250;
-			warningText.borderSize = 2;
-			warningText.alpha = 0;
-			add(warningText);
-
-			var warningText2 = new FlxText(0, 0, "WE HAVE DETECTED A THREAT NEARBY", 22).setFormat(Paths.font("DEADLY KILLERS.ttf"), 22, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			warningText2.y = warningText.y + 65;
-			warningText2.x = alertAttack.x + 250;
-			warningText2.borderSize = 2;
-			warningText2.alpha = 0;
-			add(warningText2);
-
-			var warningText3 = new FlxText(0, 0, "INITIATING SECURITY PROTOCOL", 22).setFormat(Paths.font("DEADLY KILLERS.ttf"), 22, 0xffffffff, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			warningText3.y = warningText2.y + 25;
-			warningText3.x = alertAttack.x + 250;
-			warningText3.borderSize = 2;
-			warningText3.alpha = 0;
-			add(warningText3);
-
-			var vignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/vignette'));
-			vignette.setGraphicSize(FlxG.width, FlxG.height);
-			vignette.screenCenter();
-			vignette.alpha = 1;
-			add(vignette);
-
-			var alertVignette = new FlxSprite(0, 0).loadGraphic(Paths.image('bossCinematic/alert-vignette'));
-			alertVignette.setGraphicSize(FlxG.width, FlxG.height);
-			alertVignette.screenCenter();
-			alertVignette.alpha = 0;
-			add(alertVignette);
-
-			FlxTween.tween(hitmansEye, {alpha: 1}, 4, 
-				{
-					type: FlxTweenType.PINGPONG,
-					ease: FlxEase.cubeInOut
-				}
-			);
-
-			FlxTween.tween(bgBackDrop, {alpha: 0.25}, 4, 
-				{
-					type: FlxTweenType.PINGPONG,
-					ease: FlxEase.cubeInOut
-				}
-			);
-
-			FlxTween.tween(alertVignette, {alpha: 0.4}, 2, 
-				{
-					type: FlxTweenType.PINGPONG,
-					ease: FlxEase.cubeInOut
-				}
-			);
-
-
-			new FlxTimer().start(2, function(tmr:FlxTimer) {
-				FlxTween.tween(tapeBackdrop, {y: (FlxG.height/2) - (tapeBackdrop.height/2) - 75}, 2, {ease: FlxEase.cubeInOut});
-				FlxTween.tween(tapeBackdrop2, {y: (FlxG.height/2) + (tapeBackdrop2.height/2) + 45}, 2, {ease: FlxEase.cubeInOut});
-			});
-
-			new FlxTimer().start(3, function(tmr:FlxTimer) {
-				FlxTween.tween(darkerGraphic, {alpha: 0.6}, 2, {ease: FlxEase.cubeInOut});
-			});
-
-			new FlxTimer().start(4, function(tmr:FlxTimer) {
-				FlxTween.tween(alertAttack, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
-				FlxTween.tween(alertAttackBG, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
-			});
-
-			new FlxTimer().start(4, function(tmr:FlxTimer) {
-				FlxTween.tween(warningText, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
-			});
-
-			new FlxTimer().start(6, function(tmr:FlxTimer) {
-				FlxTween.tween(warningText2, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
-				FlxTween.tween(warningText3, {alpha: 1}, 2, {ease: FlxEase.cubeInOut});
-			});
-
-			new FlxTimer().start(8, function(tmr:FlxTimer) {
-				hitmansEye.animation.play('start');
-			});
-		}
 	}
 }
 

@@ -334,9 +334,9 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.changedDifficulty = true;
 					practiceText.visible = PlayState.instance.practiceMode;
 				case "Restart Song":
-					restartSong();
+					restartSong(false, true);
 				case "Leave Charting Mode":
-					restartSong();
+					restartSong(false, true);
 					PlayState.chartingMode = false;
 				case 'Skip Time':
 					if(curTime < Conductor.songPosition)
@@ -491,7 +491,7 @@ class PauseSubState extends MusicBeatSubstate
 		skipTimeTracker = null;
 	}
 
-	public static function restartSong(noTrans:Bool = false)
+	public static function restartSong(noTrans:Bool = false, ?isReset:Bool = false)
 	{
 		PlayState.instance.paused = true; // For lua
 		FlxG.sound.music.volume = 0;
@@ -504,7 +504,10 @@ class PauseSubState extends MusicBeatSubstate
 		}
 		else
 		{
-			MusicBeatState.resetState();
+			if (!isReset)
+				MusicBeatState.resetState();
+			else
+				LoadingState.loadAndSwitchState(new PlayState(), true, true, 0.5);
 		}
 	}
 

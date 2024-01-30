@@ -3336,16 +3336,9 @@ class PlayState extends MusicBeatState
 			}
 		}else if (((skipHealthCheck && instakillOnMiss) || health <= 0) && practiceMode && !diedPractice){
 			diedPractice = true; //bro died in practice mode LMAO
-			var youdied:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/Edwhak/Hitmans/newGameOver/youdied.png', IMAGE));
-        	youdied.screenCenter();
-        	youdied.scale.y = 2;
-        	youdied.scale.x = 2;
-        	youdied.alpha = 1;
+			var youdied:huds.DiedHud = new huds.DiedHud();
 			youdied.cameras = [camOther];
-        	youdied.antialiasing = ClientPrefs.globalAntialiasing;
         	add(youdied);
-			FlxTween.tween(youdied.scale, {x: 0.5, y: 0.5}, 1, {ease:FlxEase.elasticOut});
-			FlxTween.tween(youdied, {alpha: 0}, 2, {ease:FlxEase.expoOut});
 		}
 		return false;
 	}
