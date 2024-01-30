@@ -120,8 +120,9 @@ class Main extends Sprite
 
 		ClientPrefs.loadPrefs();
 
-		#if ACHIEVEMENTS_ALLOWED Achievements.load(); 
-		ClientPrefs.alreadyLoadedAchievements = true; #end
+		#if ACHIEVEMENTS_ALLOWED 
+		Achievements.load(); 
+		#end
 
 		
 		FlxGraphic.defaultPersist = false;

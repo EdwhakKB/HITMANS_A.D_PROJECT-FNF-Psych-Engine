@@ -146,6 +146,7 @@ class ClientPrefs {
 	}
 
 	public static function saveSettings() {
+		#if ACHIEVEMENTS_ALLOWED Achievements.save(); #end
 		FlxG.save.data.downScroll = downScroll;
 		FlxG.save.data.middleScroll = middleScroll;
 		FlxG.save.data.opponentStrums = opponentStrums;
@@ -204,8 +205,6 @@ class ClientPrefs {
 
 		FlxG.save.data.developerMode = developerMode;
 		FlxG.save.data.edwhakMode = edwhakMode;
-
-		#if ACHIEVEMENTS_ALLOWED Achievements.save(); #end
 	
 		FlxG.save.flush();
 
@@ -216,12 +215,8 @@ class ClientPrefs {
 		FlxG.log.add("Settings saved!");
 	}
 
-	#if ACHIEVEMENTS_ALLOWED
-	public static var alreadyLoadedAchievements:Bool = false;
-	#end
-
 	public static function loadPrefs() {
-		#if ACHIEVEMENTS_ALLOWED if (!alreadyLoadedAchievements) Achievements.load(); #end
+		#if ACHIEVEMENTS_ALLOWED Achievements.load(); #end
 		if(FlxG.save.data.downScroll != null) {
 			downScroll = FlxG.save.data.downScroll;
 		}
