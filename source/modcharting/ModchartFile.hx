@@ -55,7 +55,7 @@ class ModchartFile
     public var data:ModchartJson = null;
     private var renderer:PlayfieldRenderer;
     public var scriptListen:Bool = false;
-    public var customModifiers:Map<String, SSHScript> = new Map<String, SSHScript>();
+    public var customModifiers:Map<String, CustomModifierScript> = new Map<String, CustomModifierScript>();
     public var hasDifficultyModchart:Bool = false; //so it loads false as default!
     
     public function new(renderer:PlayfieldRenderer)
@@ -233,7 +233,7 @@ class ModchartFile
                     if(file.endsWith('.hx')) //custom mods!!!!
                     {
                         var scriptStr = File.getContent(folderShit + file);
-                        var script = new SSHScript(null, scriptStr, null);
+                        var script = new CustomModifierScript(scriptStr);
                         customModifiers.set(file.replace(".hx", ""), script);
                         trace('loaded custom mod: ' + file);
                     }
@@ -320,5 +320,96 @@ class ModchartFile
 
         data.playfields = renderer.playfields.length;
         scriptListen = true;
+    }
+}
+
+class CustomModifierScript
+{
+    public var interp:Interp = null;
+    var script:Expr;
+    var parser:Parser;
+    public function new(scriptStr:String)
+    {
+        parser = new Parser();
+        parser.allowTypes = true;
+        parser.allowMetadata = true;
+        parser.allowJSON = true;
+        
+        try
+        {
+            interp = new Interp();
+            script = parser.parseString(scriptStr); //load da shit
+            interp.execute(script);
+        }
+        catch(e)
+        {
+            lime.app.Application.current.window.alert(e.message, 'Error on custom mod .hx!');
+            return;
+        }
+        init();
+    }
+    private function init()
+    {
+        if (interp == null)
+            return;
+
+
+        interp.variables.set('Math', Math);
+        interp.variables.set('PlayfieldRenderer', PlayfieldRenderer);
+        interp.variables.set('ModchartUtil', ModchartUtil);
+        interp.variables.set('Modifier', Modifier);
+        interp.variables.set('ModifierSubValue', Modifier.ModifierSubValue);
+        interp.variables.set('BeatXModifier', Modifier.BeatXModifier);
+        interp.variables.set('NoteMovement', NoteMovement);
+        interp.variables.set('NotePositionData', NotePositionData);
+        interp.variables.set('ModchartFile', ModchartFile);
+        interp.variables.set('FlxG', flixel.FlxG);
+		interp.variables.set('FlxSprite', flixel.FlxSprite);
+        interp.variables.set('FlxMath', FlxMath);
+		interp.variables.set('FlxCamera', flixel.FlxCamera);
+		interp.variables.set('FlxTimer', flixel.util.FlxTimer);
+		interp.variables.set('FlxTween', flixel.tweens.FlxTween);
+		interp.variables.set('FlxEase', flixel.tweens.FlxEase);
+		interp.variables.set('PlayState', PlayState);
+		interp.variables.set('game', PlayState.instance);
+		interp.variables.set('Paths', Paths);
+		interp.variables.set('Conductor', Conductor);
+        interp.variables.set('StringTools', StringTools);
+        interp.variables.set('Note', Note);
+
+        #if PSYCH
+        interp.variables.set('ClientPrefs', ClientPrefs);
+        interp.variables.set('ColorSwap', ColorSwap);
+        #end
+
+        
+    }
+    public function call(event:String, args:Array<Dynamic>)
+    {
+        if (interp == null)
+            return;
+        if (interp.variables.exists(event)) //make sure it exists
+        {
+            try
+            {
+                if (args.length > 0)
+                    Reflect.callMethod(null, interp.variables.get(event), args);
+                else
+                    interp.variables.get(event)(); //if function doesnt need an arg
+            }
+            catch(e)
+            {
+                lime.app.Application.current.window.alert(e.message, 'Error on custom mod .hx!');
+            }
+        }
+    }
+    public function initMod(mod:Modifier)
+    {
+        call("initMod", [mod]);
+    }
+
+    public function destroy()
+    {
+        interp = null;
     }
 }

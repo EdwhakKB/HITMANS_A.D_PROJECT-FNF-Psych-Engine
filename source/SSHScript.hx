@@ -215,30 +215,30 @@ class SSHScript extends SScript
 		set('insert', FlxG.state.insert);
 		set('remove', FlxG.state.remove);
 
-		#if modchartingTools
-		set('Math', Math);
-		set('ModchartEditorState', modcharting.ModchartEditorState);
-		set('ModchartEvent', modcharting.ModchartEvent);
-		set('ModchartEventManager', modcharting.ModchartEventManager);
-		set('ModchartFile', modcharting.ModchartFile);
-		set('ModchartFuncs', modcharting.ModchartFuncs);
-		set('ModchartMusicBeatState', modcharting.ModchartMusicBeatState);
-		set('ModchartUtil', modcharting.ModchartUtil);
-		for (i in ['mod', 'Modifier'])
-			set(i, modcharting.Modifier); //the game crashes without this???????? what??????????? -- fue glow
-		set('ModifierSubValue', modcharting.Modifier.ModifierSubValue);
-		set('ModTable', modcharting.ModTable);
-		set('NoteMovement', modcharting.NoteMovement);
-		set('NotePositionData', modcharting.NotePositionData);
-		set('Playfield', modcharting.Playfield);
-		set('PlayfieldRenderer', modcharting.PlayfieldRenderer);
-		set('SimpleQuaternion', modcharting.SimpleQuaternion);
-		set('SustainStrip', modcharting.SustainStrip);
+		// #if modchartingTools
+		// set('Math', Math);
+		// set('ModchartEditorState', modcharting.ModchartEditorState);
+		// set('ModchartEvent', modcharting.ModchartEvent);
+		// set('ModchartEventManager', modcharting.ModchartEventManager);
+		// set('ModchartFile', modcharting.ModchartFile);
+		// set('ModchartFuncs', modcharting.ModchartFuncs);
+		// set('ModchartMusicBeatState', modcharting.ModchartMusicBeatState);
+		// set('ModchartUtil', modcharting.ModchartUtil);
+		// for (i in ['mod', 'Modifier'])
+		// 	set(i, modcharting.Modifier); //the game crashes without this???????? what??????????? -- fue glow
+		// set('ModifierSubValue', modcharting.Modifier.ModifierSubValue);
+		// set('ModTable', modcharting.ModTable);
+		// set('NoteMovement', modcharting.NoteMovement);
+		// set('NotePositionData', modcharting.NotePositionData);
+		// set('Playfield', modcharting.Playfield);
+		// set('PlayfieldRenderer', modcharting.PlayfieldRenderer);
+		// set('SimpleQuaternion', modcharting.SimpleQuaternion);
+		// set('SustainStrip', modcharting.SustainStrip);
 
-		//Why?
-		set('BeatXModifier', modcharting.Modifier.BeatXModifier);
-		//if (PlayState.instance != null && PlayState.SONG != null && !isHxStage && PlayState.SONG.notITG && PlayState.instance.notITGMod)
-		#end
+		// //Why?
+		// set('BeatXModifier', modcharting.Modifier.BeatXModifier);
+		// //if (PlayState.instance != null && PlayState.SONG != null && !isHxStage && PlayState.SONG.notITG && PlayState.instance.notITGMod)
+		// #end
 
 		modcharting.ModchartFuncs.loadHScriptFunctions(this);
 
@@ -396,10 +396,5 @@ class SSHScript extends SScript
 		active = false;
 	}
 	#end
-
-	public function initMod(mod:modcharting.Modifier)
-    {
-        call("initMod", [mod]);
-    }
 }
 #end
