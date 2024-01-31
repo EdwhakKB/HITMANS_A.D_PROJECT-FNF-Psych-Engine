@@ -205,7 +205,7 @@ class BossTierState extends MusicBeatState
 	}
 
 	function setupIntro(enter:Bool = false){
-		var result:Dynamic = callOnHScript('setupIntro');
+		var result:Dynamic = callOnHScript('setupIntro', [enter]);
 		if (result != null)
 			return;
         var blackFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
@@ -218,6 +218,13 @@ class BossTierState extends MusicBeatState
 	{
 
     }
+
+	override public function stepHit()
+	{
+		super.stepHit();
+
+		callOnHScript('onStepHit');
+	}
 
 	public function callOnHScript(funcToCall:String, args:Array<Dynamic> = null, ?ignoreStops:Bool = false, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
 		var returnVal:Dynamic = FunkinLua.Function_Continue;
