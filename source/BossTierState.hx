@@ -23,11 +23,6 @@ import sys.FileSystem;
 
 using StringTools;
 
-class BossIntro extends FlxSpriteGroup
-{
-		
-}
-
 class BossTierState extends MusicBeatState
 {
 	private var camBoss:FlxCamera;
@@ -74,8 +69,6 @@ class BossTierState extends MusicBeatState
 		callOnHScript('onCreate');
         super.create();
 		callOnHScript('onCreatePost');
-
-        setupIntro(true);
 
         continueText = new FlxText((FlxG.width/2) +(FlxG.width/4), FlxG.height-25-30, 0, "PRESS ENTER TO CONTINUE");
 		continueText.setFormat(Paths.font("DEADLY KILLERS.ttf"), 24, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -159,9 +152,9 @@ class BossTierState extends MusicBeatState
 	}
 
 	function setupBossFight(){
-		var result:Dynamic = callOnHScript('setupBossFight');
-		if (result != null)
-			return;
+		// var result:Dynamic = callOnHScript('setupBossFight');
+		// if (result != null)
+		// 	return;
 		var theEnemy = "none";
 		switch(bossCharacter.toLowerCase()){
 			case 'edwhak':
@@ -205,9 +198,9 @@ class BossTierState extends MusicBeatState
 	}
 
 	function setupIntro(enter:Bool = false){
-		var result:Dynamic = callOnHScript('setupIntro', [enter]);
-		if (result != null)
-			return;
+		// var result:Dynamic = callOnHScript('setupIntro', [enter]);
+		// if (result != null)
+		// 	return;
         var blackFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
         blackFade.alpha = enter ? 0 : 1;
         add(blackFade);

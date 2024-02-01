@@ -517,7 +517,7 @@ class FreeplayState extends MusicBeatState
 
 					if (!bossTier)
 						LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7);
-					else LoadingState.loadAndSwitchState(new BossTierState(bossChar, bossLvl), false, true, 0.7);
+					else MusicBeatState.switchState(new BossTierState(bossChar, bossLvl), true, 0.7);
 
 					FlxG.sound.music.volume = 0;
 	
