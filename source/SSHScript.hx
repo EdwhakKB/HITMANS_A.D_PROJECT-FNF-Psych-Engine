@@ -65,7 +65,6 @@ class SSHScript extends SScript
 	var varsToBring:Any = null;
 	override function preset()
 	{
-		#if (SScript >= "3.0.0")
 		super.preset();
 
 		// Some very commonly used classes
@@ -261,7 +260,6 @@ class SSHScript extends SScript
 			}
 			varsToBring = null;
 		}
-		#end
 	}
 
 	public function executeCode(?funcToRun:String = null, ?funcArgs:Array<Dynamic> = null):SCall

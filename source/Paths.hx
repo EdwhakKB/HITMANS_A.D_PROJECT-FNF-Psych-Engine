@@ -327,6 +327,22 @@ class Paths
 		return Paths.json(song + "/events");
 	}
 
+	
+	inline static public function scriptsForHandler(key:String, defaultPlace:String = null):String
+	{
+		if (defaultPlace == null) defaultPlace = 'classes';
+
+		#if MODS_ALLOWED
+		if (FileSystem.exists(modFolders('$defaultPlace/$key.hx')))
+			return modFolders('$defaultPlace/$key.hx');
+		#end
+		if (FileSystem.exists(getPreloadPath('$defaultPlace/$key.hx')))
+			return getPreloadPath('$defaultPlace/$key.hx');
+
+		trace('File for script $key.hx not found!');
+		return null;
+	}
+
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
 		#if sys
