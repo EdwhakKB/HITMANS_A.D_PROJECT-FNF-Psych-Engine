@@ -43,6 +43,10 @@ class BossTierState extends MusicBeatState
 
     override public function create()
     {
+		camBoss = new FlxCamera();
+		FlxG.cameras.reset(camBoss);
+		FlxG.cameras.setDefaultDrawTarget(camBoss, true);
+
 		persistentUpdate = true;
 		persistentDraw = true;
 		bossScript = new ScriptHandler(Paths.scriptsForHandler(bossCharacter, 'data/boss'));
@@ -75,6 +79,9 @@ class BossTierState extends MusicBeatState
 	{
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
+
+		if (controls.ACCEPT)
+			LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7);
 
 		bossScript.callFunc('onUpdate', [elapsed]);
 		bossScript.callFunc('onUpdatePost', [elapsed]);
@@ -142,5 +149,13 @@ class BossTierState extends MusicBeatState
 
 		bossScript.setVar('curStep', [curStep]);
 		bossScript.callFunc('onStepHit', [curStep]);
+	}
+
+	override public function destroy()
+	{
+		super.destroy();
+
+		bossScript.callFunc('onDestroy', []);
+		bossScript.destroy();
 	}
 }

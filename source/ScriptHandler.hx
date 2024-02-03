@@ -142,10 +142,10 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
                 case 'x':
                     spr.x = (FlxG.width - spr.width) / 2;
                 case 'y':
-                    spr.y = (FlxG.width - spr.height) / 2;
+                    spr.y = (FlxG.height - spr.height) / 2;
                 default:
                     spr.x = (FlxG.width - spr.width) / 2;
-                    spr.y = (FlxG.width - spr.height) / 2;
+                    spr.y = (FlxG.height - spr.height) / 2;
             }
         });
 
@@ -237,4 +237,12 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
         #end
 		return null;
 	}
+
+	// override public function destroy()
+	// {
+	// 	scriptFile = null;
+	// 	interp = null;
+
+	// 	super.destroy();
+	// }
 }
