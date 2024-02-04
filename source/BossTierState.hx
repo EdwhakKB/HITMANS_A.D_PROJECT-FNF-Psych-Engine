@@ -153,9 +153,12 @@ class BossTierState extends MusicBeatState
 
 	override public function destroy()
 	{
+		if (bossScript != null)
+		{
+			bossScript.callFunc('onDestroy', []);
+			bossScript.destroy();
+			bossScript = null;
+		}
 		super.destroy();
-
-		bossScript.callFunc('onDestroy', []);
-		bossScript.destroy();
 	}
 }
