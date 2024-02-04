@@ -2,7 +2,7 @@ package;
 
 import flixel.*;
 import flixel.util.FlxColor;
-
+import flixel.util.FlxAxes;
 
 #if LUA_ALLOWED
 import FunkinLua;
@@ -240,6 +240,19 @@ class SSHScript extends SScript
 		// #end
 
 		modcharting.ModchartFuncs.loadHScriptFunctions(this);
+
+		set('setAxes', function(fromString:Bool, axes:String, xAxes:Bool, yAxes:Bool, bothAxes:Bool)
+		{
+			if (fromString)
+				return FlxAxes.fromString(axes);
+			else if (xAxes)
+				return FlxAxes.X;
+			else if (yAxes)
+				return FlxAxes.Y;
+			else if (bothAxes)
+				return FlxAxes.XY;
+			return FlxAxes.fromString('XY');
+		});
 
 		if(PlayState.instance == FlxG.state)
 		{
