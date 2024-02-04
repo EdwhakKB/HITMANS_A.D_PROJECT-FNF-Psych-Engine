@@ -4250,8 +4250,8 @@ class PlayState extends MusicBeatState
 						opponentNoteHit(daNote);
 					}
 			});
-
-			playerDance();
+			if (!parsedHoldArray.contains(true) || endingSong)
+				playerDance();
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
