@@ -3331,7 +3331,7 @@ class PlayState extends MusicBeatState
 			}
 		}else if (((skipHealthCheck && instakillOnMiss) || health <= 0) && practiceMode && !diedPractice){
 			diedPractice = true; //bro died in practice mode LMAO
-			var youdied:huds.DiedHud = new huds.DiedHud();
+			var youdied:huds.DiedHud = new huds.DiedHud(deathVariableTXT); //should work ig?
 			youdied.cameras = [camOther];
         	add(youdied);
 		}

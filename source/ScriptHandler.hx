@@ -37,12 +37,15 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
 {
 	var ignoreErrors:Bool = false;
 	var hxFileName:String = '';
+	public var disabled:Bool = false;
 
 	public function new(file:String, ?preset:Bool = true)
 	{
         #if HSCRIPT_ALLOWED
-		if (file == null)
+		if (file == null){
+			disabled = true;
 			return;
+		}
 		hxFileName = file;
 		trace('Running script: ' + hxFileName);
 		trace('haxe file loaded succesfully:' + hxFileName);

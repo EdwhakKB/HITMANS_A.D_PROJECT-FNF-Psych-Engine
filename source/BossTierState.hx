@@ -49,15 +49,30 @@ class BossTierState extends MusicBeatState
 
 		persistentUpdate = true;
 		persistentDraw = true;
-		bossScript = new ScriptHandler(Paths.scriptsForHandler(bossCharacter, 'data/boss'));
 
-		bossScript.setVar('BossTierState', this);
-		bossScript.setVar('add', add);
-		bossScript.setVar('insert', insert);
-		bossScript.setVar('members', members);
-		bossScript.setVar('remove', remove);
+		var loadEnemy = "none";
+		switch(bossCharacter.toLowerCase()){
+			case 'edwhak', 'he', 'edwhakbroken', 'edkbmassacre':
+				loadEnemy = "edwhak";
+			default:
+				loadEnemy = bossCharacter;
+		}
 
-		bossScript.callFunc('onCreate', []);
+		bossScript = new ScriptHandler(Paths.scriptsForHandler(loadEnemy, 'data/boss'));
+
+		if (bossScript.disabled){
+			trace('boss script is null, using in source version');
+		}
+
+		if (!bossScript.disabled){
+			bossScript.setVar('BossTierState', this);
+			bossScript.setVar('add', add);
+			bossScript.setVar('insert', insert);
+			bossScript.setVar('members', members);
+			bossScript.setVar('remove', remove);
+
+			bossScript.callFunc('onCreate', []);
+		}
 
         super.create();
 
@@ -67,12 +82,15 @@ class BossTierState extends MusicBeatState
 		continueText.visible = false;
 		add(continueText);
 
-		bossScript.callFunc('onCreatePost', []);
+		if (!bossScript.disabled)
+			bossScript.callFunc('onCreatePost', []);
 
-       /*new FlxTimer().start(1, function(twn:FlxTimer) {
-            setupBossFight();
-            setupIntro(false);
-        });*/
+		if (bossScript.disabled){
+			new FlxTimer().start(1, function(twn:FlxTimer) {
+				setupBossFight();
+				setupIntro(true);
+			});
+		}	
     }
 
 	override public function update(elapsed:Float)
@@ -83,13 +101,17 @@ class BossTierState extends MusicBeatState
 		if (controls.ACCEPT)
 			LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7);
 
-		bossScript.callFunc('onUpdate', [elapsed]);
-		bossScript.callFunc('onUpdatePost', [elapsed]);
+		if(!bossScript.disabled){
+			bossScript.callFunc('onUpdate', [elapsed]);
+			bossScript.callFunc('onUpdatePost', [elapsed]);
+		}
 		super.update(elapsed);
 	}
 
 	function setupBossFight(){
-		bossScript.callFunc('setupBossFight', []);
+		if(!bossScript.disabled)
+			bossScript.callFunc('setupBossFight', []);
+
 		var theEnemy = "none";
 		switch(bossCharacter.toLowerCase()){
 			case 'edwhak', 'he', 'edwhakbroken', 'edkbmassacre':
@@ -127,37 +149,39 @@ class BossTierState extends MusicBeatState
 	}
 
 	function setupIntro(enter:Bool = false){
-		bossScript.callFunc('setupIntro', []);
+		if(!bossScript.disabled)
+			bossScript.callFunc('setupIntro', [enter]);
+
+		var blackFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, CustomFlxColor.BLACK);
+		blackFade.alpha = enter ? 1 : 0;
+		add(blackFade);
+		FlxTween.tween(blackFade, {alpha: enter ? 0 : 1}, 1, {ease: FlxEase.quadInOut});
 	}
-
-	function setupBossIntro(boss:String = 'none')
-	{
-
-    }
 
 	override public function beatHit()
 	{
 		super.beatHit();
 
-		bossScript.setVar('curBeat', [curBeat]);
-		bossScript.callFunc('onBeatHit', [curBeat]);
+		if(!bossScript.disabled){
+			bossScript.setVar('curBeat', [curBeat]);
+			bossScript.callFunc('onBeatHit', [curBeat]);
+		}
 	}
 
 	override public function stepHit()
 	{
 		super.stepHit();
-
-		bossScript.setVar('curStep', [curStep]);
-		bossScript.callFunc('onStepHit', [curStep]);
+		if(!bossScript.disabled){
+			bossScript.setVar('curStep', [curStep]);
+			bossScript.callFunc('onStepHit', [curStep]);
+		}
 	}
 
 	override public function destroy()
 	{
-		if (bossScript != null)
-		{
+		if(!bossScript.disabled){
 			bossScript.callFunc('onDestroy', []);
 			bossScript.destroy();
-			bossScript = null;
 		}
 		super.destroy();
 	}

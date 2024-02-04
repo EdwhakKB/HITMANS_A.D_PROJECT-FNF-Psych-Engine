@@ -48,9 +48,11 @@ class DiedHud extends FlxGroup
     var time:FlxText;
 
 
-	public function new()
+	public function new(noteWhoKilled:String = "notes")
 	{
 		super();
+
+		diedTo = noteWhoKilled; //so i make sure that the noteWhoKilled is set in the function ig?
 
         CoolUtil.precacheImage("overlays/ctr","image");
 		if (ClientPrefs.downScroll)
