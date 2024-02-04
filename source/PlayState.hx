@@ -2895,26 +2895,21 @@ class PlayState extends MusicBeatState
 			// Conductor.lastSongPos = FlxG.sound.music.time;
 		}
 
-		#if desktop
-		if (songStarted)
+		var shaderThing = FunkinLua.lua_Shaders;
+
+		for(shaderKey in shaderThing.keys())
 		{
-			var shaderThing = FunkinLua.lua_Shaders;
-
-			for(shaderKey in shaderThing.keys())
-			{
-				if(shaderThing.exists(shaderKey))
-					shaderThing.get(shaderKey).update(elapsed);
-			}
-
-			var shaderThing2 = FunkinLua.lua_Custom_Shaders;
-
-			for(shaderKey2 in shaderThing2.keys())
-			{
-				if(shaderThing2.exists(shaderKey2))
-					shaderThing2.get(shaderKey2).update(elapsed);
-			}
+			if(shaderThing.exists(shaderKey))
+				shaderThing.get(shaderKey).update(elapsed);
 		}
-		#end
+
+		var shaderThing2 = FunkinLua.lua_Custom_Shaders;
+
+		for(shaderKey2 in shaderThing2.keys())
+		{
+			if(shaderThing2.exists(shaderKey2))
+				shaderThing2.get(shaderKey2).update(elapsed);
+		}
 
 		while (threadbeat.length > 0 && threadbeat[0] != null && curDecBeat >= threadbeat[0].beat) {
 			threadbeat[0].func();
