@@ -3012,18 +3012,26 @@ class FunkinLua {
             }
         });
         Lua_helper.add_callback(lua,"setActorShader", function(actorStr:String, shaderName:String) {
-            var shad = lua_Shaders.get(shaderName);
-            var actor = getActorByName(actorStr);
-            
+			var shad = lua_Shaders.get(shaderName);
+			var actor = getActorByName(actorStr);
+			var spr:FlxSprite = PlayState.instance.getLuaObject(actorStr);
+	
+			if(spr==null){
+				var split:Array<String> = actorStr.split('.');
+				spr = getObjectDirectly(split[0]);
+				if(split.length > 1) {
+					spr = getVarInArray(getPropertyLoopThingWhatever(split), split[split.length-1]);
+				}
+			}
 
-            if(actor != null && shad != null)
-            {
-                actor.shader = Reflect.getProperty(shad, 'shader'); //use reflect to workaround compiler errors
-
-                //trace('added shader '+shaderName+" to " + actorStr);
-
-            }else if(actor == null && shad == null){
-				return;
+			if (shad != null)
+			{
+				if (spr != null)
+					spr.shader = Reflect.getProperty(shad, 'shader');
+				if (actor != null)
+					actor.shader = Reflect.getProperty(shad, 'shader');
+				
+				if (actor == null && spr == null) trace('Actor and spr are both null!');
 			}
         });
 
