@@ -275,7 +275,7 @@ class SSHScript extends SScript
 		}
 	}
 
-	public function executeCode(?funcToRun:String = null, ?funcArgs:Array<Dynamic> = null):SCall
+	public function executeCode(?funcToRun:String = null, ?funcArgs:Array<Dynamic> = null): #if (SScript >= "6.1.8") TeaCall #else SCall #end
 	{
 		if (funcToRun == null) return null;
 
@@ -310,7 +310,7 @@ class SSHScript extends SScript
 		return callValue;
 	}
 
-	public function executeFunction(funcToRun:String = null, funcArgs:Array<Dynamic>):SCall
+	public function executeFunction(funcToRun:String = null, funcArgs:Array<Dynamic>): #if (SScript >= "6.1.8") TeaCall #else SCall #end
 	{
 		if (funcToRun == null)
 			return null;
@@ -324,7 +324,7 @@ class SSHScript extends SScript
 		funk.addLocalCallback("runSSHaxeCode", function(codeToRun:String, ?varsToBring:Any = null, ?funcToRun:String = null, ?funcArgs:Array<Dynamic> = null):Dynamic {
 			#if (SScript >= "3.0.0")
 			initHaxeModuleCode(funk, codeToRun, varsToBring);
-			var retVal:SCall = funk.ssHscript.executeCode(funcToRun, funcArgs);
+			var retVal: #if (SScript >= "6.1.8") TeaCall #else SCall #end = funk.ssHscript.executeCode(funcToRun, funcArgs);
 			retVal = funk.ssHscript.executeCode(funcToRun, funcArgs);
 			if (retVal != null)
 			{
