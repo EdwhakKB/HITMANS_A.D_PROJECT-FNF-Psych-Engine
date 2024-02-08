@@ -113,35 +113,19 @@ class DiscordClient
 
 	public static function changePresence(details:String, state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)
 	{
-		if (ClientPrefs.discordRPC){
-			var startTimestamp:Float = 0;
-			if (hasStartTimestamp) startTimestamp = Date.now().getTime();
-			if (endTimestamp > 0) endTimestamp = startTimestamp + endTimestamp;
+		var startTimestamp:Float = 0;
+		if (hasStartTimestamp) startTimestamp = Date.now().getTime();
+		if (endTimestamp > 0) endTimestamp = startTimestamp + endTimestamp;
 
-			_options.details = details;
-			_options.state = state;
-			_options.largeImageKey = 'icon';
-			_options.largeImageText = "Hitmans Version: " + MainMenuState.psychEngineVersion;
-			_options.smallImageKey = smallImageKey;
-			// Obtained times are in milliseconds so they are divided so Discord can use it
-			_options.startTimestamp = Std.int(startTimestamp / 1000);
-			_options.endTimestamp = Std.int(endTimestamp / 1000);
-			DiscordRpc.presence(_options);
-		}else{
-			var startTimestamp:Float = 0;
-			if (hasStartTimestamp) startTimestamp = Date.now().getTime();
-			if (endTimestamp > 0) endTimestamp = startTimestamp + endTimestamp;
-
-			_options.details = 'CENSORED';
-			_options.state = 'NO LEAKS HERE';
-			_options.largeImageKey = 'icon';
-			_options.largeImageText = "Hitmans Version: " + MainMenuState.psychEngineVersion;
-			_options.smallImageKey = smallImageKey;
-			// Obtained times are in milliseconds so they are divided so Discord can use it
-			_options.startTimestamp = Std.int(startTimestamp / 1000);
-			_options.endTimestamp = Std.int(endTimestamp / 1000);
-			DiscordRpc.presence(_options);
-		}
+		_options.details = ClientPrefs.discordRPC ? details : "CENSORED ";
+		_options.state = ClientPrefs.discordRPC ? state : "NO LEAKS HERE";
+		_options.largeImageKey = 'icon';
+		_options.largeImageText = "Hitmans Version: " + MainMenuState.psychEngineVersion;
+		_options.smallImageKey = smallImageKey;
+		// Obtained times are in milliseconds so they are divided so Discord can use it
+		_options.startTimestamp = Std.int(startTimestamp / 1000);
+		_options.endTimestamp = Std.int(endTimestamp / 1000);
+		DiscordRpc.presence(_options);
 
 		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
 	}

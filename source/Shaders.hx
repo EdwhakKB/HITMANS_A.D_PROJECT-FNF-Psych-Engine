@@ -174,7 +174,7 @@ class TunnelFractShader extends FlxShader
     }
 }
 
-class ScrollEffect extends ShaderEffectNew
+class ScrollWarpEffect extends ShaderEffectNew
 {
     public var shader:ScrollShader = new ScrollShader();
     public var timeMulti(default, set):Float = 0.2;
