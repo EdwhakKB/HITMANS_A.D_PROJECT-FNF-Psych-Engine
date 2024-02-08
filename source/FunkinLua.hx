@@ -2985,12 +2985,16 @@ class FunkinLua {
 		});
         
         Lua_helper.add_callback(lua,"setActorNoShader", function(id:String) {
-            var actor = getActorByName(id);
+			if (getObjectDirectly(id, false) != null)
+			{
+				lua_Shaders.remove(id);
+                getObjectDirectly(id, false).shader = null;
+			}
 
-            if(actor != null)
+            if(getActorByName(id) != null)
             {
                 lua_Shaders.remove(id);
-                actor.shader = null;
+                etActorByName(id).shader = null;
             }
         });
 
