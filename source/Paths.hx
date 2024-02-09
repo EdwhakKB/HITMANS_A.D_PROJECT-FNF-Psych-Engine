@@ -567,21 +567,21 @@ class Paths
 		return modFolders('images/' + key + '.json');
 	}
 
-	/* Goes unused for now
-
 	inline static public function modsShaderFragment(key:String, ?library:String)
 	{
-		return modFolders('shaders/'+key+'.frag');
+		return modFolders('shaders/' + key + '.frag');
 	}
+
 	inline static public function modsShaderVertex(key:String, ?library:String)
 	{
-		return modFolders('shaders/'+key+'.vert');
+		return modFolders('shaders/' + key + '.vert');
 	}
+
 	inline static public function modsAchievements(key:String) {
 		return modFolders('achievements/' + key + '.json');
-	}*/
+	}
 
-	static public function modFolders(key:String) {
+	static public function modFolders(key:String):String {
 		if(Mods.currentModDirectory != null && Mods.currentModDirectory.length > 0) {
 			var fileToCheck:String = mods(Mods.currentModDirectory + '/' + key);
 			if(FileSystem.exists(fileToCheck)) {
