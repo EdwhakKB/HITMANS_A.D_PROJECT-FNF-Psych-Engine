@@ -2901,14 +2901,6 @@ class PlayState extends MusicBeatState
 				shaderThing.get(shaderKey).update(elapsed);
 		}
 
-		var shaderThing2 = FunkinLua.lua_Custom_Shaders;
-
-		for(shaderKey2 in shaderThing2.keys())
-		{
-			if(shaderThing2.exists(shaderKey2))
-				shaderThing2.get(shaderKey2).update(elapsed);
-		}
-
 		while (threadbeat.length > 0 && threadbeat[0] != null && curDecBeat >= threadbeat[0].beat) {
 			threadbeat[0].func();
 			threadbeat.splice(0, 1);
