@@ -2984,7 +2984,7 @@ class FunkinLua {
 			return list;
 		});
         
-        Lua_helper.add_callback(lua,"setActorNoShader", function(id:String) {
+        Lua_helper.add_callback(lua,"removeActorShader", function(id:String) {
 			if (getObjectDirectly(id, false) != null)
 			{
 				lua_Shaders.remove(id);
@@ -2994,7 +2994,7 @@ class FunkinLua {
             if(getActorByName(id) != null)
             {
                 lua_Shaders.remove(id);
-                etActorByName(id).shader = null;
+                getActorByName(id).shader = null;
             }
         });
 
