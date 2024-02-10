@@ -2823,23 +2823,32 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (FlxG.keys.anyJustPressed(debugKeysChart) && !endingSong && !inCutscene)
+		if (!endingSong && !inCutscene)
 		{
-			if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
-				antiCheat();
-				// openChartEditor();
-			}else{
-				openChartEditor();
-			}
-		}
-
-		if (FlxG.keys.anyJustPressed(debugKeysModchart) && !endingSong && !inCutscene)
-		{
-			if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
-				antiCheat();
-				// openModchartEditor();
-			}else{
-				openModchartEditor();
+			if (FlxG.keys.anyJustPressed(debugKeysModchart)){
+				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+					antiCheat();
+					// openModchartEditor();
+				}else{
+					modcharting.ModchartEditorState.stepModchart = false;
+					openModchartEditor();
+				}
+			}else if (FlxG.keys.anyJustPressed(debugKeysChart))
+			{
+				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+					antiCheat();
+					// openChartEditor();
+				}else{
+					openChartEditor();
+				}
+			}else if (FlxG.keys.justPressed.NINE){
+				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+					antiCheat();
+					// openModchartEditor();
+				}else{
+					modcharting.ModchartEditorState.stepModchart = true;
+					openModchartEditor();
+				}
 			}
 		}
 
@@ -5050,6 +5059,13 @@ class PlayState extends MusicBeatState
 			}
 		}
 		lastStepHit = curStep;
+
+		if (SONG.notITG && notITGMod)
+		{
+			playfieldRenderer.eventManager.stepHit();
+			modcharting.Modifier.curStep = curStep;
+		}
+
 		setOnScripts('curStep', curStep);
 		callOnScripts('stepHit', [curStep]);
 		callOnScripts('onStepHit', [curStep]);
@@ -5079,6 +5095,12 @@ class PlayState extends MusicBeatState
 		characterBopper(curBeat);
 
 		lastBeatHit = curBeat;
+
+		if (SONG.notITG && notITGMod)
+		{
+			playfieldRenderer.eventManager.beatHit();
+			modcharting.Modifier.curBeat = curBeat;
+		}
 
 		setOnScripts('curBeat', curBeat);
 		setOnScripts('curAccBeat', curBeat2);

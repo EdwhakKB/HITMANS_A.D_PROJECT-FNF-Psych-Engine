@@ -64,6 +64,9 @@ class Modifier
     public var instance:ModchartMusicBeatState = null;
     public var renderer:PlayfieldRenderer = null;
     public static var beat:Float = 0;
+    public static var step:Float = 0;
+    public static var curBeat:Int = 0;
+    public static var curStep:Int = 0;
     public var notes:FlxTypedGroup<Note>;
     
     public function new(tag:String, ?type:ModifierType = ALL, ?playfield:Int = -1)

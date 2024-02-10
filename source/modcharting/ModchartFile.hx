@@ -23,6 +23,7 @@ typedef ModchartJson =
 {
     var modifiers:Array<Array<Dynamic>>;
     var events:Array<Array<Dynamic>>;
+    var stepEvents:Array<Array<Dynamic>>;
     var playfields:Int;
 }
 
@@ -243,7 +244,7 @@ class ModchartFile
         }
         else 
         {
-            json = {modifiers: [], events: [], playfields: 1};
+            json = {modifiers: [], events: [], stepEvents: [], playfields: 1};
         }
         return json;
     }
@@ -251,6 +252,7 @@ class ModchartFile
     {
         data.modifiers = [];
         data.events = [];
+        data.stepEvents = [];
         data.playfields = 1;
     }
 
@@ -297,7 +299,24 @@ class ModchartFile
             {
                 addEvent(i);
             }
+        }
 
+        for (i in data.stepEvents)
+        {
+            if (i[EVENT_REPEAT] == null) //add repeat data if it doesnt exist
+                i[EVENT_REPEAT] = [false, 1, 0];
+
+            if (i[EVENT_REPEAT][EVENT_REPEATBOOL])
+            {
+                for (j in 0...(Std.int(i[EVENT_REPEAT][EVENT_REPEATCOUNT])+1))
+                {
+                    addEventStep(i, (j*i[EVENT_REPEAT][EVENT_REPEATBEATGAP]));
+                }
+            }
+            else 
+            {
+                addEventStep(i);
+            }
         }
     }
     private function addEvent(i:Array<Dynamic>, ?beatOffset:Float = 0)
@@ -308,6 +327,19 @@ class ModchartFile
                 ModchartFuncs.ease(Std.parseFloat(i[EVENT_DATA][EVENT_TIME])+beatOffset, Std.parseFloat(i[EVENT_DATA][EVENT_EASETIME]), i[EVENT_DATA][EVENT_EASE], i[EVENT_DATA][EVENT_EASEDATA], renderer.instance);
             case "set": 
                 ModchartFuncs.set(Std.parseFloat(i[EVENT_DATA][EVENT_TIME])+beatOffset, i[EVENT_DATA][EVENT_SETDATA], renderer.instance);
+            case "hscript": 
+                //maybe just run some code???
+        }
+    }
+
+    private function addEventStep(i:Array<Dynamic>, ?stepOffset:Float = 0)
+    {
+        switch(i[EVENT_TYPE])
+        {
+            case "ease": 
+                ModchartFuncs.easeStep(Std.parseFloat(i[EVENT_DATA][EVENT_TIME])+stepOffse, Std.parseFloat(i[EVENT_DATA][EVENT_EASETIME]), i[EVENT_DATA][EVENT_EASE], i[EVENT_DATA][EVENT_EASEDATA], renderer.instance);
+            case "set": 
+                ModchartFuncs.setStep(Std.parseFloat(i[EVENT_DATA][EVENT_TIME])+stepOffset, i[EVENT_DATA][EVENT_SETDATA], renderer.instance);
             case "hscript": 
                 //maybe just run some code???
         }
