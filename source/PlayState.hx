@@ -2830,7 +2830,6 @@ class PlayState extends MusicBeatState
 					antiCheat();
 					// openModchartEditor();
 				}else{
-					modcharting.ModchartEditorState.stepModchart = false;
 					openModchartEditor();
 				}
 			}else if (FlxG.keys.anyJustPressed(debugKeysChart))
@@ -2841,28 +2840,18 @@ class PlayState extends MusicBeatState
 				}else{
 					openChartEditor();
 				}
-			}else if (FlxG.keys.justPressed.NINE){
-				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
-					antiCheat();
-					// openModchartEditor();
-				}else{
-					modcharting.ModchartEditorState.stepModchart = true;
-					openModchartEditor();
-				}
+			}else if (FlxG.keys.anyJustPressed(debugKeysCharacter)) {
+				persistentUpdate = false;
+				paused = true;
+				cancelMusicFadeTween();
+				#if desktop DiscordClient.resetClientID(); #end
+				MusicBeatState.switchState(new CharacterEditorState(SONG.player2));
 			}
 		}
 
 		if (health > 2) health = 2;
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
-
-		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene) {
-			persistentUpdate = false;
-			paused = true;
-			cancelMusicFadeTween();
-			#if desktop DiscordClient.resetClientID(); #end
-			MusicBeatState.switchState(new CharacterEditorState(SONG.player2));
-		}
 		
 		if (startedCountdown)
 		{
@@ -5060,12 +5049,6 @@ class PlayState extends MusicBeatState
 		}
 		lastStepHit = curStep;
 
-		if (SONG.notITG && notITGMod)
-		{
-			playfieldRenderer.eventManager.stepHit();
-			modcharting.Modifier.curStep = curStep;
-		}
-
 		setOnScripts('curStep', curStep);
 		callOnScripts('stepHit', [curStep]);
 		callOnScripts('onStepHit', [curStep]);
@@ -5095,12 +5078,6 @@ class PlayState extends MusicBeatState
 		characterBopper(curBeat);
 
 		lastBeatHit = curBeat;
-
-		if (SONG.notITG && notITGMod)
-		{
-			playfieldRenderer.eventManager.beatHit();
-			modcharting.Modifier.curBeat = curBeat;
-		}
 
 		setOnScripts('curBeat', curBeat);
 		setOnScripts('curAccBeat', curBeat2);

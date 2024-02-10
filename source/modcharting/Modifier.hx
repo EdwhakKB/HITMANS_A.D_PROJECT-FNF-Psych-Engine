@@ -1854,8 +1854,8 @@ class ShakeNotesModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += FlxMath.fastSin(1)*(currentValue * FlxG.random.int(1, 20));
-        noteData.y += FlxMath.fastSin(1)*(currentValue * FlxG.random.int(1, 20));
+        noteData.x += FlxMath.fastSin(0.1)*(currentValue * FlxG.random.int(1, 20));
+        noteData.y += FlxMath.fastSin(0.1)*(currentValue * FlxG.random.int(1, 20));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {

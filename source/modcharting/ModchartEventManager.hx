@@ -34,15 +34,11 @@ class ModchartEventManager
             event.func(event.args);
 			events.shift();
 		}
-        Modifier.beat = ((Conductor.songPosition*0.001)*(Conductor.bpm/60));
-        Modifier.step = Modifier.beat / 4;
+        Modifier.beat = ((Conductor.songPosition *0.001)*(Conductor.bpm/60));
     }
-
-    public function stepHit() {}
-    public function beatHit() {}
-    public function addEvent(timeTaken:Float, func:Array<String>->Void, args:Array<String>, useStep:Bool)
+    public function addEvent(beat:Float, func:Array<String>->Void, args:Array<String>)
     {
-        var time = useStep ? ModchartUtil.getTimeFromStep(timeTaken) : ModchartUtil.getTimeFromBeat(timeTaken);
+        var time = ModchartUtil.getTimeFromBeat(beat);
         events.push(new ModchartEvent(time, func, args));
     }
     public function clearEvents()

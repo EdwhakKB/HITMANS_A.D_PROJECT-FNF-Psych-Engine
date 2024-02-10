@@ -296,29 +296,4 @@ class ModchartUtil
 
         return totalTime;
     }
-
-    public static function getTimeFromStep(step:Float)
-    {
-        var totalTime:Float = 0;
-        var curBpm = Conductor.bpm;
-        if (PlayState.SONG != null)
-            curBpm = PlayState.SONG.bpm;
-        for (i in 0...Math.floor(step))
-        {
-            if (Conductor.bpmChangeMap.length > 0)
-            {
-                for (j in 0...Conductor.bpmChangeMap.length)
-                {
-                    if (totalTime >= Conductor.bpmChangeMap[j].songTime)
-                        curBpm = Conductor.bpmChangeMap[j].bpm;
-                }
-            }
-            totalTime += (((60 / curBpm) * 1000) / 4);
-        }
-
-        var leftOverStep = step - Math.floor(step);
-        totalTime += (((60 / curBpm) * 1000) / 4)*leftOverStep;
-
-        return totalTime;
-    }
 }

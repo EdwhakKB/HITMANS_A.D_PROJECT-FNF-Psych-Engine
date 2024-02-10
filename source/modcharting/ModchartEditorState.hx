@@ -99,7 +99,6 @@ class ModchartEditorEvent extends FlxSprite
         antialiasing = true;
     }
     public function getBeatTime():Float { return data[ModchartFile.EVENT_DATA][ModchartFile.EVENT_TIME]; }
-    public function getStepTime():Float { return data[ModchartFile.EVENT_DATA][ModchartFile.EVENT_TIME]; }
     #end
 }
 #if ((PSYCH || LEATHER))
@@ -435,8 +434,6 @@ class ModchartEditorState extends MusicBeatState
         playfieldRenderer.inEditor = true;
 		add(playfieldRenderer);
 
-        trace('stepModchart: ' + stepModchart);
-
         //strumLineNotes.cameras = [camHUD];
 		//notes.cameras = [camHUD];
 
@@ -454,7 +451,7 @@ class ModchartEditorState extends MusicBeatState
         
         add(grid);
         
-        for (i in 0...(stepModchart ? 24 : 12))
+        for (i in 0...12)
         {
             var beatText = new FlxText(-50, gridSize, 0, i+"", 32);
             add(beatText);
@@ -547,7 +544,6 @@ class ModchartEditorState extends MusicBeatState
     var dirtyUpdateEvents:Bool = false;
     var dirtyUpdateModifiers:Bool = false;
     var totalElapsed:Float = 0;
-    public static var stepModchart:Bool = false;
     override public function update(elapsed:Float)
     {
         if (ClientPrefs.quantization)
@@ -567,19 +563,19 @@ class ModchartEditorState extends MusicBeatState
         Conductor.songPosition = FlxG.sound.music.time;
 
         
-        var songPosPixelPos = (((Conductor.songPosition/Conductor.stepCrochet)%(stepModchart ? 16 : 4))*gridSize);
+        var songPosPixelPos = (((Conductor.songPosition/Conductor.stepCrochet)%4)*gridSize);
         grid.x = -curDecStep*gridSize;
         line.x = gridSize*4;
 
         for (i in 0...beatTexts.length)
         {
             beatTexts[i].x = -songPosPixelPos + (gridSize*4*(i+1)) - 16;
-            beatTexts[i].text = ""+ (Math.floor(Conductor.songPosition/(stepModchart ? Conductor.stepCrochet%16 : Conductor.crochet))+i);
+            beatTexts[i].text = ""+ (Math.floor(Conductor.songPosition/Conductor.crochet)+i);
         }
         var eventIsSelected:Bool = false;
         for (i in 0...eventSprites.members.length)
         {
-            var pos = grid.x + ((stepModchart ? eventSprites.members[i].getStepTime() : eventSprites.members[i].getBeatTime())*gridSize*4)+(gridSize*4);
+            var pos = grid.x + (eventSprites.members[i].getBeatTime()*gridSize*4)+(gridSize*4);
             //var dec = eventSprites.members[i].beatTime-Math.floor(eventSprites.members[i].beatTime);
             eventSprites.members[i].x = pos; //+ (dec*4*gridSize);
             if (highlightedEvent != null)
@@ -864,6 +860,14 @@ class ModchartEditorState extends MusicBeatState
             Conductor.bpm = curBpmChange.bpm;
         }
 
+
+            
+
+
+
+
+
+
         debugText.text = Std.string(FlxMath.roundDecimal(Conductor.songPosition / 1000, 2)) + " / " + Std.string(FlxMath.roundDecimal(FlxG.sound.music.length / 1000, 2)) +
 		"\nBeat: " + Std.string(curDecBeat).substring(0,4) +
 		"\nStep: " + curStep + "\n";
@@ -906,8 +910,7 @@ class ModchartEditorState extends MusicBeatState
             event[EVENT_REPEAT][EVENT_REPEATBEATGAP] = highlightedEvent[EVENT_REPEAT][EVENT_REPEATBEATGAP];
         
         }
-        if (stepModchart) playfieldRenderer.modchart.data.stepEvents.push(event);
-        else playfieldRenderer.modchart.data.events.push(event);
+        playfieldRenderer.modchart.data.events.push(event);
         hasUnsavedChanges = true;
         return event;
     }
@@ -930,28 +933,14 @@ class ModchartEditorState extends MusicBeatState
         //     --i;
         // }
         eventSprites.clear();
-        if (stepModchart)
+        for (i in 0...playfieldRenderer.modchart.data.events.length)
         {
-            for (i in 0...playfieldRenderer.modchart.data.events.length)
+            var beat:Float = playfieldRenderer.modchart.data.events[i][1][0];
+            if (curBeat > beat-5  && curBeat < beat+5)
             {
-                var beat:Float = playfieldRenderer.modchart.data.events[i][1][0];
-                if (curBeat > beat-5  && curBeat < beat+5)
-                {
-                    var daEvent:ModchartEditorEvent = new ModchartEditorEvent(playfieldRenderer.modchart.data.events[i]);
-                    eventSprites.add(daEvent);
-                    //trace("added event sprite "+beat);
-                }
-            }
-        }else{
-            for (i in 0...playfieldRenderer.modchart.data.stepEvents.length)
-            {
-                var step:Float = playfieldRenderer.modchart.data.stepEvents[i][1][0];
-                if (curStep > step-20  && curStep < step+20)
-                {
-                    var daEvent:ModchartEditorEvent = new ModchartEditorEvent(playfieldRenderer.modchart.data.stepEvents[i]);
-                    eventSprites.add(daEvent);
-                    //trace("added event sprite "+beat);
-                }
+                var daEvent:ModchartEditorEvent = new ModchartEditorEvent(playfieldRenderer.modchart.data.events[i]);
+                eventSprites.add(daEvent);
+                //trace("added event sprite "+beat);
             }
         }
     }
@@ -960,26 +949,13 @@ class ModchartEditorState extends MusicBeatState
     {
         if (highlightedEvent == null)
             return;
-        if (!stepModchart)
+        for (i in 0...playfieldRenderer.modchart.data.events.length)
         {
-            for (i in 0...playfieldRenderer.modchart.data.events.length)
+            if (highlightedEvent == playfieldRenderer.modchart.data.events[i])
             {
-                if (highlightedEvent == playfieldRenderer.modchart.data.events[i])
-                {
-                    playfieldRenderer.modchart.data.events.remove(playfieldRenderer.modchart.data.events[i]);
-                    dirtyUpdateEvents = true;
-                    break;
-                }
-            }
-        }else{
-            for (i in 0...playfieldRenderer.modchart.data.stepEvents.length)
-            {
-                if (highlightedEvent == playfieldRenderer.modchart.data.stepEvents[i])
-                {
-                    playfieldRenderer.modchart.data.stepEvents.remove(playfieldRenderer.modchart.data.stepEvents[i]);
-                    dirtyUpdateEvents = true;
-                    break;
-                }
+                playfieldRenderer.modchart.data.events.remove(playfieldRenderer.modchart.data.events[i]);
+                dirtyUpdateEvents = true;
+                break;
             }
         }
         updateEventSprites();
@@ -987,8 +963,7 @@ class ModchartEditorState extends MusicBeatState
 
     override public function beatHit()
     {
-        if (!stepModchart)
-            updateEventSprites();
+        updateEventSprites();
         //trace("beat hit");
         super.beatHit();
     }
@@ -1364,8 +1339,8 @@ class ModchartEditorState extends MusicBeatState
     var lastStepHit:Int = -1;
     override function stepHit()
     {
-        if (stepModchart) updateEventSprites();
         super.stepHit();
+
         if(curStep == lastStepHit) {
             return;
         }
@@ -2211,22 +2186,11 @@ class ModchartEditorState extends MusicBeatState
     {
         if (highlightedEvent == null)
             return null;
-        if (!stepModchart)
+        for (i in 0...playfieldRenderer.modchart.data.events.length)
         {
-            for (i in 0...playfieldRenderer.modchart.data.events.length)
+            if (playfieldRenderer.modchart.data.events[i] == highlightedEvent)
             {
-                if (playfieldRenderer.modchart.data.events[i] == highlightedEvent)
-                {
-                    return playfieldRenderer.modchart.data.events[i];
-                }
-            }
-        }else{
-            for (i in 0...playfieldRenderer.modchart.data.stepEvents.length)
-            {
-                if (playfieldRenderer.modchart.data.stepEvents[i] == highlightedEvent)
-                {
-                    return playfieldRenderer.modchart.data.stepEvents[i];
-                }
+                return playfieldRenderer.modchart.data.events[i];
             }
         }
 
