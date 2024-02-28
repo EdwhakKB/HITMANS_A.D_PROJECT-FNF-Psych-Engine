@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 import flixel.tweens.FlxTween;
+import flixel.tweens.misc.*;
 
 class TweenManager extends FlxTweenManager
 {
@@ -257,6 +258,28 @@ class TweenManager extends FlxTweenManager
 		daTween.manager = this;
 		return daTween;
 	}
+
+	/**
+	 * Tweens value by using bezier path. Minimum 2 points.
+	 *
+	 * ```haxe
+	 * this.createBezierPathTween(Object, { x: [500,1000,500], y: [350,400,400,350]}, 2.0, { ease: easeFunction, onStart: onStart, onUpdate: onUpdate, onComplete: onComplete, type: ONESHOT });
+	 * ```
+	 *
+	 * @param	Object		The object containing the properties to tween.
+	 * @param	Values		An object containing key/value pairs of properties and the value as in array containing points. Tip: Use Math.Nan at the first point to use the object's original value!
+	 * @param	Duration	Duration of the tween in seconds.
+	 * @param	Options		A structure with tween options.
+	 * @return	The added BezierPathTween object.
+	 * @since   4.2.0
+	 */
+	public function createBezierPathTween(Object:Dynamic, Values:Dynamic<Array<Float>>, Duration:Float = 1, ?Options:TweenOptions):BezierPathTween
+	{
+		var daTween = this.bezierPathTween(Object, Values, Duration, Options);
+		daTween.manager = this;
+		return daTween;
+	}
+
 
 	/**
 	 * Cancels all related tweens on the specified object.
