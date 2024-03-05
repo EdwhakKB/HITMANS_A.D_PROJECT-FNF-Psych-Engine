@@ -3151,12 +3151,12 @@ class FunkinLua {
 
 		Lua_helper.add_callback(lua, "getCustomShaderProperty", function(id:String, property:Dynamic) {
 			var funnyCustomShader:CustomCodeShader = lua_Custom_Shaders.get(id);
-			return funnyCustomShader.get(property);
+			return funnyCustomShader.hget(property);
 		});
 
 		Lua_helper.add_callback(lua, "setCustomShaderProperty", function(id:String, property:String, value:Dynamic) {
 			var funnyCustomShader:CustomCodeShader = lua_Custom_Shaders.get(id);
-			funnyCustomShader.set(property, value);
+			funnyCustomShader.hset(property, value);
 		});
 
 		//Custom shader made by me (glowsoony)
@@ -3165,7 +3165,7 @@ class FunkinLua {
             var shad:CustomCodeShader = lua_Custom_Shaders.get(shaderName);
             var ease = getFlxEaseByString(easeStr);
 			var startValue:Null<Float> = startVal;
-			if (startValue == null) startValue = shad.get(prop);
+			if (startValue == null) startValue = shad.hget(prop);
 
             if(shad != null)
             {
@@ -3173,10 +3173,10 @@ class FunkinLua {
 					PlayState.tweenManager.num(startValue, value, time, {
 					onUpdate: function(tween:FlxTween){
 						var ting = FlxMath.lerp(startValue, value, ease(tween.percent));
-                    	shad.set(prop, ting);
+                    	shad.hset(prop, ting);
 					}, ease: ease, 
 					onComplete: function(tween:FlxTween) {
-						shad.set(prop, value);
+						shad.hset(prop, value);
 						PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 						PlayState.instance.modchartTweens.remove(tag);
 					}})

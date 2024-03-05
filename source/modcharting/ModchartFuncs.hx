@@ -15,7 +15,9 @@ import states.PlayState;
 import game.Conductor;
 #end
 import flixel.FlxG;
+#if HSCRIPT_ALLOWED
 import SSHScript as FunkinHScript;
+#end
 import modcharting.Modifier;
 import modcharting.PlayfieldRenderer;
 import modcharting.NoteMovement;
@@ -169,7 +171,7 @@ class ModchartFuncs
         #end
     }
 
-    public static function loadHScriptFunctions(parent:FunkinHScript)
+    public static function loadHScriptFunctions(parent:Dynamic)
     {
         #if HSCRIPT_ALLOWED
         parent.set('startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
@@ -212,12 +214,6 @@ class ModchartFuncs
         });
         parent.set('easeModValue', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
             ease(beat, time, easeStr, argsAsString);
-        });
-        parent.set('stepSetModValue', function(beat:Float, argsAsString:String){
-            stepSet(beat, argsAsString);
-        });
-        parent.set('stepEaseModValue', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-            stepEase(beat, time, easeStr, argsAsString);
         });
         #end
     }

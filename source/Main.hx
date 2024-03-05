@@ -97,6 +97,10 @@ class Main extends Sprite
 	
 		addChild(new CrashHandler.MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
+		#if HSCRIPT_ALLOWED
+		codenameengine.scripting.GlobalScript.init();
+		#end
+
 		mouseCursor = new FlxSprite().loadGraphic(Paths.getPreloadPath('images/mouse'));
         // } 
         FlxG.mouse.load(mouseCursor.pixels);

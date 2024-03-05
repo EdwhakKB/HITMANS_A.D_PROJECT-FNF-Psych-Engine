@@ -98,6 +98,10 @@ import VideoHandler as VideoHandler;
 #end
 import flash.system.System;
 
+#if HSCRIPT_ALLOWED
+import codenameengine.scripting.Script as HScriptCode;
+#end
+
 typedef ThreadBeatList = {
 	beat:Float,
 	func:Dynamic
@@ -512,8 +516,11 @@ class PlayState extends MusicBeatState
 	public var hitmansHUD:huds.Huds;
 
 	#if HSCRIPT_ALLOWED
-	public var hscriptArray:Array<SSHScript> = [];
 	public var instancesExclude:Array<String> = [];
+	#end
+
+	#if (HSCRIPT_ALLOWED && HScriptImproved)
+	public var scripts:codenameengine.scripting.ScriptPack;
 	#end
 
 	override public function create()
@@ -529,6 +536,10 @@ class PlayState extends MusicBeatState
 
 		// for lua
 		instance = this;
+
+		#if (HSCRIPT_ALLOWED && HScriptImproved)
+		if (scripts == null) (scripts = new codenameengine.scripting.ScriptPack("PlayState")).setParent(this);
+		#end
 
 		debugKeysChart = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
 		debugKeysCharacter = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_2'));
@@ -1150,6 +1161,12 @@ class PlayState extends MusicBeatState
 		if (notITGMod && SONG.notITG)
 			ModchartFuncs.loadLuaFunctions();
 
+		#if (HSCRIPT_ALLOWED && HScriptImproved)
+		scripts.set("SONG", SONG);
+		scripts.load();
+		scripts.call('onCreate');
+		#end
+
 		callOnScripts('onCreatePost');
 
 		// camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
@@ -1377,11 +1394,11 @@ class PlayState extends MusicBeatState
 	}
 
 	#if (LUA_ALLOWED || HSCRIPT_ALLOWED)
-	public function addTextToDebug(text:String, color:FlxColor) {
+	public function addTextToDebug(text:String, color:FlxColor, ?timeTaken:Float = 6) {
 		var newText:DebugLuaText = luaDebugGroup.recycle(DebugLuaText);
 		newText.text = text;
 		newText.color = color;
-		newText.disableTime = 6;
+		newText.disableTime = timeTaken;
 		newText.alpha = 1;
 		newText.setPosition(10, 8 - newText.height);
 
@@ -1489,9 +1506,7 @@ class PlayState extends MusicBeatState
 
 		if(doPush)
 		{
-			if(SScript.global.exists(scriptFile))
-				doPush = false;
-			if(doPush) initHScript(scriptFile);
+			initHScript(scriptFile);
 		}
 		#end
 	}
@@ -4965,18 +4980,18 @@ class PlayState extends MusicBeatState
 		#end
 
 		#if HSCRIPT_ALLOWED
-		for (script in hscriptArray)
-			if(script != null)
+		for (script in scripts.scripts)
+			if (script != null)
 			{
 				script.call('onDestroy');
-				#if (SScript > "6.1.80" || SScript != "6.1.80")
 				script.destroy();
-				#else
-				script.kill();
-				#end
 			}
-		while (hscriptArray.length > 0)
-			hscriptArray.pop();
+		while (scripts.scripts.length > 0)
+			scripts.scripts.pop();
+		
+		remove(scripts);
+		scripts.destroy();
+		scripts = null;
 		#end
 
 		if(!ClientPrefs.controllerMode)
@@ -5186,85 +5201,12 @@ class PlayState extends MusicBeatState
 		try
 		{
 			var times:Float = Date.now().getTime();
-			var newScript:SSHScript = new SSHScript(null, file);
-			#if (SScript > "6.1.80" || SScript != "6.1.80")
-			@:privateAccess
-			if(newScript.parsingExceptions != null && newScript.parsingExceptions.length > 0)
-			{
-				@:privateAccess
-				for (e in newScript.parsingExceptions)
-					if(e != null)
-						addTextToDebug('ERROR ON LOADING ($file): ${e.message.substr(0, e.message.indexOf('\n'))}', FlxColor.RED);
-				newScript.destroy();
-				return;
-			}
-			#else
-			if(newScript.parsingException != null)
-			{
-				var e = newScript.parsingException.message;
-				if (!e.contains(newScript.origin)) e = '${newScript.origin}: $e';
-				SSHScript.hscriptTrace('ERROR ON LOADING - $e', FlxColor.RED);
-				newScript.kill();
-				return;
-			}
-			#end
-
-			hscriptArray.push(newScript);
-			if(newScript.exists('onCreate'))
-			{
-				var callValue = newScript.call('onCreate');
-				if(!callValue.succeeded)
-				{
-					for (e in callValue.exceptions)
-					{
-						#if (SScript > "6.1.80" || SScript != "6.1.80")
-						if (e != null)
-						{
-							var len:Int = e.message.indexOf('\n') + 1;
-							if(len <= 0) len = e.message.length;
-								addTextToDebug('ERROR ($file: onCreate) - ${e.message.substr(0, len)}', FlxColor.RED);
-						}
-						#else
-						if (e != null) {
-							var e:String = e.toString();
-							if (!e.contains(newScript.origin)) e = '${newScript.origin}: $e';
-							SSHScript.hscriptTrace('ERROR (onCreate) - $e', FlxColor.RED);
-						}
-						#end
-					}
-					#if (SScript > "6.1.80" || SScript != "6.1.80")
-					newScript.destroy();
-					#else
-					newScript.kill();
-					#end
-					hscriptArray.remove(newScript);
-					return;
-				}
-			}
-			trace('initialized sscript interp successfully: $file (${Std.int(Date.now().getTime() - times)}ms)');
+			addScript(file);
+			trace('initialized hscript-improved interp successfully: $file (${Std.int(Date.now().getTime() - times)}ms)');
 		}
 		catch(e)
 		{
-			var newScript:SSHScript = cast (SScript.global.get(file), SSHScript);
-			#if (SScript >= "6.1.80")
-			var e:String = e.toString();
-			if (!e.contains(newScript.origin)) e = '${newScript.origin}: $e';
-			addTextToDebug('ERROR - $e', FlxColor.RED);
-			#else
-			var len:Int = e.message.indexOf('\n') + 1;
-			if(len <= 0) len = e.message.length;
-			addTextToDebug('ERROR  - ' + e.message.substr(0, len), FlxColor.RED);
-			#end
-
-			if(newScript != null)
-			{
-				#if (SScript > "6.1.80" || SScript != "6.1.80")
-				newScript.destroy();
-				#else
-				newScript.kill();
-				#end
-				hscriptArray.remove(newScript);
-			}
+			trace('Error on loading Script!' + e);
 		}
 	}
 	#end
@@ -5323,47 +5265,25 @@ class PlayState extends MusicBeatState
 	public function callOnHScript(funcToCall:String, args:Array<Dynamic> = null, ?ignoreStops:Bool = false, exclusions:Array<String> = null, excludeValues:Array<Dynamic> = null):Dynamic {
 		var returnVal:Dynamic = FunkinLua.Function_Continue;
 
-		#if HSCRIPT_ALLOWED
-		if(exclusions == null) exclusions = new Array();
-		if(excludeValues == null) excludeValues = new Array();
-		excludeValues.push(FunkinLua.Function_Continue);
+		#if (HSCRIPT_ALLOWED && HScriptImproved)
+		if(args == null) args = [];
+		if(exclusions == null) exclusions = [];
+		if(excludeValues == null) excludeValues = [FunkinLua.Function_Continue];
 
-		var len:Int = hscriptArray.length;
-		if (len < 1)
-			return returnVal;
-		for(i in 0...len)
+		for (script in scripts.scripts)
 		{
-			var script:SSHScript = hscriptArray[i];
-			if(script == null || !script.exists(funcToCall) || exclusions.contains(script.origin))
+			if(exclusions.contains(script.fileName))
 				continue;
 
-			var myValue:Dynamic = null;
-			try
+			var myValue:Dynamic = script.call(funcToCall, args);
+			if((myValue == FunkinLua.Function_StopLua || myValue == FunkinLua.Function_StopAll) && !excludeValues.contains(myValue) && !ignoreStops)
 			{
-				var callValue = script.call(funcToCall, args);
-				if(!callValue.succeeded)
-				{
-					var e = callValue.exceptions[0];
-					if(e != null)
-					{
-						var len:Int = e.message.indexOf('\n') + 1;
-						if(len <= 0) len = e.message.length;
-						addTextToDebug('ERROR (${callValue.calledFunction}) - ' + e.message.substr(0, len), FlxColor.RED);
-					}
-				}
-				else
-				{
-					myValue = callValue.returnValue;
-					if((myValue == FunkinLua.Function_StopHScript || myValue == FunkinLua.Function_StopAll) && !excludeValues.contains(myValue) && !ignoreStops)
-					{
-						returnVal = myValue;
-						break;
-					}
-
-					if(myValue != null && !excludeValues.contains(myValue))
-						returnVal = myValue;
-				}
+				returnVal = myValue;
+				break;
 			}
+			
+			if(myValue != null && !excludeValues.contains(myValue))
+				returnVal = myValue;
 		}
 		#end
 
@@ -5392,8 +5312,8 @@ class PlayState extends MusicBeatState
 	public function setOnHScript(variable:String, arg:Dynamic, exclusions:Array<String> = null) {
 		#if HSCRIPT_ALLOWED
 		if(exclusions == null) exclusions = [];
-		for (script in hscriptArray) {
-			if(exclusions.contains(script.origin))
+		for (script in scripts.scripts) {
+			if(exclusions.contains(script.fileName))
 				continue;
 
 			if(!instancesExclude.contains(variable))
@@ -5428,8 +5348,8 @@ class PlayState extends MusicBeatState
 	{
 		#if HSCRIPT_ALLOWED
 		if(exclusions == null) exclusions = [];
-		for (script in hscriptArray) {
-			if(exclusions.contains(script.origin))
+		for (script in scripts.scripts) {
+			if(exclusions.contains(script.fileName))
 				continue;
 
 			script.get(variable);
@@ -5640,5 +5560,12 @@ class PlayState extends MusicBeatState
 
 		return true;
 		#end
+	}
+
+	public function addScript(file:String) {
+		if (haxe.io.Path.extension(file).toLowerCase().contains('hx')) {
+			trace('INITIALIZED');
+			scripts.add(HScriptCode.create(file));
+		}
 	}
 }

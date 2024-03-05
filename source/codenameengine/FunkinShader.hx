@@ -1,10 +1,11 @@
 package codenameengine;
 
+import hscript.IHScriptCustomBehaviour;
 import haxe.Exception;
 import flixel.graphics.tile.FlxGraphicsShader;
 import openfl.display3D.Program3D;
 import flixel.system.FlxAssets.FlxShader;
-
+import hscript.IHScriptCustomBehaviour;
 import openfl.display.BitmapData;
 import openfl.display.ShaderParameter;
 import openfl.display.ShaderParameterType;
@@ -21,7 +22,7 @@ import openfl.display.ShaderInput;
 @:access(openfl.display3D.Program3D)
 @:access(openfl.display.ShaderInput)
 @:access(openfl.display.ShaderParameter)
-class FunkinShader extends FlxShader {
+class FunkinShader extends FlxShader implements IHScriptCustomBehaviour {
 	private static var __instanceFields = Type.getInstanceFields(FunkinShader);
 
 	public var glslVer:String = "120";
@@ -362,7 +363,7 @@ class FunkinShader extends FlxShader {
 	}
 
 	//USE THESE IN HSCRIPT FOR SETTING AND GETTING PROPERTY'S!
-	public function get(name:String):Dynamic {
+	public function hget(name:String):Dynamic {
 		if (__instanceFields.contains(name) || __instanceFields.contains('get_${name}')) {
 			return Reflect.getProperty(this, name);
 		}
@@ -382,7 +383,7 @@ class FunkinShader extends FlxShader {
 		return field;
 	}
 
-	public function set(name:String, val:Dynamic):Dynamic {
+	public function hset(name:String, val:Dynamic):Dynamic {
 		if (__instanceFields.contains(name) || __instanceFields.contains('set_${name}')) {
 			Reflect.setProperty(this, name, val);
 			return val;

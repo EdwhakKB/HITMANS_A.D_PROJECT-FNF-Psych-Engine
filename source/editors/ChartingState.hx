@@ -61,7 +61,7 @@ import sys.io.File;
 import flixel.util.FlxStringUtil;
 
 
-@:access(flixel.system.FlxSound._sound)
+@:access(flixel.sound.FlxSound._sound)
 @:access(openfl.media.Sound.__buffer)
 
 class ChartingState extends MusicBeatState
@@ -1420,7 +1420,7 @@ class ChartingState extends MusicBeatState
 		notITGModchart.callback = function()
 		{
 			_song.notITG = notITGModchart.checked;
-			//Debug.logInfo('CHECKED!');
+			//trace('CHECKED!');
 		};
 
 		var forceRightScroll = new FlxUICheckBox(reloadNotesButton.x + 160, reloadNotesButton.y - 90, null, null, "Forced RightScroll", 100);

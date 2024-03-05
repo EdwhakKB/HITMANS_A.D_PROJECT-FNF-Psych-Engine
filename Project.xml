@@ -143,6 +143,18 @@
 
 	<haxelib name="SScript" if="HSCRIPT_ALLOWED"/>
 
+	<!-- Comment this out to prevent unused classes from being compiled.
+		 Reduces compilation time at the cost of limited HScript flexibility. !-->
+	<define name="COMPILE_ALL_CLASSES" />
+
+	<!-- Comment this out to prevent extending classes in hscript.
+		 Reduces compilation time at the cost of limited HScript flexibility. !-->
+	<define name="CUSTOM_CLASSES" />
+
+	<haxelib name="hscript-improved" />
+	<haxedef name="hscriptPos" /> <!-- for logging -->
+	<define name="HScriptImproved" if="hscript-improved"/>
+
 	<!--In case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
@@ -208,6 +220,10 @@
 	<icon path="art/icon32.png" size='32'/>
 	<icon path="art/icon64.png" size='64'/>
 	<icon path="art/iconOG.png" />
+
+	<section if="COMPILE_ALL_CLASSES">
+		<haxeflag name="-dce" value="no" />
+	</section>
 
 	<assets path="Hitmans-CrashDialog.exe" type="template" if="windows release" />
     <assets path="Hitmans-CrashDialog" type="template" if="linux release" />

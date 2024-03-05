@@ -61,8 +61,8 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
 		// here we set up the built-in imports
 		// these should work on *any* script;
 
-		/*Debug.logInfo('Running script: ' + hxFileName);
-		Debug.logInfo('haxe file loaded succesfully:' + hxFileName);*/
+		/*trace('Running script: ' + hxFileName);
+		trace('haxe file loaded succesfully:' + hxFileName);*/
 
 		// CLASSES (HAXE)
 		set('Type', Type);
