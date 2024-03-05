@@ -216,14 +216,14 @@ class LoadingState extends MusicBeatState
 		funkay.setGraphicSize(0, FlxG.height);
 		funkay.updateHitbox();
 		funkay.antialiasing = ClientPrefs.globalAntialiasing;
-		add(funkay);
+		// add(funkay);
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
 
 		loader = new AsyncAssetPreloader(function()
 		{
 			trace("Load time: " + loadTime);
-			new FlxTimer().start(0.5, function(tmr:FlxTimer) {
+			new FlxTimer().start(1.0, function(tmr:FlxTimer) {
 				onLoad();
 			});
 		});
