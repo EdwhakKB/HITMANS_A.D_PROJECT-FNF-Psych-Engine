@@ -55,8 +55,9 @@ class ModchartFile
     public var data:ModchartJson = null;
     private var renderer:PlayfieldRenderer;
     public var scriptListen:Bool = false;
-    public var customModifiers:Map<String, CustomModifierScript> = new Map<String, CustomModifierScript>();
+    public var customModifiers:Map<String, Dynamic> = new Map<String, Dynamic>();
     public var hasDifficultyModchart:Bool = false; //so it loads false as default!
+    public var hasImproved:Bool = false;
     
     public function new(renderer:PlayfieldRenderer)
     {
@@ -232,8 +233,19 @@ class ModchartFile
                     //trace(file);
                     if(file.endsWith('.hx')) //custom mods!!!!
                     {
-                        var scriptStr = File.getContent(folderShit + file);
-                        var script = new CustomModifierScript(scriptStr);
+                        var scriptStr = null;
+                        var script = null;
+                        #if HScriptImproved
+			            var justFilePlace = folderShit + file;
+                        script = codenameengine.scripting.Script.create(justFilePlace);
+                        if (PlayState.instance == flixel.FlxG.state)
+                            PlayState.instance.scripts.add(script);
+                        script.load();
+                        hasImproved = true;
+                        #else
+                        scriptStr = File.getContent(folderShit + file);
+                        script = new CustomModifierScript(scriptStr);
+                        #end
                         customModifiers.set(file.replace(".hx", ""), script);
                         trace('loaded custom mod: ' + file);
                     }

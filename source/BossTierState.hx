@@ -34,11 +34,6 @@ class BossTierState extends MusicBeatState
 
     public var continueText:FlxText;
 
-	#if HSCRIPT_ALLOWED
-	public var hscriptArray:Array<SSHScript> = [];
-	public var instancesExclude:Array<String> = [];
-	#end
-
 	public var bossScript:ScriptHandler = null;
 
     override public function create()
