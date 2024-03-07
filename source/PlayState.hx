@@ -5563,9 +5563,26 @@ class PlayState extends MusicBeatState
 	}
 
 	public function addScript(file:String) {
-		if (haxe.io.Path.extension(file).toLowerCase().contains('hx')) {
+		#if (HSCRIPT_ALLOWED && HScriptImproved)
+		if (haxe.io.Path.extension(file).toLowerCase().contains('hx')){
 			trace('INITIALIZED');
-			scripts.add(HScriptCode.create(file));
+			var script = HScriptCode.create(file);
+			if (!(script is codenameengine.scripting.DummyScript))
+			{
+				scripts.add(script);
+
+				if (!file.contains('stages')){
+					//Set the things first
+					script.set("SONG", SONG);
+				}else{
+					script.set("game", PlayState.instance);
+				}
+
+				//Then CALL SCRIPT
+				script.load();
+				script.call('onCreate');
+			}
 		}
+		#end
 	}
 }
