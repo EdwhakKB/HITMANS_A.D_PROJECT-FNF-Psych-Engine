@@ -96,7 +96,9 @@ class Note extends FlxSkewedSprite{
 	public var ratingDisabled:Bool = false;
 	public static var canDamagePlayer:Bool = true; //for edwhak Instakill Notes and others :3 -Ed
 	public static var edwhakIsPlayer:Bool = false; //made to make Ed special Mechanics lmao
-	public static var sustainRGB:Bool = true; //so if it have only 1 sustain and colored it loads this LOL
+
+	//MAKES PUBLIC VAR NOT STATIC VAR IDIOT
+	public var sustainRGB:Bool = true; //so if it have only 1 sustain and colored it loads this LOL
 
 	public var texture(default, set):String = null;
 

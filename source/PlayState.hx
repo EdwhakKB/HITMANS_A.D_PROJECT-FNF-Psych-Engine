@@ -1167,6 +1167,78 @@ class PlayState extends MusicBeatState
 		scripts.call('onCreate');
 		#end
 
+		if (boyfriend.LNoteColors != null && boyfriend.DNoteColors != null && boyfriend.UNoteColors != null && boyfriend.RNoteColors != null)
+		{
+			trace('this is not null bruh');
+			for (note in unspawnNotes) {
+				if (note.mustPress){
+					if (!note.isSustainNote) {
+						switch (note.noteData)
+						{
+							case 0:
+								note.rgbShader.r = FlxColor.fromString(boyfriend.LNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(boyfriend.LNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(boyfriend.LNoteColors[2]);
+							case 1:
+								note.rgbShader.r = FlxColor.fromString(boyfriend.DNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(boyfriend.DNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(boyfriend.DNoteColors[2]);
+							case 2:
+								note.rgbShader.r = FlxColor.fromString(boyfriend.UNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(boyfriend.UNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(boyfriend.UNoteColors[2]);
+							case 3:
+								note.rgbShader.r = FlxColor.fromString(boyfriend.RNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(boyfriend.RNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(boyfriend.RNoteColors[2]);
+						}
+					}else{
+						if (note.sustainRGB){
+							note.rgbShader.r = note.prevNote.rgbShader.r;
+							note.rgbShader.g = note.prevNote.rgbShader.g;
+							note.rgbShader.b = note.prevNote.rgbShader.b;  
+						}
+					}
+				}
+			}
+		}
+
+		if (dad.LNoteColors != null && dad.DNoteColors != null && dad.UNoteColors != null && dad.RNoteColors != null)
+		{
+			trace('this is not null bruh');
+			for (note in unspawnNotes) {
+				if (!note.mustPress){
+					if (!note.isSustainNote) {
+						switch (note.noteData)
+						{
+							case 0:
+								note.rgbShader.r = FlxColor.fromString(dad.LNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(dad.LNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(dad.LNoteColors[2]);
+							case 1:
+								note.rgbShader.r = FlxColor.fromString(dad.DNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(dad.DNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(dad.DNoteColors[2]);
+							case 2:
+								note.rgbShader.r = FlxColor.fromString(dad.UNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(dad.UNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(dad.UNoteColors[2]);
+							case 3:
+								note.rgbShader.r = FlxColor.fromString(dad.RNoteColors[0]);
+								note.rgbShader.g = FlxColor.fromString(dad.RNoteColors[1]);
+								note.rgbShader.b = FlxColor.fromString(dad.RNoteColors[2]);
+						}
+					}else{
+						if (note.sustainRGB){
+							note.rgbShader.r = note.prevNote.rgbShader.r;
+							note.rgbShader.g = note.prevNote.rgbShader.g;
+							note.rgbShader.b = note.prevNote.rgbShader.b;  
+						}
+					}
+				}
+			}
+		}
+
 		callOnScripts('onCreatePost');
 
 		// camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
@@ -1227,7 +1299,7 @@ class PlayState extends MusicBeatState
 					currentBPM = bpmChanges[i].bpm;
 					newTime = strumTime - bpmChanges[i].songTime;
 				}
-			if (note.rgbShader.enabled && !note.hurtNote){
+			if (note.rgbShader.enabled && !note.hurtNote && ((note.mustPress && boyfriend.allowQuantized) || (!note.mustPress && dad.allowQuantized))){
 				dataStuff = ((currentBPM * (newTime - ClientPrefs.noteOffset)) / 1000 / 60);
 				beat = round(dataStuff * 48, 0);
 				if (!note.isSustainNote){

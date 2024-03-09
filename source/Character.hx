@@ -36,9 +36,16 @@ typedef CharacterFile = {
 	var no_antialiasing:Bool;
 	var healthbar_colors:Array<Int>;
 
-	var graphicScale:Float;
+	var ?graphicScale:Float;
 
 	var ?_editor_isPlayer:Null<Bool>;
+
+	var ?allowQuantized:Null<Bool>;
+
+	var ?leftNoteColors:Array<String>;
+	var ?upNoteColors:Array<String>;
+	var ?downNoteColors:Array<String>;
+	var ?rightNoteColors:Array<String>;
 }
 
 typedef AnimArray = {
@@ -86,6 +93,13 @@ class Character extends FlxSprite
 	public var editorIsPlayer:Null<Bool> = null;
 
 	public var jsonGraphicScale:Float = 0;
+	
+	public var LNoteColors:Array<String> = null;
+	public var DNoteColors:Array<String> = null;
+	public var UNoteColors:Array<String> = null;
+	public var RNoteColors:Array<String> = null;
+
+	public var allowQuantized:Bool = false;
 
 	public static var DEFAULT_CHARACTER:String = 'player'; //In case a character is missing, it will use BF on its place
 	public function new(x:Float, y:Float, ?character:String = 'player', ?isPlayer:Bool = false)
@@ -225,6 +239,14 @@ class Character extends FlxSprite
 		// antialiasing
 		noAntialiasing = (json.no_antialiasing == true);
 		antialiasing = ClientPrefs.globalAntialiasing ? !noAntialiasing : false;
+
+		//ColoredNotes
+		allowQuantized = json.allowQuantized != null ? json.allowQuantized : false;
+		LNoteColors = (json.leftNoteColors != null && json.leftNoteColors.length > 2) ? json.leftNoteColors : null;
+		UNoteColors = (json.upNoteColors != null && json.upNoteColors.length > 2) ? json.upNoteColors : null;
+		DNoteColors = (json.downNoteColors != null && json.downNoteColors.length > 2) ? json.downNoteColors : null;
+		RNoteColors = (json.rightNoteColors != null && json.rightNoteColors.length > 2) ? json.rightNoteColors : null;
+
 
 		// animations
 		animationsArray = json.animations;
