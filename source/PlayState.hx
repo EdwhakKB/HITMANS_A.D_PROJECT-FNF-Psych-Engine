@@ -5342,21 +5342,15 @@ class PlayState extends MusicBeatState
 		if(exclusions == null) exclusions = [];
 		if(excludeValues == null) excludeValues = [FunkinLua.Function_Continue];
 
-		for (script in scripts.scripts)
+		var myValue:Dynamic = scripts.call(funcToCall, args);
+		if((myValue == FunkinLua.Function_StopLua || myValue == FunkinLua.Function_StopAll) && !excludeValues.contains(myValue) && !ignoreStops)
 		{
-			if(exclusions.contains(script.fileName))
-				continue;
-
-			var myValue:Dynamic = script.call(funcToCall, args);
-			if((myValue == FunkinLua.Function_StopLua || myValue == FunkinLua.Function_StopAll) && !excludeValues.contains(myValue) && !ignoreStops)
-			{
-				returnVal = myValue;
-				break;
-			}
-			
-			if(myValue != null && !excludeValues.contains(myValue))
-				returnVal = myValue;
+			returnVal = myValue;
+			return returnVal;
 		}
+		
+		if(myValue != null && !excludeValues.contains(myValue))
+			returnVal = myValue;
 		#end
 
 		return returnVal;
