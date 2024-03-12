@@ -3668,10 +3668,16 @@ class FunkinLua {
 		return NORMAL;
 	}
 
+	public static function pushCustomCameras(name:String, camera:FlxCamera)
+	{
+		lua_Cameras.set(name, {cam: camera, shaders: [], shaderNames: []});
+	}
+
 	function cameraFromString(cam:String):FlxCamera {
 		var camera:LuaCamera = getCameraByName(cam);
 		if (camera == null)
 		{
+			trace('I am null!');
 			switch(cam.toLowerCase()) {
 				case 'camhud' | 'hud': return PlayState.instance.camHUD;
 				case 'notecameras0' | 'notes0': return PlayState.instance.noteCameras0;
@@ -3692,9 +3698,7 @@ class FunkinLua {
 
 	public static function getCameraByName(id:String):LuaCamera
     {
-        if(lua_Cameras.exists(id))
-            return lua_Cameras.get(id);
-
+        if(lua_Cameras.exists(id)) return lua_Cameras.get(id);
         switch(id.toLowerCase())
         {
             case 'camhud' | 'hud': return lua_Cameras.get("hud");
@@ -3704,8 +3708,7 @@ class FunkinLua {
 			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
 			case 'caminterfaz2' | 'interfaz2': return lua_Cameras.get("interfaz2");
         }
-        
-        return lua_Cameras.get("game");
+        return null;
     }
 
     public static function killShaders() //dead
@@ -3720,7 +3723,7 @@ class FunkinLua {
 	public static function getActorByName(id:String):Dynamic //kade to psych
 	{
 		if (lua_Cameras.exists(id))
-            		return lua_Cameras.get(id).cam;
+            return lua_Cameras.get(id).cam;
 		
 		// pre defined names
 		switch(id)
@@ -4111,6 +4114,9 @@ class HScript
 				return true;
 			}
 			return false;
+		});
+		interp.variables.set('pushCustomCameraToLua', function(name:String, camera:FlxCamera){
+			FunkinLua.pushCustomCameras(name, camera);
 		});
 	}
 
