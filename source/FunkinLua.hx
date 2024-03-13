@@ -3212,7 +3212,58 @@ class FunkinLua {
 			}
         });
 
-		Lua_helper.add_callback(lua, "makeArrowCopy", function(tag:String = '', x:Float, y:Float, noteData:Int, isStrum:Bool, 
+		//Welp finally this code is FINAL! (unless you want to make changes edwhak!)
+		Lua_helper.add_callback(lua, "makeArrowCopy", function(tag:String = '', ?compositionArray:Array<Dynamic>) {
+            tag = tag.replace('.', '');
+            resetSpriteTag(tag);
+			
+			if (compositionArray == null) compositionArray = [0, 0, 0, false, "camHUD", '', '', '', 1, 1]; // works ig?
+			//X = 0, Y = 1, noteData = 2, isStrum = 3, camera = 4, daSkin = 5, daType = 6, daNoteTypeStyle = 7, daScaleX = 8, daScaleY = 9
+
+            trace('what the x, ' + compositionArray[0] + ', y, ' + compositionArray[1] + ', noteData, ' + compositionArray[2] + 
+				', isStrum, ' + compositionArray[3] + ', camera, ' + compositionArray[4] + ', daSkin, ' + compositionArray[5] + 
+				', daType, ' + compositionArray[6] + ', daNoteTypeStyle, ' + compositionArray[7] + 
+				', daScaleX, ' + compositionArray[8] + ', daScaleY, ' + compositionArray[9]);
+
+            var noteTypeSkin = compositionArray[7];
+
+            var theSkin = 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets';
+            if (compositionArray[5] != '') theSkin = compositionArray[5];
+
+ 			var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
+
+            if (compositionArray[3] == true){
+                var spriteCopy:StrumNew = new StrumNew(compositionArray[0],compositionArray[1],Std.int(compositionArray[2]),0,theSkin,null,false);
+				spriteCopy.animation.play(colArray[Std.int(compositionArray[2]) % colArray.length], true);
+                spriteCopy.camera = cameraFromString(compositionArray[4]);
+                getInstance().add(spriteCopy);
+                PlayState.instance.modchartSprites.set(tag, spriteCopy);
+            }else{
+                var spriteCopy:NewNote = new NewNote(0,Std.int(compositionArray[2]),false,true);
+                spriteCopy.setPosition(compositionArray[0],compositionArray[1]);
+                spriteCopy.scale.set(compositionArray[8],compositionArray[9]);
+
+                if (compositionArray[6] != '' && (compositionArray[5] == '')) {
+                    spriteCopy.noteType = compositionArray[6];
+                    if (noteTypeSkin != '' && (compositionArray[6].toLowerCase() == 'hurt' || compositionArray[6].toLowerCase() == 'mine'))
+                        spriteCopy.reloadNote('', 'Skins/${noteTypeSkin}');
+                }
+                else if (compositionArray[5] != '' && (compositionArray[6] == '')) {
+                   spriteCopy.noteType = '';
+                   spriteCopy.reloadNote('', compositionArray[5]);
+                }
+                else{
+                   spriteCopy.reloadNote('', 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets');
+                }
+
+				spriteCopy.animation.play(colArray[Std.int(compositionArray[2]) % colArray.length] + 'Scroll', true);
+                spriteCopy.camera = cameraFromString(compositionArray[4]);
+                getInstance().add(spriteCopy);
+                PlayState.instance.modchartSprites.set(tag, spriteCopy);
+            }
+        });
+
+		/*Lua_helper.add_callback(lua, "makeArrowCopy", function(tag:String = '', x:Float, y:Float, noteData:Int, isStrum:Bool, 
 			camera:String, daSkin:String, daType:String, daNoteTypeStyle:String, daScaleX:Float, daScaleY:Float) 
 		{
             tag = tag.replace('.', '');
@@ -3261,7 +3312,7 @@ class FunkinLua {
                 getInstance().add(spriteCopy);
                 PlayState.instance.modchartSprites.set(tag, spriteCopy);
             }
-        });
+        });*/
 
 		Lua_helper.add_callback(lua, "objectPlayLoopNoteAnimation", function(obj:String, name:String, forced:Bool = false, ?startFrame:Int = 0, ?isStrum:Bool = false) {
 			// luaTrace("objectPlayAnimation is deprecated! Use playAnim instead", false, true)
