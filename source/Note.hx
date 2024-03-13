@@ -279,7 +279,6 @@ class Note extends FlxSkewedSprite{
 					}
 				case 'Mine Note':
 					ignoreNote = mustPress;
-					isRoll = false;
 					reloadNote('', 'Skins/Misc/'+ClientPrefs.mineSkin+'/MINENOTE_assets');
 					rgbShader.enabled = false;
 					// texture = 'MINENOTE_assets';
@@ -388,9 +387,6 @@ class Note extends FlxSkewedSprite{
 					noMissAnimation = true;
 				case 'GF Sing':
 					gfNote = true;
-				case 'RollNote':
-					isRoll = true;
-					reloadNote('ROLL');
 			}
 			noteType = value;
 		}
