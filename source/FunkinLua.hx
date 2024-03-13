@@ -3212,51 +3212,52 @@ class FunkinLua {
 			}
         });
 
-		Lua_helper.add_callback(lua, "makeArrowCopy", function(tag:String = '', ?compositionArray:Array<Dynamic>) {
+		Lua_helper.add_callback(lua, "makeArrowCopy", function(tag:String = '', x:Float, y:Float, noteData:Int, isStrum:Bool, 
+			camera:String, daSkin:String, daType:String, daNoteTypeStyle:String, daScaleX:Float, daScaleY:Float) 
+		{
             tag = tag.replace('.', '');
             resetSpriteTag(tag);
 			
-			if (compositionArray == null) compositionArray = [0, 0, 0, false, "camHUD", '', '', '', 1, 1]; // works ig?
 			//X = 0, Y = 1, noteData = 2, isStrum = 3, camera = 4, daSkin = 5, daType = 6, daNoteTypeStyle = 7, daScaleX = 8, daScaleY = 9
 
-            trace('what the x, ' + compositionArray[0] + ', y, ' + compositionArray[1] + ', noteData, ' + compositionArray[2] + 
-				', isStrum, ' + compositionArray[3] + ', camera, ' + compositionArray[4] + ', daSkin, ' + compositionArray[5] + 
-				', daType, ' + compositionArray[6] + ', daNoteTypeStyle, ' + compositionArray[7] + 
-				', daScaleX, ' + compositionArray[8] + ', daScaleY, ' + compositionArray[9]);
+            trace('what the x, ' + x + ', y, ' + y + ', noteData, ' + noteData + 
+				', isStrum, ' + isStrum + ', camera, ' + camera + ', daSkin, ' + daSkin + 
+				', daType, ' + daType + ', daNoteTypeStyle, ' + daNoteTypeStyle + 
+				', daScaleX, ' + daScaleX + ', daScaleY, ' + daScaleY);
 
-            var noteTypeSkin = compositionArray[7];
+            var noteTypeSkin = daNoteTypeStyle;
 
             var theSkin = 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets';
-            if (compositionArray[5] != '') theSkin = compositionArray[5];
+            if (daSkin != '') theSkin = daSkin;
 
  			var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
 
-            if (compositionArray[3] == true){
-                var spriteCopy:StrumNew = new StrumNew(compositionArray[0],compositionArray[1],compositionArray[2],0,theSkin,null,false);
-				spriteCopy.animation.play(colArray[Std.int(compositionArray[2]) % colArray.length], true);
-                spriteCopy.camera = cameraFromString(compositionArray[4]);
+            if (isStrum){
+                var spriteCopy:StrumNew = new StrumNew(x,y,noteData,0,theSkin,null,false);
+				spriteCopy.animation.play(colArray[noteData % colArray.length], true);
+                spriteCopy.cameras = [cameraFromString(camera)];
                 getInstance().add(spriteCopy);
                 PlayState.instance.modchartSprites.set(tag, spriteCopy);
             }else{
-                var spriteCopy:NewNote = new NewNote(0,compositionArray[2],false,true);
-                spriteCopy.setPosition(compositionArray[0],compositionArray[1]);
-                spriteCopy.scale.set(compositionArray[8],compositionArray[9]);
+                var spriteCopy:NewNote = new NewNote(0,noteData,false,true);
+                spriteCopy.setPosition(x,y);
+                spriteCopy.scale.set(daScaleX,daScaleY);
 
-                if (compositionArray[6] != '' && (compositionArray[5] == '')) {
-                    spriteCopy.noteType = compositionArray[6];
-                    if (noteTypeSkin != '' && (compositionArray[6].toLowerCase() == 'hurt' || compositionArray[6].toLowerCase() == 'mine'))
+                if (daType != '' && (daSkin == '')) {
+                    spriteCopy.noteType = daType;
+                    if (noteTypeSkin != '' && (daType.toLowerCase() == 'hurt' || daType.toLowerCase() == 'mine'))
                         spriteCopy.reloadNote('', 'Skins/${noteTypeSkin}');
                 }
-                else if (compositionArray[5] != '' && (compositionArray[6] == '')) {
+                else if (daSkin != '' && (daType == '')) {
                    spriteCopy.noteType = '';
-                   spriteCopy.reloadNote('', compositionArray[5]);
+                   spriteCopy.reloadNote('', daSkin);
                 }
                 else{
                    spriteCopy.reloadNote('', 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets');
                 }
 
-				spriteCopy.animation.play(colArray[Std.int(compositionArray[2]) % colArray.length] + 'Scroll', true);
-                spriteCopy.camera = cameraFromString(compositionArray[4]);
+				spriteCopy.animation.play(colArray[noteData % colArray.length] + 'Scroll', true);
+                spriteCopy.cameras = [cameraFromString(camera)];
                 getInstance().add(spriteCopy);
                 PlayState.instance.modchartSprites.set(tag, spriteCopy);
             }
@@ -3712,10 +3713,12 @@ class FunkinLua {
 
 	public static function pushCustomCameras(name:String, camera:FlxCamera)
 	{
+		var camBool:Bool = (camera != null);
+		trace('name for cam: ' + name + ', is camera not null: ' + camBool);
 		lua_Cameras.set(name, {cam: camera, shaders: [], shaderNames: []});
 	}
 
-	function cameraFromString(cam:String):FlxCamera {
+	public function cameraFromString(cam:String):FlxCamera {
 		var camera:LuaCamera = getCameraByName(cam);
 		if (camera == null)
 		{
@@ -3749,6 +3752,7 @@ class FunkinLua {
 			case 'camother' | 'other': return lua_Cameras.get("other");
 			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
 			case 'caminterfaz2' | 'interfaz2': return lua_Cameras.get("interfaz2");
+			case 'camgame' | 'game': return lua_Cameras.get('game');
         }
         return null;
     }
@@ -4158,7 +4162,13 @@ class HScript
 			return false;
 		});
 		interp.variables.set('pushCustomCameraToLua', function(name:String, camera:FlxCamera){
-			FunkinLua.pushCustomCameras(name, camera);
+			return FunkinLua.pushCustomCameras(name, camera);
+		});
+		interp.variables.set('startNewCustomCamera', function(name:String, newCamera:FlxCamera){
+			newCamera.bgColor.alpha = 0;
+			FunkinLua.pushCustomCameras(name, newCamera);
+			PlayState.instance.variables.set(name, newCamera);
+			return newCamera;
 		});
 	}
 
