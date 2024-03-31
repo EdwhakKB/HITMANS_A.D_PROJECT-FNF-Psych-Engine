@@ -96,7 +96,8 @@ class ClientPrefs {
 		'practice' => false,
 		'botplay' => false,
 		'chaosmode' => false,
-		'chaosdifficulty' => 1.0
+		'chaosdifficulty' => 1.0,
+		'randomnotes' => false
 	];
 
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
