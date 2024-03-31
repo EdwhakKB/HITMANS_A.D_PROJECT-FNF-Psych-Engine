@@ -108,6 +108,9 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		option.changeValue = 1;
 		option.displayFormat = '%vX';
 		optionsArray.push(option);
+
+		var option:GameplayOption = new GameplayOption('Randomized Notes', 'randomnotes', 'bool', false);
+		optionsArray.push(option);
 	}
 
 	public function getOptionByName(name:String)
