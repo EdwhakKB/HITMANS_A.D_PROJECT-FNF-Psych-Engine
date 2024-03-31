@@ -322,6 +322,7 @@ class PlayState extends MusicBeatState
 	public var notITGMod:Bool = true;
 	public var chaosMod:Bool = false;
 	public var chaosDifficulty:Float = 1;
+	public var randomizedNotes:Bool = false;
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
@@ -625,6 +626,7 @@ class PlayState extends MusicBeatState
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
 		chaosMod = ClientPrefs.getGameplaySetting('chaosmode', false);
 		chaosDifficulty = ClientPrefs.getGameplaySetting('chaosdifficulty', 1);
+		randomizedNotes = ClientPrefs.getGameplaySetting('randomnotes', false);
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
@@ -2253,7 +2255,8 @@ class PlayState extends MusicBeatState
 				else
 					oldNote = null;
 
-				var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+				var swagNote:Note = new Note(daStrumTime,  randomizedNotes ? Std.int(Math.abs(FlxG.random.int(noteData - 3, 3 - noteData))) : 
+					daNoteData, oldNote);
 				swagNote.mustPress = gottaHitNote;
 				swagNote.sustainLength = songNotes[2];
 				swagNote.gfNote = (section.gfSection && (songNotes[1]<4));
@@ -2273,7 +2276,8 @@ class PlayState extends MusicBeatState
 					{
 						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-						var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData, oldNote, true);
+						var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / FlxMath.roundDecimal(songSpeed, 2)), randomizedNotes ? Std.int(Math.abs(FlxG.random.int(noteData - 3, 3 - noteData))) : 
+							daNoteData, oldNote, true);
 						sustainNote.mustPress = gottaHitNote;
 						sustainNote.gfNote = (section.gfSection && (songNotes[1]<4));
 						sustainNote.noteType = swagNote.noteType;
