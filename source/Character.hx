@@ -19,7 +19,7 @@ import haxe.Json;
 import haxe.format.JsonParser;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-
+enableQuant
 using StringTools;
 
 typedef CharacterFile = {
@@ -40,7 +40,7 @@ typedef CharacterFile = {
 
 	var ?_editor_isPlayer:Null<Bool>;
 
-	var ?allowQuantized:Null<Bool>;
+	var ?disableQuant:Null<Bool>;
 
 	var ?leftNoteColors:Array<String>;
 	var ?upNoteColors:Array<String>;
@@ -99,7 +99,7 @@ class Character extends FlxSprite
 	public var UNoteColors:Array<String> = null;
 	public var RNoteColors:Array<String> = null;
 
-	public var allowQuantized:Bool = false;
+	public var disableQuant:Bool = false;
 
 	public static var DEFAULT_CHARACTER:String = 'player'; //In case a character is missing, it will use BF on its place
 	public function new(x:Float, y:Float, ?character:String = 'player', ?isPlayer:Bool = false)
@@ -241,7 +241,7 @@ class Character extends FlxSprite
 		antialiasing = ClientPrefs.globalAntialiasing ? !noAntialiasing : false;
 
 		//ColoredNotes
-		allowQuantized = json.allowQuantized != null ? json.allowQuantized : false;
+		disableQuant = json.disableQuant != null ? json.disableQuant : false;
 		LNoteColors = (json.leftNoteColors != null && json.leftNoteColors.length > 2) ? json.leftNoteColors : null;
 		UNoteColors = (json.upNoteColors != null && json.upNoteColors.length > 2) ? json.upNoteColors : null;
 		DNoteColors = (json.downNoteColors != null && json.downNoteColors.length > 2) ? json.downNoteColors : null;
