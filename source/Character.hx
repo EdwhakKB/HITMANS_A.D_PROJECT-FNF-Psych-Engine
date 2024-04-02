@@ -19,7 +19,7 @@ import haxe.Json;
 import haxe.format.JsonParser;
 import flixel.util.FlxColor;
 import flixel.util.FlxDestroyUtil;
-enableQuant
+
 using StringTools;
 
 typedef CharacterFile = {
