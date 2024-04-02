@@ -1301,7 +1301,7 @@ class PlayState extends MusicBeatState
 					currentBPM = bpmChanges[i].bpm;
 					newTime = strumTime - bpmChanges[i].songTime;
 				}
-			if (note.rgbShader.enabled && !note.hurtNote && ((note.mustPress && boyfriend.allowQuantized) || (!note.mustPress && dad.allowQuantized))){
+			if (note.rgbShader.enabled && !note.hurtNote && ((note.mustPress && !boyfriend.disableQuant) || (!note.mustPress && !dad.disableQuant))){
 				dataStuff = ((currentBPM * (newTime - ClientPrefs.noteOffset)) / 1000 / 60);
 				beat = round(dataStuff * 48, 0);
 				if (!note.isSustainNote){
