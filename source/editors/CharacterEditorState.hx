@@ -646,6 +646,7 @@ class CharacterEditorState extends MusicBeatState
 
 	var flipXCheckBox:FlxUICheckBox;
 	var noAntialiasingCheckBox:FlxUICheckBox;
+	var disableQuantCheckBox:FlxUICheckBox;
 
 	var healthColorStepperR:FlxUINumericStepper;
 	var healthColorStepperG:FlxUINumericStepper;
@@ -701,6 +702,12 @@ class CharacterEditorState extends MusicBeatState
 			character.noAntialiasing = noAntialiasingCheckBox.checked;
 		};
 
+		disableQuantCheckBox =  new FlxUICheckBox(noAntialiasingCheckBox.x, noAntialiasingCheckBox.y + 40, null, null, "Disable Quant", 120);
+		disableQuantCheckBox.checked = character.disableQuant;
+		disableQuantCheckBox.callback = function() {
+			character.disableQuant = disableQuantCheckBox.checked;
+		};
+
 		positionXStepper = new FlxUINumericStepper(flipXCheckBox.x + 110, flipXCheckBox.y, 10, character.positionArray[0], -9000, 9000, 0);
 		positionYStepper = new FlxUINumericStepper(positionXStepper.x + 60, positionXStepper.y, 10, character.positionArray[1], -9000, 9000, 0);
 
@@ -733,6 +740,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.add(graphicScaleStepper);
 		tab_group.add(flipXCheckBox);
 		tab_group.add(noAntialiasingCheckBox);
+		tab_group.add(disableQuantCheckBox);
 		tab_group.add(positionXStepper);
 		tab_group.add(positionYStepper);
 		tab_group.add(positionCameraXStepper);
