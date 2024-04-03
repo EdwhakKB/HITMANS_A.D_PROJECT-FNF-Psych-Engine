@@ -91,7 +91,7 @@ class QuantSubState extends MusicBeatSubstate
 		modeBG.alpha = 0.4;
 		add(modeBG);
 
-		notesBG = new FlxSprite(140, 190).makeGraphic(480, 125, FlxColor.BLACK);
+		notesBG = new FlxSprite(20, 190).makeGraphic(710, 125, FlxColor.BLACK);
 		notesBG.visible = false;
 		notesBG.alpha = 0.4;
 		add(notesBG);
@@ -528,8 +528,8 @@ class QuantSubState extends MusicBeatSubstate
 	function changeSelectionMode(change:Int = 0) {
 		curSelectedMode += change;
 		if (curSelectedMode < 0)
-			curSelectedMode = 1;
-		if (curSelectedMode >= 2)
+			curSelectedMode = 2;
+		if (curSelectedMode >= 3)
 			curSelectedMode = 0;
 
 		modeBG.visible = true;
@@ -597,7 +597,7 @@ class QuantSubState extends MusicBeatSubstate
 
 		// respawn stuff
 
-		var res:Int = 160;
+		var res:Int = 17;
 		skinNote = new FlxSprite(48, 24).loadGraphic(Paths.image('noteColorMenu/note'), true, res, res);
 		skinNote.antialiasing = ClientPrefs.globalAntialiasing;
 		skinNote.setGraphicSize(68);
@@ -610,7 +610,7 @@ class QuantSubState extends MusicBeatSubstate
 		var res:Int = 160;
 		for (i in 0...3)
 		{
-			var newNote:FlxSprite = new FlxSprite(210 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/note'), true, res, res);
+			var newNote:FlxSprite = new FlxSprite(230 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/note'), true, res, res);
 			newNote.antialiasing = ClientPrefs.globalAntialiasing;
 			newNote.setGraphicSize(85);
 			newNote.updateHitbox();
@@ -662,6 +662,7 @@ class QuantSubState extends MusicBeatSubstate
 		}
 		bigNote.animation.play('note$curSelectedNote', true);
 		updateColors();
+		fixColors(); // fixes your gosh dang note colors    - DM-kun
 	}
 
 	function updateColors(specific:Null<FlxColor> = null)
@@ -694,6 +695,27 @@ class QuantSubState extends MusicBeatSubstate
 			case 2:
 				getShader().b = strumRGB.b = color;
 		}
+	}
+
+	function fixColors()
+	{
+		for (i in 0...7)
+		{
+			var strumRGB:RGBShaderReference = myNotes.members[curSelectedNote].rgbShader;
+			var color:FlxColor = rgbQuantize[curSelectedNote][i];
+			switch(i)
+			{
+				case 0:
+					getShader().r = strumRGB.r = color;
+				case 1:
+					getShader().g = strumRGB.g = color;
+				case 2:
+					getShader().b = strumRGB.b = color;
+			}
+			dataArray[curSelectedNote][i] = color;
+		}
+		setShaderColor(rgbQuantize[curSelectedNote][curSelectedMode]);
+		updateColors();
 	}
 
 	function setShaderColor(value:FlxColor) dataArray[curSelectedNote][curSelectedMode] = value;
