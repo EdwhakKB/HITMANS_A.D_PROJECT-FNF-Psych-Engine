@@ -1163,12 +1163,6 @@ class PlayState extends MusicBeatState
 		if (notITGMod && SONG.notITG)
 			ModchartFuncs.loadLuaFunctions();
 
-		#if (HSCRIPT_ALLOWED && HScriptImproved)
-		scripts.set("SONG", SONG);
-		scripts.load();
-		scripts.call('onCreate');
-		#end
-
 		if (boyfriend.LNoteColors != null && boyfriend.DNoteColors != null && boyfriend.UNoteColors != null && boyfriend.RNoteColors != null)
 		{
 			trace('this is not null bruh');
