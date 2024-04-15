@@ -74,6 +74,8 @@ class StrumNote extends FlxSkewedSprite
         var pressAnim:Array<String> = ['left', 'down', 'up', 'right'];
         var colorAnims:Array<String> = ['purple', 'blue', 'green', 'red'];
 
+		var daNoteData:Float = Math.abs(noteData) % 4;
+		
         if(PlayState.isPixelStage)
         {
             loadGraphic(Paths.image('pixelUI/' + texture));
@@ -89,9 +91,9 @@ class StrumNote extends FlxSkewedSprite
             antialiasing = false;
             setGraphicSize(Std.int(width * PlayState.daPixelZoom));
 
-            animation.add('static', [0 + noteData]);
-            animation.add('pressed', [4 + noteData, 8 + noteData], 12, false);
-            animation.add('confirm', [12 + noteData, 16 + noteData], 24, false);
+            animation.add('static', [0 + Std.int(daNoteData)]);
+            animation.add('pressed', [4 + Std.int(daNoteData), 8 + Std.int(daNoteData)], 12, false);
+            animation.add('confirm', [12 + Std.int(daNoteData), 16 + Std.int(daNoteData)], 24, false);
         }
         else
         {
@@ -104,11 +106,11 @@ class StrumNote extends FlxSkewedSprite
             antialiasing = ClientPrefs.globalAntialiasing;
             setGraphicSize(Std.int(width * 0.7));
 
-            animation.addByPrefix(colorAnims[noteData], 'arrow' + notesAnim[noteData]);
+            animation.addByPrefix(colorAnims[Std.int(daNoteData)], 'arrow' + notesAnim[Std.int(daNoteData)]);
 
-            animation.addByPrefix('static', 'arrow' + notesAnim[noteData]);
-            animation.addByPrefix('pressed', pressAnim[noteData] + ' press', 24, false);
-            animation.addByPrefix('confirm', pressAnim[noteData] + ' confirm', 24, false);
+            animation.addByPrefix('static', 'arrow' + notesAnim[Std.int(daNoteData)]);
+            animation.addByPrefix('pressed', pressAnim[Std.int(daNoteData)] + ' press', 24, false);
+            animation.addByPrefix('confirm', pressAnim[Std.int(daNoteData)] + ' confirm', 24, false);
         }
 		updateHitbox();
 
