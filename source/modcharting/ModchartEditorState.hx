@@ -333,6 +333,7 @@ class ModchartEditorState extends MusicBeatState
         FlxG.mouse.visible = true;
 
         strumLine = new FlxSprite(0, 100).makeGraphic(FlxG.width, 10);
+        if(ModchartUtil.getDownscroll(this)) strumLine.y = FlxG.height - 150;
 		strumLine.scrollFactor.set();
 
         strumLineNotes = new FlxTypedGroup<StrumNoteType>();
