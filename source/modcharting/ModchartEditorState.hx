@@ -435,6 +435,8 @@ class ModchartEditorState extends MusicBeatState
     var totalElapsed:Float = 0;
     override public function update(elapsed:Float)
     {
+        songRateLabel.text = "Song Time: " + Std.string(Conductor.songPosition);
+        songRate.pos = Conductor.songPosition;
         if (finishedSetUpQuantStuff)
         {
             if (ClientPrefs.quantization && !PlayState.SONG.disableNoteRGB)
@@ -1434,6 +1436,9 @@ class ModchartEditorState extends MusicBeatState
 		ui.addComponent(box4);
 	}
 
+    var songRateLabel:Label = new Label();
+    var songRate:HorizontalSlider = new HorizontalSlider();
+
     inline function setupEditorUI()
     {
         var vbox:VBox = new VBox();
@@ -1454,11 +1459,9 @@ class ModchartEditorState extends MusicBeatState
             sliderRateLabel.text = 'Playback Speed: ' + Std.string(sliderRate.pos);
         }
 
-        var songRateLabel:Label = new Label();
         songRateLabel.text = 'Song Time: ' + Std.string(inst.time);
         songRateLabel.verticalAlign = "center";
 
-        var songRate = new HorizontalSlider();
         songRate.min = 0;
         songRate.max = inst.length;
         songRate.pos = inst.time;
