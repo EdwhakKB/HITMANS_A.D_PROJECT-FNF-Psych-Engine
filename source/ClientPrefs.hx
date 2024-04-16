@@ -147,7 +147,6 @@ class ClientPrefs {
 	}
 
 	public static function saveSettings() {
-		#if ACHIEVEMENTS_ALLOWED Achievements.save(); #end
 		FlxG.save.data.downScroll = downScroll;
 		FlxG.save.data.middleScroll = middleScroll;
 		FlxG.save.data.opponentStrums = opponentStrums;
@@ -206,6 +205,8 @@ class ClientPrefs {
 
 		FlxG.save.data.developerMode = developerMode;
 		FlxG.save.data.edwhakMode = edwhakMode;
+
+		#if ACHIEVEMENTS_ALLOWED Achievements.save(); #end
 	
 		FlxG.save.flush();
 
