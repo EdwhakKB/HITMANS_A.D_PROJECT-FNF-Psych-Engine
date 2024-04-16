@@ -402,10 +402,6 @@ class ModchartEditorState extends MusicBeatState
         debugText.alignment = FlxTextAlign.LEFT;
         add(debugText);
 
-        Toolkit.init();
-        Toolkit.theme = "DARK";
-		Toolkit.autoScale = false;
-
 		ui = new TabView();
 		ui.text = "huh";
 		ui.draggable = true;
@@ -436,7 +432,7 @@ class ModchartEditorState extends MusicBeatState
     override public function update(elapsed:Float)
     {
         songRateLabel.text = "Song Time: " + Std.string(Conductor.songPosition);
-        songRate.pos = Conductor.songPosition;
+        // songRate.pos = Conductor.songPosition;
         if (finishedSetUpQuantStuff)
         {
             if (ClientPrefs.quantization && !PlayState.SONG.disableNoteRGB)
