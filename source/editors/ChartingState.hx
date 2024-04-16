@@ -386,10 +386,6 @@ class ChartingState extends MusicBeatState
 		add(dummyArrow);
 		//UI_box.selected_tab = 4;
 
-		Toolkit.init();
-        Toolkit.theme = "DARK";
-		Toolkit.autoScale = false;
-
 		ui = new TabView();
 		ui.text = "huh";
 		ui.draggable = true;
@@ -599,7 +595,7 @@ class ChartingState extends MusicBeatState
 		player1DropDown.onChange = function(e)
 		{
 			_song.player1 = characters[player1DropDown.selectedIndex];
-			
+			updateHeads();
 		}
 		player1DropDown.selectedItem = _song.player1;
 
@@ -615,7 +611,7 @@ class ChartingState extends MusicBeatState
 		gfVersionDropDown.onChange = function(e)
 		{
 			_song.gfVersion = characters[gfVersionDropDown.selectedIndex];
-			
+			updateHeads();
 		}
 		gfVersionDropDown.selectedItem = _song.gfVersion;
 
@@ -631,7 +627,7 @@ class ChartingState extends MusicBeatState
 		player2DropDown.onChange = function(e)
 		{
 			_song.player2 = characters[player2DropDown.selectedIndex];
-			
+			updateHeads();	
 		}
 		player2DropDown.selectedItem = _song.player2;
 
@@ -647,7 +643,7 @@ class ChartingState extends MusicBeatState
 		player4DropDown.onChange = function(e)
 		{
 			_song.player1 = characters[player4DropDown.selectedIndex];
-			
+			updateHeads();
 		}
 		player4DropDown.selectedItem = _song.player1;
 
