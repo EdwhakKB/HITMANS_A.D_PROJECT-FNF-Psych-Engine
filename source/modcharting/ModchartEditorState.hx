@@ -1930,6 +1930,25 @@ class ModchartEditorState extends MusicBeatState
         var stepperNeedsBlock:Array<NumberStepper> = [stackedEventStepper, repeatBeatGapStepper, repeatCountStepper, eventTimeStepper, 
         selectedEventDataStepper];
         for (blockedStep in 0...stepperNeedsBlock.length) stepperBlockers.push(stepperNeedsBlock[blockedStep]);
+
+        var alreadyActive = false;
+
+        var sideBar = new SideBar();
+        sideBar.position = "bottom";
+        sideBar.modal = false;
+
+        var helpButton:Button = new Button();
+        helpButton.text = "Explanation to Events Tab";
+        helpButton.width = 100;
+        helpButton.height = 100;
+        helpButton.onClick = function(e)
+        {
+            helpButton.width = 100;
+            helpButton.height = 100;
+            alreadyActive = !alreadyActive;
+            if (!alreadyActive) sideBar.hide();
+            else sideBar.show();
+        }
         
         //Components
         vbox1.addComponent(addStackedLabel);
@@ -1954,6 +1973,7 @@ class ModchartEditorState extends MusicBeatState
         vbox1.addComponent(eventTypeDropDoes);
         vbox1.addComponent(easeDropLabel);
         vbox1.addComponent(easeDropDown);
+        vbox1.addComponent(helpButton);
         vbox2.addComponent(addEventButton);
         vbox2.addComponent(removeEventButton);
         vbox2.addComponent(repeatBeatGapLabel);
@@ -2195,6 +2215,25 @@ class ModchartEditorState extends MusicBeatState
         var stepperNeedsBlock:Array<NumberStepper> = [playfieldStepper, targetLaneStepper];
         for (blockedStep in 0...stepperNeedsBlock.length) stepperBlockers.push(stepperNeedsBlock[blockedStep]);
 
+        var alreadyActive = false;
+
+        var sideBar = new SideBar();
+        sideBar.position = "bottom";
+        sideBar.modal = false;
+
+        var helpButton:Button = new Button();
+        helpButton.text = "Explanation to Modifiers Tab";
+        helpButton.width = 100;
+        helpButton.height = 100;
+        helpButton.onClick = function(e)
+        {
+            helpButton.width = 100;
+            helpButton.height = 100;
+            alreadyActive = !alreadyActive;
+            if (!alreadyActive) sideBar.hide();
+            else sideBar.show();
+        }
+
         vbox1.addComponent(explainText);
 
         vbox1.addComponent(modNameLabel);
@@ -2213,6 +2252,8 @@ class ModchartEditorState extends MusicBeatState
         vbox1.addComponent(saveModifier);
         vbox1.addComponent(removeModifier);
         vbox1.addComponent(activeModifiersText);
+
+        vbox1.addComponent(helpButton);
 
         vbox2.addComponent(modifierDropDown);
         vbox2.addComponent(modClassDropDown);
@@ -2428,9 +2469,29 @@ class ModchartEditorState extends MusicBeatState
 
         stepperBlockers.push(playfieldCountStepper);
 
+        var alreadyActive = false;
+
+        var sideBar = new SideBar();
+        sideBar.position = "bottom";
+        sideBar.modal = false;
+
+        var helpButton:Button = new Button();
+        helpButton.text = "Explanation to Playfields Tab";
+        helpButton.width = 100;
+        helpButton.height = 100;
+        helpButton.onClick = function(e)
+        {
+            helpButton.width = 100;
+            helpButton.height = 100;
+            alreadyActive = !alreadyActive;
+            if (!alreadyActive) sideBar.hide();
+            else sideBar.show();
+        }
+
         vbox1.addComponent(playfieldDoes);
         vbox1.addComponent(playfieldCountStepper);
         vbox1.addComponent(playfieldLabel);
+        vbox1.addComponent(helpButton);
         box4.addComponent(vbox1);
     }
 
