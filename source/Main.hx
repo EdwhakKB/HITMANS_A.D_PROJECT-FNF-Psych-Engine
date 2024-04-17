@@ -133,7 +133,6 @@ class Main extends Sprite
 		#if ACHIEVEMENTS_ALLOWED 
 		Achievements.load(); 
 		#end
-
 		
 		FlxGraphic.defaultPersist = false;
 	        FlxG.signals.preStateSwitch.add(function()
