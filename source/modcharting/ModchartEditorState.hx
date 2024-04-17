@@ -1519,6 +1519,14 @@ class ModchartEditorState extends MusicBeatState
             playfieldRenderer.visible = !playfieldRenderer.visible;
         }
 
+        var helpButton:Button = new Button();
+        helpButton.text = "Help";
+        helpButton.color = FlxColor.YELLOW;
+        helpButton.onClick = function(e)
+        {
+            CoolUtil.browserLoad('https://docs.google.com/document/d/12i7Ci7ISfbx34Gh8btIDNQqNV8x4WLMCaOYeU2I-nEU/edit?usp=sharing');
+        }
+
         vbox.addComponent(sliderRateLabel);
         vbox.addComponent(sliderRate);
         vbox.addComponent(songRateLabel);
@@ -1530,6 +1538,7 @@ class ModchartEditorState extends MusicBeatState
         vbox.addComponent(resetSpeedLabel);
         vbox.addComponent(resetSpeed);
         vbox.addComponent(hideNotes);
+        vbox.addComponent(helpButton);
 
         grid.addComponent(vbox);
         box.addComponent(grid);
