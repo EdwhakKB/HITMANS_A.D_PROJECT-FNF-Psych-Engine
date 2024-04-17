@@ -55,6 +55,7 @@ import haxe.ui.containers.ContinuousHBox;
 import haxe.ui.containers.TabView;
 import haxe.ui.containers.VBox;
 import haxe.ui.containers.Grid;
+import haxe.ui.containers.SideBar;
 
 import haxe.ui.components.CheckBox;
 import haxe.ui.components.Button;
