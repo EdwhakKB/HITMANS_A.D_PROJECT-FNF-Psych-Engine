@@ -111,14 +111,14 @@ class ModchartFile
                 rawJson = File.getContent(moddyFileMods).trim();
                 folderShit = moddyFileMods.replace("modchart-" + difficulty + ".json", "customMods/");
 
-                trace('${difficulty} Mochart Found In Mods! loading modchart-${difficulty}.json');
+                trace('${difficulty} Modchart Found In Mods! loading modchart-${difficulty}.json');
             }
             else
             {
                 rawJson = File.getContent(moddyFileMods2).trim();
                 folderShit = moddyFileMods2.replace("modchart.json", "customMods/");
 
-                trace('${difficulty} Mochart Has Not Been Found In Mods! loading modchart.json');
+                trace('${difficulty} Modchart Has Not Been Found In Mods! loading modchart.json');
             }
             #end
 
@@ -127,14 +127,14 @@ class ModchartFile
                 rawJson = File.getContent(moddyFile).trim();
                 folderShit = moddyFile.replace("modchart-" + difficulty + ".json", "customMods/");
 
-                trace('${difficulty} Mochart Found! loading modchart-${difficulty}.json');
+                trace('${difficulty} Modchart Found! loading modchart-${difficulty}.json');
             }
             else
             {
                 rawJson = File.getContent(moddyFile2).trim();
                 folderShit = moddyFile2.replace("modchart.json", "customMods/");
 
-                trace('${difficulty} Mochart Has Not Been Found! loading modchart.json');
+                trace('${difficulty} Modchart Has Not Been Found! loading modchart.json');
             }
         }
         catch(e:Dynamic)
@@ -160,7 +160,7 @@ class ModchartFile
                         folderShit = filePath.replace("modchart-" + difficulty + ".json", "customMods/");
                     #end
 
-                    trace('${difficulty} Mochart FolderShit Found In Mods! loading modchart-${difficulty}.json');
+                    trace('${difficulty} Modchart FolderShit Found In Mods! loading modchart-${difficulty}.json');
                 }
                 else
                 { 
@@ -172,7 +172,7 @@ class ModchartFile
                         folderShit = filePath.replace("modchart.json", "customMods/");
                     #end
 
-                    trace('${difficulty} Mochart Has No FolderShit Found In Mods! loading modchart.json');
+                    trace('${difficulty} Modchart Has No FolderShit Found In Mods! loading modchart.json');
                 }
                 #end
 
@@ -187,7 +187,7 @@ class ModchartFile
                         folderShit = filePath.replace("modchart-" + difficulty + ".json", "customMods/");
                     #end
 
-                    trace('${difficulty} Mochart FolderShit Found! loading modchart-${difficulty}.json');
+                    trace('${difficulty} Modchart FolderShit Found! loading modchart-${difficulty}.json');
                 }
                 else
                 {
@@ -199,7 +199,7 @@ class ModchartFile
                         folderShit = filePath.replace("modchart.json", "customMods/");
                     #end
 
-                    trace('${difficulty} Mochart Has No FolderShit Found! loading modchart.json');
+                    trace('${difficulty} Modchart Has No FolderShit Found! loading modchart.json');
                 }
             }
             catch(e:Dynamic)

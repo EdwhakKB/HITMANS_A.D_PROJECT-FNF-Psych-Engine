@@ -405,8 +405,8 @@ class ModchartEditorState extends MusicBeatState
 		ui = new TabView();
 		ui.text = "huh";
 		ui.draggable = true;
-		ui.x = 400;
-		ui.y = 120;
+		ui.x = 200;
+		ui.y = 100;
 		ui.height = 600;
 		ui.width = 900;
 

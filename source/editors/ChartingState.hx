@@ -264,6 +264,16 @@ class ChartingState extends MusicBeatState
 
 	override function create()
 	{
+		ui = new TabView();
+		ui.text = "huh";
+		ui.draggable = false;
+		ui.x = 800;
+		ui.y = 50;
+		ui.height = 600;
+		ui.width = 400;
+
+        addTabs();
+
 		if (PlayState.SONG != null)
 			_song = PlayState.SONG;
 		else
@@ -385,16 +395,6 @@ class ChartingState extends MusicBeatState
 		dummyArrow = new FlxSprite().makeGraphic(GRID_SIZE, GRID_SIZE);
 		add(dummyArrow);
 		//UI_box.selected_tab = 4;
-
-		ui = new TabView();
-		ui.text = "huh";
-		ui.draggable = true;
-		ui.x = 400;
-		ui.y = 120;
-		ui.height = 600;
-		ui.width = 400;
-
-        addTabs();
 
 		addSongAssetsAndOptionsUI();
 		addNoteUI();
