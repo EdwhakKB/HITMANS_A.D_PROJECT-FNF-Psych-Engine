@@ -233,6 +233,22 @@ class ModchartEditorState extends MusicBeatState
     var highlightedEvent:Array<Dynamic> = null;
     var stackedHighlightedEvents:Array<Array<Dynamic>> = [];
 
+    public var outlineEvents:FlxSprite;
+    public var clickEvents:FlxSprite;
+    public var textEvents:FlxText; //duh
+
+    public var outlineEditor:FlxSprite;
+    public var clickEditor:FlxSprite;
+    public var textEditor:FlxText; //duh
+
+    public var outlineModifiers:FlxSprite;
+    public var clickModifiers:FlxSprite;
+    public var textModifiers:FlxText; //duh
+
+    public var outlineMisc:FlxSprite;
+    public var clickMisc:FlxSprite;
+    public var textMisc:FlxText; //duh
+
     var UI_box:FlxUITabMenu;
 
     var textBlockers:Array<TextField> = [];
@@ -405,7 +421,7 @@ class ModchartEditorState extends MusicBeatState
 
 		ui = new TabView();
 		ui.text = "huh";
-		ui.draggable = true;
+		ui.draggable = false;
 		ui.x = 200;
 		ui.y = 100;
 		ui.height = 600;
@@ -419,6 +435,66 @@ class ModchartEditorState extends MusicBeatState
         setupPlayfieldUI();
 
         add(ui);
+
+        clickEvents = new FlxSprite(FlxG.width-50, 100).makeGraphic(50, 200);
+        clickEvents.color = 0x313335;
+
+        outlineEvents = new FlxSprite(clickEvents.x-2, clickEvents.y-2).makeGraphic(55, 203);
+        outlineEvents.color = 0x222426;
+
+        textEvents = new FlxText(0, gridSize, 0, 'E\nV\nE\nN\nT\nS', 20);
+        textEvents.x = clickEvents.x + 20;
+        textEvents.y = clickEvents.y + 20;
+        textEvents.color = 0xAAAAAA;
+
+        clickEditor = new FlxSprite(0, 100).makeGraphic(50, 200);
+        clickEditor.color = 0x313335;
+
+        outlineEditor = new FlxSprite(clickEditor.x-3, clickEditor.y-1).makeGraphic(55, 203);
+        outlineEditor.color = 0x222426;
+
+        textEditor = new FlxText(0, gridSize, 0, 'E\nD\nI\nT\nO\nR', 20);
+        textEditor.x = clickEditor.x + 20;
+        textEditor.y = clickEditor.y + 20;
+        textEditor.color = 0xAAAAAA;
+
+        clickModifiers = new FlxSprite(FlxG.width-50, 301).makeGraphic(50, 280);
+        clickModifiers.color = 0x313335;
+
+        outlineModifiers = new FlxSprite(clickModifiers.x-2, clickModifiers.y-1).makeGraphic(55, 283);
+        outlineModifiers.color = 0x222426;
+
+        textModifiers = new FlxText(0, gridSize, 0, 'M\nO\nD\nI\nF\nI\nE\nR\nS', 20);
+        textModifiers.x = clickModifiers.x + 20;
+        textModifiers.y = clickModifiers.y + 20;
+        textModifiers.color = 0xAAAAAA;
+
+        clickMisc = new FlxSprite(0, 301).makeGraphic(50, 150);
+        clickMisc.color = 0x313335;
+
+        outlineMisc = new FlxSprite(clickMisc.x-3, clickMisc.y-1).makeGraphic(55, 153);
+        outlineMisc.color = 0x222426;
+
+        textMisc = new FlxText(0, gridSize, 0, 'M\nI\nS\nC', 20);
+        textMisc.x = clickMisc.x + 20;
+        textMisc.y = clickMisc.y + 20;
+        textMisc.color = 0xAAAAAA;
+
+        add(outlineEditor);
+        add(clickEditor);
+        add(textEditor);
+
+        add(outlineModifiers);
+        add(clickModifiers);
+        add(textModifiers);
+
+        add(outlineMisc);
+        add(clickMisc);
+        add(textMisc);
+
+        add(outlineEvents);
+        add(clickEvents);
+        add(textEvents);
 
         if (ClientPrefs.quantization && !PlayState.SONG.disableNoteRGB) setUpNoteQuant();
 
@@ -794,6 +870,79 @@ class ModchartEditorState extends MusicBeatState
         }
 
         activeModifiersText.text = leText;
+
+
+        if (pointerClicked()){
+            if(pointerOverlaps(clickEvents)){
+                clickEvents.color = 0x3D3F41;
+
+                clickEditor.color = 0x313335;
+                clickModifiers.color = 0x313335;
+                clickMisc.color = 0x313335;
+            }else if(pointerOverlaps(clickEditor)){
+                clickEditor.color = 0x3D3F41;
+
+                clickEvents.color = 0x313335;
+                clickModifiers.color = 0x313335;
+                clickMisc.color = 0x313335;
+            }else if(pointerOverlaps(clickModifiers)){
+                clickModifiers.color = 0x3D3F41;
+
+                clickEvents.color = 0x313335;
+                clickEditor.color = 0x313335;
+                clickMisc.color = 0x313335;
+            }else if(pointerOverlaps(clickMisc)){
+                clickMisc.color = 0x3D3F41;
+
+                clickEvents.color = 0x313335;
+                clickEditor.color = 0x313335;
+                clickModifiers.color = 0x313335;
+            }else{
+                clickEvents.color = 0x313335;
+                clickEditor.color = 0x313335;
+                clickModifiers.color = 0x313335;
+                clickMisc.color = 0x313335;
+            }
+
+
+            // if(pointerOverlaps(clickEvents)){
+            //     clickEvents.visible = true;
+            //     textEvents.visible = true;
+
+            //     clickModifiers.visible = false;
+            //     textModifiers.visible = false;
+            // }else if(pointerOverlaps(clickModifiers)){
+            //     clickModifiers.visible = true;
+            //     textModifiers.visible = true;
+
+            //     clickEvents.visible = false;
+            //     textEvents.visible = false;
+            // }else{
+            //     clickEvents.visible = true;
+            //     textEvents.visible = true;
+            //     clickModifiers.visible = true;
+            //     textModifiers.visible = true;
+            // }
+
+            // if(pointerOverlaps(clickMisc)){
+            //     clickMisc.visible = true;
+            //     textMisc.visible = true;
+
+            //     clickEditor.visible = false;
+            //     textEditor.visible = false;
+            // }else if(pointerOverlaps(clickEditor)){
+            //     clickEditor.visible = true;
+            //     textEditor.visible = true;
+
+            //     clickMisc.visible = false;
+            //     textMisc.visible = false;
+            // }else{
+            //     clickMisc.visible = true;
+            //     textMisc.visible = true;
+            //     clickEditor.visible = true;
+            //     textEditor.visible = true;
+            // }
+        }
     }
 
     function addNewEvent(time:Float)
@@ -1247,9 +1396,16 @@ class ModchartEditorState extends MusicBeatState
     public static function createGrid(CellWidth:Int, CellHeight:Int, Width:Int, Height:Int):BitmapData
     {
         // How many cells can we fit into the width/height? (round it UP if not even, then trim back)
-        var Color1 = FlxColor.GRAY; //quant colors!!!
-        var Color2 = FlxColor.WHITE;
-        // var Color3 = FlxColor.LIME;
+        var Color1 = 0xFFAAAAAA; //not quant colors LMAO
+        var Color2 = 0xFFAAAAAA;
+        var Color3 = 0xFF888888;
+
+        if(ClientPrefs.quantization){
+            Color1 = 0xFFFFAAAA; //quant colors!!!
+            Color2 = 0xFFB3B2FF;
+            Color3 = 0xFF759E71;
+        }
+
         var rowColor:Int = Color1;
         var lastColor:Int = Color1;
         var grid:BitmapData = new BitmapData(Width, Height, true);
@@ -1269,10 +1425,14 @@ class ModchartEditorState extends MusicBeatState
             var x:Int = 0;
             while (x <= Width)
             {
-                if (timesFilled % 2 == 0)
+                if (timesFilled % 4 == 0)
                     lastColor = Color1;
-                else if (timesFilled % 2 == 1)
+                else if (timesFilled % 4 == 1)
+                    lastColor = Color3;
+                else if (timesFilled % 4 == 2)
                     lastColor = Color2;
+                else if (timesFilled % 4 == 3)
+                    lastColor = Color3;
                 grid.fillRect(new Rectangle(x, y, CellWidth, CellHeight), lastColor);
                 // grid.unlock();
                 timesFilled++;
@@ -2451,6 +2611,31 @@ class ModchartEditorState extends MusicBeatState
        return explainString;
     }
 
+    function pointerOverlaps(obj:Dynamic)
+    {
+        return FlxG.mouse.overlaps(obj);
+    }
+
+    function pointerClicked()
+    {
+        return FlxG.mouse.justPressed;
+    }
+        
+    function clickedLabel(type:String, entering:Bool)
+    {
+        switch(type){
+            case 'Editor':
+
+            case 'Modifiers':
+
+            case 'Misc':
+
+            case 'Events':
+
+            default:
+
+        }
+    }
     function setupPlayfieldUI()
     {
         var vbox1:VBox = new VBox();
