@@ -193,6 +193,13 @@ class CrashHandler
 			}
 			assetGrpCrash.add(crashtext);
 
+			if(crashtext.width >= FlxG.width || crashtext.height >= FlxG.height) {
+				crashtext.size -= 2;
+				// (for extremely long texts (bro, what did you do to make this happen?)
+				if(crashtext.width >= FlxG.width || crashtext.height >= FlxG.height)
+					crashtext.size -= 2;
+			}
+
 			var text2 = new FlxText(10, crashtext.height + 70, 0, "");
 			text2.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			text2.scrollFactor.set();
