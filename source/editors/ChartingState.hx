@@ -878,6 +878,7 @@ class ChartingState extends MusicBeatState
 		stepperSusLength.max = Conductor.stepCrochet * 64;
 		stepperSusLength.step = ((Conductor.stepCrochet / 2) / 10);
 		stepperSusLength.pos = 0;
+		stepperSusLength.precision = 2;
 		stepperSusLength.onChange = function(e)
 		{
 			if(curSelectedNote != null && curSelectedNote[2] != null) {
