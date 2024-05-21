@@ -3371,6 +3371,9 @@ class PlayState extends MusicBeatState
 				}});
 				FlxTween.tween(staticDeath, {alpha: 1}, 3, {ease:FlxEase.sineIn, onComplete:function(daTween:FlxTween){
 					FlxG.sound.music.volume = 0;
+					vocals.volume = 0;
+					// vocals.stop();
+					vocals.pause();
 					FlxG.sound.play(Paths.sound('Edwhak/deathSound'), 1, false);
 					playbackRate = 1;
 					staticDeath.alpha = 0;

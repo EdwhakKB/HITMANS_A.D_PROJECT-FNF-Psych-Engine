@@ -1883,6 +1883,21 @@ class TordnadoModifier extends Modifier
     }
 }
 
+class ParalysisModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('amplitude', new ModifierSubValue(1.0));
+    }
+    override function curPosMath(lane:Int, curPos:Float, pf:Int)
+    {
+        var beat = (Conductor.songPosition/Conductor.crochet/2);
+        var fixedperiod = (Math.floor(beat)*Conductor.crochet*2);
+        var strumTime = (Conductor.songPosition - (curPos / PlayState.SONG.speed));
+        return ((fixedperiod - strumTime)*PlayState.SONG.speed/4)*subValues.get('amplitude').value;
+    }  
+}
+
 class ZigZagModifier extends Modifier
 {
     override function setupSubValues()

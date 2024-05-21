@@ -339,11 +339,10 @@ class Note extends FlxSkewedSprite{
 						}
 					}
 					if (edwhakIsPlayer){
-						fire = true;
 						if(isSustainNote) {
 							hitHealth = -0.35;
 						} else {
-							hitHealth = -0.7;
+							hitHealth = -0.5;
 						}
 						fire = true;
 					}
