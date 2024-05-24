@@ -36,8 +36,6 @@ using StringTools;
 class Huds extends FlxGroup
 {
 	// health
-    public var healthBarHit:AttachedSprite;
-    public var healthHitBar:FlxBar;
 	public var healthBarBG:AttachedSprite;
 	public var healthBar:FlxBar;
 	public var health:Float = 1;
@@ -59,9 +57,7 @@ class Huds extends FlxGroup
 
 	// score bla bla bla
 	public var scoreTxt:FlxText;
-    public var scoreTxtHit:FlxText;
 	public var scoreTxtTween:FlxTween;
-    public var scoreTxtHitTween:FlxTween;
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
@@ -223,54 +219,39 @@ class Huds extends FlxGroup
 			    timeTxt.y += 3;
 		    }
 
-            healthBarBG = new AttachedSprite('healthBar');
-            healthBarBG.y = FlxG.height * 0.89;
+            healthBarBG = new AttachedSprite(ClientPrefs.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBar');
+			if (ClientPrefs.hudStyle == 'HITMANS'){
+				healthBarBG.flipY = ClientPrefs.downScroll;
+				healthBarBG.y = ClientPrefs.downScroll ? 0 * FlxG.height : FlxG.height * 0.9;
+            }else{
+				healthBarBG.y = FlxG.height * 0.89;
+				healthBarBG.xAdd = -4;
+				healthBarBG.yAdd = -4;
+			}
             healthBarBG.screenCenter(X);
             healthBarBG.scrollFactor.set();
             healthBarBG.visible = !ClientPrefs.hideHud;
-            healthBarBG.xAdd = -4;
-            healthBarBG.yAdd = -4;
-            add(healthBarBG);
-            if (ClientPrefs.hudStyle == 'HITMANS'){
-                healthBarBG.visible = false;
-            }
+			add(healthBarBG);
     
             if(ClientPrefs.downScroll) healthBarBG.y = 0.11 * FlxG.height;
     
-            healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-                'health', 0, 2);
+            healthBar = new FlxBar(
+				ClientPrefs.hudStyle == 'HITMANS' ? 350 : healthBarBG.x + 4, 
+				ClientPrefs.hudStyle == 'HITMANS' ? healthBar.y + 15 : healthBarBG.y + 4, 
+				RIGHT_TO_LEFT, 
+				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.width - 120) : Std.int(healthBarBG.width - 8), 
+				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.height - 30) : Std.int(healthBarBG.height - 8), 
+				this,
+				'health', 0, 2
+			);
             healthBar.scrollFactor.set();
             // healthBar
             healthBar.visible = !ClientPrefs.hideHud;
             healthBar.alpha = ClientPrefs.healthBarAlpha;
             add(healthBar);
-            if (ClientPrefs.hudStyle == 'HITMANS'){
-                healthBar.visible = false;
-            }
             healthBarBG.sprTracker = healthBar;
     
-            healthBarHit = new AttachedSprite('healthBarHit');
-            if(!ClientPrefs.downScroll) healthBarHit.y = FlxG.height * 0.9;
-            if(ClientPrefs.downScroll) healthBarHit.y = 0 * FlxG.height;
-            healthBarHit.screenCenter(X);
-            healthBarHit.visible = !ClientPrefs.hideHud;
-            healthBarHit.alpha = ClientPrefs.healthBarAlpha;
-            healthBarHit.flipY = false;
-            if (!ClientPrefs.downScroll){
-                healthBarHit.flipY = true;
-            }
-            healthHitBar = new FlxBar(350, healthBarHit.y + 15, RIGHT_TO_LEFT, Std.int(healthBarHit.width - 120), Std.int(healthBarHit.height - 30), this,
-                'health', 0, 2);
-            // healthBar
-            healthHitBar.visible = !ClientPrefs.hideHud;
-            healthHitBar.alpha = ClientPrefs.healthBarAlpha;
-            add(healthHitBar);
-            add(healthBarHit);
-            if (ClientPrefs.hudStyle == 'Classic'){
-                healthHitBar.visible = false;
-                healthBarHit.visible = false;
-            }
-    
+
             iconP1 = new HealthIcon(PlayState.instance.boyfriend.healthIcon, true);
             iconP1.y = healthBar.y - 75;
             iconP1.visible = !ClientPrefs.hideHud;
@@ -284,25 +265,18 @@ class Huds extends FlxGroup
             add(iconP2);
             reloadHealthBarColors();
     
-            scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 20);
-            scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+            scoreTxt = new FlxText(
+				0, 
+				ClientPrefs.hudStyle == 'HITMANS' ? (ClientPrefs.downScroll ? healthBar.y + 66 : healthBar.y - 33) : healthBarBG.y + 36, 
+				FlxG.width, 
+				"", 
+				20
+			);
+            scoreTxt.setFormat(ClientPrefs.hudStyle == 'HITMANS' ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             scoreTxt.scrollFactor.set();
             scoreTxt.borderSize = 1.25;
             scoreTxt.visible = !ClientPrefs.hideHud;
-            if (ClientPrefs.hudStyle == 'Classic'){
             add(scoreTxt);
-            }
-    
-            scoreTxtHit = new FlxText(0, 0, FlxG.width, "", 20);
-            scoreTxtHit.setFormat(Paths.font("DEADLY KILLERS.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-            if(!ClientPrefs.downScroll) scoreTxtHit.y = healthBarHit.y - 33;
-            if(ClientPrefs.downScroll) scoreTxtHit.y = healthBarHit.y + 66;
-            scoreTxtHit.scrollFactor.set();
-            scoreTxtHit.borderSize = 1.25;
-            scoreTxtHit.visible = !ClientPrefs.hideHud;
-            if (ClientPrefs.hudStyle == 'HITMANS'){
-            add(scoreTxtHit);
-            }
     
             botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
             botplayTxt.setFormat(Paths.font("DEADLY KILLERS.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -339,31 +313,17 @@ class Huds extends FlxGroup
 			iconP2.updateHitbox();
     
 			iconP1.x = (hudUsed == 'hitmans') ? (FlxG.width - 160) : healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-			iconP2.x = (hudUsed == 'hitmans') ? (0) : healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+			iconP2.x = (hudUsed == 'hitmans') ? 0 : healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 			
-            if (ClientPrefs.hudStyle == 'Classic'){
-                if (healthBar.percent < 20)
-                    iconP1.animation.curAnim.curFrame = 1;
-                else
-                    iconP1.animation.curAnim.curFrame = 0;
+            if (healthBar.percent < 20)
+				iconP1.animation.curAnim.curFrame = 1;
+			else
+				iconP1.animation.curAnim.curFrame = 0;
 
-                if (healthBar.percent > 80)
-                    iconP2.animation.curAnim.curFrame = 1;
-                else
-                    iconP2.animation.curAnim.curFrame = 0;
-            }
-    
-            if (ClientPrefs.hudStyle == 'HITMANS'){
-                if (healthHitBar.percent < 20)
-                    iconP1.animation.curAnim.curFrame = 1;
-                else
-                    iconP1.animation.curAnim.curFrame = 0;
-        
-                if (healthHitBar.percent > 80)
-                    iconP2.animation.curAnim.curFrame = 1;
-                else
-                    iconP2.animation.curAnim.curFrame = 0;
-            }
+			if (healthBar.percent > 80)
+				iconP2.animation.curAnim.curFrame = 1;
+			else
+				iconP2.animation.curAnim.curFrame = 0;
 
 			if (botplayTxt.visible)
 			{
@@ -437,8 +397,6 @@ class Huds extends FlxGroup
 			}
 
 			tempScore += ratingString + '\n';
-			scoreTxt.text = tempScore;
-            scoreTxtHit.text = tempScore;
 		}
 	}
 
@@ -454,9 +412,6 @@ class Huds extends FlxGroup
 
 			healthBar.createFilledBar(dadcolor, bfcolor);
 			healthBar.updateBar();
-
-            healthHitBar.createFilledBar(dadcolor, bfcolor);
-		    healthHitBar.updateBar();
 		}
 	}
 

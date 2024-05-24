@@ -384,10 +384,8 @@ class PlayState extends MusicBeatState
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
-	public var scoreTxtHit:FlxText;
 	var timeTxt:FlxText;
 	var scoreTxtTween:FlxTween;
-	var scoreTxtHitTween:FlxTween;
 
 	var resultScreen:ResultScreen;
 
@@ -1045,8 +1043,6 @@ class PlayState extends MusicBeatState
 
 		hitmansHUD.healthBar.cameras = [camInterfaz];
 		hitmansHUD.healthBarBG.cameras = [camInterfaz];
-		hitmansHUD.healthBarHit.cameras = [camInterfaz2];
-		hitmansHUD.healthHitBar.cameras = [camInterfaz2];
 
 		hitmansHUD.ratings.cameras = [camInterfaz2];
 		hitmansHUD.ratingsOP.cameras = [camInterfaz2];
@@ -1062,7 +1058,6 @@ class PlayState extends MusicBeatState
 		}
 
 		hitmansHUD.scoreTxt.cameras = [camInterfaz];
-		hitmansHUD.scoreTxtHit.cameras = [camInterfaz2];
 		hitmansHUD.botplayTxt.cameras = [camInterfaz2];
 		hitmansHUD.timeBar.cameras = [camInterfaz];
 		hitmansHUD.timeBarBG.cameras = [camInterfaz];
@@ -1964,17 +1959,6 @@ class PlayState extends MusicBeatState
 			hitmansHUD.scoreTxtTween = FlxTween.tween(hitmansHUD.scoreTxt.scale, {x: 1, y: 1}, 0.2, {
 				onComplete: function(twn:FlxTween) {
 					hitmansHUD.scoreTxtTween = null;
-				}
-			});
-
-			if(hitmansHUD.scoreTxtHitTween != null) {
-				hitmansHUD.scoreTxtHitTween.cancel();
-			}
-			hitmansHUD.scoreTxtHit.scale.x = 1.075;
-			hitmansHUD.scoreTxtHit.scale.y = 1.075;
-			hitmansHUD.scoreTxtHitTween = FlxTween.tween(hitmansHUD.scoreTxtHit.scale, {x: 1, y: 1}, 0.2, {
-				onComplete: function(twn:FlxTween) {
-					hitmansHUD.scoreTxtHitTween = null;
 				}
 			});
 		}

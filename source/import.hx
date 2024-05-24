@@ -1,3 +1,4 @@
+#if !macro
 import Paths;
 
 #if ACHIEVEMENTS_ALLOWED
@@ -19,3 +20,4 @@ import tea.SScript;
 #end
 
 using StringTools;
+#end

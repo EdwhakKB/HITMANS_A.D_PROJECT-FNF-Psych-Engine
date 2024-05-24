@@ -354,10 +354,7 @@ function onStepHit()
 		setProperty('hitmansHUD.iconP2.visible', false);
 		setProperty('hitmansHUD.healthBar.visible', false);
 		setProperty('hitmansHUD.scoreTxt.visible', false);
-		setProperty('hitmansHUD.scoreTxtHit.visible', false);
-		setProperty('hitmansHUD.healthBarHit.visible', false);
 		setProperty('hitmansHUD.healthBarBG.visible', false);
-		setProperty('hitmansHUD.healthHitBar.visible', false);
         endPart = false
     end
     
