@@ -920,7 +920,7 @@ class EaseCurveAngleModifier extends EaseCurveModifier
         noteData.angle += (easeFunc(curPos*0.01)*currentValue*0.2);
     }
 }
-/*
+
 class EaseCurveScaleModifier extends EaseCurveModifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
@@ -928,7 +928,7 @@ class EaseCurveScaleModifier extends EaseCurveModifier
         noteData.scaleX += (easeFunc(curPos*0.01)*currentValue*0.2);
         noteData.scaleY += (easeFunc(curPos*0.01)*currentValue*0.2);
     }
-}*/
+}
 
 
 class InvertSineModifier extends Modifier
@@ -985,7 +985,12 @@ class BoomerangModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     { 
-        noteData.y += (FlxMath.fastSin(curPos/-700) * 400 + (curPos/3.5)) * (-currentValue);
+        var scrollSwitch = -1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                scrollSwitch *= -1;
+
+        noteData.y += (FlxMath.fastSin((curPos/-700)) * 400 + (curPos/3.5))*scrollSwitch * (-currentValue);
         noteData.alpha *= FlxMath.bound(1-(curPos/-600-3.5), 0, 1);
     }
     override function curPosMath(lane:Int, curPos:Float, pf:Int)

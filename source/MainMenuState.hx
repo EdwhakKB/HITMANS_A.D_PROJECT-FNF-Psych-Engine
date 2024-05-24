@@ -77,6 +77,7 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
+		Paths.setCurrentLevel('shared'); //LMAO LMAO
 		#if MODS_ALLOWED
 		Mods.pushGlobalMods();
 		#end
@@ -157,7 +158,7 @@ class MainMenuState extends MusicBeatState
 		notes.updateHitbox();
 		// storyMode.alpha = 0.4;
 		notes.antialiasing = ClientPrefs.globalAntialiasing;
-		// add(notes);
+		add(notes);
 
 		folder = new FlxSprite(200, 40).loadGraphic(Paths.image('MenuShit/folder'));
 		folder.updateHitbox();
@@ -294,62 +295,64 @@ class MainMenuState extends MusicBeatState
 					notes.animation.play('normal');
 				}
 			}
-			if (FlxG.mouse.overlaps(storyMode)) {
-				if (FlxG.mouse.justPressed) {
-					new FlxTimer().start(1, function(tmrS:FlxTimer)
-					{
-						MusicBeatState.switchState(new StoryMenuState());
-					});
-					storyMode.animation.play('selected');
-					freeplay.animation.play('normal');
-					mods.animation.play('normal');
-					credits.animation.play('normal');
-					settings.animation.play('normal');
-					notes.animation.play('normal');
-				}
-			}
-			if (FlxG.mouse.overlaps(freeplay)) {
-				if (FlxG.mouse.justPressed) {
-					new FlxTimer().start(1, function(tmrF:FlxTimer)
+			if (!inFolder){
+				if (FlxG.mouse.overlaps(storyMode)) {
+					if (FlxG.mouse.justPressed) {
+						new FlxTimer().start(1, function(tmrS:FlxTimer)
 						{
-							MusicBeatState.switchState(new FreeplayState());
+							MusicBeatState.switchState(new StoryMenuState());
 						});
-					freeplay.animation.play('selected');
-					storyMode.animation.play('normal');
-					mods.animation.play('normal');
-					credits.animation.play('normal');
-					settings.animation.play('normal');
-					notes.animation.play('normal');
+						storyMode.animation.play('selected');
+						freeplay.animation.play('normal');
+						mods.animation.play('normal');
+						credits.animation.play('normal');
+						settings.animation.play('normal');
+						notes.animation.play('normal');
+					}
 				}
-			}
-			if (FlxG.mouse.overlaps(mods)) {
-				if (FlxG.mouse.justPressed) {
-					#if MODS_ALLOWED
-					new FlxTimer().start(1, function(tmrA:FlxTimer)
-						{
-							MusicBeatState.switchState(new ModsMenuState());
-						});
-					#end
-					mods.animation.play('selected');
-					storyMode.animation.play('normal');
-					freeplay.animation.play('normal');
-					credits.animation.play('normal');
-					settings.animation.play('normal');
-					notes.animation.play('normal');
+				if (FlxG.mouse.overlaps(freeplay)) {
+					if (FlxG.mouse.justPressed) {
+						new FlxTimer().start(1, function(tmrF:FlxTimer)
+							{
+								MusicBeatState.switchState(new FreeplayState());
+							});
+						freeplay.animation.play('selected');
+						storyMode.animation.play('normal');
+						mods.animation.play('normal');
+						credits.animation.play('normal');
+						settings.animation.play('normal');
+						notes.animation.play('normal');
+					}
 				}
-			}
-			if (FlxG.mouse.overlaps(credits)) {
-				if (FlxG.mouse.justPressed) {
-					new FlxTimer().start(1, function(tmrC:FlxTimer)
-						{
-							MusicBeatState.switchState(new CreditsState());
-						});
-					credits.animation.play('selected');
-					storyMode.animation.play('normal');
-					freeplay.animation.play('normal');
-					mods.animation.play('normal');
-					settings.animation.play('normal');
-					notes.animation.play('normal');
+				if (FlxG.mouse.overlaps(mods)) {
+					if (FlxG.mouse.justPressed) {
+						#if MODS_ALLOWED
+						new FlxTimer().start(1, function(tmrA:FlxTimer)
+							{
+								MusicBeatState.switchState(new ModsMenuState());
+							});
+						#end
+						mods.animation.play('selected');
+						storyMode.animation.play('normal');
+						freeplay.animation.play('normal');
+						credits.animation.play('normal');
+						settings.animation.play('normal');
+						notes.animation.play('normal');
+					}
+				}
+				if (FlxG.mouse.overlaps(credits)) {
+					if (FlxG.mouse.justPressed) {
+						new FlxTimer().start(1, function(tmrC:FlxTimer)
+							{
+								MusicBeatState.switchState(new CreditsState());
+							});
+						credits.animation.play('selected');
+						storyMode.animation.play('normal');
+						freeplay.animation.play('normal');
+						mods.animation.play('normal');
+						settings.animation.play('normal');
+						notes.animation.play('normal');
+					}
 				}
 			}
 			if (FlxG.mouse.overlaps(settings)) {
@@ -367,21 +370,21 @@ class MainMenuState extends MusicBeatState
 					notes.animation.play('normal');
 				}
 			}
-			// if (FlxG.mouse.overlaps(notes)) {
-			// 	if (FlxG.mouse.justPressed) {
-			// 		new FlxTimer().start(1, function(tmrSe:FlxTimer)
-			// 			{
-			// 				LoadingState.loadAndSwitchState(new options.NoteOptionsState());
-			// 			});
-			// 		inFolder = true;
-			// 		notes.animation.play('selected');
-			// 		settings.animation.play('normal');
-			// 		storyMode.animation.play('normal');
-			// 		freeplay.animation.play('normal');
-			// 		mods.animation.play('normal');
-			// 		credits.animation.play('normal');
-			// 	}
-			// }
+			if (FlxG.mouse.overlaps(notes)) {
+				if (FlxG.mouse.justPressed) {
+					new FlxTimer().start(1, function(tmrSe:FlxTimer)
+						{
+							openSubState(new options.FunkinArrowSubState());
+						});
+					inFolder = true;
+					notes.animation.play('selected');
+					settings.animation.play('normal');
+					storyMode.animation.play('normal');
+					freeplay.animation.play('normal');
+					mods.animation.play('normal');
+					credits.animation.play('normal');
+				}
+			}
 
 			// if (controls.ACCEPT && !inCMD && !inFolder)
 			// {

@@ -20,6 +20,7 @@ class StrumNote extends FlxSkewedSprite
 	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
 	public var sustainReduce:Bool = true;
 	var myLibrary:String = '';
+	public var loadShader:Bool = false;
 	
 	private var player:Int;
 	
@@ -32,14 +33,18 @@ class StrumNote extends FlxSkewedSprite
 		return value;
 	}
 	public var useRGBShader:Bool = true;
-	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String = 'shared', ?quantizedNotes:Bool) {
-		rgbShader = new RGBShaderReference(this, !quantizedNotes ? Note.initializeGlobalRGBShader(leData) : 
-																Note.initializeGlobalQuantRBShader(leData));
-		rgbShader.enabled = false;
-		if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) useRGBShader = false;
-		var arr:Array<FlxColor> = !quantizedNotes ? ClientPrefs.arrowRGB[leData] : ClientPrefs.arrowRGBQuantize[leData];
+	var rgb9:Bool = false;
+	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String = 'shared', ?quantizedNotes:Bool = false, ?loadShader:Bool = true) {
+		if (loadShader)
+		{
+			rgb9 = (player < 0);
+			rgbShader = new RGBShaderReference(this, !quantizedNotes ? Note.initializeGlobalRGBShader(leData, rgb9) : 
+				Note.initializeGlobalQuantRBShader(leData));
+			rgbShader.enabled = false;
+			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) useRGBShader = false;
+			var arr:Array<FlxColor> = !quantizedNotes ? (rgb9 ? ClientPrefs.arrowRGB9[leData] : ClientPrefs.arrowRGB[leData]) : ClientPrefs.arrowRGBQuantize[leData];
 
-		if(leData <= arr.length)
+			if(leData <= arr.length)
 			{
 				@:bypassAccessor
 				{
@@ -48,10 +53,12 @@ class StrumNote extends FlxSkewedSprite
 					rgbShader.b = arr[2];
 				}
 			}
+		}
 
 		noteData = leData;
 		this.player = player;
 		this.noteData = leData;
+		this.loadShader = loadShader;
 		super(x, y);
 
 		myLibrary = library;
@@ -59,8 +66,6 @@ class StrumNote extends FlxSkewedSprite
 		daTexture = daTexture != null ? daTexture : skin;
 		if(PlayState.SONG != null && PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 		if (daTexture != null) texture = daTexture else texture = skin;
-		// texture = skin; //Load texture and anims
-		//trace('Using $daTexture found in $library path');
 
 		scrollFactor.set();
 	}
@@ -70,9 +75,9 @@ class StrumNote extends FlxSkewedSprite
 		var lastAnim:String = null;
 		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-		var notesAnim:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
-        var pressAnim:Array<String> = ['left', 'down', 'up', 'right'];
-        var colorAnims:Array<String> = ['purple', 'blue', 'green', 'red'];
+		var notesAnim:Array<String> = rgb9 ? ["UP", "UP", "UP", "UP", "UP", "UP", "UP", "UP", "UP"] : ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+        var pressAnim:Array<String> = rgb9 ? ["up", "up", "up", "up", "up", "up", "up", "up", "up"] : ['left', 'down', 'up', 'right'];
+        var colorAnims:Array<String> = rgb9 ? ["green", "green", "green", "green", "green", "green", "green", "green", "green"] : ['purple', 'blue', 'green', 'red'];
 
 		var daNoteData:Float = Math.abs(noteData) % 4;
 		
@@ -146,6 +151,6 @@ class StrumNote extends FlxSkewedSprite
 				centerOffsets();
 				centerOrigin();
 			}
-		if(useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
+		if(loadShader && useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
 	}
 }

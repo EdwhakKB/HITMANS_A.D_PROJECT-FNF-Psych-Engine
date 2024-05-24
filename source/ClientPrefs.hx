@@ -66,6 +66,17 @@ class ClientPrefs {
 		[0xFF101010, 0xFFFF0000, 0xFF990022],
 		[0xFF101010, 0xFFFF0000, 0xFF990022]
 	];
+	public static var arrowRGB9:Array<Array<FlxColor>> = [
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+		[0xFF12FA05, 0xFFFFFFFF, 0xFF0A4447],
+	];
 	public static var ghostTapping:Bool = true;
 	public static var timeBarType:String = 'Time Left';
 	public static var scoreZoom:Bool = true;
@@ -180,6 +191,7 @@ class ClientPrefs {
 		FlxG.save.data.arrowHSV = arrowHSV;
 		FlxG.save.data.arrowRGB = arrowRGB;
 		FlxG.save.data.arrowRGBQuantize = arrowRGBQuantize;
+		FlxG.save.data.arrowRGB9 = arrowRGB9;
 		FlxG.save.data.hurtRGB = hurtRGB;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.timeBarType = timeBarType;
@@ -325,6 +337,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.arrowRGBQuantize != null) {
 			arrowRGBQuantize = FlxG.save.data.arrowRGBQuantize;
+		}
+		if(FlxG.save.data.arrowRGB9 != null) {
+			arrowRGB9 = FlxG.save.data.arrowRGB9;
 		}
 		if(FlxG.save.data.hurtRGB != null) {
 			hurtRGB = FlxG.save.data.hurtRGB;

@@ -61,6 +61,7 @@ class Note extends FlxSkewedSprite{
 
 	public var rgbShader:RGBShaderReference;
 	public static var globalRgbShaders:Array<RGBPalette> = [];
+	public static var globalRgb9Shaders:Array<RGBPalette> = [];
 	public static var globalHurtRgbShaders:Array<RGBPalette> = [];
 	public static var globalQuantRgbShaders:Array<RGBPalette> = [];
 	public var inEditor:Bool = false;
@@ -154,8 +155,8 @@ class Note extends FlxSkewedSprite{
 		return value;
 	}
 
-	public function defaultRGB() {
-		var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+	public function defaultRGB(?moreThan8:Bool) {
+		var arr:Array<FlxColor> = moreThan8 ? ClientPrefs.arrowRGB9[noteData] : ClientPrefs.arrowRGB[noteData];
 
 		if (noteData > -1 && noteData <= arr.length)
 		{
@@ -163,7 +164,6 @@ class Note extends FlxSkewedSprite{
 			rgbShader.g = arr[1];
 			rgbShader.b = arr[2];
 		}
-			
 	}
 
 	public function defaultRGBHurt() {
@@ -339,10 +339,11 @@ class Note extends FlxSkewedSprite{
 						}
 					}
 					if (edwhakIsPlayer){
+						fire = true;
 						if(isSustainNote) {
 							hitHealth = -0.35;
 						} else {
-							hitHealth = -0.5;
+							hitHealth = -0.7;
 						}
 						fire = true;
 					}
@@ -421,7 +422,7 @@ class Note extends FlxSkewedSprite{
 		if(noteData > -1) {
 			texture = '';
 			if (quantizedNotes) rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalQuantRBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
-			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
+			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData, false) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
 			if(!sustainRGB && isSustainNote){
 				rgbShader.enabled = false;
@@ -497,13 +498,29 @@ class Note extends FlxSkewedSprite{
 		return Math.floor(num * mult + 0.5) / mult;
 	}
 
-	public static function initializeGlobalRGBShader(noteData:Int)
+	public static function initializeGlobalRGBShader(noteData:Int, ?moreThan8:Bool)
+	{
+		if (moreThan8)
 		{
+			if(globalRgb9Shaders[noteData] == null)
+			{
+				var newRGB:RGBPalette = new RGBPalette();
+				globalRgb9Shaders[noteData] = newRGB;
+
+				var arr:Array<FlxColor> = ClientPrefs.arrowRGB9[noteData];
+				if (noteData > -1 && noteData <= arr.length)
+				{
+					newRGB.r = arr[0];
+					newRGB.g = arr[1];
+					newRGB.b = arr[2];
+				}
+			}
+		}else{
 			if(globalRgbShaders[noteData] == null)
 			{
 				var newRGB:RGBPalette = new RGBPalette();
 				globalRgbShaders[noteData] = newRGB;
-	
+
 				var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
 				if (noteData > -1 && noteData <= arr.length)
 				{
@@ -512,43 +529,44 @@ class Note extends FlxSkewedSprite{
 					newRGB.b = arr[2];
 				}
 			}
-			return globalRgbShaders[noteData];
 		}
+		return moreThan8 ? globalRgb9Shaders[noteData] : globalRgbShaders[noteData];
+	}
 	public static function initializeGlobalHurtRGBShader(noteData:Int)
+	{
+		if(globalHurtRgbShaders[noteData] == null)
 		{
-			if(globalHurtRgbShaders[noteData] == null)
-			{
-				var newRGB:RGBPalette = new RGBPalette();
-				globalHurtRgbShaders[noteData] = newRGB;
-	
-				var arr:Array<FlxColor> = ClientPrefs.hurtRGB[noteData];
-				if (noteData > -1 && noteData <= arr.length)
-				{
-					newRGB.r = arr[0];
-					newRGB.g = arr[1];
-					newRGB.b = arr[2];
-				}
-			}
-			return globalHurtRgbShaders[noteData];
-		}
-	public static function initializeGlobalQuantRBShader(noteData:Int)
-		{
-			if(globalQuantRgbShaders[noteData] == null)
-			{
-				var newRGB:RGBPalette = new RGBPalette();
-				globalQuantRgbShaders[noteData] = newRGB;
-	
-				var arr:Array<FlxColor> = ClientPrefs.arrowRGBQuantize[noteData];
+			var newRGB:RGBPalette = new RGBPalette();
+			globalHurtRgbShaders[noteData] = newRGB;
 
-				if (noteData > -1 && noteData <= arr.length)
-				{
-					newRGB.r = arr[0];
-					newRGB.g = arr[1];
-					newRGB.b = arr[2];
-				}
+			var arr:Array<FlxColor> = ClientPrefs.hurtRGB[noteData];
+			if (noteData > -1 && noteData <= arr.length)
+			{
+				newRGB.r = arr[0];
+				newRGB.g = arr[1];
+				newRGB.b = arr[2];
 			}
-			return globalQuantRgbShaders[noteData];
-		}	
+		}
+		return globalHurtRgbShaders[noteData];
+	}
+	public static function initializeGlobalQuantRBShader(noteData:Int)
+	{
+		if(globalQuantRgbShaders[noteData] == null)
+		{
+			var newRGB:RGBPalette = new RGBPalette();
+			globalQuantRgbShaders[noteData] = newRGB;
+
+			var arr:Array<FlxColor> = ClientPrefs.arrowRGBQuantize[noteData];
+
+			if (noteData > -1 && noteData <= arr.length)
+			{
+				newRGB.r = arr[0];
+				newRGB.g = arr[1];
+				newRGB.b = arr[2];
+			}
+		}
+		return globalQuantRgbShaders[noteData];
+	}	
 
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
 	var lastNoteScaleToo:Float = 1;
