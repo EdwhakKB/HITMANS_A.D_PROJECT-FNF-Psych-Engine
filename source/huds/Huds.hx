@@ -224,33 +224,31 @@ class Huds extends FlxGroup
 				healthBarBG.flipY = ClientPrefs.downScroll;
 				healthBarBG.y = ClientPrefs.downScroll ? 0 * FlxG.height : FlxG.height * 0.9;
             }else{
-				healthBarBG.y = FlxG.height * 0.89;
+				healthBarBG.y = ClientPrefs.downScroll ? 0.11 * FlxG.height : FlxG.height * 0.89;
 				healthBarBG.xAdd = -4;
 				healthBarBG.yAdd = -4;
 			}
             healthBarBG.screenCenter(X);
-            healthBarBG.scrollFactor.set();
+           	if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.scrollFactor.set();
             healthBarBG.visible = !ClientPrefs.hideHud;
-			add(healthBarBG);
-    
-            if(ClientPrefs.downScroll) healthBarBG.y = 0.11 * FlxG.height;
+			if (ClientPrefs.hudStyle == 'CLASSIC') add(healthBarBG);
     
             healthBar = new FlxBar(
 				ClientPrefs.hudStyle == 'HITMANS' ? 350 : healthBarBG.x + 4, 
-				ClientPrefs.hudStyle == 'HITMANS' ? healthBar.y + 15 : healthBarBG.y + 4, 
+				ClientPrefs.hudStyle == 'HITMANS' ? healthBarBG.y + 15 : healthBarBG.y + 4, 
 				RIGHT_TO_LEFT, 
 				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.width - 120) : Std.int(healthBarBG.width - 8), 
 				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.height - 30) : Std.int(healthBarBG.height - 8), 
 				this,
 				'health', 0, 2
 			);
-            healthBar.scrollFactor.set();
+            if (ClientPrefs.hudStyle == 'CLASSIC') healthBar.scrollFactor.set();
             // healthBar
             healthBar.visible = !ClientPrefs.hideHud;
             healthBar.alpha = ClientPrefs.healthBarAlpha;
             add(healthBar);
-            healthBarBG.sprTracker = healthBar;
-    
+			if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.sprTracker = healthBar;
+			if (ClientPrefs.hudStyle == 'HITMANS') add(healthBarBG);
 
             iconP1 = new HealthIcon(PlayState.instance.boyfriend.healthIcon, true);
             iconP1.y = healthBar.y - 75;
