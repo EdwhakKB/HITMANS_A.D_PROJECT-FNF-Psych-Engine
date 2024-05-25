@@ -2406,6 +2406,11 @@ class FunkinLua {
 			}
 			return false;
 		});
+
+		Lua_helper.add_callback(lua, "beginADialogue", function(dialogue:String, music:String = ""){
+			PlayState.instance.startCallback = null;
+			PlayState.instance.findDialogue(dialogue, music);
+		});
 		Lua_helper.add_callback(lua, "startVideo", function(videoFile:String) {
 			#if VIDEOS_ALLOWED
 			if(FileSystem.exists(Paths.video(videoFile))) {

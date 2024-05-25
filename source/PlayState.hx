@@ -522,6 +522,9 @@ class PlayState extends MusicBeatState
 	public var scripts:codenameengine.scripting.ScriptPack;
 	#end
 
+	public var startCallback:Void->Void;
+	public var endCallback:Void->Void;
+
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
@@ -532,6 +535,9 @@ class PlayState extends MusicBeatState
 		timerManager = new FlxTimerManager();
 
 		Paths.clearStoredMemory();
+
+		startCallback = startCountdown;
+		endCallback = endSong;
 
 		// for lua
 		instance = this;
@@ -1112,20 +1118,9 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
-		var daSong:String = Paths.formatToSongPath(curSong);
-		if (isStoryMode && !seenCutscene)
-		{
-			switch (daSong)
-			{
-				default:
-					startCountdown();
-			}
-			seenCutscene = true;
-		}
-		else
-		{
-			startCountdown();
-		}
+		startCallback = spawnDialogue;
+	
+		startCallback();
 		RecalculateRating();
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
@@ -1275,6 +1270,48 @@ class PlayState extends MusicBeatState
 		}
 
 		CustomFadeTransition.nextCamera = camOther;
+	}
+
+	public function spawnDialogue()
+	{
+		var file:String = "";
+		var music:String = "";
+		switch (Paths.formatToSongPath(SONG.song).toLowerCase())
+		{
+			case 'operating':
+				file = 'dialogue';
+		}
+		findDialogue(file, music);
+	}
+
+	public function findDialogue(dialogueFile:String, music:String = "")
+	{
+		var path:String;
+		#if MODS_ALLOWED
+		path = Paths.modsJson(Paths.formatToSongPath(SONG.song) + '/' + dialogueFile);
+		if(!FileSystem.exists(path))
+		#end
+			path = Paths.json(Paths.formatToSongPath(SONG.song) + '/' + dialogueFile);
+
+		#if MODS_ALLOWED
+		if(FileSystem.exists(path))
+		#else
+		if(Assets.exists(path))
+		#end
+		{
+			var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
+			if(shit.dialogue.length > 0) {
+				startDialogue(shit, music);
+			} else {
+				trace('startDialogue: Your dialogue file is badly formatted!');
+			}
+		} else {
+			if(endingSong) {
+				endSong();
+			} else {
+				startCountdown();
+			}
+		}
 	}
 
 	public function doNoteQuant()

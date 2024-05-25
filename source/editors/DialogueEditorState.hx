@@ -45,6 +45,7 @@ class DialogueEditorState extends MusicBeatState
 	var animText:FlxText;
 
 	var defaultLine:DialogueLine;
+	var defaultBackground:DialogueBackground;
 	var dialogueFile:DialogueFile = null;
 
 	override function create() {
@@ -57,14 +58,28 @@ class DialogueEditorState extends MusicBeatState
 			text: DEFAULT_TEXT,
 			boxState: DEFAULT_BUBBLETYPE,
 			speed: 0.05,
-			sound: ''
-		};
+			sound: '',
+			curBg: "speech_bubble"
+		}
+
+		defaultBackground = {
+			bgName: "speech_bubble",
+			bg: "speech_bubble",
+			scale: 0,
+			xPos: 75,
+			yPos: 370,
+			animations: [],
+			includeDefaultAnimations: true
+		}
 
 		dialogueFile = {
 			dialogue: [
 				copyDefaultLine()
+			],
+			background: [
+				copyDefaultBackground()
 			]
-		};
+		}
 		
 		character = new DialogueCharacter();
 		character.scrollFactor.set();
@@ -179,7 +194,21 @@ class DialogueEditorState extends MusicBeatState
 			text: defaultLine.text,
 			boxState: defaultLine.boxState,
 			speed: defaultLine.speed,
-			sound: ''
+			sound: '',
+			curBg: defaultLine.curBg
+		};
+		return copyLine;
+	}
+
+	function copyDefaultBackground():DialogueBackground{
+		var copyLine:DialogueBackground = {
+			bgName: defaultBackground.bgName,
+			bg: defaultBackground.bg,
+			scale: defaultBackground.scale,
+			xPos: defaultBackground.xPos,
+			yPos: defaultBackground.yPos,
+			animations: defaultBackground.animations,
+			includeDefaultAnimations: defaultBackground.includeDefaultAnimations
 		};
 		return copyLine;
 	}

@@ -43,6 +43,26 @@ typedef DialogueAnimArray = {
 // love u Shubs no homo :flushedh4:
 typedef DialogueFile = {
 	var dialogue:Array<DialogueLine>;
+	var background:Array<DialogueBackground>;
+}
+
+typedef DialogueBackground = {
+	var animations:Array<DialogueBackgroundAnimsArray>;
+	var bgName:Null<String>;
+	var bg:Null<String>;
+	var xPos:Null<Float>;
+	var yPos:Null<Float>;
+	var scale:Float;
+	var includeDefaultAnimations:Bool;
+}
+
+typedef DialogueBackgroundAnimsArray = {
+	var anim:String;
+	var name:String;
+	var fps:Int;
+	var loop:Bool;
+	var indices:Array<Int>;
+	var offsets:Array<Float>;
 }
 
 typedef DialogueLine = {
@@ -52,6 +72,7 @@ typedef DialogueLine = {
 	var boxState:Null<String>;
 	var speed:Null<Float>;
 	var sound:Null<String>;
+	var curBg:Null<String>;
 }
 
 class DialogueCharacter extends FlxSprite
@@ -61,11 +82,7 @@ class DialogueCharacter extends FlxSprite
 	public static var DEFAULT_SCALE:Float = 0.7;
 
 	public var jsonFile:DialogueCharacterFile = null;
-	#if (haxe >= "4.0.0")
 	public var dialogueAnimations:Map<String, DialogueAnimArray> = new Map();
-	#else
-	public var dialogueAnimations:Map<String, DialogueAnimArray> = new Map<String, DialogueAnimArray>();
-	#end
 
 	public var startingPos:Float = 0; //For center characters, it works as the starting Y, for everything else it works as starting X
 	public var isGhost:Bool = false; //For the editor
@@ -162,6 +179,33 @@ class DialogueCharacter extends FlxSprite
 	}
 }
 
+class BackgroundSprite extends FlxSprite
+{
+	public var animOffsets:Map<String, Array<Float>>;
+	public var name:String = "";
+	public function new(X:Float, Y:Float, name:String)
+	{
+		animOffsets = new Map<String, Array<Float>>();
+		this.name = name;
+		super(X, Y);
+	}
+
+	public function playAnim(anim:String, force:Bool = false, reversed:Bool = false, startFrame:Int = 0)
+	{
+		animation.play(anim, force, reversed, startFrame);
+		var daOffset = animOffsets.get(anim);
+		if (animOffsets.exists(anim))
+		{
+			offset.set(daOffset[0], daOffset[1]);
+		}
+	}
+
+	public function addOffset(name:String, x:Float, y:Float)
+	{
+		animOffsets[name] = [x, y];
+	}
+}
+
 // TO DO: Clean code? Maybe? idk
 class DialogueBoxPsych extends FlxSpriteGroup
 {
@@ -172,7 +216,6 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	public var nextDialogueThing:Void->Void = null;
 	public var skipDialogueThing:Void->Void = null;
 	var bgFade:FlxSprite = null;
-	var box:FlxSprite;
 	var textToType:String = '';
 
 	var arrayCharacters:Array<DialogueCharacter> = [];
@@ -184,6 +227,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	
 	var curCharacter:String = "";
 	//var charPositionList:Array<String> = ['left', 'center', 'right'];
+	var boxs:FlxTypedSpriteGroup<BackgroundSprite> = new FlxTypedSpriteGroup<BackgroundSprite>();
 
 	public function new(dialogueList:DialogueFile, ?song:String = null)
 	{
@@ -203,23 +247,53 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		this.dialogueList = dialogueList;
 		spawnCharacters();
 
-		box = new FlxSprite(70, 370);
-		box.frames = Paths.getSparrowAtlas('speech_bubble');
-		box.scrollFactor.set();
-		box.antialiasing = ClientPrefs.globalAntialiasing;
-		box.animation.addByPrefix('normal', 'speech bubble normal', 24);
-		box.animation.addByPrefix('normalOpen', 'Speech Bubble Normal Open', 24, false);
-		box.animation.addByPrefix('angry', 'AHH speech bubble', 24);
-		box.animation.addByPrefix('angryOpen', 'speech bubble loud open', 24, false);
-		box.animation.addByPrefix('center-normal', 'speech bubble middle', 24);
-		box.animation.addByPrefix('center-normalOpen', 'Speech Bubble Middle Open', 24, false);
-		box.animation.addByPrefix('center-angry', 'AHH Speech Bubble middle', 24);
-		box.animation.addByPrefix('center-angryOpen', 'speech bubble Middle loud open', 24, false);
-		box.animation.play('normal', true);
-		box.visible = false;
-		box.setGraphicSize(Std.int(box.width * 0.9));
-		box.updateHitbox();
-		add(box);
+		for (i in 0...dialogueList.background.length)
+		{
+			var box = new BackgroundSprite(
+				dialogueList.background[i].xPos != null ? dialogueList.background[i].xPos : 70, 
+				dialogueList.background[i].yPos != null ? dialogueList.background[i].yPos : 370, 
+				dialogueList.background[i].bgName != null ? dialogueList.background[i].bgName : 'box_$i'
+			);
+			box.frames = Paths.getSparrowAtlas(dialogueList.background[i].bg != null ? dialogueList.background[i].bg : 'speech_bubble');
+			box.scrollFactor.set();
+			box.antialiasing = ClientPrefs.globalAntialiasing;
+			if (dialogueList.background[i].includeDefaultAnimations)
+			{
+				box.animation.addByPrefix('normal', 'speech bubble normal', 24);
+				box.animation.addByPrefix('normalOpen', 'Speech Bubble Normal Open', 24, false);
+				box.animation.addByPrefix('angry', 'AHH speech bubble', 24);
+				box.animation.addByPrefix('angryOpen', 'speech bubble loud open', 24, false);
+				box.animation.addByPrefix('center-normal', 'speech bubble middle', 24);
+				box.animation.addByPrefix('center-normalOpen', 'Speech Bubble Middle Open', 24, false);
+				box.animation.addByPrefix('center-angry', 'AHH Speech Bubble middle', 24);
+				box.animation.addByPrefix('center-angryOpen', 'speech bubble Middle loud open', 24, false);
+			}
+			if (dialogueList.background[i].animations != null || dialogueList.background[i].animations.length > 0)
+			{
+				for (anim in dialogueList.background[i].animations)
+				{
+					var animAnim:String = '' + anim.anim;
+					var animName:String = '' + anim.name;
+					var animFps:Int = anim.fps;
+					var animLoop:Bool = !anim.loop; // Bruh
+					var animIndices:Array<Int> = anim.indices;
+					if (animIndices != null && animIndices.length > 0)
+						box.animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
+					else
+						box.animation.addByPrefix(animAnim, animName, animFps, animLoop);
+					if(anim.offsets != null && anim.offsets.length > 1) box.addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+					else box.addOffset(anim.anim, 0, 0);
+				}
+			}
+			box.animation.play('normal', true);
+				
+			box.visible = false;
+			if (dialogueList.background[i].scale != 0) box.setGraphicSize(Std.int(box.width * dialogueList.background[i].scale));
+			else box.setGraphicSize(Std.int(box.width * 0.9));
+			box.updateHitbox();
+			boxs.add(box);
+		}
+		add(boxs);
 
 		daText = new TypedAlphabet(DEFAULT_TEXT_X, DEFAULT_TEXT_Y, '');
 		daText.scaleX = 0.7;
@@ -237,11 +311,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 	public static var DEFAULT_CHAR_Y:Float = 60;
 
 	function spawnCharacters() {
-		#if (haxe >= "4.0.0")
 		var charsMap:Map<String, Bool> = new Map();
-		#else
-		var charsMap:Map<String, Bool> = new Map<String, Bool>();
-		#end
 		for (i in 0...dialogueList.dialogue.length) {
 			if(dialogueList.dialogue[i] != null) {
 				var charToAdd:String = dialogueList.dialogue[i].portrait;
@@ -298,122 +368,118 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			super.update(elapsed);
 			return;
 		}
+		boxs.forEachAlive(function(box:BackgroundSprite) {
+			if(!dialogueEnded) {
+				bgFade.alpha += 0.5 * elapsed;
+				if(bgFade.alpha > 0.5) bgFade.alpha = 0.5;
 
-		if(!dialogueEnded) {
-			bgFade.alpha += 0.5 * elapsed;
-			if(bgFade.alpha > 0.5) bgFade.alpha = 0.5;
+				if(PlayerSettings.player1.controls.ACCEPT) {
+					if(!daText.finishedText) {
+						daText.finishText();
+						if(skipDialogueThing != null) {
+							skipDialogueThing();
+						}
+					} else if(currentText >= dialogueList.dialogue.length) {
+						dialogueEnded = true;
+						for (i in 0...textBoxTypes.length) {
+							var checkArray:Array<String> = ['', 'center-'];
+							var animName:String = box.animation.curAnim.name;
+							for (j in 0...checkArray.length) {
+								if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
+									box.animation.play(checkArray[j] + textBoxTypes[i] + 'Open', true);
+								}
+							}
+						}
 
-			if(PlayerSettings.player1.controls.ACCEPT) {
-				if(!daText.finishedText) {
-					daText.finishText();
-					if(skipDialogueThing != null) {
-						skipDialogueThing();
+						box.animation.curAnim.curFrame = box.animation.curAnim.frames.length - 1;
+						box.animation.curAnim.reverse();
+						if(daText != null)
+						{
+							daText.kill();
+							remove(daText);
+							daText.destroy();
+						}
+						updateBoxOffsets(box);
+						FlxG.sound.music.fadeOut(1, 0);
+					} else {
+						startNextDialog();
 					}
-				} else if(currentText >= dialogueList.dialogue.length) {
-					dialogueEnded = true;
+					FlxG.sound.play(Paths.sound(closeSound), closeVolume);
+				} else if(daText.finishedText) {
+					var char:DialogueCharacter = arrayCharacters[lastCharacter];
+					if(char != null && char.animation.curAnim != null && char.animationIsLoop() && char.animation.finished) {
+						char.playAnim(char.animation.curAnim.name, true);
+					}
+				} else {
+					var char:DialogueCharacter = arrayCharacters[lastCharacter];
+					if(char != null && char.animation.curAnim != null && char.animation.finished) {
+						char.animation.curAnim.restart();
+					}
+				}
+
+				if(box.animation.curAnim.finished) {
 					for (i in 0...textBoxTypes.length) {
 						var checkArray:Array<String> = ['', 'center-'];
 						var animName:String = box.animation.curAnim.name;
 						for (j in 0...checkArray.length) {
 							if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
-								box.animation.play(checkArray[j] + textBoxTypes[i] + 'Open', true);
+								box.animation.play(checkArray[j] + textBoxTypes[i], true);
 							}
 						}
-					}
-
-					box.animation.curAnim.curFrame = box.animation.curAnim.frames.length - 1;
-					box.animation.curAnim.reverse();
-					if(daText != null)
-					{
-						daText.kill();
-						remove(daText);
-						daText.destroy();
 					}
 					updateBoxOffsets(box);
-					FlxG.sound.music.fadeOut(1, 0);
-				} else {
-					startNextDialog();
 				}
-				FlxG.sound.play(Paths.sound(closeSound), closeVolume);
-			} else if(daText.finishedText) {
-				var char:DialogueCharacter = arrayCharacters[lastCharacter];
-				if(char != null && char.animation.curAnim != null && char.animationIsLoop() && char.animation.finished) {
-					char.playAnim(char.animation.curAnim.name, true);
-				}
-			} else {
-				var char:DialogueCharacter = arrayCharacters[lastCharacter];
-				if(char != null && char.animation.curAnim != null && char.animation.finished) {
-					char.animation.curAnim.restart();
-				}
-			}
 
-			if(box.animation.curAnim.finished) {
-				for (i in 0...textBoxTypes.length) {
-					var checkArray:Array<String> = ['', 'center-'];
-					var animName:String = box.animation.curAnim.name;
-					for (j in 0...checkArray.length) {
-						if(animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open') {
-							box.animation.play(checkArray[j] + textBoxTypes[i], true);
+				if(lastCharacter != -1 && arrayCharacters.length > 0) {
+					for (i in 0...arrayCharacters.length) {
+						var char = arrayCharacters[i];
+						if(char != null) {
+							if(i != lastCharacter) {
+								switch(char.jsonFile.dialogue_pos) {
+									case 'left':
+										char.x -= scrollSpeed * elapsed;
+										if(char.x < char.startingPos + offsetPos) char.x = char.startingPos + offsetPos;
+									case 'center':
+										char.y += scrollSpeed * elapsed;
+										if(char.y > char.startingPos + FlxG.height) char.y = char.startingPos + FlxG.height;
+									case 'right':
+										char.x += scrollSpeed * elapsed;
+										if(char.x > char.startingPos - offsetPos) char.x = char.startingPos - offsetPos;
+								}
+								char.alpha -= 3 * elapsed;
+								if(char.alpha < 0.00001) char.alpha = 0.00001;
+							} else {
+								switch(char.jsonFile.dialogue_pos) {
+									case 'left':
+										char.x += scrollSpeed * elapsed;
+										if(char.x > char.startingPos) char.x = char.startingPos;
+									case 'center':
+										char.y -= scrollSpeed * elapsed;
+										if(char.y < char.startingPos) char.y = char.startingPos;
+									case 'right':
+										char.x -= scrollSpeed * elapsed;
+										if(char.x < char.startingPos) char.x = char.startingPos;
+								}
+								char.alpha += 3 * elapsed;
+								if(char.alpha > 1) char.alpha = 1;
+							}
 						}
 					}
 				}
-				updateBoxOffsets(box);
-			}
-
-			if(lastCharacter != -1 && arrayCharacters.length > 0) {
-				for (i in 0...arrayCharacters.length) {
-					var char = arrayCharacters[i];
-					if(char != null) {
-						if(i != lastCharacter) {
-							switch(char.jsonFile.dialogue_pos) {
-								case 'left':
-									char.x -= scrollSpeed * elapsed;
-									if(char.x < char.startingPos + offsetPos) char.x = char.startingPos + offsetPos;
-								case 'center':
-									char.y += scrollSpeed * elapsed;
-									if(char.y > char.startingPos + FlxG.height) char.y = char.startingPos + FlxG.height;
-								case 'right':
-									char.x += scrollSpeed * elapsed;
-									if(char.x > char.startingPos - offsetPos) char.x = char.startingPos - offsetPos;
-							}
-							char.alpha -= 3 * elapsed;
-							if(char.alpha < 0.00001) char.alpha = 0.00001;
-						} else {
-							switch(char.jsonFile.dialogue_pos) {
-								case 'left':
-									char.x += scrollSpeed * elapsed;
-									if(char.x > char.startingPos) char.x = char.startingPos;
-								case 'center':
-									char.y -= scrollSpeed * elapsed;
-									if(char.y < char.startingPos) char.y = char.startingPos;
-								case 'right':
-									char.x -= scrollSpeed * elapsed;
-									if(char.x < char.startingPos) char.x = char.startingPos;
-							}
-							char.alpha += 3 * elapsed;
-							if(char.alpha > 1) char.alpha = 1;
-						}
-					}
+			} else { //Dialogue ending
+				if(box != null && box.animation.curAnim.curFrame <= 0) {
+					box.alive = false;
+					box.active = false;
+					box.visible = false;
+					box.kill();
+					boxs.remove(box);
+					box.destroy();
 				}
 			}
-		} else { //Dialogue ending
-			if(box != null && box.animation.curAnim.curFrame <= 0) {
-				box.kill();
-				remove(box);
-				box.destroy();
-				box = null;
-			}
+		});
 
-			if(bgFade != null) {
-				bgFade.alpha -= 0.5 * elapsed;
-				if(bgFade.alpha <= 0) {
-					bgFade.kill();
-					remove(bgFade);
-					bgFade.destroy();
-					bgFade = null;
-				}
-			}
-
+		if (dialogueEnded)
+		{
 			for (i in 0...arrayCharacters.length) {
 				var leChar:DialogueCharacter = arrayCharacters[i];
 				if(leChar != null) {
@@ -428,8 +494,17 @@ class DialogueBoxPsych extends FlxSpriteGroup
 					leChar.alpha -= elapsed * 10;
 				}
 			}
-
-			if(box == null && bgFade == null) {
+			if(bgFade != null) {
+				bgFade.alpha -= 0.5 * elapsed;
+				if(bgFade.alpha <= 0) {
+					bgFade.kill();
+					remove(bgFade);
+					bgFade.destroy();
+					bgFade = null;
+				}
+			}
+			if(boxs.members[0] == null && bgFade == null) {
+				trace('start finish thing');
 				for (i in 0...arrayCharacters.length) {
 					var leChar:DialogueCharacter = arrayCharacters[0];
 					if(leChar != null) {
@@ -458,6 +533,9 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		if(curDialogue.text == null || curDialogue.text.length < 1) curDialogue.text = ' ';
 		if(curDialogue.boxState == null) curDialogue.boxState = 'normal';
 		if(curDialogue.speed == null || Math.isNaN(curDialogue.speed)) curDialogue.speed = 0.05;
+		if(curDialogue.curBg == null) curDialogue.curBg = "speech_bubble";
+
+		for (i in 0...boxs.members.length) boxs.members[i].visible = (boxs.members[i].name == curDialogue.curBg);
 
 		var animName:String = curDialogue.boxState;
 		var boxType:String = textBoxTypes[0];
@@ -468,7 +546,6 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		}
 
 		var character:Int = 0;
-		box.visible = true;
 		for (i in 0...arrayCharacters.length) {
 			if(arrayCharacters[i].curCharacter == curDialogue.portrait) {
 				character = i;
@@ -479,13 +556,17 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		var lePosition:String = arrayCharacters[character].jsonFile.dialogue_pos;
 		if(lePosition == 'center') centerPrefix = 'center-';
 
-		if(character != lastCharacter) {
-			box.animation.play(centerPrefix + boxType + 'Open', true);
-			updateBoxOffsets(box);
-			box.flipX = (lePosition == 'left');
-		} else if(boxType != lastBoxType) {
-			box.animation.play(centerPrefix + boxType, true);
-			updateBoxOffsets(box);
+		for (i in 0...boxs.members.length)
+		{
+			var box:BackgroundSprite = boxs.members[i];
+			if(character != lastCharacter) {
+				box.animation.play(centerPrefix + boxType + 'Open', true);
+				updateBoxOffsets(box);
+				box.flipX = (lePosition == 'left');
+			} else if(boxType != lastBoxType) {
+				box.animation.play(centerPrefix + boxType, true);
+				updateBoxOffsets(box);
+			}
 		}
 		lastCharacter = character;
 		lastBoxType = boxType;
