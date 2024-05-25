@@ -171,7 +171,9 @@ class ModTable
             time /= renderer.speed;
             var tween = renderer.createTween(modifiers.get(modifier), {currentValue: val}, time, {ease: easefunc,
                 onComplete: function(twn:FlxTween) {
-    
+                    #if PSYCH
+                        PlayState.instance.callOnScripts("onModifierComplete", [modifier, []]);
+                    #end
                 }
             });
             if (Conductor.songPosition > ModchartUtil.getTimeFromBeat(beat)) //skip to where it should be i guess??
@@ -208,6 +210,10 @@ class ModTable
                     onComplete: function(twn:FlxTween) {
                         if (modifiers.exists(modifier))
                             modifiers.get(modifier).subValues.get(subValue).value = val;
+
+                        #if PSYCH
+                            PlayState.instance.callOnScripts("onModifierComplete", [modifier, subValue]);
+                        #end
                     },
                     onUpdate: function(twn:FlxTween) {
                         //need to update like this because its inside a map
