@@ -6851,3 +6851,52 @@ class FlipShader extends FlxShader
         super();
     }
 }
+
+class SlashEffectNew extends ShaderEffectNew
+{
+    public var shader:SlashShaderNew = new SlashShaderNew();
+}
+
+class SlashShaderNew extends FlxShader
+{
+    @:glFragmentSource('
+    //https://www.shadertoy.com/view/4sfczj
+
+    //Uniform variables
+    float cutAngleInRad = 1.2;
+    vec4 glowCol = vec4(1.0,0.5,0.0,1.0);
+    void mainImage( out vec4 fragColor, in vec2 fragCoord )
+    {
+        vec2 uv = fragCoord.xy / iResolution.xy;
+
+        vec4 col;
+        col = texture( iChannel0, uv );
+
+
+
+        float lw = 1.5 / iResolution.y; //%line width
+        uv = (fragCoord - .5 * iResolution.xy ) / iResolution.y ;
+        float rad = cutAngleInRad;
+
+        //rad += 3.1415; //make the angle inverted for the other screen
+
+        uv.y = cos(rad)* uv.x + sin(rad) * uv.y;//rotate rad
+        float alpha = smoothstep(0.0, lw, uv.y);
+
+        float g = pow(abs(uv.y)+0.2,1.0); //this is stupid XD
+        g = 0.3-g;
+        g * = 10.0;
+        vec4 glow = vec4(g) * glowCol;
+        glow = clamp(glow,0.0,1.0);
+        col += glow * glowCol.a;
+
+        col = mix(col, vec4(0.0), alpha);
+        fragColor = col;
+    }
+    ')
+
+    public function new()
+    {
+        super();
+    }
+}
