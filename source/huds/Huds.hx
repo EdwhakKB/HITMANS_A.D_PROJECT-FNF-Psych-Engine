@@ -112,6 +112,8 @@ class Huds extends FlxGroup
 	var ratingsScaleMultiplier:Float = 1.0;
 	var comboOffset:Array<Float> = [0,0];
 	var ratingsPoss:Array<Float> = [0,0];
+	var iconsYOffset:Array<Float> = [0,0];
+	var scoreOffset:Array<Float> = [0,0]; //upscroll/Downscroll
 	// var hudRating:String = ClientPrefs.hudStyle.toLowerCase();
 
 	public function new()
@@ -135,18 +137,30 @@ class Huds extends FlxGroup
 					comboOffset[1] = 0;
 					ratingsPoss[0] = 850;
 					ratingsPoss[1] = 230;
+					iconsYOffset[0] = 90;
+					iconsYOffset[1] = 90;
+					scoreOffset[0] = -33;
+					scoreOffset[1] = 66;
 				case 'classic':
 					ratingsScaleMultiplier = 0.5;
 					comboOffset[0] = 65;
 					comboOffset[1] = 50;
 					ratingsPoss[0] = 780;
 					ratingsPoss[1] = 180;
+					iconsYOffset[0] = -75;
+					iconsYOffset[1] = -75;
+					scoreOffset[0] = 36;
+					scoreOffset[1] = 36;
 				default:
 					ratingsScaleMultiplier = 1;
 					comboOffset[0] = 0;
 					comboOffset[1] = 0;
 					ratingsPoss[0] = 850;
 					ratingsPoss[1] = 230;
+					iconsYOffset[0] = 90;
+					iconsYOffset[1] = 90;
+					scoreOffset[0] = -33;
+					scoreOffset[1] = 66;
 			}
             //Hitmans Ratings (Kinda Better LOL, sorry if separated i can't use array due keyboard bug)
             //570 x and 200 y (just in case)
@@ -249,7 +263,7 @@ class Huds extends FlxGroup
 
             healthBarBG = new EditedAttachedSprite(ClientPrefs.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBar');
 			if (ClientPrefs.hudStyle == 'HITMANS'){
-				healthBarBG.flipY = ClientPrefs.downScroll;
+				// healthBarBG.flipY = false;
 				healthBarBG.y = ClientPrefs.downScroll ? 0 * FlxG.height : FlxG.height * 0.9;
             }else{
 				healthBarBG.y = ClientPrefs.downScroll ? 0.11 * FlxG.height : FlxG.height * 0.89;
@@ -279,25 +293,19 @@ class Huds extends FlxGroup
 			if (ClientPrefs.hudStyle == 'HITMANS') add(healthBarBG);
 
             iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true);
-            iconP1.y = healthBar.y - 75;
+            iconP1.y = healthBar.y + iconsYOffset[0];
             iconP1.visible = !ClientPrefs.hideHud;
             iconP1.alpha = ClientPrefs.healthBarAlpha;
             add(iconP1);
     
             iconP2 = new EditedHealthIcon(PlayState.instance.dad.healthIcon, false);
-            iconP2.y = healthBar.y - 75;
+            iconP2.y = healthBar.y + iconsYOffset[1];
             iconP2.visible = !ClientPrefs.hideHud;
             iconP2.alpha = ClientPrefs.healthBarAlpha;
             add(iconP2);
             reloadHealthBarColors();
     
-            scoreTxt = new EditedFlxText(
-				0, 
-				ClientPrefs.hudStyle == 'HITMANS' ? (ClientPrefs.downScroll ? healthBar.y + 66 : healthBar.y - 33) : healthBarBG.y + 36, 
-				FlxG.width, 
-				"", 
-				20
-			);
+            scoreTxt = new EditedFlxText(0, (ClientPrefs.downScroll ? scoreOffset[0] : scoreOffset[1]), FlxG.width, "", 20);
             scoreTxt.setFormat(ClientPrefs.hudStyle == 'HITMANS' ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             scoreTxt.scrollFactor.set();
             scoreTxt.borderSize = 1.25;
@@ -440,6 +448,7 @@ class Huds extends FlxGroup
 			}
 
 			tempScore += ratingString + '\n';
+			scoreTxt.text = tempScore;
 		}
 	}
 
@@ -460,14 +469,14 @@ class Huds extends FlxGroup
 
 	public function beatHit()
 	{
-		if (hudadded)
-		{
-			iconP1.scale.set(1.2, 1.2);
-			iconP2.scale.set(1.2, 1.2);
+		// if (hudadded)
+		// {
+		// 	iconP1.scale.set(1.2, 1.2);
+		// 	iconP2.scale.set(1.2, 1.2);
 
-			iconP1.updateHitbox();
-			iconP2.updateHitbox();
-		}
+		// 	iconP1.updateHitbox();
+		// 	iconP2.updateHitbox();
+		// }
 	}
 
     public function ratingsBumpScale() {

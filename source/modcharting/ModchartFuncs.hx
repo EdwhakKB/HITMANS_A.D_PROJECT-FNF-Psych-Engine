@@ -158,7 +158,7 @@ class ModchartFuncs
                     stepSet(beat, argsAsString);
                 });
                 Lua_helper.add_callback(funkin.lua, 'stepEase', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-                    stepEase(beat, time, easeStr, argsAsString);                
+                    stepEase(beat, time, easeStr, argsAsString);               
                 });
             }
         }
@@ -214,6 +214,12 @@ class ModchartFuncs
         });
         parent.set('easeModValue', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
             ease(beat, time, easeStr, argsAsString);
+        });
+        parent.set('sSetModValue', function(beat:Float, argsAsString:String){
+            stepSet(beat, argsAsString);
+        });
+        parent.set('sEaseModValue', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+            stepEase(beat, time, easeStr, argsAsString);
         });
         #end
     }
