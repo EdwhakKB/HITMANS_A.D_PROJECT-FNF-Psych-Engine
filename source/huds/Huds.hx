@@ -33,48 +33,76 @@ using StringTools;
 	so if you want to add something to it, feel free to make this easier ed
 	-Edwhak
 */
+
+
+//Same classes new variable
+class EditedFlxBar extends FlxBar
+{
+	public var separated:Bool = false;
+}
+
+class EditedFlxText extends FlxText
+{
+	public var separated:Bool = false;
+}
+
+class EditedHealthIcon extends HealthIcon
+{
+	public var separated:Bool = false;
+}
+
+class EditedAttachedSprite extends AttachedSprite
+{
+	public var separated:Bool = false;
+}
+
+class EditedFlxSprite extends FlxSprite
+{
+	public var separated:Bool = false;
+}
+
 class Huds extends FlxGroup
 {
 	// health
-	public var healthBarBG:AttachedSprite;
-	public var healthBar:FlxBar;
+	public var healthBarBG:EditedAttachedSprite;
+	public var healthBar:EditedFlxBar;
 	public var health:Float = 1;
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var coloredHealthBar:Bool;
 
 	// timer
-	public var timeBarBG:AttachedSprite;
-	public var timeBar:FlxBar;
+	public var timeBarBG:EditedAttachedSprite;
+	public var timeBar:EditedFlxBar;
 	public var timeBarUi:String;
 	public var updateTimePos:Bool = true;
 
-	public var timeTxt:FlxText;
+	public var timeTxt:EditedFlxText;
 	public var songName:String = "";
 
 	public var updateTime:Bool = false;
 	public var songPercent:Float = 0;
 
 	// score bla bla bla
-	public var scoreTxt:FlxText;
+	public var scoreTxt:EditedFlxText;
 	public var scoreTxtTween:FlxTween;
 
 	public var botplaySine:Float = 0;
-	public var botplayTxt:FlxText;
+	public var botplayTxt:EditedFlxText;
 
     //made these 2 for Player and Enemy (usually both plays at the same time but when its vs Ed he usually play enemy so...)
-    public var ratings:FlxSprite;
+    public var ratings:EditedFlxSprite;
     public var ratingsBumpTween:FlxTween;
     public var ratingsBumpTween2:FlxTween;
     public var ratingsBumpTimer:FlxTimer;
 
-    public var ratingsOP:FlxSprite;
+    public var ratingsOP:EditedFlxSprite;
     public var ratingsOPBumpTween:FlxTween;
     public var ratingsOPBumpTween2:FlxTween;
     public var ratingsOPBumpTimer:FlxTimer;
 
-    public var noteScore:FlxText;
-    public var noteScoreOp:FlxText;
+    public var noteScore:EditedFlxText;
+    public var noteScoreOp:EditedFlxText;
     public var noteRatingTween:FlxTween;
     public var noteRatingTweenOp:FlxTween;
 
@@ -122,7 +150,7 @@ class Huds extends FlxGroup
 			}
             //Hitmans Ratings (Kinda Better LOL, sorry if separated i can't use array due keyboard bug)
             //570 x and 200 y (just in case)
-            ratings = new FlxSprite(ratingsPoss[0], ratingsPoss[1]);
+            ratings = new EditedFlxSprite(ratingsPoss[0], ratingsPoss[1]);
             ratings.frames = Paths.getSparrowAtlas('Huds/ratings/'+hudUsed+'/judgements');
             ratings.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
             ratings.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -140,7 +168,7 @@ class Huds extends FlxGroup
             ratings.visible = false;
             add(ratings);
 
-            ratingsOP = new FlxSprite(ratings.x - 700, ratings.y);
+            ratingsOP = new EditedFlxSprite(ratings.x - 700, ratings.y);
             ratingsOP.frames = Paths.getSparrowAtlas('Huds/ratings/'+hudUsed+'/judgements');
             ratingsOP.animation.addByPrefix('fantastic', 'Fantastic', 1, true);
             ratingsOP.animation.addByPrefix('excellent Late', 'Excellent late', 1, true);
@@ -158,7 +186,7 @@ class Huds extends FlxGroup
             ratingsOP.visible = false;
             add(ratingsOP);
 
-            noteScoreOp = new FlxText(ratingsOP.x, 0, FlxG.width, '', 36);
+            noteScoreOp = new EditedFlxText(ratingsOP.x, 0, FlxG.width, '', 36);
             noteScoreOp.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
 			noteScoreOp.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
 			noteScoreOp.size = (hudUsed == 'hitmans') ? 36 : 72;
@@ -167,7 +195,7 @@ class Huds extends FlxGroup
             noteScoreOp.visible = false;
             add(noteScoreOp);
 
-            noteScore = new FlxText(ratings.x, 0, FlxG.width, '', 36);
+            noteScore = new EditedFlxText(ratings.x, 0, FlxG.width, '', 36);
             noteScore.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
 			noteScore.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
 			noteScore.size = (hudUsed == 'hitmans') ? 36 : 72;
@@ -177,7 +205,7 @@ class Huds extends FlxGroup
             add(noteScore);
 
             var showTime:Bool = (ClientPrefs.timeBarType != 'Disabled');
-            timeTxt = new FlxText(PlayState.STRUM_X + (FlxG.width / 2) - 248, 19, 400, "", 32);
+            timeTxt = new EditedFlxText(PlayState.STRUM_X + (FlxG.width / 2) - 248, 19, 400, "", 32);
             timeTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             timeTxt.scrollFactor.set();
             timeTxt.alpha = 0;
@@ -191,7 +219,7 @@ class Huds extends FlxGroup
             }
             updateTime = showTime;
     
-            timeBarBG = new AttachedSprite('timeBar');
+            timeBarBG = new EditedAttachedSprite('timeBar');
             timeBarBG.x = timeTxt.x;
             timeBarBG.y = timeTxt.y + (timeTxt.height / 4);
             timeBarBG.scrollFactor.set();
@@ -202,7 +230,7 @@ class Huds extends FlxGroup
             timeBarBG.yAdd = -4;
             add(timeBarBG);
     
-            timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this,
+            timeBar = new EditedFlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this,
                 'songPercent', 0, 1);
             timeBar.scrollFactor.set();
             timeBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
@@ -219,7 +247,7 @@ class Huds extends FlxGroup
 			    timeTxt.y += 3;
 		    }
 
-            healthBarBG = new AttachedSprite(ClientPrefs.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBar');
+            healthBarBG = new EditedAttachedSprite(ClientPrefs.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBar');
 			if (ClientPrefs.hudStyle == 'HITMANS'){
 				healthBarBG.flipY = ClientPrefs.downScroll;
 				healthBarBG.y = ClientPrefs.downScroll ? 0 * FlxG.height : FlxG.height * 0.9;
@@ -233,7 +261,7 @@ class Huds extends FlxGroup
             healthBarBG.visible = !ClientPrefs.hideHud;
 			if (ClientPrefs.hudStyle == 'CLASSIC') add(healthBarBG);
     
-            healthBar = new FlxBar(
+            healthBar = new EditedFlxBar(
 				ClientPrefs.hudStyle == 'HITMANS' ? 350 : healthBarBG.x + 4, 
 				ClientPrefs.hudStyle == 'HITMANS' ? healthBarBG.y + 15 : healthBarBG.y + 4, 
 				RIGHT_TO_LEFT, 
@@ -250,20 +278,20 @@ class Huds extends FlxGroup
 			if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.sprTracker = healthBar;
 			if (ClientPrefs.hudStyle == 'HITMANS') add(healthBarBG);
 
-            iconP1 = new HealthIcon(PlayState.instance.boyfriend.healthIcon, true);
+            iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true);
             iconP1.y = healthBar.y - 75;
             iconP1.visible = !ClientPrefs.hideHud;
             iconP1.alpha = ClientPrefs.healthBarAlpha;
             add(iconP1);
     
-            iconP2 = new HealthIcon(PlayState.instance.dad.healthIcon, false);
+            iconP2 = new EditedHealthIcon(PlayState.instance.dad.healthIcon, false);
             iconP2.y = healthBar.y - 75;
             iconP2.visible = !ClientPrefs.hideHud;
             iconP2.alpha = ClientPrefs.healthBarAlpha;
             add(iconP2);
             reloadHealthBarColors();
     
-            scoreTxt = new FlxText(
+            scoreTxt = new EditedFlxText(
 				0, 
 				ClientPrefs.hudStyle == 'HITMANS' ? (ClientPrefs.downScroll ? healthBar.y + 66 : healthBar.y - 33) : healthBarBG.y + 36, 
 				FlxG.width, 
@@ -276,7 +304,7 @@ class Huds extends FlxGroup
             scoreTxt.visible = !ClientPrefs.hideHud;
             add(scoreTxt);
     
-            botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
+            botplayTxt = new EditedFlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
             botplayTxt.setFormat(Paths.font("DEADLY KILLERS.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 			botplayTxt.font = (hudUsed == 'hitmans') ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf");
             botplayTxt.scrollFactor.set();
@@ -292,6 +320,14 @@ class Huds extends FlxGroup
 			updateScore();
 		}
 	}
+
+	public function changeVariables(items:Array<Dynamic>, variablesToChange:Array<String>, variables:Array<Dynamic>, tweenPos:Bool = true):Void
+	{
+		for (i in 0...items.length) Reflect.setProperty(items[i], variablesToChange[i], variables[i]);
+	}
+
+	public var separateBarMovement:Bool = true;
+	public var separateTimeMovement:Bool = true;
 
     var iconOffset:Int = 26;
 
@@ -341,6 +377,15 @@ class Huds extends FlxGroup
                     noteScoreOp.text = Std.string(PlayState.instance.combo);
                     noteScoreOp.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
             }
+
+			if (!separateTimeMovement)
+			{
+				for (i in [timeBarBG, timeTxt])
+				{
+					i.setPosition(timeBar.x, timeBar.y);
+				}
+			}
+			if (!separateBarMovement) for (i in [healthBarBG]) i.setPosition(healthBar.x, healthBar.y);
 
             noteScore.x = (ratings.x-510) + comboOffset[0];
             noteScoreOp.x = (ratingsOP.x-510) + comboOffset[0];

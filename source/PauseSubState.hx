@@ -295,7 +295,7 @@ class PauseSubState extends MusicBeatSubstate
 				switch (daSelected)
 				{
 					case "Resume":
-						inCountdown = true;
+						inCountDown = true;
 						hideCameraOverlay(true);
 						unPauseTimer = new FlxTimer().start(Conductor.crochet / 1000, function(hmmm:FlxTimer)
 						{

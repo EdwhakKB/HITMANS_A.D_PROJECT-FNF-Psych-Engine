@@ -3378,6 +3378,10 @@ class FunkinLua {
             // return retVal;
         });
 
+		Lua_helper.add_callback(lua, "setHudsVariables", function(objects:Array<Dynamic>, variablesToChange:Array<String>, vars:Array<Dynamic>) {
+			PlayState.instance.hitmansHUD.changeVariables(objects, variablesToChange, vars);
+		});
+
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		#if HSCRIPT_ALLOWED SSHScript.implement(this); #end
 		
