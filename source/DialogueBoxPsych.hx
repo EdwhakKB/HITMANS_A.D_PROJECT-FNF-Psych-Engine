@@ -72,7 +72,8 @@ typedef DialogueLine = {
 	var boxState:Null<String>;
 	var speed:Null<Float>;
 	var sound:Null<String>;
-	var curBg:Null<String>;
+	var curDiaBg:Null<String>;
+	var backgroundBg:Null<String>;
 }
 
 class DialogueCharacter extends FlxSprite
@@ -533,9 +534,15 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		if(curDialogue.text == null || curDialogue.text.length < 1) curDialogue.text = ' ';
 		if(curDialogue.boxState == null) curDialogue.boxState = 'normal';
 		if(curDialogue.speed == null || Math.isNaN(curDialogue.speed)) curDialogue.speed = 0.05;
-		if(curDialogue.curBg == null) curDialogue.curBg = "speech_bubble";
+		if(curDialogue.curDiaBg == null) curDialogue.curDiaBg = "speech_bubble";
+		if(curDialogue.backgroundBg == null) curDialogue.backgroundBg = "default";
 
-		for (i in 0...boxs.members.length) boxs.members[i].visible = (boxs.members[i].name == curDialogue.curBg);
+		for (i in 0...boxs.members.length) 
+		{
+			if (curDialogue.backgroundBg != "default") bgFade.loadGraphic(Paths.image(curDialogue.backgroundBg));
+			if (bgFade.graphic == null) bgFade.makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.WHITE);
+			boxs.members[i].visible = (boxs.members[i].name == curDialogue.curDiaBg);
+		}
 
 		var animName:String = curDialogue.boxState;
 		var boxType:String = textBoxTypes[0];

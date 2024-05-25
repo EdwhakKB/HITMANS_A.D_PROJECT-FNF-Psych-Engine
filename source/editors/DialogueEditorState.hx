@@ -59,7 +59,8 @@ class DialogueEditorState extends MusicBeatState
 			boxState: DEFAULT_BUBBLETYPE,
 			speed: 0.05,
 			sound: '',
-			curBg: "speech_bubble"
+			curDiaBg: "speech_bubble",
+			backgroundBg: "default"
 		}
 
 		defaultBackground = {
@@ -195,7 +196,8 @@ class DialogueEditorState extends MusicBeatState
 			boxState: defaultLine.boxState,
 			speed: defaultLine.speed,
 			sound: '',
-			curBg: defaultLine.curBg
+			curDiaBg: defaultLine.curDiaBg,
+			backgroundBg: defaultLine.backgroundBg
 		};
 		return copyLine;
 	}
