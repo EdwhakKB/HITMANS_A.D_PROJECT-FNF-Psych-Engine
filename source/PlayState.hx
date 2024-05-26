@@ -2114,6 +2114,7 @@ class PlayState extends MusicBeatState
 		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
 		FlxTween.tween(hitmansHUD.timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
+		FlxTween.tween(hitmansHUD.timeBarBG, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(hitmansHUD.timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 
 		hitmansHUD.beatHit();
