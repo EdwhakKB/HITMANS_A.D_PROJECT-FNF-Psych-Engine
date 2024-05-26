@@ -2373,6 +2373,8 @@ class FunkinLua {
 			return FlxG.random.bool(chance);
 		});
 		Lua_helper.add_callback(lua, "startDialogue", function(dialogueFile:String, music:String = null) {
+			PlayState.instance.startCallback = null;
+
 			var path:String;
 			#if MODS_ALLOWED
 			path = Paths.modsJson(Paths.formatToSongPath(PlayState.SONG.song) + '/' + dialogueFile);
@@ -2399,18 +2401,14 @@ class FunkinLua {
 			} else {
 				luaTrace('startDialogue: Dialogue file not found', false, false, FlxColor.RED);
 				if(PlayState.instance.endingSong) {
-					PlayState.instance.endSong();
+					if (!PlayState.inResultsScreen) PlayState.instance.endSong();
 				} else {
-					PlayState.instance.startCountdown();
+					if (!PlayState.inResultsScreen) PlayState.instance.startCountdown();
 				}
 			}
 			return false;
 		});
 
-		Lua_helper.add_callback(lua, "beginADialogue", function(dialogue:String, music:String = ""){
-			PlayState.instance.startCallback = null;
-			PlayState.instance.findDialogue(dialogue, music);
-		});
 		Lua_helper.add_callback(lua, "startVideo", function(videoFile:String) {
 			#if VIDEOS_ALLOWED
 			if(FileSystem.exists(Paths.video(videoFile))) {

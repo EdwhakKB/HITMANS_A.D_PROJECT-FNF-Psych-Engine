@@ -32,13 +32,13 @@ import Alphabet;
 #if sys
 import sys.io.File;
 #end
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
 using StringTools;
 
 class DialogueEditorState extends MusicBeatState
 {
 	var character:DialogueCharacter;
-	var box:FlxSprite;
 	var daText:TypedAlphabet;
 
 	var selectedText:FlxText;
@@ -48,9 +48,18 @@ class DialogueEditorState extends MusicBeatState
 	var defaultBackground:DialogueBackground;
 	var dialogueFile:DialogueFile = null;
 
+	var boxs:FlxTypedSpriteGroup<BackgroundSprite> = new FlxTypedSpriteGroup<BackgroundSprite>();
+
+	var backgroundBG:FlxSprite;
+
 	override function create() {
 		persistentUpdate = persistentDraw = true;
-		FlxG.camera.bgColor = FlxColor.fromHSL(0, 0, 0.5);
+		
+		backgroundBG = new FlxSprite(0, 0).makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.WHITE);
+		backgroundBG.scrollFactor.set();
+		backgroundBG.visible = true;
+		backgroundBG.alpha = 0.7;
+		add(backgroundBG);
 
 		defaultLine = {
 			portrait: DialogueCharacter.DEFAULT_CHARACTER,
@@ -60,17 +69,20 @@ class DialogueEditorState extends MusicBeatState
 			speed: 0.05,
 			sound: '',
 			curDiaBg: "speech_bubble",
-			backgroundBg: "default"
+			backgroundBg: "default",
+			backgroundScale: [],
+			backgroundGraphicScale: []
 		}
 
 		defaultBackground = {
 			bgName: "speech_bubble",
 			bg: "speech_bubble",
-			scale: 0,
-			xPos: 75,
+			xPos: 70,
 			yPos: 370,
-			animations: [],
-			includeDefaultAnimations: true
+			scale: [],
+			graphicScale: [],
+			includeDefaultAnimations: true,
+			animations: []
 		}
 
 		dialogueFile = {
@@ -86,18 +98,8 @@ class DialogueEditorState extends MusicBeatState
 		character.scrollFactor.set();
 		add(character);
 
-		box = new FlxSprite(70, 370);
-		box.frames = Paths.getSparrowAtlas('speech_bubble');
-		box.scrollFactor.set();
-		box.antialiasing = ClientPrefs.globalAntialiasing;
-		box.animation.addByPrefix('normal', 'speech bubble normal', 24);
-		box.animation.addByPrefix('angry', 'AHH speech bubble', 24);
-		box.animation.addByPrefix('center', 'speech bubble middle', 24);
-		box.animation.addByPrefix('center-angry', 'AHH Speech Bubble middle', 24);
-		box.animation.play('normal', true);
-		box.setGraphicSize(Std.int(box.width * 0.9));
-		box.updateHitbox();
-		add(box);
+		addNewBox();
+		add(boxs);
 
 		addEditorBox();
 		FlxG.mouse.visible = true;
@@ -128,7 +130,8 @@ class DialogueEditorState extends MusicBeatState
 	var UI_box:FlxUITabMenu;
 	function addEditorBox() {
 		var tabs = [
-			{name: 'Dialogue Line', label: 'Dialogue Line'},
+			{name: 'Dialogue Box And BG', label: 'Dialogue Box And BG'},
+			{name: 'Dialogue Line', label: 'Dialogue Line'}
 		];
 		UI_box = new FlxUITabMenu(null, tabs, true);
 		UI_box.resize(250, 210);
@@ -137,6 +140,7 @@ class DialogueEditorState extends MusicBeatState
 		UI_box.scrollFactor.set();
 		UI_box.alpha = 0.8;
 		addDialogueLineUI();
+		addDialogueBoxUI();
 		add(UI_box);
 	}
 
@@ -188,6 +192,31 @@ class DialogueEditorState extends MusicBeatState
 		UI_box.addGroup(tab_group);
 	}
 
+	var dialogueBoxInputText:FlxUIInputText;
+	var backgroundBoxInputText:FlxUIInputText;
+	function addDialogueBoxUI(){
+		var tab_group = new FlxUI(null, UI_box);
+		tab_group.name = "Dialogue Box And BG";
+		
+		dialogueBoxInputText = new FlxUIInputText(10, 20, 210, "", 8);
+		blockPressWhileTypingOn.push(dialogueBoxInputText);
+
+		backgroundBoxInputText = new FlxUIInputText(10, dialogueBoxInputText.y + 40, 210, "", 8);
+		blockPressWhileTypingOn.push(backgroundBoxInputText);
+
+		var loadButton:FlxButton = new FlxButton(20, backgroundBoxInputText.y + 25, "Load Background", function() {
+			changeBackground(dialogueFile.dialogue[curSelected].backgroundBg);
+		});
+
+		tab_group.add(new FlxText(10, dialogueBoxInputText.y - 18, 0, 'Dia Box BG:'));
+		tab_group.add(new FlxText(10, backgroundBoxInputText.y - 18, 0, 'Background:'));
+
+		tab_group.add(dialogueBoxInputText);
+		tab_group.add(backgroundBoxInputText);
+		tab_group.add(loadButton);
+		UI_box.addGroup(tab_group);
+	}
+
 	function copyDefaultLine():DialogueLine {
 		var copyLine:DialogueLine = {
 			portrait: defaultLine.portrait,
@@ -197,7 +226,9 @@ class DialogueEditorState extends MusicBeatState
 			speed: defaultLine.speed,
 			sound: '',
 			curDiaBg: defaultLine.curDiaBg,
-			backgroundBg: defaultLine.backgroundBg
+			backgroundBg: defaultLine.backgroundBg,
+			backgroundScale: defaultLine.backgroundScale,
+			backgroundGraphicScale: defaultLine.backgroundGraphicScale
 		};
 		return copyLine;
 	}
@@ -207,6 +238,7 @@ class DialogueEditorState extends MusicBeatState
 			bgName: defaultBackground.bgName,
 			bg: defaultBackground.bg,
 			scale: defaultBackground.scale,
+			graphicScale: defaultBackground.graphicScale,
 			xPos: defaultBackground.xPos,
 			yPos: defaultBackground.yPos,
 			animations: defaultBackground.animations,
@@ -216,22 +248,24 @@ class DialogueEditorState extends MusicBeatState
 	}
 
 	function updateTextBox() {
-		box.flipX = false;
-		var isAngry:Bool = angryCheckbox.checked;
-		var anim:String = isAngry ? 'angry' : 'normal';
-
-		switch(character.jsonFile.dialogue_pos) {
-			case 'left':
-				box.flipX = true;
-			case 'center':
-				if(isAngry) {
-					anim = 'center-angry';
-				} else {
-					anim = 'center';
-				}
-		}
-		box.animation.play(anim, true);
-		DialogueBoxPsych.updateBoxOffsets(box);
+		boxs.forEach(function(box:BackgroundSprite){
+			box.flipX = false;
+			var isAngry:Bool = angryCheckbox.checked;
+			var anim:String = isAngry ? 'angry' : 'normal';
+	
+			switch(character.jsonFile.dialogue_pos) {
+				case 'left':
+					box.flipX = true;
+				case 'center':
+					if(isAngry) {
+						anim = 'center-angry';
+					} else {
+						anim = 'center';
+					}
+			}
+			box.animation.play(anim, true);
+			DialogueBoxPsych.updateBoxOffsets(box);
+		});
 	}
 
 	function reloadCharacter() {
@@ -330,6 +364,14 @@ class DialogueEditorState extends MusicBeatState
 				daText.sound = soundInputText.text;
 				if(daText.sound == null) daText.sound = '';
 			}
+			else if(sender == dialogueBoxInputText)
+			{
+				dialogueFile.dialogue[curSelected].curDiaBg = dialogueBoxInputText.text;
+			}
+			else if(sender == backgroundBoxInputText)
+			{
+				dialogueFile.dialogue[curSelected].backgroundBg = backgroundBoxInputText.text;
+			}
 		} else if(id == FlxUINumericStepper.CHANGE_EVENT && (sender == speedStepper)) {
 			dialogueFile.dialogue[curSelected].speed = speedStepper.value;
 			if(Math.isNaN(dialogueFile.dialogue[curSelected].speed) || dialogueFile.dialogue[curSelected].speed == null || dialogueFile.dialogue[curSelected].speed < 0.001) {
@@ -415,15 +457,25 @@ class DialogueEditorState extends MusicBeatState
 
 			if(FlxG.keys.justPressed.O) {
 				dialogueFile.dialogue.remove(dialogueFile.dialogue[curSelected]);
+				dialogueFile.background.remove(dialogueFile.background[curSelected]);
 				if(dialogueFile.dialogue.length < 1) //You deleted everything, dumbo!
 				{
 					dialogueFile.dialogue = [
 						copyDefaultLine()
 					];
 				}
+				if(dialogueFile.background.length < 1) //You deleted everything, dumbo!
+				{
+					dialogueFile.background = [
+						copyDefaultBackground()
+					];
+				}
+				removeBox();
 				changeText();
 			} else if(FlxG.keys.justPressed.P) {
 				dialogueFile.dialogue.insert(curSelected + 1, copyDefaultLine());
+				dialogueFile.background.insert(curSelected + 1, copyDefaultBackground());
+				addNewBox(curSelected + 1);
 				changeText(1);
 			}
 		}
@@ -440,6 +492,8 @@ class DialogueEditorState extends MusicBeatState
 		lineInputText.text = curDialogue.text;
 		angryCheckbox.checked = (curDialogue.boxState == 'angry');
 		speedStepper.value = curDialogue.speed;
+		dialogueBoxInputText.text = curDialogue.curDiaBg;
+		backgroundBoxInputText.text = curDialogue.backgroundBg;
 
 		if (curDialogue.sound == null) curDialogue.sound = '';
 		soundInputText.text = curDialogue.sound;
@@ -448,11 +502,14 @@ class DialogueEditorState extends MusicBeatState
 		daText.sound = soundInputText.text;
 		if(daText.sound != null && daText.sound.trim() == '') daText.sound = 'dialogue';
 
+		changeBackground(backgroundBoxInputText.text);
+
 		curAnim = 0;
 		character.reloadCharacterJson(characterInputText.text);
 		reloadCharacter();
 		reloadText(false);
 		updateTextBox();
+		
 
 		var leLength:Int = character.jsonFile.animations.length;
 		if(leLength > 0) {
@@ -471,6 +528,92 @@ class DialogueEditorState extends MusicBeatState
 		characterAnimSpeed();
 
 		selectedText.text = 'Line: (' + (curSelected + 1) + ' / ' + dialogueFile.dialogue.length + ') - Press A or D to scroll';
+
+		boxs.forEach(function(box:BackgroundSprite){
+			box.visible = (box.ID == curSelected);
+		});
+	}
+
+	function addNewBox(boxId:Int = 0)
+	{
+		var box = new BackgroundSprite(
+			dialogueFile.background[boxId].xPos != null ? dialogueFile.background[boxId].xPos : 70, 
+			dialogueFile.background[boxId].yPos != null ? dialogueFile.background[boxId].yPos : 370, 
+			dialogueFile.background[boxId].bgName != null ? dialogueFile.background[boxId].bgName : 'box_$boxId'
+		);
+		box.frames = Paths.getSparrowAtlas(dialogueFile.background[boxId].bg != null ? dialogueFile.background[boxId].bg : 'speech_bubble');
+		box.scrollFactor.set();
+		box.antialiasing = ClientPrefs.globalAntialiasing;
+		if (dialogueFile.background[boxId].includeDefaultAnimations)
+		{
+			box.animation.addByPrefix('normal', 'speech bubble normal', 24);
+			box.animation.addByPrefix('angry', 'AHH speech bubble', 24);
+			box.animation.addByPrefix('center-normal', 'speech bubble middle', 24);
+			box.animation.addByPrefix('center-angry', 'AHH Speech Bubble middle', 24);
+		}
+		if (dialogueFile.background[boxId].animations != null || dialogueFile.background[boxId].animations.length > 0)
+		{
+			for (anim in dialogueFile.background[boxId].animations)
+			{
+				var excludedAnims:Array<String> = ['open'];
+				if (!anim.anim.toLowerCase().contains(excludedAnims[excludedAnims.length-1]))
+				{
+					var animAnim:String = '' + anim.anim;
+					var animName:String = '' + anim.name;
+					var animFps:Int = anim.fps;
+					var animLoop:Bool = !anim.loop; // Bruh
+					var animIndices:Array<Int> = anim.indices;
+					if (animIndices != null && animIndices.length > 0)
+						box.animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
+					else
+						box.animation.addByPrefix(animAnim, animName, animFps, animLoop);
+					if(anim.offsets != null && anim.offsets.length > 1) box.addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+					else box.addOffset(anim.anim, 0, 0);
+				}
+			}
+		}
+		box.animation.play('normal', true);
+			
+		box.visible = false;
+		if (dialogueFile.background[boxId].scale.length > 0) 
+		{
+			var scale:Array<Float> = dialogueFile.background[boxId].scale;
+			box.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
+		}
+		if (dialogueFile.background[boxId].graphicScale.length > 0)
+		{
+			var graphicScale:Array<Float> = dialogueFile.background[boxId].graphicScale;
+			box.setGraphicSize(Std.int(graphicScale[0] != 0 ? graphicScale[0] : FlxG.width), Std.int(graphicScale[1] != 0 ? graphicScale[1] : FlxG.height));
+		}
+		if (dialogueFile.background[boxId].graphicScale.length == 0 && dialogueFile.background[boxId].scale.length == 0) box.setGraphicSize(Std.int(box.width * 0.9));
+		box.updateHitbox();
+		box.ID = boxId;
+		Sys.println("WTF IS THE ID, " + box.ID);
+		boxs.add(box);
+	}
+
+	function removeBox()
+	{
+		boxs.remove(boxs.members[boxs.members.length-1]);
+	}
+
+	function changeBackground(bg:String)
+	{
+		var scale:Array<Float> = dialogueFile.dialogue[curSelected].backgroundScale;
+		var graphic:Array<Float> = dialogueFile.dialogue[curSelected].backgroundGraphicScale;
+		if (bg != "default" && bg != "" && bg != null) 
+		{
+			backgroundBG.loadGraphic(Paths.image(bg));
+			if (scale.length > 0) backgroundBG.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
+			if (graphic.length > 0)
+				backgroundBG.setGraphicSize(Std.int(graphic[0] != 0 ? graphic[0] : FlxG.width), Std.int(graphic[1] != 0 ? graphic[1] : FlxG.height));
+			if (graphic.length == 0 && scale.length == 0) backgroundBG.setGraphicSize(Std.int(FlxG.width), Std.int(FlxG.height));
+			backgroundBG.alpha = 1;
+		}
+		else {
+			backgroundBG.makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.WHITE);
+			backgroundBG.alpha = 0.7;
+		}
 	}
 
 	function characterAnimSpeed() {

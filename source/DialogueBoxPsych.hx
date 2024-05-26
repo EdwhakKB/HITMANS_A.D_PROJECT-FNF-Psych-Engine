@@ -47,13 +47,14 @@ typedef DialogueFile = {
 }
 
 typedef DialogueBackground = {
-	var animations:Array<DialogueBackgroundAnimsArray>;
 	var bgName:Null<String>;
 	var bg:Null<String>;
 	var xPos:Null<Float>;
 	var yPos:Null<Float>;
-	var scale:Float;
+	var scale:Array<Float>;
+	var graphicScale:Array<Float>;
 	var includeDefaultAnimations:Bool;
+	var animations:Array<DialogueBackgroundAnimsArray>;
 }
 
 typedef DialogueBackgroundAnimsArray = {
@@ -74,6 +75,8 @@ typedef DialogueLine = {
 	var sound:Null<String>;
 	var curDiaBg:Null<String>;
 	var backgroundBg:Null<String>;
+	var backgroundScale:Array<Float>;
+	var backgroundGraphicScale:Array<Float>;
 }
 
 class DialogueCharacter extends FlxSprite
@@ -289,8 +292,18 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			box.animation.play('normal', true);
 				
 			box.visible = false;
-			if (dialogueList.background[i].scale != 0) box.setGraphicSize(Std.int(box.width * dialogueList.background[i].scale));
-			else box.setGraphicSize(Std.int(box.width * 0.9));
+			if (dialogueList.background[i].scale.length > 0) 
+			{
+				var scale:Array<Float> = dialogueList.background[i].scale;
+				box.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
+			}
+			if (dialogueList.background[i].graphicScale.length > 0)
+			{
+				var graphicScale:Array<Float> = dialogueList.background[i].graphicScale;
+				box.setGraphicSize(Std.int(graphicScale[0] != 0 ? graphicScale[0] : FlxG.width), Std.int(graphicScale[1] != 0 ? graphicScale[1] : FlxG.height));
+			}
+			if (dialogueList.background[i].graphicScale.length == 0 && dialogueList.background[i].scale.length  == 0)
+				box.setGraphicSize(Std.int(box.width * 0.9));
 			box.updateHitbox();
 			boxs.add(box);
 		}
@@ -536,12 +549,26 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		if(curDialogue.speed == null || Math.isNaN(curDialogue.speed)) curDialogue.speed = 0.05;
 		if(curDialogue.curDiaBg == null) curDialogue.curDiaBg = "speech_bubble";
 		if(curDialogue.backgroundBg == null) curDialogue.backgroundBg = "default";
+		if(curDialogue.backgroundScale == null) curDialogue.backgroundScale = [1, 1];
+		if(curDialogue.backgroundGraphicScale == null) curDialogue.backgroundGraphicScale = [1280, 720];
 
-		for (i in 0...boxs.members.length) 
+		for (i in 0...boxs.members.length) boxs.members[i].visible = (boxs.members[i].name == curDialogue.curDiaBg);
+		
+		var bg:String = curDialogue.backgroundBg;
+		var scale:Array<Float> = curDialogue.backgroundScale;
+		var graphic:Array<Float> = curDialogue.backgroundGraphicScale;
+		if (bg != "default" && bg != "" && bg != null) 
 		{
-			if (curDialogue.backgroundBg != "default") bgFade.loadGraphic(Paths.image(curDialogue.backgroundBg));
-			if (bgFade.graphic == null) bgFade.makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.WHITE);
-			boxs.members[i].visible = (boxs.members[i].name == curDialogue.curDiaBg);
+			bgFade.loadGraphic(Paths.image(bg));
+			if (scale.length > 0) bgFade.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
+			if (graphic.length > 0)
+				bgFade.setGraphicSize(Std.int(graphic[0] != 0 ? graphic[0] : FlxG.width), Std.int(graphic[1] != 0 ? graphic[1] : FlxG.height));
+			if (graphic.length == 0 && scale.length == 0) bgFade.setGraphicSize(Std.int(FlxG.width), Std.int(FlxG.height));
+			bgFade.alpha = 1;
+		}
+		else {
+			bgFade.makeGraphic(FlxG.width * 2, FlxG.height * 2, FlxColor.WHITE);
+			bgFade.alpha = 0.7;
 		}
 
 		var animName:String = curDialogue.boxState;
