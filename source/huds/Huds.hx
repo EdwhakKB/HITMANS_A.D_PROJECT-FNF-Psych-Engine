@@ -137,8 +137,8 @@ class Huds extends FlxGroup
 					comboOffset[1] = 0;
 					ratingsPoss[0] = 850;
 					ratingsPoss[1] = 230;
-					iconsYOffset[0] = 90;
-					iconsYOffset[1] = 90;
+					iconsYOffset[0] = !ClientPrefs.downScroll ? -75 : -10;
+					iconsYOffset[1] = !ClientPrefs.downScroll ? -75 : -10;
 					scoreOffset[0] = -33;
 					scoreOffset[1] = 66;
 				case 'classic':
@@ -147,8 +147,8 @@ class Huds extends FlxGroup
 					comboOffset[1] = 50;
 					ratingsPoss[0] = 780;
 					ratingsPoss[1] = 180;
-					iconsYOffset[0] = -75;
-					iconsYOffset[1] = -75;
+					iconsYOffset[0] = -65;
+					iconsYOffset[1] = -65;
 					scoreOffset[0] = 36;
 					scoreOffset[1] = 36;
 				default:
@@ -200,7 +200,7 @@ class Huds extends FlxGroup
             ratingsOP.visible = false;
             add(ratingsOP);
 
-            noteScoreOp = new EditedFlxText(ratingsOP.x, 0, FlxG.width, '', 36);
+            noteScoreOp = new EditedFlxText(ratingsOP.x-510 + comboOffset[0], (ratingsOP.y+100) + comboOffset[1], FlxG.width, '', 36);
             noteScoreOp.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
 			noteScoreOp.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
 			noteScoreOp.size = (hudUsed == 'hitmans') ? 36 : 72;
@@ -209,7 +209,7 @@ class Huds extends FlxGroup
             noteScoreOp.visible = false;
             add(noteScoreOp);
 
-            noteScore = new EditedFlxText(ratings.x, 0, FlxG.width, '', 36);
+            noteScore = new EditedFlxText(ratings.x-510 + comboOffset[0], (ratings.y+100) + comboOffset[1], FlxG.width, '', 36);
             noteScore.setFormat(Paths.font("pixel.otf"), 36, 0xff000000, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.WHITE);
 			noteScore.font = (hudUsed == 'hitmans') ? Paths.font("pixel.otf") : Paths.font("Phantomuff.ttf");
 			noteScore.size = (hudUsed == 'hitmans') ? 36 : 72;
@@ -261,7 +261,7 @@ class Huds extends FlxGroup
 			    timeTxt.y += 3;
 		    }
 
-            healthBarBG = new EditedAttachedSprite(ClientPrefs.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBar');
+            healthBarBG = new EditedAttachedSprite(ClientPrefs.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBarEmpty');
 			if (ClientPrefs.hudStyle == 'HITMANS'){
 				// healthBarBG.flipY = false;
 				healthBarBG.y = ClientPrefs.downScroll ? 0 * FlxG.height : FlxG.height * 0.9;
@@ -273,7 +273,6 @@ class Huds extends FlxGroup
             healthBarBG.screenCenter(X);
            	if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.scrollFactor.set();
             healthBarBG.visible = !ClientPrefs.hideHud;
-			if (ClientPrefs.hudStyle == 'CLASSIC') add(healthBarBG);
     
             healthBar = new EditedFlxBar(
 				ClientPrefs.hudStyle == 'HITMANS' ? 350 : healthBarBG.x + 4, 
@@ -290,7 +289,7 @@ class Huds extends FlxGroup
             healthBar.alpha = ClientPrefs.healthBarAlpha;
             add(healthBar);
 			if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.sprTracker = healthBar;
-			if (ClientPrefs.hudStyle == 'HITMANS') add(healthBarBG);
+			add(healthBarBG);
 
             iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true);
             iconP1.y = healthBar.y + iconsYOffset[0];
@@ -305,7 +304,7 @@ class Huds extends FlxGroup
             add(iconP2);
             reloadHealthBarColors();
     
-            scoreTxt = new EditedFlxText(0, (ClientPrefs.downScroll ? scoreOffset[0] : scoreOffset[1]), FlxG.width, "", 20);
+            scoreTxt = new EditedFlxText(0, healthBarBG.y + (!ClientPrefs.downScroll ? scoreOffset[0] : scoreOffset[1]), FlxG.width, "", 20);
             scoreTxt.setFormat(ClientPrefs.hudStyle == 'HITMANS' ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             scoreTxt.scrollFactor.set();
             scoreTxt.borderSize = 1.25;
