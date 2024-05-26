@@ -1243,6 +1243,16 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.quantization)
 			doNoteQuant();
 
+		// var aftBitmapL:AFT_capture;
+		// aftBitmapL = new AFT_capture(camHUD);
+		// aftBitmapL.updateRate = 0.0;
+		// aftBitmapL.recursive = false;
+
+		// var aftBitmapR:AFT_capture;
+		// aftBitmapR = new AFT_capture(camHUD);
+		// aftBitmapR.recursive = false;
+		// aftBitmapR.updateRate = 0.0;
+
 		super.create();
 
 		cacheCountdown();

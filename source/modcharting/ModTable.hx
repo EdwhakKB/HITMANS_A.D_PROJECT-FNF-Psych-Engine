@@ -6,6 +6,7 @@ import modcharting.Modifier;
 #if LEATHER
 import game.Conductor;
 #end
+import flixel.FlxG;
 
 class ModTable
 {
@@ -173,6 +174,7 @@ class ModTable
             var tween = renderer.createTween(modifiers.get(modifier), {currentValue: val}, time, {ease: easefunc,
                 onComplete: function(twn:FlxTween) {
                     #if PSYCH
+                    if (PlayState.instance == FlxG.state)
                         PlayState.instance.callOnScripts("onModifierComplete", [modifier, []]);
                     #end
                 }
@@ -213,6 +215,7 @@ class ModTable
                             modifiers.get(modifier).subValues.get(subValue).value = val;
 
                         #if PSYCH
+                        if (PlayState.instance == FlxG.state)
                             PlayState.instance.callOnScripts("onModifierComplete", [modifier, subValue]);
                         #end
                     },

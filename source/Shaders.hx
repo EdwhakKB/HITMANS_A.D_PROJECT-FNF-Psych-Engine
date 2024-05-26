@@ -6855,6 +6855,14 @@ class FlipShader extends FlxShader
 class SlashEffectNew extends ShaderEffectNew
 {
     public var shader:SlashShaderNew = new SlashShaderNew();
+    public var angle(default, set):Float = 0.0; //1.2
+
+    function set_angle(val:Float)
+    {
+        angle = val;
+        shader.radius.value = [angle];
+        return val;
+    }
 }
 
 class SlashShaderNew extends FlxShader
@@ -6862,36 +6870,50 @@ class SlashShaderNew extends FlxShader
     @:glFragmentSource('
     //https://www.shadertoy.com/view/4sfczj
 
+    vec2 uv = openfl_TextureCoordv.xy;
+    vec2 fragCoord = openfl_TextureCoordv*openfl_TextureSize;
+    vec2 iResolution = openfl_TextureSize;
+    
+    uniform float iTime;
+    #define iChannel0 bitmap
+    #define texture flixel_texture2D
+    #define fragColor gl_FragColor
+    #define mainImage main
+
     //Uniform variables
-    float cutAngleInRad = 1.2;
+    uniform float radius = 0.0;
     vec4 glowCol = vec4(1.0,0.5,0.0,1.0);
-    void mainImage( out vec4 fragColor, in vec2 fragCoord )
+    void main()
     {
-        vec2 uv = fragCoord.xy / iResolution.xy;
-
-        vec4 col;
-        col = texture( iChannel0, uv );
-
-
-
-        float lw = 1.5 / iResolution.y; //%line width
-        uv = (fragCoord - .5 * iResolution.xy ) / iResolution.y ;
+        float cutAngleInRad = radius;
+        vec4 glowCol = vec4(1.0,0.5,0.0,uWaveAmplitude);
+        
+        vec2 uv = openfl_TextureCoordv;
+        vec4 col = flixel_texture2D(bitmap, uv);
+        
+        //https://www.shadertoy.com/view/4sfczj
+        float lw = 1.5 / resolution.y; //%line width
+        
+        vec2 fragCoord = openfl_TextureCoordv * resolution.xy;
+        uv = (fragCoord - .5 * resolution.xy ) / resolution.y ;
+        uv.y *= -1.0;
+        
         float rad = cutAngleInRad;
-
-        //rad += 3.1415; //make the angle inverted for the other screen
-
-        uv.y = cos(rad)* uv.x + sin(rad) * uv.y;//rotate rad
+        if(effectType == EFFECT_TYPE_CUTOUT+1){
+            rad += 3.1415;
+        }
+        uv.y = cos(rad)*uv.x + sin(rad) * uv.y;
         float alpha = smoothstep(0.0, lw, uv.y);
-
+        
         float g = pow(abs(uv.y)+0.2,1.0); //this is stupid XD
         g = 0.3-g;
-        g * = 10.0;
+        g *= 10.0;
         vec4 glow = vec4(g) * glowCol;
         glow = clamp(glow,0.0,1.0);
         col += glow * glowCol.a;
-
-        col = mix(col, vec4(0.0), alpha);
-        fragColor = col;
+        
+        col = mix(col, vec4(0.0), alpha);         
+        gl_FragColor = col;
     }
     ')
 
