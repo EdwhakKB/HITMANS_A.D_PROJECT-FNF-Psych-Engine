@@ -102,6 +102,8 @@ import flash.system.System;
 import codenameengine.scripting.Script as HScriptCode;
 #end
 
+import AFT_capture;
+
 typedef ThreadBeatList = {
 	beat:Float,
 	func:Dynamic
@@ -329,10 +331,10 @@ class PlayState extends MusicBeatState
 
 	public var camHUD:FlxCamera;
 	public var camInterfaz:FlxCamera;
-	public var camInterfaz2:FlxCamera;
+	public var camVisuals:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
-	public var camRate:FlxCamera;
+	public var camProxy:FlxCamera;
 	public var cameraSpeed:Float = 1;
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
@@ -636,14 +638,14 @@ class PlayState extends MusicBeatState
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
 		camInterfaz = new FlxCamera();
-		camInterfaz2 = new FlxCamera();
+		camVisuals = new FlxCamera();
 		camOther = new FlxCamera();
-		camRate = new FlxCamera();
+		camProxy = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 		camInterfaz.bgColor.alpha = 0;
-		camInterfaz2.bgColor.alpha = 0;
+		camVisuals.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
-		camRate.bgColor.alpha = 0;
+		camProxy.bgColor.alpha = 0;
 		noteCameras0 = new FlxCamera();
 		noteCameras0.bgColor.alpha = 0;
 		noteCameras0.visible = false;
@@ -657,9 +659,9 @@ class PlayState extends MusicBeatState
 
 		FlxG.cameras.add(noteCameras0, false);
 		FlxG.cameras.add(noteCameras1, false);
-		FlxG.cameras.add(camInterfaz2, false);
+		FlxG.cameras.add(camProxy, false);
+		FlxG.cameras.add(camVisuals, false);
 		FlxG.cameras.add(camOther, false);
-		FlxG.cameras.add(camRate, false);
 
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
 		CustomFadeTransition.nextCamera = camOther;
@@ -1050,21 +1052,16 @@ class PlayState extends MusicBeatState
 		hitmansHUD.healthBar.cameras = [camInterfaz];
 		hitmansHUD.healthBarBG.cameras = [camInterfaz];
 
-		hitmansHUD.ratings.cameras = [camInterfaz2];
-		hitmansHUD.ratingsOP.cameras = [camInterfaz2];
-		hitmansHUD.noteScore.cameras = [camInterfaz2];
-		hitmansHUD.noteScoreOp.cameras = [camInterfaz2];
+		hitmansHUD.ratings.cameras = [camVisuals];
+		hitmansHUD.ratingsOP.cameras = [camVisuals];
+		hitmansHUD.noteScore.cameras = [camVisuals];
+		hitmansHUD.noteScoreOp.cameras = [camVisuals];
 
-		if (ClientPrefs.hudStyle == 'HITMANS'){
-			hitmansHUD.iconP1.cameras = [camInterfaz2];
-			hitmansHUD.iconP2.cameras = [camInterfaz2];	
-		}else if (ClientPrefs.hudStyle == 'Classic'){
-			hitmansHUD.iconP1.cameras = [camInterfaz];
-			hitmansHUD.iconP2.cameras = [camInterfaz];
-		}
+		hitmansHUD.iconP1.cameras = [camInterfaz];
+		hitmansHUD.iconP2.cameras = [camInterfaz];
 
 		hitmansHUD.scoreTxt.cameras = [camInterfaz];
-		hitmansHUD.botplayTxt.cameras = [camInterfaz2];
+		hitmansHUD.botplayTxt.cameras = [camVisuals];
 		hitmansHUD.timeBar.cameras = [camInterfaz];
 		hitmansHUD.timeBarBG.cameras = [camInterfaz];
 		hitmansHUD.timeTxt.cameras = [camInterfaz];

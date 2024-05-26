@@ -12,6 +12,7 @@ class ModTable
     public var modifiers:Map<String, Modifier> = new Map<String, Modifier>();
     private var instance:ModchartMusicBeatState = null;
     private var renderer:PlayfieldRenderer = null;
+    public var isEditor:Bool = false; //BRUH
 
     //The table is used to precalculate all the playfield and lane checks on each modifier,
     //so it should end up with a lot less loops and if checks each frame
