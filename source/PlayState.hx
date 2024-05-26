@@ -1304,9 +1304,9 @@ class PlayState extends MusicBeatState
 			}
 		} else {
 			if(endingSong) {
-				endSong();
+				if (!inResultsScreen) endSong();
 			} else {
-				startCountdown();
+				if (!inResultsScreen) startCountdown();
 			}
 		}
 	}
