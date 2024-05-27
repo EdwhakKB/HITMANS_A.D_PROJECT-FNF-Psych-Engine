@@ -3806,7 +3806,7 @@ class FunkinLua {
 			case 'notecameras1' | 'notes1': return lua_Cameras.get("notecameras1");
 			case 'camother' | 'other': return lua_Cameras.get("other");
 			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
-			case 'camVisuals' | 'Visuals': return lua_Cameras.get("Visuals");
+			case 'camvisuals' | 'visuals': return lua_Cameras.get("Visuals");
 			case 'camgame' | 'game': return lua_Cameras.get('game');
         }
         return null;
