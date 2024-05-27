@@ -3376,6 +3376,31 @@ class FunkinLua {
             // return retVal;
         });
 
+		Lua_helper.add_callback(lua, "makeLuaProxy", function(tag:String, x:Float, y:Float, ?camera:String = '') {
+			var micamara:FlxCamera = PlayState.instance.camProxy;
+
+			if(PlayState.instance.aftBitmap != null)
+			{
+				tag = tag.replace('.', '');
+				resetSkewedSpriteTag(tag);
+				var leSprite:FlxSkewedSprite = new FlxSkewedSprite(x, y);
+
+				leSprite.loadGraphic(PlayState.instance.aftBitmap.bitmap); //idk if this even works but whatever
+				
+				leSprite.antialiasing = ClientPrefs.globalAntialiasing;
+				PlayState.instance.modchartSkewedSprite.set(tag, leSprite);
+				leSprite.active = true;
+
+				if (camera != null && camera != '') {
+					leSprite.camera = cameraFromString(camera);
+				}else{
+					leSprite.camera = micamara;
+				}
+			}else{
+				luaTrace('makeLuaProxy: attempted to make a proxy but aftBitmap is null!', false, false, FlxColor.RED);
+			}
+		});
+
 		Discord.DiscordClient.addLuaCallbacks(lua);
 		#if HSCRIPT_ALLOWED SSHScript.implement(this); #end
 		
@@ -3784,7 +3809,7 @@ class FunkinLua {
 				case 'notecameras1' | 'notes1': return PlayState.instance.noteCameras1;
 				case 'camother' | 'other': return PlayState.instance.camOther;
 				case 'caminterfaz' | 'interfaz': return PlayState.instance.camInterfaz;
-				case 'camvisuals' | 'visuals': return PlayState.instance.camInterfaz;
+				case 'camvisuals' | 'visuals': return PlayState.instance.camVisuals;
 			}
 			
 			//modded cameras
@@ -3806,7 +3831,7 @@ class FunkinLua {
 			case 'notecameras1' | 'notes1': return lua_Cameras.get("notecameras1");
 			case 'camother' | 'other': return lua_Cameras.get("other");
 			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
-			case 'camvisuals' | 'visuals': return lua_Cameras.get("Visuals");
+			case 'camvisuals' | 'visuals': return lua_Cameras.get("visuals");
 			case 'camgame' | 'game': return lua_Cameras.get('game');
         }
         return null;

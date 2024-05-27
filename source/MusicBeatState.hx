@@ -224,4 +224,15 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 		if(PlayState.SONG != null && PlayState.SONG.notes[curSection] != null) val = PlayState.SONG.notes[curSection].sectionBeats;
 		return val == null ? 4 : val;
 	}
+
+	// Esto no importa donde va
+	public function refresh()
+    {
+      sort(math.Zutils.byZIndex, flixel.util.FlxSort.ASCENDING);
+    }
+
+	public function refreshZ()
+	{
+		sort(math.Zutils.byZ, flixel.util.FlxSort.ASCENDING);
+	}
 }

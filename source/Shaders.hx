@@ -6868,6 +6868,8 @@ class SlashEffectNew extends ShaderEffectNew
 class SlashShaderNew extends FlxShader
 {
     @:glFragmentSource('
+    #pragma header
+    
     //https://www.shadertoy.com/view/4sfczj
 
     vec2 uv = openfl_TextureCoordv.xy;
@@ -6882,10 +6884,15 @@ class SlashShaderNew extends FlxShader
 
     //Uniform variables
     uniform float radius = 0.0;
+    uniform float amplitude = 0.0;
     vec4 glowCol = vec4(1.0,0.5,0.0,1.0);
+
+    //Or import your own resolution thing lol
+    const vec3 resolution = vec3(1280.0, 720.0, 1.0);
     void main()
     {
         float cutAngleInRad = radius;
+        float uWaveAmplitude = amplitude;
         vec4 glowCol = vec4(1.0,0.5,0.0,uWaveAmplitude);
         
         vec2 uv = openfl_TextureCoordv;

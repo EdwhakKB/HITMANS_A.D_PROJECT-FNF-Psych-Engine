@@ -102,7 +102,7 @@ import flash.system.System;
 import codenameengine.scripting.Script as HScriptCode;
 #end
 
-import AFT_capture;
+import HazardAFT_Capture as AFT_capture;
 
 typedef ThreadBeatList = {
 	beat:Float,
@@ -228,6 +228,8 @@ class PlayState extends MusicBeatState
 	public var gain:Bool = false;
 
 	public var tgain:Bool = false;
+
+	public var aftBitmap:AFT_capture; //hazzy stuff :3
 
 	//I must add hardcoded shaders! -PastEd
 
@@ -807,6 +809,10 @@ class PlayState extends MusicBeatState
 		add(dadGroup);
 		add(boyfriendGroup);
 
+		aftBitmap = new AFT_capture(camHUD);
+		aftBitmap.updateRate = 0.0;
+		aftBitmap.recursive = false;
+
 		// useModchart = modchartedSongs.contains(SONG.song.toLowerCase());
 		// generateSong(SONG.song);
 
@@ -1013,11 +1019,13 @@ class PlayState extends MusicBeatState
 
 		// After all characters being loaded, it makes then invisible 0.01s later so that the player won't freeze when you change characters
 		// add(strumLine);
+
 		if (SONG.notITG && notITGMod){
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
 			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1];
 			add(playfieldRenderer);
 		}
+
 		camFollow = new FlxPoint();
 		camFollowPos = new FlxObject(0, 0, 1, 1);
 
@@ -1243,16 +1251,6 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.quantization)
 			doNoteQuant();
 
-		// var aftBitmapL:AFT_capture;
-		// aftBitmapL = new AFT_capture(camHUD);
-		// aftBitmapL.updateRate = 0.0;
-		// aftBitmapL.recursive = false;
-
-		// var aftBitmapR:AFT_capture;
-		// aftBitmapR = new AFT_capture(camHUD);
-		// aftBitmapR.recursive = false;
-		// aftBitmapR.updateRate = 0.0;
-
 		super.create();
 
 		cacheCountdown();
@@ -1277,6 +1275,9 @@ class PlayState extends MusicBeatState
 		}
 
 		CustomFadeTransition.nextCamera = camOther;
+
+		refresh(); //z sort shit LOL
+		refreshZ();
 	}
 
 	public function spawnDialogue()
@@ -2724,6 +2725,11 @@ class PlayState extends MusicBeatState
 		callOnScripts('onUpdate', [elapsed]);
 		if (notITGMod && SONG.notITG)
 			playfieldRenderer.speed = playbackRate; //LMAO IT LOOKS SOO GOOFY AS FUCK
+		
+		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
+
+		refresh(); //z sort shit LOL
+		refreshZ();
 
 		switch (modChartEffect){
 			case 4:

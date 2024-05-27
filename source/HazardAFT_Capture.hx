@@ -10,18 +10,9 @@ import flixel.FlxCamera;
 
 //PROBABLY DOES NOT WORK ON BLITZ RENDER MODE!
 //Credits to "Hazard24" for this code LMAO
-class AFT_Capture
-{
-     /**
-     * Whether the module is currently active.
-     */
-    public var active(default, set):Bool = true;
-  
-    function set_active(value:Bool):Bool
-    {
-      return this.active = value;
-    }
-    
+class HazardAFT_Capture{
+    public var time:Float = 0;
+
     //Set to true if you want it to not clear out the old bitmap data
     public var recursive:Bool = true; 
     
@@ -48,7 +39,6 @@ class AFT_Capture
     }    
     
     public function update(elapsed:Float = 0.0){
-        // super.update(elapsed);
         if(targetCAM != null && bitmap != null){
             if(updateTimer >= 0 && updateRate != 0){ updateTimer -= elapsed; }
             else if(updateTimer < 0 || updateRate == 0){
@@ -60,7 +50,6 @@ class AFT_Capture
     
     public function new(cameraTarget:FlxCamera)
     {
-        // super();
         this.targetCAM = cameraTarget;
         bitmap = new BitmapData(FlxG.width,FlxG.height, true, 0x00FFFFFF);        
         rec = new Rectangle(0,0,FlxG.width,FlxG.height);
