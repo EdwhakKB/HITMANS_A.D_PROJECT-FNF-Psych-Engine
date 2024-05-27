@@ -6930,9 +6930,21 @@ class SlashShaderNew extends FlxShader
     }
 }
 
-class CustomBlueShader // from yoshi engine termination port (by yoshi crafter)
+class CustomBlueShader extends ShaderEffectNew // from yoshi engine termination port (by yoshi crafter)
 {
 	public var shader(default, null):BlueShader = new BlueShader();
+
+    public var enabled(default, set):Bool = false;
+    public var notuseX2(default, set):Bool = false;
+    public var diffX(default, set):Float = 0;
+    public var diffX2(default, set):Float = 0;
+    public var diffY(default, set):Float = 0;
+    public var diffY2(default, set):Float = 0;
+    public var r(default, set):Float = 0;
+    public var g(default, set):Float = 0;
+    public var b(default, set):Float = 0;
+    public var a(default, set):Float = 0;
+    public var passes(default, set):Int = 0;
 
 	public function new()
 	{
@@ -6941,6 +6953,7 @@ class CustomBlueShader // from yoshi engine termination port (by yoshi crafter)
 		shader.diffX.value = [0];
 		shader.diffX2.value = [0];
 		shader.diffY.value = [-0.01];
+        shader.diffY2.value = [-0.01];
 		shader.r.value = [255];
 		shader.g.value = [116];
 		shader.b.value = [220];
@@ -6948,11 +6961,95 @@ class CustomBlueShader // from yoshi engine termination port (by yoshi crafter)
 		shader.passes.value = [80];
 		shader.clipRect.value = [0, 0, 1, 1];
 	}
+
+    override public function update(elapsed:Float)
+    {
+        shader.enabled.value = [enabled];
+		shader.notuseX2.value = [notuseX2];
+		shader.diffX.value = [diffX];
+		shader.diffX2.value = [diffX2];
+		shader.diffY.value = [diffY];
+        shader.diffY2.value = [diffY2];
+		shader.r.value = [r];
+		shader.g.value = [g];
+		shader.b.value = [g];
+		shader.a.value = [a];
+		shader.passes.value = [passes];
+		shader.clipRect.value = [0, 0, 1, 1];
+    }
+
+    public function set_enabled(v:Bool):Bool
+    {
+        enabled = v;
+        shader.enabled.value = [enabled];
+        return v;
+    }
+    public function set_notuseX2(v:Bool):Bool
+    {
+        notuseX2 = v;
+        shader.notuseX2.value = [notuseX2];
+        return v;
+    }
+    public function set_diffX(v:Float):Float
+    {
+        diffX = v;
+        shader.diffX.value = [diffX];
+        return v;
+    }
+    public function set_diffX2(v:Float):Float
+    {
+        diffX2 = v;
+        shader.diffX2.value = [diffX2];
+        return v;
+    }
+    public function set_diffY(v:Float):Float
+    {
+        diffY = v;
+        shader.diffY.value = [diffY];
+        return v;
+    }
+    public function set_diffY2(v:Float):Float
+    {
+        diffY2 = v;
+        shader.diffY2.value = [diffY2];
+        return v;
+    }
+    public function set_r(v:Float):Float
+    {
+        r = v;
+        shader.r.value = [r];
+        return v;
+    }
+    public function set_g(v:Float):Float
+    {
+        g = v;
+        shader.g.value = [g];
+        return v;
+    }
+    public function set_b(v:Float):Float
+    {
+        b = v;
+        shader.b.value = [b];
+        return v;
+    }
+    public function set_a(v:Float):Float
+    {
+        a = v;
+        shader.a.value = [a];
+        return v;
+    }
+    public function set_passes(v:Int):Int
+    {
+        passes = v;
+        shader.passes.value = [passes];
+        return v;
+    }
 }
 
-class BlueShader extends FlxFixedShader
+class BlueShader extends FlxShader
 {
-	@:glFragmentSource('#pragma header
+	@:glFragmentSource('
+    #pragma header
 
 	uniform bool enabled = false;
 	uniform bool notuseX2 = false;

@@ -292,17 +292,18 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			box.animation.play('normal', true);
 				
 			box.visible = false;
-			if (dialogueList.background[i].scale.length > 0) 
+
+			var scale:Array<Float> = dialogueList.background[i].scale;
+			var graphicScale:Array<Float> = dialogueList.background[i].graphicScale;
+			if (scale != null && scale.length > 0) 
 			{
-				var scale:Array<Float> = dialogueList.background[i].scale;
 				box.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
 			}
-			if (dialogueList.background[i].graphicScale.length > 0)
+			if (graphicScale != null && graphicScale.length > 0)
 			{
-				var graphicScale:Array<Float> = dialogueList.background[i].graphicScale;
 				box.setGraphicSize(Std.int(graphicScale[0] != 0 ? graphicScale[0] : FlxG.width), Std.int(graphicScale[1] != 0 ? graphicScale[1] : FlxG.height));
 			}
-			if (dialogueList.background[i].graphicScale.length == 0 && dialogueList.background[i].scale.length  == 0)
+			if (scale != null && graphicScale != null && (graphicScale.length == 0 && scale.length == 0))
 				box.setGraphicSize(Std.int(box.width * 0.9));
 			box.updateHitbox();
 			boxs.add(box);
@@ -549,8 +550,6 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		if(curDialogue.speed == null || Math.isNaN(curDialogue.speed)) curDialogue.speed = 0.05;
 		if(curDialogue.curDiaBg == null) curDialogue.curDiaBg = "speech_bubble";
 		if(curDialogue.backgroundBg == null) curDialogue.backgroundBg = "default";
-		if(curDialogue.backgroundScale == null) curDialogue.backgroundScale = [1, 1];
-		if(curDialogue.backgroundGraphicScale == null) curDialogue.backgroundGraphicScale = [1280, 720];
 
 		for (i in 0...boxs.members.length) boxs.members[i].visible = (boxs.members[i].name == curDialogue.curDiaBg);
 		
@@ -560,10 +559,10 @@ class DialogueBoxPsych extends FlxSpriteGroup
 		if (bg != "default" && bg != "" && bg != null) 
 		{
 			bgFade.loadGraphic(Paths.image(bg));
-			if (scale.length > 0) bgFade.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
-			if (graphic.length > 0)
+			if (scale != null && scale.length > 0) bgFade.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
+			if (graphic != null && graphic.length > 0)
 				bgFade.setGraphicSize(Std.int(graphic[0] != 0 ? graphic[0] : FlxG.width), Std.int(graphic[1] != 0 ? graphic[1] : FlxG.height));
-			if (graphic.length == 0 && scale.length == 0) bgFade.setGraphicSize(Std.int(FlxG.width), Std.int(FlxG.height));
+			if (scale != null && graphic != null && (graphic.length == 0 && scale.length == 0)) bgFade.setGraphicSize(Std.int(FlxG.width), Std.int(FlxG.height));
 			bgFade.alpha = 1;
 		}
 		else {

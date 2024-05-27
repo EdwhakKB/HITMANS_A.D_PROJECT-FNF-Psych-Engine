@@ -575,17 +575,18 @@ class DialogueEditorState extends MusicBeatState
 		box.animation.play('normal', true);
 			
 		box.visible = false;
-		if (dialogueFile.background[boxId].scale.length > 0) 
+
+		var scale:Array<Float> = dialogueFile.background[boxId].scale;
+		var graphicScale:Array<Float> = dialogueFile.background[boxId].graphicScale;
+		if (scale != null && scale.length > 0) 
 		{
-			var scale:Array<Float> = dialogueFile.background[boxId].scale;
 			box.scale.set(scale[0] != 0 ? scale[0] : 1, scale[1] != 0 ? scale[1] : 1);
 		}
-		if (dialogueFile.background[boxId].graphicScale.length > 0)
+		if (graphicScale != null && graphicScale.length > 0)
 		{
-			var graphicScale:Array<Float> = dialogueFile.background[boxId].graphicScale;
 			box.setGraphicSize(Std.int(graphicScale[0] != 0 ? graphicScale[0] : FlxG.width), Std.int(graphicScale[1] != 0 ? graphicScale[1] : FlxG.height));
 		}
-		if (dialogueFile.background[boxId].graphicScale.length == 0 && dialogueFile.background[boxId].scale.length == 0) box.setGraphicSize(Std.int(box.width * 0.9));
+		if (graphicScale != null && scale != null && (graphicScale.length == 0 && dialogueFile.background[boxId].scale.length == 0)) box.setGraphicSize(Std.int(box.width * 0.9));
 		box.updateHitbox();
 		box.ID = boxId;
 		Sys.println("WTF IS THE ID, " + box.ID);
