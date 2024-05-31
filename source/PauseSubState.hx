@@ -398,15 +398,6 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.sound.playMusic(Paths.music('bloodstained'));
 						PlayState.changedDifficulty = false;
 						PlayState.chartingMode = false;
-						if (PlayState.forceMiddleScroll){
-							if (PlayState.savePrefixScrollR && PlayState.prefixRightScroll){
-								ClientPrefs.middleScroll = false;
-							}
-						}else if (PlayState.forceRightScroll){
-							if (PlayState.savePrefixScrollM && PlayState.prefixMiddleScroll){
-								ClientPrefs.middleScroll = true;
-							}
-						}
 				}
 			}
 		}

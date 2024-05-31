@@ -198,10 +198,7 @@ class PlayState extends MusicBeatState
 	//stolen from Qt mod lmao, don't kill me hazzy pls -Ed
 	public static var forceMiddleScroll:Bool = false; //yeah
 	public static var forceRightScroll:Bool = false; //so modcharts that NEED rightscroll will be forced (mainly for player vs enemy classic stuff like bf vs someone)
-	public static var prefixMiddleScroll:Bool = false;
-	public static var prefixRightScroll:Bool = false; //so if someone force the scroll in chart and clientPrefs are the other option it will be autoLoaded again
-	public static var savePrefixScrollM:Bool = false;
-	public static var savePrefixScrollR:Bool = false;
+	public static var forcedAScroll:Bool = false; //if forced then it should disable "clientPrefs" stuff
 	var edwhakDrain:Float = 0.03;
 	public var edwhakIsEnemy:Bool = false;
 	public var allowEnemyDrain:Bool = false;
@@ -701,14 +698,6 @@ class PlayState extends MusicBeatState
 		NewHitmansGameOver.resetVariables();
 		var songName:String = Paths.formatToSongPath(SONG.song);
 
-		if (ClientPrefs.middleScroll){
-			prefixMiddleScroll = true;
-			prefixRightScroll = false;
-		}else if (!ClientPrefs.middleScroll){
-			prefixRightScroll = true;
-			prefixMiddleScroll = false;
-		}
-
 		curStage = SONG.stage;
 		//trace('stage is: ' + curStage);
 		if(SONG.stage == null || SONG.stage.length < 1) {
@@ -987,23 +976,17 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000 / Conductor.songPosition;
 
 		
-		if (SONG.middleScroll && !ClientPrefs.middleScroll){
-			forceMiddleScroll = true;
-			forceRightScroll = false;
-			ClientPrefs.middleScroll = true;
-		}else if (SONG.rightScroll && ClientPrefs.middleScroll){
-			forceMiddleScroll = false;
-			forceRightScroll = true;
-			ClientPrefs.middleScroll = false;
-		}
+		forceMiddleScroll = SONG.middleScroll;
+		forceRightScroll = SONG.rightScroll;
 
-		if (forceMiddleScroll && !ClientPrefs.middleScroll){
-			savePrefixScrollR = true;
-		}else if (forceRightScroll && ClientPrefs.middleScroll){
-			savePrefixScrollM = true;
-		}
+		forcedAScroll = forceRightScroll || forceMiddleScroll; //so its forced to true
 
-		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
+		strumLine = new FlxSprite(!forcedAScroll ? (ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X) : 
+												   (if (forceRightScroll && !forceMiddleScroll) STRUM_X 
+												   else if (forceMiddleScroll && !forceRightScroll) STRUM_X_MIDDLESCROLL 
+												   else ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X), 
+		50).makeGraphic(FlxG.width, 10);
+
 		if(ClientPrefs.downScroll) strumLine.y = FlxG.height - 150;
 		strumLine.scrollFactor.set();
 
@@ -1276,8 +1259,8 @@ class PlayState extends MusicBeatState
 
 		CustomFadeTransition.nextCamera = camOther;
 
-		refresh(); //z sort shit LOL
-		refreshZ();
+		// refresh(); //z sort shit LOL
+		// refreshZ();
 	}
 
 	public function spawnDialogue()
@@ -1929,7 +1912,7 @@ class PlayState extends MusicBeatState
 					{
 						note.copyAlpha = false;
 						note.alpha = note.multAlpha;
-						if(ClientPrefs.middleScroll && !note.mustPress) {
+						if(ClientPrefs.middleScroll && !note.mustPress && !forceRightScroll || forceMiddleScroll) {
 							note.alpha *= 0.35;
 						}
 					}
@@ -2312,7 +2295,7 @@ class PlayState extends MusicBeatState
 						{
 							sustainNote.x += FlxG.width / 2; // general offset
 						}
-						else if(ClientPrefs.middleScroll)
+						else if(ClientPrefs.middleScroll && !forceRightScroll || forceMiddleScroll)
 						{
 							sustainNote.x += 310;
 							if(daNoteData > 1) //Up and Right
@@ -2327,7 +2310,7 @@ class PlayState extends MusicBeatState
 				{
 					swagNote.x += FlxG.width / 2; // general offset
 				}
-				else if(ClientPrefs.middleScroll)
+				else if(ClientPrefs.middleScroll && !forceRightScroll || forceMiddleScroll)
 				{
 					swagNote.x += 310;
 					if(daNoteData > 1) //Up and Right
@@ -2486,10 +2469,14 @@ class PlayState extends MusicBeatState
 			if (player < 1)
 			{
 				if(!ClientPrefs.opponentStrums) targetAlpha = 0;
-				else if(ClientPrefs.middleScroll) targetAlpha = 0.35;
+				else if(ClientPrefs.middleScroll && !forceRightScroll || forceMiddleScroll) targetAlpha = 0.35;
 			}
 
-			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player);
+			var babyArrow:StrumNote = new StrumNote(!forcedAScroll ? (ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X) : 
+																	(if (forceRightScroll && !forceMiddleScroll) STRUM_X 
+																	else if (forceMiddleScroll && !forceRightScroll) STRUM_X_MIDDLESCROLL 
+																	else ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X)
+			, strumLine.y, i, player);
 			babyArrow.downScroll = ClientPrefs.downScroll;
 			if (!isStoryMode && !skipArrowStartTween)
 			{
@@ -2508,7 +2495,7 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				if(ClientPrefs.middleScroll)
+				if(ClientPrefs.middleScroll && !forceRightScroll || forceMiddleScroll)
 				{
 					babyArrow.x += 310;
 					if(i > 1) { //Up and Right
@@ -2702,7 +2689,7 @@ class PlayState extends MusicBeatState
 	public function getXPosition(diff:Float, direction:Int, player:Int):Float
 		{
 			var x:Float = (FlxG.width / 2) - Note.swagWidth - 54 + Note.swagWidth * direction;
-			if (!ClientPrefs.middleScroll)
+			if (!ClientPrefs.middleScroll && !forceRightScroll || forceMiddleScroll)
 			{
 				switch (player)
 				{
@@ -2728,8 +2715,8 @@ class PlayState extends MusicBeatState
 		
 		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
 
-		refresh(); //z sort shit LOL
-		refreshZ();
+		// refresh(); //z sort shit LOL
+		// refreshZ();
 
 		switch (modChartEffect){
 			case 4:
@@ -4068,16 +4055,6 @@ class PlayState extends MusicBeatState
 			rating();
 
 			transitioning = true;
-
-			if (forceMiddleScroll){
-				if (savePrefixScrollR && prefixRightScroll){
-					ClientPrefs.middleScroll = false;
-				}
-			}else if (forceRightScroll){
-				if (savePrefixScrollM && prefixMiddleScroll){
-					ClientPrefs.middleScroll = true;
-				}
-			}
 		}
 	
 	}

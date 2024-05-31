@@ -198,52 +198,89 @@ class OptionsMenu extends MusicBeatSubstate
 		
 		ClientPrefs.loadPrefs();
 
-		options = [
-			new OptionCata(50, 100, "Gameplay", [
-                new ControllerModeOption("If you want to play with a controller instead of using your Keyboard."),
-                new DownscrollOption("Notes go Down instead of Up, simple enough."),
-                new MiddleScrollOption("Your notes get centered."),
-                new OpponentNotesOption("Opponent notes get hidden."),
-                new CasualModeOption("Game will buff healthGain and nerf the drain only that it will don't enable any archivement"),
-                new GhostTappingOption("You won't get misses from pressing keys while there are no notes able to be hit."),
-                new DisableResetOption("Pressing Reset won't do anything."),
-                new HitsoundVolumeOption("Funny notes does \"Tick!\" when you hit them."),
-				new HotkeysOption("Change your keyblinds ig?"),
-			]),
-			new OptionCata(345, 100, "Appearance", [
-                new HudStyleOption("What HUD you like more?"),
-                new HideHudOption("Hides most HUD elements."),
-				new TimeBarOption("What should the Time Bar display?"),
-                new CamZoomOption("The camera won't zoom in on a beat hit."),
-                new ScoreZoomOption("Disables the Score text zooming everytime you hit a note."),
-				new HealthBarVisibility("Toggles health bar transperancy"),
-				new NoteOption("Change your notes options (skin/color)"),
-				new HurtOption("Change your hurts options (skin/color)"),
-				new QuantizationOption("Allow note quantization"),
-				new QuantOption("Change the Quantize colors"),
-				new MineSkin("Change the Mine Note Skin"),
-				new MimicNoteOption("Change the Mimic note alpha"),
-			]),
-			new OptionCata(640, 100, "Misc", [
-				new FlashingLightsOption("If you're sensitive to flashing lights!"),
-				new PauseMusicOption("What song do you prefer for the Pause Screen?"),
-				new RatingOffsetOption('Changes how late/early you have to hit for a "Sick!" Higher values mean you have to hit later.'),
-				new SafeFramesOption("Changes how many frames you have for hitting a note earlier or late."),
-				new LowQualityOption("Disables some background details, decreases loading times and improves performance."),
-                new AntiAliasOption("Disables anti-aliasing, increases performance at the cost of sharper visuals."),
-				new ShadersOption("Disables shaders. It\'s used for some visual effects, and also CPU intensive for weaker PCs."),
-			]),
-			new OptionCata(935, 100, "Performance", [
-				new FPSOption("Toggle the FPS Counter"),
-				new Framerate("Pretty self explanatory, isn't it?"),
-				#if desktop
-				new DiscordRichOption("Uncheck this to prevent accidental leaks, it will hide the Application from your Playing box on Discord"),
-				#end
-			]),
-			new OptionCata(10000, 10000, "", [
+		if (!isInPause){
+			options = [
+				new OptionCata(50, 100, "Gameplay", [
+					new ControllerModeOption("If you want to play with a controller instead of using your Keyboard."),
+					new DownscrollOption("Notes go Down instead of Up, simple enough."),
+					new MiddleScrollOption("Your notes get centered."),
+					new OpponentNotesOption("Opponent notes get hidden."),
+					new CasualModeOption("Game will buff healthGain and nerf the drain only that it will don't enable any archivement"),
+					new GhostTappingOption("You won't get misses from pressing keys while there are no notes able to be hit."),
+					new DisableResetOption("Pressing Reset won't do anything."),
+					new HitsoundVolumeOption("Funny notes does \"Tick!\" when you hit them."),
+					new HotkeysOption("Change your keyblinds ig?"),
+				]),
+				new OptionCata(345, 100, "Appearance", [
+					new HudStyleOption("What HUD you like more?"),
+					new HideHudOption("Hides most HUD elements."),
+					new TimeBarOption("What should the Time Bar display?"),
+					new CamZoomOption("The camera won't zoom in on a beat hit."),
+					new ScoreZoomOption("Disables the Score text zooming everytime you hit a note."),
+					new HealthBarVisibility("Toggles health bar transperancy"),
+					new NoteOption("Change your notes options (skin/color)"),
+					new HurtOption("Change your hurts options (skin/color)"),
+					new QuantizationOption("Allow note quantization"),
+					new QuantOption("Change the Quantize colors"),
+					new MineSkin("Change the Mine Note Skin"),
+					new MimicNoteOption("Change the Mimic note alpha"),
+				]),
+				new OptionCata(640, 100, "Misc", [
+					new FlashingLightsOption("If you're sensitive to flashing lights!"),
+					new PauseMusicOption("What song do you prefer for the Pause Screen?"),
+					new RatingOffsetOption('Changes how late/early you have to hit for a "PERFECT!" Higher values mean you have to hit later.'),
+					new SafeFramesOption("Changes how many frames you have for hitting a note earlier or late."),
+					new LowQualityOption("Disables some background details, decreases loading times and improves performance."),
+					new AntiAliasOption("Disables anti-aliasing, increases performance at the cost of sharper visuals."),
+					new ShadersOption("Disables shaders. It\'s used for some visual effects, and also CPU intensive for weaker PCs."),
+				]),
+				new OptionCata(935, 100, "Performance", [
+					new FPSOption("Toggle the FPS Counter"),
+					new Framerate("Pretty self explanatory, isn't it?"),
+					#if desktop
+					new DiscordRichOption("Uncheck this to prevent accidental leaks, it will hide the Application from your Playing box on Discord"),
+					#end
+				]),
+				new OptionCata(10000, 10000, "", [
 
-			]),
-		];
+				]),
+			];
+		}else{
+			options = [
+				new OptionCata(50, 100, "Gameplay", [
+					new ControllerModeOption("If you want to play with a controller instead of using your Keyboard."),
+					new OpponentNotesOption("Opponent notes get hidden."),
+					new DisableResetOption("Pressing Reset won't do anything."),
+					new HitsoundVolumeOption("Funny notes does \"Tick!\" when you hit them."),
+				]),
+				new OptionCata(345, 100, "Appearance", [
+					new HudStyleOption("What HUD you like more?"),
+					new HideHudOption("Hides most HUD elements."),
+					new TimeBarOption("What should the Time Bar display?"),
+					new ScoreZoomOption("Disables the Score text zooming everytime you hit a note."),
+					new HealthBarVisibility("Toggles health bar transperancy"),
+					new QuantOption("Change the Quantize colors"),
+					new MineSkin("Change the Mine Note Skin"),
+				]),
+				new OptionCata(640, 100, "Misc", [
+					new FlashingLightsOption("If you're sensitive to flashing lights!"),
+					new PauseMusicOption("What song do you prefer for the Pause Screen?"),
+					new LowQualityOption("Disables some background details, decreases loading times and improves performance."),
+					new AntiAliasOption("Disables anti-aliasing, increases performance at the cost of sharper visuals."),
+					new ShadersOption("Disables shaders. It\'s used for some visual effects, and also CPU intensive for weaker PCs."),
+				]),
+				new OptionCata(935, 100, "Performance", [
+					new FPSOption("Toggle the FPS Counter"),
+					new Framerate("Pretty self explanatory, isn't it?"),
+					#if desktop
+					new DiscordRichOption("Uncheck this to prevent accidental leaks, it will hide the Application from your Playing box on Discord"),
+					#end
+				]),
+				new OptionCata(10000, 10000, "", [
+
+				]),
+			];
+		}
 
 		menu = new FlxTypedGroup<FlxSprite>();
 
@@ -846,6 +883,7 @@ class OptionsMenu extends MusicBeatSubstate
 
 		object.text = "> " + selectedOption.getValue();
 		object.updateHitbox();
+		ClientPrefs.saveSettings();
 	}
 
 	function updateOptColors():Void

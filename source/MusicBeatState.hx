@@ -226,13 +226,13 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 	}
 
 	// Esto no importa donde va
-	public function refresh()
-    {
-      sort(math.Zutils.byZIndex, flixel.util.FlxSort.ASCENDING);
-    }
+	// public function refresh()
+    // {
+    //   sort(math.Zutils.byZIndex, flixel.util.FlxSort.ASCENDING);
+    // }
 
-	public function refreshZ()
-	{
-		sort(math.Zutils.byZ, flixel.util.FlxSort.ASCENDING);
-	}
+	// public function refreshZ()
+	// {
+	// 	sort(math.Zutils.byZ, flixel.util.FlxSort.ASCENDING);
+	// }
 }

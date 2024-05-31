@@ -113,7 +113,11 @@ class NewHitmansGameOver extends MusicBeatSubstate
         deathVariable = diedTo;
 		musicplaying=false;
 
-        tauntNum = FlxG.random.int(1,3);
+        if (characterName.toLowerCase() == 'hazard' || characterName.toLowerCase() == 'virus' || characterName.toLowerCase() == 'edwhak'){
+            tauntNum = FlxG.random.int(1,6);
+        }else{
+            tauntNum = FlxG.random.int(1,3);
+        }
 
         switch (deathVariable){
             case 'Notes':
@@ -380,16 +384,22 @@ class NewHitmansGameOver extends MusicBeatSubstate
                 text5.setText("-Do not be scare of what you see");
         }
 
-        switch (characterName)
+        switch (characterName.toLowerCase())
         {
-            case 'Edwhak':
+            case 'edwhak':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "That's all what you got!?";
+                        taunt.text = "That's all what you got?.";
                     case 2:
-                        taunt.text = "Target Exterminated";
+                        taunt.text = "Target Exterminated.";
                     case 3:
-                        taunt.text = "I expected you to last more time, dissapointing";
+                        taunt.text = "Dissapointing.";
+                    case 4:
+                        taunt.text = "Anyone else?.";
+                    case 5:
+                        taunt.text = "Who else think they can beat a god?.";
+                    case 6:
+                        taunt.text = "Game over.";
                 }
                 taunt.color = 0xff007500;
             case 'drake':
@@ -415,11 +425,11 @@ class NewHitmansGameOver extends MusicBeatSubstate
             case 'lady':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "Do my movements distract you?";
+                        taunt.text = "Who's next?~";
                     case 2:
-                        taunt.text = "I wasn't even trying to kill you...";
+                        taunt.text = "Oh dear~. You have to be careful next time~.";
                     case 3:
-                        taunt.text = "Oh dear... did you really think you had a chance to beat me?";
+                        taunt.text = "Did you really thought you had a chance to beat me?";
                 }
                 taunt.color = 0xff00a300;
             case 'dawper':
@@ -429,7 +439,7 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 2:
                         taunt.text = "Was it hard enough for you...?";
                     case 3:
-                        taunt.text = "Do you want me two nerf this?";
+                        taunt.text = "Do you want me to nerf this?";
                 }
                 taunt.color = 0xff8d3800;
             case 'mary':
@@ -437,109 +447,115 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 1:
                         taunt.text = "Objective was succesfully exterminated";
                     case 2:
-                        taunt.text = "Destroyed";
+                        taunt.text = "Enemy Destroyed";
                     case 3:
-                        taunt.text = "Enemy is no longer alive";
+                        taunt.text = "ANNIHILATED";
                 }
                 taunt.color = 0xff00ffdd;
             case 'johan':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "Didn't you watch that!?";
+                        taunt.text = "Too slow!";
                     case 2:
-                        taunt.text = "Your eyes are too slow for my attacks!";
+                        taunt.text = "Is that your best?";
                     case 3:
-                        taunt.text = "That was your best try!?";
+                        taunt.text = "GG EZ";
                 }
                 taunt.color = 0xff9e0000;
             case 'mia':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "Cmon it's not like 6 me vs you";
+                        taunt.text = "As always i end victorious";
                     case 2:
-                        taunt.text = "and you died, how amazing";
+                        taunt.text = "and you died, cool";
                     case 3:
-                        taunt.text = "You sure it's not skill issue?";
+                        taunt.text = "Keep dying, that makes me the best hitman";
                 }
                 taunt.color = 0xff9e009e;
             case 'vanessa':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "As an angel i can wellcome you to the heaven";
+                        taunt.text = "Wellcome you to the heaven";
                     case 2:
-                        taunt.text = "You wasn't worthy to escape an angel";
+                        taunt.text = "Don't feel disappointed, its impossible to beat me";
                     case 3:
-                        taunt.text = "Poor you... i'll make sure you get a better live in heaven";
+                        taunt.text = "And thats how your story ends. i always liked bad endings";
                 }
                 taunt.color = 0xff7eff5d;
             case 'violette':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "You are no worthy to a true fight";
+                        taunt.text = "really?";
                     case 2:
-                        taunt.text = "Did you know i wasn't even trying?";
+                        taunt.text = "Are you even trying?";
                     case 3:
-                        taunt.text = "Disappointing";
+                        taunt.text = "Welp, thats it. I'm out";
                 }
                 taunt.color = 0xffd341d3;
             case 'virus':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "SYSTEM 32 HAS BEEN DELETED";
+                        taunt.text = "HAHAHAHAHAHAHAHAHAHAHA";
                     case 2:
-                        taunt.text = "Too slow to erase me";
+                        taunt.text = "Skill Issue";
                     case 3:
-                        taunt.text = "print('haha skill issue');";
+                        taunt.text = "trace('player died, that proves how useless a human is')";
+                    case 4:
+                        taunt.text = "Opps i removed your life.";
+                    case 5:
+                        taunt.text = "YOU ARE AN IDIOT HAHAHAHAHAHAHA HAHAHAHAHA~.";
+                    case 6:
+                        taunt.text = "Oh well, the virus ended being strong this time.";
                 }
                 taunt.color = 0xffffffff;
             case 'demency':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "USELESS PIECE OF SHIT WAS DEFEATED!";
+                        taunt.text = "Death";
                     case 2:
-                        taunt.text = "Even the system password gave me a harder battle";
+                        taunt.text = "Done";
                     case 3:
-                        taunt.text = "HAHAHAHAHAHAHAHHAHAAH, skill issue";
+                        taunt.text = "Enought";
                 }
                 taunt.color = 0xff5a0000;
             case 'chip':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "I expected a true fight, not a kids game";
+                        taunt.text = "Even the system pasword was harder to fight agaist...";
                     case 2:
                         taunt.text = "Accept it, you'll never beat me";
                     case 3:
-                        taunt.text = "are you even trying?";
+                        taunt.text = "You'll be a good experiment, I promise";
                 }
                 taunt.color = 0xff868686;
             case 'alice':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "So you died huh?, i really expected that";
+                        taunt.text = "Calculated!";
                     case 2:
-                        taunt.text = "And the player died, yet again";
+                        taunt.text = "God dammit, im wasting my time";
                     case 3:
-                        taunt.text = "Should i make baby difficulty for you?";
+                        taunt.text = "Do you wan't me to nerf this?";
                 }
                 taunt.color = 0xffff82ea;
             case 'andrea':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "Game over Edwhak you are not as strong as you presume";
+                        taunt.text = "And thats how you win.";
                     case 2:
-                        taunt.text = "Just like a kid game!, i ended dominating";
+                        taunt.text = "Don't feel bad for this, you'll never beat me.";
                     case 3:
-                        taunt.text = "Even the gods can be defeated, like you right now";
+                        taunt.text = "Every single soul can be defeated.";
                 }
                 taunt.color = 0xff7a296d;
             case 'santyax':
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "Just like the ring, I ended up dominating the battle";
+                        taunt.text = "And you lasted 1 single round.";
                     case 2:
                         taunt.text = "KNOCK OUT!";
                     case 3:
-                        taunt.text = "Do you know why I am the boxing champion? I never lost a fight";
+                        taunt.text = "Want another round?";
                 }
                 taunt.color = 0xffff8800;
             case 'enemy':
@@ -547,20 +563,37 @@ class NewHitmansGameOver extends MusicBeatSubstate
                     case 1:
                         taunt.text = "Game over";
                     case 2:
-                        taunt.text = "END OF THE GAME";
+                        taunt.text = "You died";
                     case 3:
-                        taunt.text = "Try again?";
+                        taunt.text = "Try again";
                 }
                 taunt.color = 0xff2d2a58;
+            case 'hazard':
+                switch (tauntNum){
+                    case 1:
+                        taunt.text = "Welp, GG I guess?";
+                    case 2:
+                        taunt.text = "Oh, well that was easy.";
+                    case 3:
+                        taunt.text = "pffttt Hahaha! That's how you lost?!";
+                    case 4:
+                        taunt.text = "Huh? Why the music stop?";
+                    case 5:
+                        taunt.text = "You're cute!";
+                    case 6:
+                        taunt.text = "Sttaarrrreeeee";
+                }
+                taunt.color = 0xffffe600;
             default:
                 switch (tauntNum){
                     case 1:
-                        taunt.text = "CONNECTION LOST";
+                        taunt.text = "";
                     case 2:
-                        taunt.text = "SYSTEM 32 STOPED WORKING";
+                        taunt.text = "";
                     case 3:
-                        taunt.text = "END OF THE REPORT";
+                        taunt.text = "";
                 }
+            
         }
 	}
     var elapsedTime:Float = 0;

@@ -252,7 +252,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     }
     private function getNoteDist(noteIndex:Int)
     {
-        var noteDist = -0.45;
+        var noteDist = -0.55;
         if (ModchartUtil.getDownscroll(instance))
             noteDist *= -1;
         return noteDist;
@@ -391,8 +391,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (daNote.mesh == null)
             daNote.mesh = new SustainStrip(daNote);
 
-        daNote.mesh.scrollFactor.x = daNote.scrollFactor.x;
-        daNote.mesh.scrollFactor.y = daNote.scrollFactor.y;
+        // daNote.mesh.scrollFactor.x = daNote.scrollFactor.x;
+        // daNote.mesh.scrollFactor.y = daNote.scrollFactor.y;
         daNote.alpha = noteData.alpha;
         daNote.mesh.alpha = daNote.alpha;
 
@@ -410,7 +410,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             timeToNextSustain *= -1; //weird shit that fixes upscroll lol
             // timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
 
-        var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain*0.5);
+        var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain/2);
         var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
 
         var flipGraphic = false;
@@ -464,7 +464,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         curPos = modifierTable.applyCurPosMods(lane, curPos, pf);
 
         if ((daNote.wasGoodHit || (daNote.prevNote.wasGoodHit)) && curPos >= 0)
-            curPos = 0;
+            curPos = 0; //so sustain does a "fake" clip
+
         noteDist = modifierTable.applyNoteDistMods(noteDist, lane, pf);
         var incomingAngle:Array<Float> = modifierTable.applyIncomingAngleMods(lane, curPos, pf);
         if (noteDist < 0)

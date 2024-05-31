@@ -1734,15 +1734,6 @@ class FunkinLua {
 			PlayState.chartingMode = false;
 			PlayState.instance.transitioning = true;
 			Mods.loadTopMod();
-			if (PlayState.forceMiddleScroll){
-				if (PlayState.savePrefixScrollR && PlayState.prefixRightScroll){
-					ClientPrefs.middleScroll = false;
-				}
-			}else if (PlayState.forceRightScroll){
-				if (PlayState.savePrefixScrollM && PlayState.prefixMiddleScroll){
-					ClientPrefs.middleScroll = true;
-				}
-			}
 			return true;
 		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
