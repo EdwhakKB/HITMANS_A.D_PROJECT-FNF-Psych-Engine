@@ -6856,11 +6856,19 @@ class SlashEffectNew extends ShaderEffectNew
 {
     public var shader:SlashShaderNew = new SlashShaderNew();
     public var angle(default, set):Float = 0.0; //1.2
+    public var amplitude(default, set):Float = 0.0; //0.0
 
     function set_angle(val:Float)
     {
         angle = val;
         shader.radius.value = [angle];
+        return val;
+    }
+
+    function set_amplitude(val:Float)
+    {
+        amplitude = val;
+        shader.amplitude.value = [amplitude];
         return val;
     }
 }
@@ -6906,9 +6914,6 @@ class SlashShaderNew extends FlxShader
         uv.y *= -1.0;
         
         float rad = cutAngleInRad;
-        if(effectType == EFFECT_TYPE_CUTOUT+1){
-            rad += 3.1415;
-        }
         uv.y = cos(rad)*uv.x + sin(rad) * uv.y;
         float alpha = smoothstep(0.0, lw, uv.y);
         

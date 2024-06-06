@@ -694,7 +694,6 @@ class PlayState extends MusicBeatState
 		#end
 
 		GameOverSubstate.resetVariables();
-		HitmansGameOverSubstate.resetVariables();
 		NewHitmansGameOver.resetVariables();
 		var songName:String = Paths.formatToSongPath(SONG.song);
 
@@ -2050,39 +2049,24 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.onComplete = finishSong.bind();
 		vocals.play();
 
-		HitmansGameOverSubstate.characterName = dad.curCharacter;
 		NewHitmansGameOver.characterName = dad.curCharacter;
 		
 		switch (SONG.song.toLowerCase())
 		{
 			case "fatal error":
-				HitmansGameOverSubstate.characterName = 'Edwhak';
 				NewHitmansGameOver.characterName = 'Edwhak';
-				controlsPlayer2 = false;
 			case "killer instinct":
-				HitmansGameOverSubstate.characterName = 'Edwhak';
 				NewHitmansGameOver.characterName = 'Edwhak';
-				controlsPlayer2 = false;
 			case "annihilate":
-				HitmansGameOverSubstate.characterName = 'Edwhak';
 				NewHitmansGameOver.characterName = 'Edwhak';
-				controlsPlayer2 = false;
 			case "c18h27no3-demo":
-				HitmansGameOverSubstate.characterName = 'Edwhak';
 				NewHitmansGameOver.characterName = 'Edwhak';
-				controlsPlayer2 = false;
 			case "c18h27no3":
-				HitmansGameOverSubstate.characterName = 'Edwhak';
 				NewHitmansGameOver.characterName = 'Edwhak';
-				controlsPlayer2 = false;
 			case "killbot":
-				HitmansGameOverSubstate.characterName = 'Edwhak';
 				NewHitmansGameOver.characterName = 'Edwhak';
-				controlsPlayer2 = false;
 			case "digital massacre":
-				HitmansGameOverSubstate.characterName = 'HITMANS';
 				NewHitmansGameOver.characterName = 'HITMANS';
-				controlsPlayer2 = false;
 		}
 
 		if(timeToStart > 0){
@@ -3381,9 +3365,6 @@ class PlayState extends MusicBeatState
 				for (timer in modchartTimers) {
 					timer.active = true;
 				}
-				// if (ClientPrefs.goStyle == 'OLD'){
-				// 	openSubState(new HitmansGameOverSubstate(deathVariableTXT,this));
-				// }else if (ClientPrefs.goStyle == 'NEW'){
 				var defaultPlaybackRate:Float = playbackRate;
 				FlxTween.num(defaultPlaybackRate, 0, 3, {onUpdate: 	function(tween:FlxTween){
 					var thing = FlxMath.lerp(defaultPlaybackRate,0, tween.percent);
@@ -3408,7 +3389,6 @@ class PlayState extends MusicBeatState
 						openSubState(new NewHitmansGameOver(deathVariableTXT,this));	
 					});
 				}});
-				//}
 				//openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x - boyfriend.positionArray[0], boyfriend.getScreenPosition().y - boyfriend.positionArray[1], camFollowPos.x, camFollowPos.y));
 
 				// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
