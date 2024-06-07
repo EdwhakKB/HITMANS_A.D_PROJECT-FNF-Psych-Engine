@@ -137,7 +137,7 @@ class ChartingState extends MusicBeatState
 		['ModchartEffects', "Value 1: Modchart variable\n0 = no effects\n1 = side to side movement\n2 = camera angle rotate\n3 = left to right simple move\n4 = copy note spin shit from qt mod (secret shit for her song lmao)\n8 = disable cam rotate effects lol"],
 		['AllowHealthDrain', "Value 1: \ntrue to enable\nfalse to disable\nONLY WORKS FOR NON EDWHAK SONGS! (since Ed drains auto lmao)"],
 		['Controls Player 2', "Value1: if enable Enables Player 2 shits lmao\ndisable to disable"],
-		['Set Check Point', "Value 1: (Optional) Set Time Of The Check Point."]
+		['Set CheckPoint', "Value 1: (Optional) hide checkpoint"]
 	];
 
 	var _file:FileReference;

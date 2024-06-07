@@ -538,7 +538,6 @@ class PlayState extends MusicBeatState
 
 		currentPos = 0;
 		reloadSavePosition();
-		onCheckPoint(currentPos, savePos);
 
 		tweenManager = new FlxTweenManager();
 		timerManager = new FlxTimerManager();
@@ -2129,6 +2128,7 @@ class PlayState extends MusicBeatState
 		{
 			setCheckPointTime(checkPoints[savePos] * 1000);
 		}
+		for (i in 0... checkPoints.length) markCheckpointOnTimebar(checkPoints[i]);
 	}
 
 	public static var threadbeat:Array<ThreadBeatList> = [];
@@ -2375,9 +2375,8 @@ class PlayState extends MusicBeatState
 				var newCharacter:String = event.value2;
 				addCharacterToList(newCharacter, charType);
 
-			case 'Set Check Point':
-				if (event.value1.toLowerCase() != "") checkPoints.push(Std.parseFloat(event.value1));
-				else checkPoints.push(event.strumTime);
+			case 'Set CheckPoint':
+				onCheckPoint(event.strumTime, (event.value1.toLowerCase() == "hide"));
 
 			case 'Dadbattle Spotlight':
 				dadbattleBlack = new BGSprite(null, -800, -400, 0, 0);
@@ -5682,12 +5681,45 @@ class PlayState extends MusicBeatState
 	public var currentPos:Int = 0;
 	public var savePos:Int = 0;
 
-	public function onCheckPoint(curPos:Int, savePos:Int)
+	public function onCheckPoint(time:Float, hidden:Bool=false)
 	{
-
+		if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
+			trace("Marking Checkpoint!");
+			checkPoints.push(time);
+		}
 	}
 	
-	public function reloadSavedPosition() savePos = currentPos;
+	var checkpointMarkersOnTimebar:Array<AttachedSprite> = [];
+	function markCheckpointOnTimebar(time:Float, hidden:Bool = false){
+		if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
+			var marker:AttachedSprite = new AttachedSprite('checkPoint');
+			marker.sprTracker = hitmansHUD.timeBar;
+			marker.scrollFactor.set();
+			marker.visible = (ClientPrefs.timeBarType != 'Disabled');
+			marker.cameras = [camInterfaz];
+
+			marker.color = FlxColor.RED;
+
+			//calculate percent where checkpoint is
+			var songLengthDummy = getSongLengthFake();
+			
+			var curTime:Float = time;
+
+			if(curTime < 0) curTime = 0;
+			var whatPercent:Float = (curTime / songLengthDummy);
+
+			trace("Checkpoint at percent " + whatPercent);
+
+			//placing checkpoint on bar
+			var timebarWidth:Float = hitmansHUD.timeBar.width;
+			marker.xAdd = (timebarWidth*whatPercent)-2;
+			marker.yAdd = -5;
+			add(marker);
+			checkpointMarkersOnTimebar.push(marker);
+		}
+	}
+
+	public function reloadSavePosition() savePos = currentPos;
 
 	public function setCheckPointTime(time:Float)
 	{
@@ -5696,5 +5728,12 @@ class PlayState extends MusicBeatState
 		vocals.time = FlxG.sound.music.time;
 		camGame.zoom = 1.05;
 		camHUD.zoom = 1;
+	}
+
+	
+	function getSongLengthFake():Float{
+		var songLengthDummy = songLength;
+
+		return songLengthDummy;
 	}
 }
