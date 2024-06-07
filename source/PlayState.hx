@@ -527,7 +527,6 @@ class PlayState extends MusicBeatState
 	public var endCallback:Void->Void;
 
 	public var checkPoints:Array<Float> = [];
-	public var saveCheckPointScore:Bool = true;
 
 	var passedCheckPoint:FlxText;
 
@@ -537,14 +536,9 @@ class PlayState extends MusicBeatState
 
 		ModchartFuncs.editor = false;
 
-		initCheckPointData('checkpoints');
-		if (getCheckPointData('checkPoints', 'position') == null || Math.isNaN(getCheckPointData('checkPoints', 'position')))
-		{
-			setCheckPointData('checkpoints', 'position', 0);
-			reloadSavePosition();
-		}
+		currentPos = 0;
+		reloadSavePosition();
 		onCheckPoint(currentPos, savePos);
-		if (saveCheckPointScore) setSavedScore();
 
 		tweenManager = new FlxTweenManager();
 		timerManager = new FlxTimerManager();
@@ -3246,10 +3240,9 @@ class PlayState extends MusicBeatState
 		{
 			if (Conductor.songPosition > checkPoints[savePos+1] * 1000 && savePos > -1 && !resetted) // Push a checkpoint mark
 			{
-				passedCheckPoint.text = 'Player made it to checkpoint ${getCheckPointData('checkpoints', 'position')}, moving to checkpoint ${getCheckPointData('checkpoints', 'position') + 1}';
-				setCheckPointData('checkpoints', 'position', getCheckPointData('checkpoints', 'position') + 1);
+				passedCheckPoint.text = 'Player made it to checkpoint ${currentPos}, moving to checkpoint ${currentPos + 1}';
+				currentPos = currentPos + 1;
 				reloadSavePosition();
-				if (saveCheckPointScore) saveScores();
 			}
 		}
 		reloadSavePosition();
@@ -5685,37 +5678,6 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public var checkPointData:Map<String, FlxSave> = new Map<String, FlxSave>();
-
-	public function initCheckPointData(needFrom:String)
-	{
-		if (!checkPointData.exists(needFrom))
-		{
-			var save:FlxSave = new FlxSave();
-			save.bind(needFrom, Paths.formatToSongPath(PlayState.SONG.song) + '-checkpoint-data');
-			checkPointData.set(needFrom, save);
-			return;
-		}
-	}
-
-	public function setCheckPointData(name:String, field:String, value:Dynamic)
-	{
-		if (checkPointData.exists(name))
-		{
-			Reflect.setField(checkPointData.get(name).data, field, value);
-		}
-	}
-
-	public function getCheckPointData(name:String, field:String, ?defaultValue:Dynamic = null):Dynamic
-	{
-		if (checkPointData.exists(name))
-		{
-			var retVal:Dynamic = Reflect.field(checkPointData.get(name).data, field);
-			return retVal;
-		}
-		return defaultVaule;
-	}
-
 	public var currentPos:Int = 0;
 	public var savePos:Int = 0;
 
@@ -5724,7 +5686,7 @@ class PlayState extends MusicBeatState
 
 	}
 	
-	public function reloadSavedPosition() savePos = getCheckPointData('checkpoints', 'position');
+	public function reloadSavedPosition() savePos = currentPos;
 
 	public function setCheckPointTime(time:Float)
 	{
@@ -5733,34 +5695,5 @@ class PlayState extends MusicBeatState
 		vocals.time = FlxG.sound.music.time;
 		camGame.zoom = 1.05;
 		camHUD.zoom = 1;
-	}
-
-	public function resetSavedCheckpoints()
-	{
-		setCheckPointData('checkpoints', 'position', 0);
-		reloadSavePosition();
-		setCheckPointData('checkpoints', 'score', 0);
-		setCheckPointData('checkpoints', 'rating', 0);
-		setCheckPointData('checkpoints', 'ratingName', '?');
-		setCheckPointData('checkpoints', 'ratingFC', '');
-		setCheckPointData('checkpoints', 'misses', 0);
-	}
-
-	public function saveScores()
-	{
-		setCheckPointData('checkpoints', 'score', songScore);
-		setCheckPointData('checkpoints', 'rating', ratingPercent);
-		setCheckPointData('checkpoints', 'ratingName', ratingName);
-		setCheckPointData('checkpoints', 'ratingFC', ratingFC);
-		setCheckPointData('checkpoints', 'misses', songMisses);
-	}
-
-	public function setSavedScore()
-	{
-		songScore = getCheckPointData('checkpoints', 'score');
-		ratingPercent = getCheckPointData('checkpoints', 'rating');
-		ratingName = getCheckPointData('checkpoints', 'ratingName');
-		ratingFC = getCheckPointData('checkpoints', 'ratingFC');
-		songMisses = getCheckPointData('checkpoints', 'misses');
 	}
 }

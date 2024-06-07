@@ -336,6 +336,10 @@ class PauseSubState extends MusicBeatSubstate
 					case 'Ignore Checkpoints':
 						PlayState.instance.checkPoints = [];
 						Conductor.songPosition = 0;
+						FlxG.sound.music.volume = 0;
+						FlxG.sound.music.stop();
+						PlayState.instance.vocals.volume = 0;
+						PlayState.instance.vocals.stop();
 						PlayState.instance.startSong();
 						close();
 					case 'Change Difficulty':
