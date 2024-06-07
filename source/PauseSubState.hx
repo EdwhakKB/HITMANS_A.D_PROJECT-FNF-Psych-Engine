@@ -341,6 +341,7 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.instance.vocals.volume = 0;
 						PlayState.instance.vocals.stop();
 						PlayState.instance.startSong();
+						PlayState.instance.setCheckPointTime(0);
 						close();
 					case 'Change Difficulty':
 						menuItems = difficultyChoices;
