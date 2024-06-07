@@ -330,6 +330,14 @@ class PauseSubState extends MusicBeatSubstate
 						deleteSkipTimeText();
 						stoppedUpdatingMusic = true;
 						regenMenu();
+					case 'Restart From Checkpoint':
+						PlayState.instance.setCheckPointTime(PlayState.instance.checkPoints[PlayState.instance.savePos]);
+						close();
+					case 'Ignore Checkpoints':
+						PlayState.instance.checkPoints = [];
+						Conductor.songPosition = 0;
+						PlayState.instance.startSong();
+						close();
 					case 'Change Difficulty':
 						menuItems = difficultyChoices;
 						deleteSkipTimeText();
