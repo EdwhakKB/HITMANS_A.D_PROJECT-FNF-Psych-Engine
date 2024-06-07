@@ -5687,12 +5687,12 @@ class PlayState extends MusicBeatState
 
 	public var checkPointData:Map<String, FlxSave> = new Map<String, FlxSave>();
 
-	public function initCheckPointData()
+	public function initCheckPointData(needFrom:String)
 	{
 		if (!checkPointData.exists(needFrom))
 		{
 			var save:FlxSave = new FlxSave();
-			save.bind(needFrom, Paths.formathToSongPath(PlayState.SONG.song) + '-checkpoint-data');
+			save.bind(needFrom, Paths.formatToSongPath(PlayState.SONG.song) + '-checkpoint-data');
 			checkPointData.set(needFrom, save);
 			return;
 		}
@@ -5729,7 +5729,7 @@ class PlayState extends MusicBeatState
 	public function setCheckPointTime(time:Float)
 	{
 		clearNotesBefore(time - 350);
-		FlxG.sound.musc.time = time;
+		FlxG.sound.music.time = time;
 		vocals.time = FlxG.sound.music.time;
 		camGame.zoom = 1.05;
 		camHUD.zoom = 1;
