@@ -5066,6 +5066,7 @@ class PlayState extends MusicBeatState
 	}
 
 	override function destroy() {
+		checkPoints = [];
 		for (lua in luaArray) {
 			lua.call('onDestroy', []);
 			lua.stop();
