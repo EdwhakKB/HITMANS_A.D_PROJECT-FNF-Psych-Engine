@@ -1000,7 +1000,7 @@ class PlayState extends MusicBeatState
 		doof.nextDialogueThing = startNextDialogue;
 		doof.skipDialogueThing = skipDialogue;
 
-		Conductor.songPosition = -5000 / Conductor.songPosition;
+		Conductor.songPosition = -5000;
 
 		
 		forceMiddleScroll = SONG.middleScroll;
@@ -1817,14 +1817,14 @@ class PlayState extends MusicBeatState
 			updateLuaDefaultPos();
 
 			startedCountdown = true;
+			Conductor.songPosition = 0;
 			Conductor.songPosition = -Conductor.crochet * 5;
 			setOnScripts('startedCountdown', true);
 			callOnScripts('onCountdownStarted', []);
 
 			var swagCounter:Int = 0;
 
-			if(startOnTime < 0) startOnTime = 0;
-
+			backwardsSkip=false;
 			if (startOnTime > 0 && startingfromCheckpoint) {
 				startedFrom = startOnTime;
 				checkpointsUsed++;
@@ -2135,16 +2135,20 @@ class PlayState extends MusicBeatState
 				NewHitmansGameOver.characterName = 'HITMANS';
 		}
 
-		if(timeToStart > 0){
+		if(backwardsSkip){
+			if(startOnTime > 0)
+			{
+				setSongTime(startOnTime - 500);
+				trace("dumb: " + startOnTime);
+			}
+		}	
+		else
+			startOnTime = 0;
+
+		/*if(timeToStart > 0){
 			setSongTime(timeToStart);
 			timeToStart = 0;
-		}
-
-		if(startOnTime > 0)
-		{
-			setSongTime(startOnTime - 500);
-		}
-		startOnTime = 0;
+		}*/
 
 		if(paused) {
 			//trace('Oopsie doopsie! Paused sound');
@@ -2207,7 +2211,7 @@ class PlayState extends MusicBeatState
 
 			updateScore(true);
 		}
-		// else{
+		else{
 		// 	if(introSkip>0 && deathCounter > 0) {
 		// 		introSkipSprite.alpha=0;
 		// 		add(introSkipSprite);
@@ -2218,7 +2222,7 @@ class PlayState extends MusicBeatState
 		// 			FlxTween.tween(introSkipSprite, {alpha:0.08}, 1.5, {ease: FlxEase.quadInOut });
 		// 		});
 		// 	}
-		// }
+		}
 
 		songStarted = true;
 
@@ -2469,9 +2473,6 @@ class PlayState extends MusicBeatState
 
 				var newCharacter:String = event.value2;
 				addCharacterToList(newCharacter, charType);
-
-			case 'Set CheckPoint':
-				onCheckPoint(event.strumTime, (event.value1.toLowerCase() == "hide"));
 
 			case 'Dadbattle Spotlight':
 				dadbattleBlack = new BGSprite(null, -800, -400, 0, 0);
@@ -3058,21 +3059,19 @@ class PlayState extends MusicBeatState
 		if (health > 2) health = 2;
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
-		
-		if (startedCountdown)
-		{
-			Conductor.songPosition += FlxG.elapsed * 1000 * playbackRate;
-		}
 
 		if (startingSong)
 		{
-			if (startedCountdown && Conductor.songPosition >= 0)
-				startSong();
-			else if(!startedCountdown)
-				Conductor.songPosition = -Conductor.crochet * 5;
+			if (startedCountdown)
+			{
+				Conductor.songPosition += FlxG.elapsed * 1000 * playbackRate;
+				if (Conductor.songPosition >= 0)
+					startSong();
+			}
 		}
 		else
 		{
+			Conductor.songPosition += FlxG.elapsed * 1000 * playbackRate;
 			if (!paused)
 			{
 				songTime += FlxG.game.ticks - previousFrameTime;
@@ -3433,8 +3432,19 @@ class PlayState extends MusicBeatState
 			});
 	}
 
+	public static function resetPlayData()
+	{
+		PlayState.deathCounter = 0;
+		PlayState.seenCutscene = false;
+		PlayState.checkpointsUsed = 0;
+		PlayState.checkpointHistory = [];
+		PlayState.startOnTime = 0;
+		PlayState.ignoreCheckpointOnStart = false;
+	}
+
 	function openChartEditor()
 	{
+		resetPlayData();
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
@@ -3449,6 +3459,7 @@ class PlayState extends MusicBeatState
 
 	function openModchartEditor()
 	{
+		resetPlayData();
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
@@ -3548,7 +3559,7 @@ class PlayState extends MusicBeatState
 			if(eventNotes[0].value2 != null)
 				value2 = eventNotes[0].value2;
 
-			triggerEventNote(eventNotes[0].event, value1, value2);
+			triggerEventNote(eventNotes[0].event, value1, value2, leStrumTime);
 			eventNotes.shift();
 		}
 	}
@@ -3559,7 +3570,7 @@ class PlayState extends MusicBeatState
 		return pressed;
 	}
 
-	public function triggerEventNote(eventName:String, value1:String, value2:String) {
+	public function triggerEventNote(eventName:String, value1:String, value2:String, strumTime:Float) {
 		switch(eventName) {
 			case 'Dadbattle Spotlight':
 				var val:Null<Int> = Std.parseInt(value1);
@@ -3978,6 +3989,8 @@ class PlayState extends MusicBeatState
 				}else if (value1 == 'disable'){
 					controlsPlayer2 = false;	
 				}
+			case "Set CheckPoint":
+				onCheckPoint(strumTime, (value1.toLowerCase() == "hide"));
 		}
 		callOnScripts('onEvent', [eventName, value1, value2]);
 	}
