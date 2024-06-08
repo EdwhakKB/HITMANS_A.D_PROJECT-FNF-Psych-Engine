@@ -25,7 +25,7 @@ class PauseSubState extends MusicBeatSubstate
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Gameplay Modifiers', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Restart From Checkpoint' ,'Change Difficulty', 'Options', 'Gameplay Modifiers', 'Exit to menu'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 	var unPauseTimer:FlxTimer;
@@ -331,18 +331,13 @@ class PauseSubState extends MusicBeatSubstate
 						stoppedUpdatingMusic = true;
 						regenMenu();
 					case 'Restart From Checkpoint':
-						PlayState.instance.setCheckPointTime(PlayState.instance.checkPoints[PlayState.instance.savePos]);
-						close();
-					case 'Ignore Checkpoints':
-						PlayState.instance.checkPoints = [];
-						Conductor.songPosition = 0;
-						FlxG.sound.music.volume = 0;
-						FlxG.sound.music.stop();
-						PlayState.instance.vocals.volume = 0;
-						PlayState.instance.vocals.stop();
-						PlayState.instance.startSong();
-						PlayState.instance.setCheckPointTime(0);
-						close();
+						if(PlayState.checkpointHistory.length > 0){
+							FlxG.mouse.visible = false;
+							PlayState.seenCutscene = true; //Keep this the same tho
+							restartSong(false, true);
+						}else{
+							FlxG.sound.play(Paths.sound('cancelMenu'));
+						}
 					case 'Change Difficulty':
 						menuItems = difficultyChoices;
 						deleteSkipTimeText();

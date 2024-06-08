@@ -116,6 +116,28 @@ typedef ThreadUpdateList = {
 	oncompletefunc:Dynamic
 }
 
+class CheckpointData{ //this shit should work ig??
+	public var time:Float = 0;
+
+	public var sicks:Int = 0;
+	public var goods:Int = 0;
+	public var bads:Int = 0;
+	public var shits:Int = 0;
+	public var highestCombo:Int = 0;
+	public var songScore:Int = 0;
+	public var songHits:Int = 0;
+	public var songMisses:Int = 0;
+	public var hitTimeDiff:Array<Float> = [];
+	public var hitTimesTime:Array<Float> = [];
+	public var hitTimesJudge:Array<String> = [];
+	public var healthSamples:Array<Float> = [];
+	public var totalPlayed:Int = 0;
+	public var totalNotesHit:Float = 0.0;
+	public var BPM:Float = 160.0;
+	public function new(){
+	}
+}
+
 
 class PlayState extends MusicBeatState
 {
@@ -476,6 +498,10 @@ class PlayState extends MusicBeatState
 	// public var noteCameras21:FlxCamera;
 	// public var noteCameras22:FlxCamera;
 
+	//checkpoint stuff (thanks hazard!)
+	public static var checkpointsUsed:Int = 0;
+	public static var checkpointHistory:Array<CheckpointData> = [];
+
 	public static var tweenManager:FlxTweenManager = null;
 	public static var timerManager:FlxTimerManager = null;
 
@@ -526,9 +552,6 @@ class PlayState extends MusicBeatState
 	public var startCallback:Void->Void;
 	public var endCallback:Void->Void;
 
-	public var checkPoints:Array<Float> = [];
-	public var saveCheckPointScore:Bool = true;
-
 	var passedCheckPoint:FlxText;
 
 	override public function create()
@@ -536,15 +559,6 @@ class PlayState extends MusicBeatState
 		//trace('Playback Rate: ' + playbackRate);
 
 		ModchartFuncs.editor = false;
-
-		initCheckPointData('checkpoints');
-		if (getCheckPointData('checkPoints', 'position') == null || Math.isNaN(getCheckPointData('checkPoints', 'position')))
-		{
-			setCheckPointData('checkpoints', 'position', 0);
-			reloadSavePosition();
-		}
-		onCheckPoint(currentPos, savePos);
-		if (saveCheckPointScore) setSavedScore();
 
 		tweenManager = new FlxTweenManager();
 		timerManager = new FlxTimerManager();
@@ -1274,6 +1288,7 @@ class PlayState extends MusicBeatState
 
 		passedCheckPoint = new FlxText(0, 0, 0, "Player's current checkpoint spot is 0.", 20);
 		passedCheckPoint.size = 40;
+		passedCheckPoint.alpha = 0;
 		add(passedCheckPoint);
 
 		// refresh(); //z sort shit LOL
@@ -1771,8 +1786,18 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	public static var ignoreCheckpointOnStart:Bool = false;
+	var startedFrom:Float = 0;
+	var backwardsSkip:Bool = false;
+
 	public function startCountdown():Void
 	{
+		var startingfromCheckpoint:Bool = false;
+		if(PlayState.checkpointHistory.length > 0 && !PlayState.ignoreCheckpointOnStart){
+			startOnTime = PlayState.checkpointHistory[PlayState.checkpointHistory.length-1].time;
+			startingfromCheckpoint=true;
+			trace("Starting from checkpoint!");
+		}
 		if(startedCountdown) {
 			callOnScripts('onStartCountdown');
 			return;
@@ -1800,14 +1825,38 @@ class PlayState extends MusicBeatState
 
 			if(startOnTime < 0) startOnTime = 0;
 
-			if (startOnTime > 0) {
+			if (startOnTime > 0 && startingfromCheckpoint) {
+				startedFrom = startOnTime;
+				checkpointsUsed++;
 				clearNotesBefore(startOnTime);
-				setSongTime(startOnTime - 350);
-				return;
+				setSongTime(startOnTime - Conductor.crochet * 5);
+				for (i in 0...playerStrums.length) {
+					playerStrums.members[i].alpha=1;
+				}
+				FlxG.sound.music.volume = 0;
+				vocals.volume = 0;
+				modchartTweens.set("checkpointVolumeFadeIn", FlxTween.num(0, 1, (Conductor.crochet/1000) * 4, {ease: FlxEase.sineOut, onComplete: function(twn:FlxTween) {
+					modchartTweens.remove("checkpointVolumeFadeIn");
+				}}, function(v){
+					vocals.volume = v;
+					FlxG.sound.music.volume = v;
+				}));
+
+				//return;
 			}
-			else if (skipCountdown)
-			{
-				setSongTime(0);
+			else if (skipCountdown || startOnTime > 0) {
+				if(PlayState.ignoreCheckpointOnStart){
+					for (i in 0...playerStrums.length) {
+						playerStrums.members[i].alpha = 1;
+						opponentStrums.members[i].alpha = 1;
+					}
+					backwardsSkip=true;
+					PlayState.ignoreCheckpointOnStart = false;
+					trace("Starting from skip time! " + startOnTime);
+				}
+				startedFrom = startOnTime;
+				clearNotesBefore(startOnTime);
+				setSongTime(startOnTime - 500);
 				return;
 			}
 
@@ -2050,7 +2099,6 @@ class PlayState extends MusicBeatState
 	public function startSong():Void
 	{
 		startingSong = false;
-		songStarted = true;
 		canPause = true;
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
@@ -2131,11 +2179,51 @@ class PlayState extends MusicBeatState
 		setOnScripts('songLength', songLength);
 		callOnScripts('onSongStart', []);
 
-		if (!Math.isNaN(checkPoints[savePos]))
-		{
-			setCheckPointTime(checkPoints[savePos] * 1000);
+		if(!(backwardsSkip || PlayState.ignoreCheckpointOnStart) && PlayState.checkpointHistory.length > 0){
+			var checkpoint:CheckpointData = PlayState.checkpointHistory[PlayState.checkpointHistory.length-1];
+			trace(checkpoint);
+			//trace("Test for sicks: " + PlayState.checkpointMemory_sicks);
+			sicks = checkpoint.sicks;
+			goods = checkpoint.goods;
+			bads = checkpoint.bads;
+			shits = checkpoint.shits;
+			// highestCombo = checkpoint.highestCombo;
+			songScore = checkpoint.songScore;
+			songHits = checkpoint.songHits;
+			songMisses = checkpoint.songMisses;
+
+			// hitTimesDiff=checkpoint.hitTimeDiff;
+			// hitTimesTime=checkpoint.hitTimesTime;
+			// hitTimesJudge=checkpoint.hitTimesJudge;
+			// healthSamples=checkpoint.healthSamples;
+
+			totalPlayed = checkpoint.totalPlayed;
+			totalNotesHit = checkpoint.totalNotesHit;
+
+			//if(checkpoint.time > 359600 && SONG.song.toLowerCase() == "mindfuck")
+			//	mindfuckCheckpointTestCheckThingIDFKANYMOREPLEASESAVEME = true;
+
+			Conductor.bpm=checkpoint.BPM;
+
+			updateScore(true);
 		}
-		for (i in 0... checkPoints.length) markCheckpointOnTimebar(checkPoints[i]);
+		// else{
+		// 	if(introSkip>0 && deathCounter > 0) {
+		// 		introSkipSprite.alpha=0;
+		// 		add(introSkipSprite);
+		// 		//Make introskipsprite fade in because it looks nicer
+		// 		FlxTween.tween(introSkipSprite, {alpha: 0.49}, 1.25);
+		// 		new FlxTimer().start(5, function(tmr:FlxTimer)
+		// 		{
+		// 			FlxTween.tween(introSkipSprite, {alpha:0.08}, 1.5, {ease: FlxEase.quadInOut });
+		// 		});
+		// 	}
+		// }
+
+		songStarted = true;
+
+		setOnScripts('songLength', songLength);
+		callOnScripts('onSongStart', []);
 	}
 
 	public static var threadbeat:Array<ThreadBeatList> = [];
@@ -3242,17 +3330,6 @@ class PlayState extends MusicBeatState
 
 		callOnScripts('onUpdatePost', [elapsed]);
 
-		if (!Math.isNaN(checkPoints[savePos+1]))
-		{
-			if (Conductor.songPosition > checkPoints[savePos+1] * 1000 && savePos > -1 && !resetted) // Push a checkpoint mark
-			{
-				passedCheckPoint.text = 'Player made it to checkpoint ${getCheckPointData('checkpoints', 'position')}, moving to checkpoint ${getCheckPointData('checkpoints', 'position') + 1}';
-				setCheckPointData('checkpoints', 'position', getCheckPointData('checkpoints', 'position') + 1);
-				reloadSavePosition();
-				if (saveCheckPointScore) saveScores();
-			}
-		}
-		reloadSavePosition();
 		//code by someguywhouhhhh on discord
 		var sustainScale = (((120 / PlayState.SONG.bpm) * (songSpeed * 1.278414)) * (PlayState.isPixelStage ? (PlayState.daPixelZoom * 1.222222222) : 1)) + (0.000014 * songSpeed);
 		set_smoothNotes(unspawnNotes, sustainScale);
@@ -5073,7 +5150,10 @@ class PlayState extends MusicBeatState
 	}
 
 	override function destroy() {
-		checkPoints = [];
+		PlayState.checkpointsUsed = 0;
+		PlayState.checkpointHistory = [];
+		PlayState.startOnTime = 0;
+		PlayState.ignoreCheckpointOnStart = false;
 		for (lua in luaArray) {
 			lua.call('onDestroy', []);
 			lua.stop();
@@ -5686,45 +5766,63 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	public var checkPointData:Map<String, FlxSave> = new Map<String, FlxSave>();
+	// public function onCheckPoint(time:Float, hidden:Bool=false)
+	// {
+	// 	if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
+	// 		trace("Marking Checkpoint!");
+	// 		checkPoints.push(time);
+	// 	}
+	// }
 
-	public function initCheckPointData(needFrom:String)
-	{
-		if (!checkPointData.exists(needFrom))
-		{
-			var save:FlxSave = new FlxSave();
-			save.bind(needFrom, Paths.formatToSongPath(PlayState.SONG.song) + '-checkpoint-data');
-			checkPointData.set(needFrom, save);
-			return;
+	public function onCheckPoint(strumTime:Float, hideTell:Bool = false, manual:Bool = false){
+		
+		var previousCheckpointTime:Float = 0;
+		if(PlayState.checkpointHistory.length > 0){
+			previousCheckpointTime = PlayState.checkpointHistory[PlayState.checkpointHistory.length-1].time;
 		}
-	}
+		
+		if(strumTime > previousCheckpointTime){
+			var newCheckpoint:CheckpointData = new CheckpointData();
+			
 
-	public function setCheckPointData(name:String, field:String, value:Dynamic)
-	{
-		if (checkPointData.exists(name))
-		{
-			Reflect.setField(checkPointData.get(name).data, field, value);
-		}
-	}
+			newCheckpoint.time = strumTime;
+			trace("Checkpoint set to: " + newCheckpoint.time);
 
-	public function getCheckPointData(name:String, field:String, ?defaultValue:Dynamic = null):Dynamic
-	{
-		if (checkPointData.exists(name))
-		{
-			var retVal:Dynamic = Reflect.field(checkPointData.get(name).data, field);
-			return retVal;
-		}
-		return defaultVaule;
-	}
+			newCheckpoint.BPM = Conductor.bpm;
 
-	public var currentPos:Int = 0;
-	public var savePos:Int = 0;
+			// newCheckpoint.hitTimeDiff = hitTimesDiff;
+			// newCheckpoint.hitTimesTime = hitTimesTime;
+			// newCheckpoint.hitTimesJudge = hitTimesJudge;
+			// newCheckpoint.healthSamples = healthSamples;
+			newCheckpoint.totalPlayed = totalPlayed;
+			newCheckpoint.totalNotesHit = totalNotesHit;
 
-	public function onCheckPoint(time:Float, hidden:Bool=false)
-	{
-		if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
-			trace("Marking Checkpoint!");
-			checkPoints.push(time);
+			newCheckpoint.sicks = sicks;
+			newCheckpoint.goods = goods;
+			newCheckpoint.bads = bads;
+			newCheckpoint.shits = shits;
+			// newCheckpoint.highestCombo = highestCombo;
+			newCheckpoint.songScore = songScore;
+			newCheckpoint.songHits = songHits;
+			newCheckpoint.songMisses = songMisses;
+			//trace("Checkpoint memory set!");
+			//trace("Test for sicks: " + PlayState.checkpointMemory_sicks);
+
+			PlayState.checkpointHistory.push(newCheckpoint);
+
+			if(!hideTell){
+				// modchartTweenCancel("checkpoint!");
+				// modchartTweens.set("checkpoint!", FlxTween.tween(passedCheckPoint, {alpha : 1}, 0.1, {ease: FlxEase.linear,
+				// 	onComplete: function(twn:FlxTween) {
+				// 		modchartTweens.remove("checkpoint!");
+				// 		modchartTweens.set("checkpoint!", FlxTween.tween(passedCheckPoint, {alpha : 0.0}, 0.45, {ease: FlxEase.linear,
+				// 			onComplete: function(twn:FlxTween) {
+				// 				modchartTweens.remove("checkpoint!");
+				// 			}
+				// 		}));
+				// 	}
+				// }));
+			}
 		}
 	}
 	
@@ -5758,58 +5856,16 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public function reloadSavePosition() savePos = currentPos;
-
-	public function setCheckPointTime(time:Float)
-	{
-		clearNotesBefore(time - 350);
-		FlxG.sound.music.time = time;
-		vocals.time = FlxG.sound.music.time;
-		camGame.zoom = 1.05;
-		camHUD.zoom = 1;
-	}
-
-	
-	public function getSongLengthFake():Float{
+	function getSongLengthFake():Float{
 		var songLengthDummy = songLength;
+
 		return songLengthDummy;
 	}
 
-	public function resetSavedCheckpoints()
-	{
-		setCheckPointData('checkpoints', 'position', 0);
-		reloadSavePosition();
-		setCheckPointData('checkpoints', 'score', 0);
-		setCheckPointData('checkpoints', 'rating', 0);
-		setCheckPointData('checkpoints', 'ratingName', '?');
-		setCheckPointData('checkpoints', 'ratingFC', '');
-		setCheckPointData('checkpoints', 'misses', 0);
-		setCheckPointData('checkpoints', 'played', 0);
-		setCheckPointData('checkpoints', 'notesHit', 0);
-		setCheckPointData('checkpoints', 'bpm', PlayState.SONG.bpm);
-	}
-
-	public function saveScores()
-	{
-		setCheckPointData('checkpoints', 'score', songScore);
-		setCheckPointData('checkpoints', 'rating', ratingPercent);
-		setCheckPointData('checkpoints', 'ratingName', ratingName);
-		setCheckPointData('checkpoints', 'ratingFC', ratingFC);
-		setCheckPointData('checkpoints', 'misses', songMisses);
-		setCheckPointData('checkpoints', 'player', totalPlayed);
-		setCheckPointData('checkpoints', 'notesHit', totalNotesHit);
-		setCheckPointData('checkpoints', 'bpm', Conductor.bpm);
-	}
-
-	public function setSavedScore()
-	{
-		songScore = getCheckPointData('checkpoints', 'score');
-		ratingPercent = getCheckPointData('checkpoints', 'rating');
-		ratingName = getCheckPointData('checkpoints', 'ratingName');
-		ratingFC = getCheckPointData('checkpoints', 'ratingFC');
-		songMisses = getCheckPointData('checkpoints', 'misses');
-		totalPlayed = getCheckPointData('checkpoints', 'played');
-		totalNotesHit = getCheckPointData('checkpoints', 'notesHit');
-		Conductor.changeBPM(getCheckPointData('checkpoints', 'bpm'));
+	function modchartTweenCancel(tag:String){
+		if(modchartTweens.exists(tag)){
+			modchartTweens.get(tag).cancel();
+			modchartTweens.remove(tag);
+		}
 	}
 }
