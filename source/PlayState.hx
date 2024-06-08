@@ -127,10 +127,6 @@ class CheckpointData{ //this shit should work ig??
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
-	public var hitTimeDiff:Array<Float> = [];
-	public var hitTimesTime:Array<Float> = [];
-	public var hitTimesJudge:Array<String> = [];
-	public var healthSamples:Array<Float> = [];
 	public var totalPlayed:Int = 0;
 	public var totalNotesHit:Float = 0.0;
 	public var BPM:Float = 160.0;
@@ -2210,6 +2206,7 @@ class PlayState extends MusicBeatState
 			Conductor.bpm=checkpoint.BPM;
 
 			updateScore(true);
+			skipIntro(checkpoint.time - Conductor.crochet * 5);
 		}
 		else{
 		// 	if(introSkip>0 && deathCounter > 0) {
@@ -2228,6 +2225,56 @@ class PlayState extends MusicBeatState
 
 		setOnScripts('songLength', songLength);
 		callOnScripts('onSongStart', []);
+	}
+
+	var skippedIntro:Bool = false;
+	var introSkip:Int = 0;
+	function skipIntro(?songPosToGoTo:Float=0){
+		trace((songPosToGoTo==0?"Skipped Intro!":("Went to position: " + songPosToGoTo)));
+		skippedIntro = true;
+
+		FlxG.sound.music.pause();
+		vocals.pause();
+		if(songPosToGoTo == 0) Conductor.songPosition = introSkip * 1000;
+		else Conductor.songPosition = songPosToGoTo;
+		notes.forEachAlive(function(daNote:Note)
+		{
+			if(daNote.strumTime + 800 < Conductor.songPosition) {
+				daNote.active = false;
+				daNote.visible = false;
+
+				//if(daNote.trailShit!=null)
+				//	arrowTrails.remove(daNote.trailShit);
+				daNote.kill();
+				notes.remove(daNote, true);
+				daNote.destroy();
+			}
+		});
+		for (i in 0...unspawnNotes.length) {
+			var daNote:Note = unspawnNotes[0];
+			if(daNote.strumTime + 800 >= Conductor.songPosition) {
+				break;
+			}
+			daNote.active = false;
+			daNote.visible = false;
+			daNote.kill();
+			unspawnNotes.splice(unspawnNotes.indexOf(daNote), 1);
+			daNote.destroy();
+		}
+		FlxG.sound.music.time = Conductor.songPosition;
+		FlxG.sound.music.play();
+		FlxG.sound.music.pitch = playbackRate;
+		vocals.time = Conductor.songPosition;
+		vocals.play();
+		vocals.pitch = playbackRate;
+		if (startTimer != null && startTimer.finished)
+		{
+			DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", hitmansHUD.iconP2.getCharacter(), true, songLength - Conductor.songPosition - ClientPrefs.noteOffset);
+		}
+		else
+		{
+			DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", hitmansHUD.iconP2.getCharacter());
+		}
 	}
 
 	public static var threadbeat:Array<ThreadBeatList> = [];
@@ -5163,10 +5210,6 @@ class PlayState extends MusicBeatState
 	}
 
 	override function destroy() {
-		PlayState.checkpointsUsed = 0;
-		PlayState.checkpointHistory = [];
-		PlayState.startOnTime = 0;
-		PlayState.ignoreCheckpointOnStart = false;
 		for (lua in luaArray) {
 			lua.call('onDestroy', []);
 			lua.stop();
