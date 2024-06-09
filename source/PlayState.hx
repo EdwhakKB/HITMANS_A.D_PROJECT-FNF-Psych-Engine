@@ -285,7 +285,8 @@ class PlayState extends MusicBeatState
 	public var opponentStrums:FlxTypedGroup<StrumNote>;
 	public var playerStrums:FlxTypedGroup<StrumNote>;
 
-	public var camZooming:Bool = false;
+	public var camZooming:Bool = true;
+	public var autoCamZoom:Bool = false; //disable camZoom auto for some songs
 	public var camZoomingMult:Float = 1;
 	public var camZoomingDecay:Float = 1;
 	private var curSong:String = "";
@@ -4230,7 +4231,8 @@ class PlayState extends MusicBeatState
 		hitmansHUD.timeTxt.visible = false;
 		canPause = false;
 		endingSong = true;
-		camZooming = false;
+		camZooming = true;
+		autoCamZoom = false;
 		inCutscene = false;
 		hitmansHUD.updateTime = false;
 
@@ -4707,7 +4709,6 @@ class PlayState extends MusicBeatState
 	function opponentNoteHit(note:Note):Void
 	{
 		// if (Paths.formatToSongPath(SONG.song) != 'tutorial')
-			camZooming = true;
 		//Edwhak HealthDrain but in source so people can't nerf how his songs works!
 		if (SONG.bossFight || edwhakIsEnemy){
 			if (!note.isSustainNote){
@@ -5406,7 +5407,7 @@ class PlayState extends MusicBeatState
 				moveCameraSection();
 			}
 
-			if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms)
+			if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms  && autoCamZoom) //need auto cam zoom to make this works :b
 			{
 				FlxG.camera.zoom += 0.015 * camZoomingMult;
 				camHUD.zoom += 0.03 * camZoomingMult;
