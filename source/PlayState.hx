@@ -1806,6 +1806,14 @@ class PlayState extends MusicBeatState
 			startOnTime = PlayState.checkpointHistory[PlayState.checkpointHistory.length-1].time;
 			startingfromCheckpoint=true;
 			trace("Starting from checkpoint!");
+
+			playfieldRenderer.modifierTable.clear();
+            playfieldRenderer.modchart.loadModifiers();
+			playfieldRenderer.tweenManager.completeAll();
+            playfieldRenderer.eventManager.clearEvents();
+            playfieldRenderer.modifierTable.resetMods();
+            playfieldRenderer.modchart.loadEvents();
+			playfieldRenderer.update(0);
 		}
 		if(startedCountdown) {
 			callOnScripts('onStartCountdown');
@@ -1844,7 +1852,7 @@ class PlayState extends MusicBeatState
 				}
 				FlxG.sound.music.volume = 0;
 				vocals.volume = 0;
-				modchartTweens.set("checkpointVolumeFadeIn", FlxTween.num(0, 1, (Conductor.crochet/1000) * 4, {ease: FlxEase.sineOut, onComplete: function(twn:FlxTween) {
+				modchartTweens.set("checkpointVolumeFadeIn", FlxTween.num(0, 1, (Conductor.crochet/1000) * 10, {ease: FlxEase.sineOut, onComplete: function(twn:FlxTween) {
 					modchartTweens.remove("checkpointVolumeFadeIn");
 				}}, function(v){
 					vocals.volume = v;
@@ -2222,7 +2230,17 @@ class PlayState extends MusicBeatState
 			Conductor.bpm=checkpoint.BPM;
 
 			updateScore(true);
-			skipIntro(checkpoint.time - Conductor.crochet * 5);
+			skipIntro(checkpoint.time - Conductor.crochet * 8);
+
+			playfieldRenderer.modifierTable.clear();
+            playfieldRenderer.modchart.loadModifiers();
+			playfieldRenderer.tweenManager.completeAll();
+            playfieldRenderer.eventManager.clearEvents();
+            playfieldRenderer.modifierTable.resetMods();
+            playfieldRenderer.modchart.loadEvents();
+			playfieldRenderer.update(0);
+			
+			trace("fixing modchart");
 		}
 		else{
 		// 	if(introSkip>0 && deathCounter > 0) {
@@ -3560,13 +3578,13 @@ class PlayState extends MusicBeatState
 					timer.active = true;
 				}
 				var defaultPlaybackRate:Float = playbackRate;
-				FlxTween.num(defaultPlaybackRate, 0, 3, {onUpdate: 	function(tween:FlxTween){
+				FlxTween.num(defaultPlaybackRate, 0, 2, {onUpdate: 	function(tween:FlxTween){
 					var thing = FlxMath.lerp(defaultPlaybackRate,0, tween.percent);
                     playbackRate = thing;
 				},ease:FlxEase.elasticOut, onComplete: function(tween:FlxTween) {
 					playbackRate = 1;
 				}});
-				FlxTween.tween(staticDeath, {alpha: 1}, 3, {ease:FlxEase.sineIn, onComplete:function(daTween:FlxTween){
+				FlxTween.tween(staticDeath, {alpha: 1}, 2, {ease:FlxEase.sineIn, onComplete:function(daTween:FlxTween){
 					FlxG.sound.music.volume = 0;
 					vocals.volume = 0;
 					// vocals.stop();
