@@ -119,11 +119,14 @@ typedef ThreadUpdateList = {
 class CheckpointData{ //this shit should work ig??
 	public var time:Float = 0;
 
+	public var marvelouss:Int = 0;
 	public var sicks:Int = 0;
 	public var goods:Int = 0;
 	public var bads:Int = 0;
 	public var shits:Int = 0;
+
 	public var highestCombo:Int = 0;
+
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
@@ -497,6 +500,7 @@ class PlayState extends MusicBeatState
 	//checkpoint stuff (thanks hazard!)
 	public static var checkpointsUsed:Int = 0;
 	public static var checkpointHistory:Array<CheckpointData> = [];
+	var checkpointSprite:FlxSprite;
 
 	public static var tweenManager:FlxTweenManager = null;
 	public static var timerManager:FlxTimerManager = null;
@@ -782,6 +786,15 @@ class PlayState extends MusicBeatState
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
+
+
+		checkpointSprite = new BGSprite('Huds/checkpoint/checkpointVignette', -600, -480, 0.5, 0.5);
+		checkpointSprite.setGraphicSize(FlxG.width, FlxG.height);
+		checkpointSprite.updateHitbox();
+		checkpointSprite.cameras = [camOther]; //hud funny
+		checkpointSprite.screenCenter();	
+		checkpointSprite.alpha=0;
+		add(checkpointSprite);
 
 		switch (curStage)
 		{
@@ -1825,7 +1838,7 @@ class PlayState extends MusicBeatState
 				startedFrom = startOnTime;
 				checkpointsUsed++;
 				clearNotesBefore(startOnTime);
-				setSongTime(startOnTime - Conductor.crochet * 5);
+				setSongTime(startOnTime - Conductor.crochet * 20);
 				for (i in 0...playerStrums.length) {
 					playerStrums.members[i].alpha=1;
 				}
@@ -2176,18 +2189,21 @@ class PlayState extends MusicBeatState
 			DiscordClient.changePresence(detailsText, SONG.song + " (" + storyDifficultyText + ")", hitmansHUD.iconP2.getCharacter(), true, songLength);
 		}
 		#end
-		setOnScripts('songLength', songLength);
-		callOnScripts('onSongStart', []);
+
+		for (i in 0...checkpointQueueTimesArray.length) {
+			hitmansHUD.markCheckpointOnTimebar(checkpointQueueTimesArray[i]);
+		}
 
 		if(!(backwardsSkip || PlayState.ignoreCheckpointOnStart) && PlayState.checkpointHistory.length > 0){
 			var checkpoint:CheckpointData = PlayState.checkpointHistory[PlayState.checkpointHistory.length-1];
 			trace(checkpoint);
 			//trace("Test for sicks: " + PlayState.checkpointMemory_sicks);
+			marvelouss = checkpoint.marvelouss;
 			sicks = checkpoint.sicks;
 			goods = checkpoint.goods;
 			bads = checkpoint.bads;
 			shits = checkpoint.shits;
-			// highestCombo = checkpoint.highestCombo;
+			maxCombo = checkpoint.highestCombo;
 			songScore = checkpoint.songScore;
 			songHits = checkpoint.songHits;
 			songMisses = checkpoint.songMisses;
@@ -2506,6 +2522,8 @@ class PlayState extends MusicBeatState
 
 	function eventPushed(event:EventNote) {
 		switch(event.event) {
+			case "Set CheckPoint":
+				markCheckpointQueue(event.strumTime, (event.value1.toLowerCase() == "hide"));
 			case 'Change Character':
 				var charType:Int = 0;
 				switch(event.value1.toLowerCase()) {
@@ -5822,13 +5840,14 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	// public function onCheckPoint(time:Float, hidden:Bool=false)
-	// {
-	// 	if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
-	// 		trace("Marking Checkpoint!");
-	// 		checkPoints.push(time);
-	// 	}
-	// }
+	var checkpointQueueTimesArray:Array<Float> = [];
+	//The song length is unknown at this current moment in time... soooooooo we wait until the song length is generated and THEN place the checkpoints.
+	function markCheckpointQueue(time:Float, hidden:Bool=false){
+		if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
+			trace("Marking Checkpoint!");
+			checkpointQueueTimesArray.push(time);
+		}
+	}
 
 	public function onCheckPoint(strumTime:Float, hideTell:Bool = false, manual:Bool = false){
 		
@@ -5853,11 +5872,12 @@ class PlayState extends MusicBeatState
 			newCheckpoint.totalPlayed = totalPlayed;
 			newCheckpoint.totalNotesHit = totalNotesHit;
 
+			newCheckpoint.marvelouss = marvelouss;
 			newCheckpoint.sicks = sicks;
 			newCheckpoint.goods = goods;
 			newCheckpoint.bads = bads;
 			newCheckpoint.shits = shits;
-			// newCheckpoint.highestCombo = highestCombo;
+			newCheckpoint.highestCombo = maxCombo;
 			newCheckpoint.songScore = songScore;
 			newCheckpoint.songHits = songHits;
 			newCheckpoint.songMisses = songMisses;
@@ -5867,56 +5887,56 @@ class PlayState extends MusicBeatState
 			PlayState.checkpointHistory.push(newCheckpoint);
 
 			if(!hideTell){
-				// modchartTweenCancel("checkpoint!");
-				// modchartTweens.set("checkpoint!", FlxTween.tween(passedCheckPoint, {alpha : 1}, 0.1, {ease: FlxEase.linear,
-				// 	onComplete: function(twn:FlxTween) {
-				// 		modchartTweens.remove("checkpoint!");
-				// 		modchartTweens.set("checkpoint!", FlxTween.tween(passedCheckPoint, {alpha : 0.0}, 0.45, {ease: FlxEase.linear,
-				// 			onComplete: function(twn:FlxTween) {
-				// 				modchartTweens.remove("checkpoint!");
-				// 			}
-				// 		}));
-				// 	}
-				// }));
+				modchartTweenCancel("checkpoint!");
+				modchartTweens.set("checkpoint!", FlxTween.tween(checkpointSprite, {alpha : 0.275}, 0.1, {ease: FlxEase.linear,
+					onComplete: function(twn:FlxTween) {
+						modchartTweens.remove("checkpoint!");
+						modchartTweens.set("checkpoint!", FlxTween.tween(checkpointSprite, {alpha : 0.0}, 0.45, {ease: FlxEase.linear,
+							onComplete: function(twn:FlxTween) {
+								modchartTweens.remove("checkpoint!");
+							}
+						}));
+					}
+				}));
 			}
 		}
 	}
 	
-	var checkpointMarkersOnTimebar:Array<AttachedSprite> = [];
-	function markCheckpointOnTimebar(time:Float, hidden:Bool = false){
-		if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
-			var marker:AttachedSprite = new AttachedSprite('checkPoint');
-			marker.sprTracker = hitmansHUD.timeBar;
-			marker.scrollFactor.set();
-			marker.visible = (ClientPrefs.timeBarType != 'Disabled');
-			marker.cameras = [camInterfaz];
+	// var checkpointMarkersOnTimebar:Array<AttachedSprite> = [];
+	// function markCheckpointOnTimebar(time:Float, hidden:Bool = false){
+	// 	if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
+	// 		var marker:AttachedSprite = new AttachedSprite('checkPoint');
+	// 		marker.sprTracker = hitmansHUD.timeBar;
+	// 		marker.scrollFactor.set();
+	// 		marker.visible = true;
+	// 		marker.cameras = [camInterfaz];
 
-			marker.color = FlxColor.RED;
+	// 		marker.color = FlxColor.RED;
 
-			//calculate percent where checkpoint is
-			var songLengthDummy = getSongLengthFake();
+	// 		//calculate percent where checkpoint is
+	// 		var songLengthDummy = getSongLengthFake();
 			
-			var curTime:Float = time;
+	// 		var curTime:Float = time;
 
-			if(curTime < 0) curTime = 0;
-			var whatPercent:Float = (curTime / songLengthDummy);
+	// 		if(curTime < 0) curTime = 0;
+	// 		var whatPercent:Float = (curTime / songLengthDummy);
 
-			trace("Checkpoint at percent " + whatPercent);
+	// 		trace("Checkpoint at percent " + whatPercent);
 
-			//placing checkpoint on bar
-			var timebarWidth:Float = hitmansHUD.timeBar.width;
-			marker.xAdd = (timebarWidth*whatPercent)-2;
-			marker.yAdd = -5;
-			add(marker);
-			checkpointMarkersOnTimebar.push(marker);
-		}
-	}
+	// 		//placing checkpoint on bar
+	// 		var timebarWidth:Float = hitmansHUD.timeBar.width;
+	// 		marker.xAdd = (timebarWidth*whatPercent)-2;
+	// 		marker.yAdd = -5;
+	// 		add(marker);
+	// 		checkpointMarkersOnTimebar.push(marker);
+	// 	}
+	// }
 
-	function getSongLengthFake():Float{
-		var songLengthDummy = songLength;
+	// function getSongLengthFake():Float{
+	// 	var songLengthDummy = songLength;
 
-		return songLengthDummy;
-	}
+	// 	return songLengthDummy;
+	// }
 
 	function modchartTweenCancel(tag:String){
 		if(modchartTweens.exists(tag)){

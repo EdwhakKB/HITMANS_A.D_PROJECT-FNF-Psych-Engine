@@ -271,6 +271,7 @@ class PauseSubState extends MusicBeatSubstate
 							FlxG.sound.music.volume = 0;
 							PlayState.changedDifficulty = true;
 							PlayState.chartingMode = false;
+							PlayState.resetPlayData();
 							return;
 						}					
 					}catch(e:Dynamic){
@@ -348,6 +349,7 @@ class PauseSubState extends MusicBeatSubstate
 						practiceText.visible = PlayState.instance.practiceMode;
 					case "Restart Song":
 						restartSong(false, true);
+						PlayState.resetPlayData();
 					case "Leave Charting Mode":
 						restartSong(false, true);
 						PlayState.chartingMode = false;
@@ -370,6 +372,7 @@ class PauseSubState extends MusicBeatSubstate
 					case "End Song":
 						close();
 						PlayState.instance.finishSong(true);
+						PlayState.resetPlayData();
 					case 'Toggle Botplay':
 						PlayState.instance.cpuControlled = !PlayState.instance.cpuControlled;
 						PlayState.changedDifficulty = true;
@@ -406,6 +409,7 @@ class PauseSubState extends MusicBeatSubstate
 						FlxG.sound.playMusic(Paths.music('bloodstained'));
 						PlayState.changedDifficulty = false;
 						PlayState.chartingMode = false;
+						PlayState.resetPlayData();
 				}
 			}
 		}

@@ -488,6 +488,42 @@ class Huds extends FlxGroup
 		}
 	}
 
+	var checkpointMarkersOnTimebar:Array<AttachedSprite> = [];
+	public function markCheckpointOnTimebar(time:Float, hidden:Bool = false){
+		if(!hidden){ //Is it hidden? Don't create the marker in the first place then lol
+			var marker:AttachedSprite = new AttachedSprite('checkPoint');
+			marker.sprTracker = timeBar;
+			marker.scrollFactor.set();
+			marker.visible = true;
+			marker.cameras = [PlayState.instance.camInterfaz];
+
+			marker.color = FlxColor.RED;
+
+			//calculate percent where checkpoint is
+			var songLengthDummy = getSongLengthFake();
+			
+			var curTime:Float = time;
+
+			if(curTime < 0) curTime = 0;
+			var whatPercent:Float = (curTime / songLengthDummy);
+
+			trace("Checkpoint at percent " + whatPercent);
+
+			//placing checkpoint on bar
+			var timebarWidth:Float = timeBar.width;
+			marker.xAdd = (timebarWidth*whatPercent)-2;
+			marker.yAdd = -5;
+			add(marker);
+			checkpointMarkersOnTimebar.push(marker);
+		}
+	}
+
+	function getSongLengthFake():Float{
+		var songLengthDummy = PlayState.instance.songLength;
+
+		return songLengthDummy;
+	}
+
 	public function beatHit()
 	{
 		// if (hudadded)
