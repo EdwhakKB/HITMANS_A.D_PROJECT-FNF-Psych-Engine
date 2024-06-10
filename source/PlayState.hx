@@ -2231,7 +2231,7 @@ class PlayState extends MusicBeatState
 			Conductor.bpm=checkpoint.BPM;
 
 			updateScore(true);
-			skipIntro(checkpoint.time - Conductor.crochet * 8);
+			skipIntro(checkpoint.time - Conductor.crochet * 5);
 
 			playfieldRenderer.modifierTable.clear();
             playfieldRenderer.modchart.loadModifiers();
