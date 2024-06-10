@@ -1808,13 +1808,15 @@ class PlayState extends MusicBeatState
 			startingfromCheckpoint=true;
 			trace("Starting from checkpoint!");
 
-			playfieldRenderer.modifierTable.clear();
-            playfieldRenderer.modchart.loadModifiers();
-			playfieldRenderer.tweenManager.completeAll();
-            playfieldRenderer.eventManager.clearEvents();
-            playfieldRenderer.modifierTable.resetMods();
-            playfieldRenderer.modchart.loadEvents();
-			playfieldRenderer.update(0);
+			if (SONG.notITG && notITGMod){
+				playfieldRenderer.modifierTable.clear();
+				playfieldRenderer.modchart.loadModifiers();
+				playfieldRenderer.tweenManager.completeAll();
+				playfieldRenderer.eventManager.clearEvents();
+				playfieldRenderer.modifierTable.resetMods();
+				playfieldRenderer.modchart.loadEvents();
+				playfieldRenderer.update(0);
+			}
 		}
 		if(startedCountdown) {
 			callOnScripts('onStartCountdown');
@@ -2233,13 +2235,15 @@ class PlayState extends MusicBeatState
 			updateScore(true);
 			skipIntro(checkpoint.time - Conductor.crochet * 5);
 
-			playfieldRenderer.modifierTable.clear();
-            playfieldRenderer.modchart.loadModifiers();
-			playfieldRenderer.tweenManager.completeAll();
-            playfieldRenderer.eventManager.clearEvents();
-            playfieldRenderer.modifierTable.resetMods();
-            playfieldRenderer.modchart.loadEvents();
-			playfieldRenderer.update(0);
+			if (SONG.notITG && notITGMod){
+				playfieldRenderer.modifierTable.clear();
+				playfieldRenderer.modchart.loadModifiers();
+				playfieldRenderer.tweenManager.completeAll();
+				playfieldRenderer.eventManager.clearEvents();
+				playfieldRenderer.modifierTable.resetMods();
+				playfieldRenderer.modchart.loadEvents();
+				playfieldRenderer.update(0);
+			}
 			
 			trace("fixing modchart");
 		}

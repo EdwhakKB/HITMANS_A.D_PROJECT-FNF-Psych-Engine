@@ -25,7 +25,7 @@ class PauseSubState extends MusicBeatSubstate
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Restart From Checkpoint' ,'Change Difficulty', 'Options', 'Gameplay Modifiers', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Gameplay Modifiers', 'Exit to menu'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 	var unPauseTimer:FlxTimer;
@@ -62,6 +62,10 @@ class PauseSubState extends MusicBeatSubstate
 		super();
 		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
 
+		if(PlayState.checkpointHistory.length > 0) //must add the "restartFromCheckpoint" option if there is a checkpoint inside song ig?
+		{
+			menuItemsOG.insert(3, 'Restart From Checkpoint');
+		}
 		if(PlayState.chartingMode)
 		{
 			menuItemsOG.insert(2, 'Leave Charting Mode');
@@ -70,11 +74,11 @@ class PauseSubState extends MusicBeatSubstate
 			if(!PlayState.instance.startingSong)
 			{
 				num = 1;
-				menuItemsOG.insert(3, 'Skip Time');
+				menuItemsOG.insert(4, 'Skip Time');
 			}
-			menuItemsOG.insert(3 + num, 'End Song');
-			menuItemsOG.insert(4 + num, 'Toggle Practice Mode');
-			menuItemsOG.insert(5 + num, 'Toggle Botplay');
+			menuItemsOG.insert(4 + num, 'End Song');
+			menuItemsOG.insert(5 + num, 'Toggle Practice Mode');
+			menuItemsOG.insert(6 + num, 'Toggle Botplay');
 		}
 		menuItems = menuItemsOG;
 
@@ -337,7 +341,7 @@ class PauseSubState extends MusicBeatSubstate
 							PlayState.seenCutscene = true; //Keep this the same tho
 							restartSong(false, true);
 						}else{
-							FlxG.sound.play(Paths.sound('cancelMenu'));
+							FlxG.sound.play(Paths.sound('cancelMenu')); //in case it still spawns don't crash the song
 						}
 					case 'Change Difficulty':
 						menuItems = difficultyChoices;
