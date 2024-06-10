@@ -259,7 +259,7 @@ class OptionsMenu extends MusicBeatSubstate
 					new TimeBarOption("What should the Time Bar display?"),
 					new ScoreZoomOption("Disables the Score text zooming everytime you hit a note."),
 					new HealthBarVisibility("Toggles health bar transperancy"),
-					new QuantOption("Change the Quantize colors"),
+					new QuantizationOption("Allow note quantization"),
 					new MineSkin("Change the Mine Note Skin"),
 				]),
 				new OptionCata(640, 100, "Misc", [
