@@ -765,15 +765,20 @@ class ShrinkModifier extends Modifier
 
 class BeatXModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        subValues.set('mult', new ModifierSubValue(1.0));
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += currentValue * getShift(noteData, lane, curPos, pf);
+        noteData.x += currentValue * getShift(noteData, lane, curPos, pf, subValues.get('speed').value, subValues.get('mult').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
         noteMath(noteData, lane, 0, pf);
     }
-    public static function getShift(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int):Float
+    public static function getShift(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int, speed:Float, mult:Float):Float
     {
         var fAccelTime = 0.2;
         var fTotalTime = 0.5;
@@ -785,8 +790,10 @@ class BeatXModifier extends Modifier
         //fAccelTime /= fDiv;
         //fTotalTime /= fDiv;
 
+        var time = Modifier.beat * speed;
+        var posMult = mult;
         /* offset by VisualDelayEffect seconds */
-        var fBeat = Modifier.beat + fAccelTime;
+        var fBeat = time + fAccelTime;
         //fBeat /= fDiv;
 
         var bEvenBeat = ( Math.floor(fBeat) % 2 ) != 0;
@@ -815,16 +822,21 @@ class BeatXModifier extends Modifier
         if( bEvenBeat )
             fAmount *= -1;
 
-        var fShift = 20.0*fAmount*FlxMath.fastSin( (curPos *0.01) + (Math.PI/2.0) );
+        var fShift = 20.0*fAmount*FlxMath.fastSin( (curPos * 0.01 * posMult) + (Math.PI/2.0) );
         return fShift;
     }
 }
 
 class BeatYModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        subValues.set('mult', new ModifierSubValue(1.0));
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.y += currentValue * BeatXModifier.getShift(noteData, lane, curPos, pf);
+        noteData.y += currentValue * BeatXModifier.getShift(noteData, lane, curPos, pf, subValues.get('speed').value, subValues.get('mult').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -834,9 +846,14 @@ class BeatYModifier extends Modifier
 
 class BeatZModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        subValues.set('mult', new ModifierSubValue(1.0));
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.z += currentValue * BeatXModifier.getShift(noteData, lane, curPos, pf);
+        noteData.z += currentValue * BeatXModifier.getShift(noteData, lane, curPos, pf, subValues.get('speed').value, subValues.get('mult').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -1911,9 +1928,9 @@ class ZigZagXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = 112.0 * subValues.get('mult').value;
+        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
         var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos) + (mult/2);
+        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
         var funny:Float = (ppp + mult) % mm;
         var result:Float = funny - mult;
 
@@ -1932,9 +1949,9 @@ class ZigZagYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = 112.0 * subValues.get('mult').value;
+        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
         var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos) + (mult/2);
+        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
         var funny:Float = (ppp + mult) % mm;
         var result:Float = funny - mult;
 
@@ -1953,9 +1970,9 @@ class ZigZagZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = 112.0 * subValues.get('mult').value;
+        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
         var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos) + (mult/2);
+        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
         var funny:Float = (ppp + mult) % mm;
         var result:Float = funny - mult;
 
@@ -1974,10 +1991,12 @@ class SawToothXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += curPos % subValues.get('mult').value/2.0 * currentValue;
+        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
+        noteData.x += ((curPos*0.45) % mult/2) * currentValue;
     }
 }
 
+//for now sawTooth doesn't work as good as it should so it still its here, but again its not properly done
 class SawToothYModifier extends Modifier
 {
     override function setupSubValues()
@@ -1986,7 +2005,8 @@ class SawToothYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.y += curPos % subValues.get('mult').value/2.0 * currentValue;
+        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
+        noteData.y += ((curPos*0.45) % mult/2) * currentValue;
     }
 }
 
@@ -1998,7 +2018,8 @@ class SawToothZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.z += curPos % subValues.get('mult').value/2.0 * currentValue;
+        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
+        noteData.z += ((curPos*0.45) % mult/2) * currentValue;
     }
 }
 
