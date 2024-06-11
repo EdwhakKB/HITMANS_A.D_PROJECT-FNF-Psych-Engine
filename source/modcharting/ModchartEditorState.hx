@@ -136,7 +136,7 @@ class ModchartEditorState extends MusicBeatState
         IncomingAngleModifier, InvertSineModifier, DizzyModifier, TordnadoModifier,
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
         BounceXModifier, BounceYModifier, BounceZModifier, BumpyModifier, BeatXModifier, BeatYModifier, BeatZModifier, 
-        ShrinkModifier,
+        ShrinkModifier, ZigZagXModifier, ZigZagYModifier, ZigZagZModifier, SawToothXModifier, SawToothYModifier, SawToothZModifier,
         //Target Modifiers
         RotateModifier, StrumLineRotateModifier, JumpTargetModifier,
         LanesModifier,
@@ -2608,6 +2608,18 @@ class ModchartEditorState extends MusicBeatState
                 explainString = "Modifier used to make notes shake in their on possition";
             case 'TordnadoModifier':
                 explainString = "Modifier similar to invertSine, but notes will do their own path instead";
+            case 'SawToothXModifier':
+		        explainString = "Modifier used to make notes do a Saw Effect into their X";
+            case 'SawToothYModifier':
+                explainString = "Modifier used to make notes do a Saw Effect into their Y";
+            case 'SawToothZModifier':
+                explainString = "Modifier used to make notes do a Saw Effect into their Z";
+            case "ZigZagXModifier":
+                explainString = "Modifier used to make notes do a ZigZag Effect into their X";
+            case "ZigZagYModifier":
+                explainString = "Modifier used to make notes do a ZigZag Effect into their Y";
+            case "ZigZagZModifier":
+                explainString = "Modifier used to make notes do a ZigZag Effect into their Z";
             case 'ArrowPath':
                 explainString = "This modifier its able to make custom paths for the mods so this should be a very helpful tool";
         }

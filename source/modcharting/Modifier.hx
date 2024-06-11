@@ -1903,32 +1903,102 @@ class ParalysisModifier extends Modifier
     }  
 }
 
-class ZigZagModifier extends Modifier
+class ZigZagXModifier extends Modifier
 {
     override function setupSubValues()
     {
-        baseValue = 0.0;
-        currentValue = 1.0;
-        subValues.set('amplitude', new ModifierSubValue(1.0));
-        subValues.set('longitude', new ModifierSubValue(1.0));
+        subValues.set('mult', new ModifierSubValue(1.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        // thank you an ammar for the math LOL
+        var mult:Float = 112.0 * subValues.get('mult').value;
+        var mm:Float = mult * 2;
+        var ppp:Float = Math.abs(curPos) + (mult/2);
+        var funny:Float = (ppp + mult) % mm;
+        var result:Float = funny - mult;
 
-        var d = subValues.get('amplitude').value;
-        var c = subValues.get('longitude').value;
+        if (ppp % mm * 2 >= mm) result *= -1;
+        result -= mult/2;
 
-        var a = c * (-1+2 * mod(Math.floor((d*curPos)),2));
-        var b = -c * mod(Math.floor((d*curPos)),2);
-        var x = ((d*curPos)-Math.floor((d*curPos))) * a+b+(c/2);
-
-        noteData.x += x*currentValue;
-
+        noteData.x += result*currentValue;
     }
-    function mod(a:Float, b:Float):Float
+}
+
+class ZigZagYModifier extends Modifier
+{
+    override function setupSubValues()
     {
-        return (a/b);
+        subValues.set('mult', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var mult:Float = 112.0 * subValues.get('mult').value;
+        var mm:Float = mult * 2;
+        var ppp:Float = Math.abs(curPos) + (mult/2);
+        var funny:Float = (ppp + mult) % mm;
+        var result:Float = funny - mult;
+
+        if (ppp % mm * 2 >= mm) result *= -1;
+        result -= mult/2;
+
+        noteData.y += result*currentValue;
+    }
+}
+
+class ZigZagZModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('mult', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var mult:Float = 112.0 * subValues.get('mult').value;
+        var mm:Float = mult * 2;
+        var ppp:Float = Math.abs(curPos) + (mult/2);
+        var funny:Float = (ppp + mult) % mm;
+        var result:Float = funny - mult;
+
+        if (ppp % mm * 2 >= mm) result *= -1;
+        result -= mult/2;
+
+        noteData.z += result*currentValue;
+    }
+}
+
+class SawToothXModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('mult', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.x += curPos % subValues.get('mult').value/2.0 * currentValue;
+    }
+}
+
+class SawToothYModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('mult', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.y += curPos % subValues.get('mult').value/2.0 * currentValue;
+    }
+}
+
+class SawToothZModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('mult', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.z += curPos % subValues.get('mult').value/2.0 * currentValue;
     }
 }
 
