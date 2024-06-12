@@ -669,7 +669,7 @@ class SpeedModifier extends Modifier
 }
 
 
-class StealthModifier extends Modifier
+class AlphaModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
@@ -681,9 +681,17 @@ class StealthModifier extends Modifier
     }
 }
 
-class NoteStealthModifier extends Modifier
+class StealthModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.alpha *= 1-currentValue;
+    }
+}
+
+class DarkModifier extends Modifier
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
         noteData.alpha *= 1-currentValue;
     }
@@ -1204,14 +1212,6 @@ class JumpNotesModifier extends Modifier
         
 
         noteData.y += (beatVal*(Conductor.stepCrochet*currentValue))*renderer.getCorrectScrollSpeed()*0.45*scrollSwitch;
-    }
-}
-
-class LaneStealthModifier extends Modifier
-{
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteData.alpha *= 1-currentValue;
     }
 }
 

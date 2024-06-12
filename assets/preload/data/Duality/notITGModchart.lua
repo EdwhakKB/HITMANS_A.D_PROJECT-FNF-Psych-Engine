@@ -6,11 +6,11 @@ function onCreatePost()
     startMod('ScaleY','ScaleYModifier','',-1)
     startMod('ScaleX','ScaleXModifier','',-1)
     startMod('Beat', 'BeatXModifier','',-1)
-    startMod('AlphaO', 'StealthModifier','OPPONENT',-1)
+    startMod('AlphaO', 'AlphaModifier','OPPONENT',-1)
     startMod('BeatY', 'BeatYModifier','',-1)
     startMod('Z', 'ZModifier','PLAYER', -1)
     ----PF0/default
-    startMod('AlphaPF0', 'StealthModifier','PLAYER',0)
+    startMod('AlphaPF0', 'AlphaModifier','PLAYER',0)
     startMod('backInPF0','BrakeModifier','PLAYER',0)
     startMod('ShrinkPF0','ShrinkModifier','PLAYER',0)
     startMod('SLRPF0','StrumLineRotateModifier','PLAYER',0)
@@ -20,21 +20,21 @@ function onCreatePost()
     
     ----PF1
     addPlayfield(0,0,0)
-    startMod('AlphaPF1', 'StealthModifier','PLAYER',1)
+    startMod('AlphaPF1', 'AlphaModifier','PLAYER',1)
     startMod('ZPF1', 'ZModifier','PLAYER',1)
     startMod('XPF1', 'XModifier','PLAYER',1)
     startMod('YPF1', 'YModifier','PLAYER',1)
 
     ----PF2
     addPlayfield(0,0,0)
-    startMod('AlphaPF2', 'StealthModifier','PLAYER',2)
+    startMod('AlphaPF2', 'AlphaModifier','PLAYER',2)
     startMod('ZPF2', 'ZModifier','PLAYER',2)
     startMod('XPF2', 'XModifier','PLAYER',2)
     startMod('YPF2', 'YModifier','PLAYER',2)
 
     ----PF3
     addPlayfield(0,0,0)
-    startMod('AlphaPF3', 'StealthModifier','PLAYER',3)
+    startMod('AlphaPF3', 'AlphaModifier','PLAYER',3)
     startMod('ZPF3', 'ZModifier','PLAYER',3)
     startMod('XPF3', 'XModifier','PLAYER',3)
     startMod('RevPF3','ReverseModifier','PLAYER',3)
@@ -42,7 +42,7 @@ function onCreatePost()
 
     ----PF4
     addPlayfield(0,0,0)
-    startMod('AlphaPF4', 'StealthModifier','PLAYER',4)
+    startMod('AlphaPF4', 'AlphaModifier','PLAYER',4)
     startMod('ZPF4', 'ZModifier','PLAYER',4)
     startMod('XPF4', 'XModifier','PLAYER',4)
     startMod('RevPF4','ReverseModifier','PLAYER',4)
@@ -50,7 +50,7 @@ function onCreatePost()
 
     ----PF5
     addPlayfield(0,0,0)
-    startMod('AlphaPF5', 'StealthModifier','PLAYER',5)
+    startMod('AlphaPF5', 'AlphaModifier','PLAYER',5)
     startMod('ZPF5', 'ZModifier','PLAYER',5)
     startMod('XPF5', 'XModifier','PLAYER',5)
     startMod('RevPF5','ReverseModifier','PLAYER',5)

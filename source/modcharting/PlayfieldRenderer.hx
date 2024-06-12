@@ -433,6 +433,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         //render that shit
         daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
 
+        daNote.mesh.scale.x = noteData.scaleX * (1/-thisNotePos.z); //fixes small gaps ig??
+
         daNote.mesh.cameras = this.cameras;
         daNote.mesh.draw();
     }

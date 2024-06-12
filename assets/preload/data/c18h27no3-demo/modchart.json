@@ -44,7 +44,7 @@
 		],
 		[
 			"AlphOp",
-			"StealthModifier",
+			"AlphaModifier",
 			"Opponent",
 			-1,
 			3

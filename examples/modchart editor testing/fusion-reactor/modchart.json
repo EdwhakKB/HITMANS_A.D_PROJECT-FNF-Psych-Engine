@@ -2,13 +2,13 @@
 	"modifiers": [
 		[
 			"PF1Alpha",
-			"StealthModifier",
+			"AlphaModifier",
 			"",
 			1
 		],
 		[
 			"PF2Alpha",
-			"StealthModifier",
+			"AlphaModifier",
 			"",
 			2
 		],
@@ -128,13 +128,13 @@
 		],
 		[
 			"alpha",
-			"StealthModifier",
+			"AlphaModifier",
 			"",
 			-1
 		],
 		[
 			"opponentAlpha",
-			"StealthModifier",
+			"AlphaModifier",
 			"opponent",
 			-1
 		],

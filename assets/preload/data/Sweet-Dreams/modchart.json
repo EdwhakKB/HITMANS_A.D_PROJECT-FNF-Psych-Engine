@@ -2,7 +2,7 @@
 	"modifiers": [
 		[
 			"OpStealth",
-			"StealthModifier",
+			"AlphaModifier",
 			"Opponent",
 			-1,
 			-1
@@ -86,14 +86,14 @@
 		],
 		[
 			"Pf1Stealth",
-			"StealthModifier",
+			"AlphaModifier",
 			"All",
 			1,
 			-1
 		],
 		[
 			"Pf2Stealth",
-			"StealthModifier",
+			"AlphaModifier",
 			"All",
 			2,
 			-1
@@ -163,21 +163,21 @@
 		],
 		[
 			"StealthTargetPF1",
-			"LaneStealthModifier",
+			"DarkModifier",
 			"All",
 			1,
 			-1
 		],
 		[
 			"StealthTargetPF2",
-			"LaneStealthModifier",
+			"DarkModifier",
 			"All",
 			2,
 			-1
 		],
 		[
 			"StealthNotesPF0",
-			"NoteStealthModifier",
+			"StealthModifier",
 			"All",
 			0,
 			-1
@@ -198,7 +198,7 @@
 		],
 		[
 			"LastAlpha",
-			"StealthModifier",
+			"AlphaModifier",
 			"Player",
 			0,
 			-1

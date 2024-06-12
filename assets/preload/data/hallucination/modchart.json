@@ -2,42 +2,42 @@
 	"modifiers": [
 		[
 			"OpAlpha",
-			"StealthModifier",
+			"AlphaModifier",
 			"Opponent",
 			-1,
 			-1
 		],
 		[
 			"PlAlpha",
-			"StealthModifier",
+			"AlphaModifier",
 			"Player",
 			-1,
 			-1
 		],
 		[
 			"PlAlpha0",
-			"StealthModifier",
+			"AlphaModifier",
 			"Lane",
 			-1,
 			4
 		],
 		[
 			"PlAlpha1",
-			"StealthModifier",
+			"AlphaModifier",
 			"Lane",
 			-1,
 			5
 		],
 		[
 			"PlAlpha2",
-			"StealthModifier",
+			"AlphaModifier",
 			"Lane",
 			-1,
 			6
 		],
 		[
 			"PlAlpha3",
-			"StealthModifier",
+			"AlphaModifier",
 			"Lane",
 			-1,
 			7
@@ -275,7 +275,7 @@
 		],
 		[
 			"Pf1Alph",
-			"StealthModifier",
+			"AlphaModifier",
 			"Player",
 			1,
 			-1
@@ -324,7 +324,7 @@
 		],
 		[
 			"OpPf1Alph",
-			"StealthModifier",
+			"AlphaModifier",
 			"Opponent",
 			1,
 			-1
@@ -338,7 +338,7 @@
 		],
 		[
 			"FinalThing2",
-			"StealthModifier",
+			"AlphaModifier",
 			"All",
 			-1,
 			-1

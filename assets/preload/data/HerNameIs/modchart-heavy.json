@@ -9,14 +9,14 @@
 		],
 		[
 			"StealthOP",
-			"StealthModifier",
+			"AlphaModifier",
 			"Opponent",
 			-1,
 			-1
 		],
 		[
 			"StealthPL",
-			"StealthModifier",
+			"AlphaModifier",
 			"Player",
 			-1,
 			-1
@@ -268,7 +268,7 @@
 		],
 		[
 			"SteathPF1",
-			"StealthModifier",
+			"AlphaModifier",
 			"Player",
 			1,
 			-1

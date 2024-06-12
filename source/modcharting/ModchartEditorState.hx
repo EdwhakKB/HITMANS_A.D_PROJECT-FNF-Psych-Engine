@@ -130,7 +130,7 @@ class ModchartEditorState extends MusicBeatState
         SpeedModifier, BoostModifier, BrakeModifier, BoomerangModifier, WaveingModifier,
         TwirlModifier, RollModifier,
         //Stealth Modifiers
-        StealthModifier, NoteStealthModifier, LaneStealthModifier,
+        AlphaModifier, StealthModifier, DarkModifier,
         SuddenModifier, HiddenModifier, VanishModifier, BlinkModifier,
         //Path Modifiers
         IncomingAngleModifier, InvertSineModifier, DizzyModifier, TordnadoModifier,
@@ -2484,11 +2484,11 @@ class ModchartEditorState extends MusicBeatState
 		        explainString = "Modifier used to make notes and targets bigger or smaller (Only in Y)";
             case 'SpeedModifier':
 		        explainString = "Modifier used to make notes be faster or slower";
-            case 'StealthModifier':
+            case 'AlphaModifier':
 		        explainString = "Modifier used to change notes and targets alpha";
-            case 'NoteStealthModifier':
+            case 'StealthModifier':
 		        explainString = "Modifier used to change notes alpha";
-            case 'LaneStealthModifier':
+            case 'DarkModifier':
 		        explainString = "Modifier used to change targets alpha";
             case 'InvertModifier':
 		        explainString = "Modifier used to invert notes and targets X poss (down/left/right/up)";

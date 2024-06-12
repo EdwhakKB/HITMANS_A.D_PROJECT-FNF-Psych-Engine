@@ -2,7 +2,7 @@
 	"modifiers": [
 		[
 			"alphOp",
-			"StealthModifier",
+			"AlphaModifier",
 			"Opponent",
 			-1,
 			-1
@@ -128,7 +128,7 @@
 		],
 		[
 			"alphaPl",
-			"StealthModifier",
+			"AlphaModifier",
 			"Player",
 			-1,
 			-1
