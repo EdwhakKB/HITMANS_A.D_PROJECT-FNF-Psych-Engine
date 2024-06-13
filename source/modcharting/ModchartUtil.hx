@@ -192,7 +192,7 @@ class ModchartUtil
         yOffsetToCenter += (offsetY * -zPerspectiveOffset);
 
         var xPerspective = xOffsetToCenter*(1/tanHalfFOV);
-        var yPerspective = yOffsetToCenter*tanHalfFOV;
+        var yPerspective = yOffsetToCenter/(1/tanHalfFOV);
         xPerspective /= -zPerspectiveOffset;
         yPerspective /= -zPerspectiveOffset;
 

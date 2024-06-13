@@ -281,13 +281,13 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
                 var sustainTimeThingy:Float = 0;
 
                 //just causes too many issues lol, might fix it at some point
-                /*if (notes.members[i].animation.curAnim.name.endsWith('end') && ClientPrefs.downScroll)
-                {
-                    if (noteDist > 0)
-                        sustainTimeThingy = (NoteMovement.getFakeCrochet()/4)/2; //fix stretched sustain ends (downscroll)
-                    //else 
-                        //sustainTimeThingy = (-NoteMovement.getFakeCrochet()/4)/songSpeed;
-                }*/
+                // if (notes.members[i].animation.curAnim.name.endsWith('end') && ClientPrefs.downScroll) //checking rn LMAO
+                // {
+                //     if (noteDist > 0)
+                //         sustainTimeThingy = (ModchartUtil.getFakeCrochet()/4)/2; //fix stretched sustain ends (downscroll)
+                //     //else 
+                //         //sustainTimeThingy = (-NoteMovement.getFakeCrochet()/4)/songSpeed;
+                // }
                     
                 var curPos = getNoteCurPos(i, sustainTimeThingy);
                 curPos = modifierTable.applyCurPosMods(lane, curPos, pf);
@@ -433,7 +433,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         //render that shit
         daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
 
-        daNote.mesh.scale.x = noteData.scaleX * (1/-thisNotePos.z); //fixes small gaps ig??
+        // daNote.mesh.scale.x = NoteMovement.defaultScale[lane] * noteData.scaleX * (1/-thisNotePos.z); //fixes small gaps ig??
 
         daNote.mesh.cameras = this.cameras;
         daNote.mesh.draw();

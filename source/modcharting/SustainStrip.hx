@@ -51,34 +51,34 @@ class SustainStrip extends FlxStrip
         {
             verts.push(nextNotePos.x);
             verts.push(nextNotePos.y); //slight offset to fix small gaps
-            verts.push(nextNotePos.x+(daNote.frameWidth*(1/-nextNotePos.z)*noteData.scaleX));
+            verts.push(nextNotePos.x+((daNote.frameWidth*(1/-nextNotePos.z))*noteData.scaleX));
             verts.push(nextNotePos.y);
 
             verts.push(nextHalfNotePos.x);
             verts.push(nextHalfNotePos.y);
-            verts.push(nextHalfNotePos.x+(daNote.frameWidth*(1/-nextHalfNotePos.z)*noteData.scaleX));
+            verts.push(nextHalfNotePos.x+((daNote.frameWidth*(1/-nextHalfNotePos.z))*noteData.scaleX));
             verts.push(nextHalfNotePos.y);
 
             verts.push(thisNotePos.x);
             verts.push(thisNotePos.y);
-            verts.push(thisNotePos.x+(daNote.frameWidth*(1/-thisNotePos.z)*nextNotePos.scaleX));
+            verts.push(thisNotePos.x+((daNote.frameWidth*(1/-thisNotePos.z))*nextNotePos.scaleX));
             verts.push(thisNotePos.y);
         }
         else 
         {
             verts.push(thisNotePos.x);
             verts.push(thisNotePos.y); //fliped this with the down ones (last) to test if it bugs of it fixes itself
-            verts.push(thisNotePos.x+(daNote.frameWidth*(1/-thisNotePos.z)*noteData.scaleX));
+            verts.push(thisNotePos.x+((daNote.frameWidth*(1/-thisNotePos.z))*noteData.scaleX));
             verts.push(thisNotePos.y);
 
             verts.push(nextHalfNotePos.x);
             verts.push(nextHalfNotePos.y);
-            verts.push(nextHalfNotePos.x+(daNote.frameWidth*(1/-nextHalfNotePos.z)*noteData.scaleX));
+            verts.push(nextHalfNotePos.x+((daNote.frameWidth*(1/-nextHalfNotePos.z))*noteData.scaleX));
             verts.push(nextHalfNotePos.y);
 
             verts.push(nextNotePos.x);
             verts.push(nextNotePos.y); //slight offset to fix small gaps
-            verts.push(nextNotePos.x+(daNote.frameWidth*(1/-nextNotePos.z)*nextNotePos.scaleX));
+            verts.push(nextNotePos.x+((daNote.frameWidth*(1/-nextNotePos.z))*nextNotePos.scaleX));
             verts.push(nextNotePos.y);
         }
         vertices = new DrawData(12, true, verts);
