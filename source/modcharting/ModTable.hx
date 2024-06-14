@@ -69,8 +69,14 @@ class ModTable
         add(new ConfusionModifier('confusion'));
         for (i in 0...((NoteMovement.keyCount+NoteMovement.playerKeyCount)))
         {
-            add(new StrumsModifier('strum'+i, ModifierType.LANESPECIFIC));
-            setModTargetLane('strum'+i, i);
+            add(new XModifier('x'+i, ModifierType.LANESPECIFIC));
+            add(new YModifier('y'+i, ModifierType.LANESPECIFIC));
+            add(new ZModifier('z'+i, ModifierType.LANESPECIFIC));
+            add(new ConfusionModifier('confusion'+i, ModifierType.LANESPECIFIC));
+            setModTargetLane('x'+i, i);
+            setModTargetLane('y'+i, i);
+            setModTargetLane('z'+i, i);
+            setModTargetLane('confusion'+i, i);
         }
     }
 
