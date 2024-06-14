@@ -62,20 +62,15 @@ class ModTable
     public function loadDefaultModifiers() : Void
     {
         //default modifiers
+        //got a sigly rework to make this shit work better ig? (added all modifiers so lua and hxscript can use them and no need add)
         add(new XModifier('x'));
         add(new YModifier('y'));
         add(new ZModifier('z'));
         add(new ConfusionModifier('confusion'));
         for (i in 0...((NoteMovement.keyCount+NoteMovement.playerKeyCount)))
         {
-            add(new XModifier('x'+i, ModifierType.LANESPECIFIC));
-            add(new YModifier('y'+i, ModifierType.LANESPECIFIC));
-            add(new ZModifier('z'+i, ModifierType.LANESPECIFIC));
-            add(new ConfusionModifier('confusion'+i, ModifierType.LANESPECIFIC));
-            setModTargetLane('x'+i, i);
-            setModTargetLane('y'+i, i);
-            setModTargetLane('z'+i, i);
-            setModTargetLane('confusion'+i, i);
+            add(new StrumsModifier('strum'+i, ModifierType.LANESPECIFIC));
+            setModTargetLane('strum'+i, i);
         }
     }
 
