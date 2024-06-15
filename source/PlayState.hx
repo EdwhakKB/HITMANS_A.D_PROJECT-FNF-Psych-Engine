@@ -1816,6 +1816,7 @@ class PlayState extends MusicBeatState
 				playfieldRenderer.modifierTable.resetMods();
 				playfieldRenderer.modchart.loadEvents();
 				playfieldRenderer.update(0);
+				ModchartFuncs.loadLuaFunctions();
 			}
 		}
 		if(startedCountdown) {
@@ -2243,6 +2244,7 @@ class PlayState extends MusicBeatState
 				playfieldRenderer.modifierTable.resetMods();
 				playfieldRenderer.modchart.loadEvents();
 				playfieldRenderer.update(0);
+				ModchartFuncs.loadLuaFunctions();
 			}
 			
 			trace("fixing modchart");
