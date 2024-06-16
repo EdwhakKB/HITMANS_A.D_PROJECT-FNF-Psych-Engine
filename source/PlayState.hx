@@ -3127,7 +3127,7 @@ class PlayState extends MusicBeatState
 					antiCheat();
 					// openModchartEditor();
 				}else{
-					openModchartEditor();
+					openSelectModchartEditorSubState();
 				}
 			}else if (FlxG.keys.anyJustPressed(debugKeysChart))
 			{
@@ -3547,13 +3547,24 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	function openModchartEditor()
+	function openSelectModchartEditorSubState()
+	{
+		openSubState(new SLSelectMDEditor());
+	}
+
+	function openModchartEditor(?old:Bool)
 	{
 		resetPlayData();
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
-		MusicBeatState.switchState(new modcharting.ModchartEditorState());
+		if (!old) {
+			MusicBeatState.switchState(new modcharting.NewModchartEditorState());
+		}
+		else {
+			MusicBeatState.switchState(new modcharting.ModchartEditorState());
+		}
+
 		chartingMode = true;
 	
 		#if desktop
