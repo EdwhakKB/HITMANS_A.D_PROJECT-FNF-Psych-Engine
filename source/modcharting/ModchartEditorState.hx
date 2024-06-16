@@ -135,7 +135,7 @@ class ModchartEditorState extends MusicBeatState
         //Path Modifiers
         IncomingAngleModifier, InvertSineModifier, DizzyModifier,
         TornadoModifier, TornadoYModifier, TornadoZModifier,
-        EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
+        EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier, EaseCurveScaleModifier,
         BounceXModifier, BounceYModifier, BounceZModifier, BounceAngleModifier, BounceScaleModifier,
         BumpyModifier,
         BeatXModifier, BeatYModifier, BeatZModifier, BeatAngleModifier, BeatScaleModifier,
