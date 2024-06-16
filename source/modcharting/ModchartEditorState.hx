@@ -117,14 +117,14 @@ class ModchartEditorState extends MusicBeatState
         SkewModifier, SkewXModifier, SkewYModifier,
         //Modifiers with curpos math!!!
         //Drunk Modifiers
-        DrunkXModifier, DrunkYModifier, DrunkZModifier, DrunkAngleModifier,
-        TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier, TanDrunkAngleModifier,
-        CosecantXModifier, CosecantYModifier, CosecantZModifier,
+        DrunkXModifier, DrunkYModifier, DrunkZModifier, DrunkAngleModifier, DrunkScaleModifier,
+        TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier, TanDrunkAngleModifier, TanDrunkScaleModifier,
+        CosecantXModifier, CosecantYModifier, CosecantZModifier, CosecantAngleModifier, CosecantScaleModifier,
         //Tipsy Modifiers
-        TipsyXModifier, TipsyYModifier, TipsyZModifier,
+        TipsyXModifier, TipsyYModifier, TipsyZModifier, TipsyAngleModifier, TipsyScaleModifier,
         //Wave Modifiers
-        WaveXModifier, WaveYModifier, WaveZModifier, WaveAngleModifier,
-        TanWaveXModifier, TanWaveYModifier, TanWaveZModifier, TanWaveAngleModifier,
+        WaveXModifier, WaveYModifier, WaveZModifier, WaveAngleModifier, WaveScaleModifier,
+        TanWaveXModifier, TanWaveYModifier, TanWaveZModifier, TanWaveAngleModifier, TanWaveScaleModifier,
         //Scroll Modifiers
         ReverseModifier, CrossModifier, SplitModifier, AlternateModifier,
         SpeedModifier, BoostModifier, BrakeModifier, BoomerangModifier, WaveingModifier,
@@ -133,10 +133,16 @@ class ModchartEditorState extends MusicBeatState
         AlphaModifier, StealthModifier, DarkModifier,
         SuddenModifier, HiddenModifier, VanishModifier, BlinkModifier,
         //Path Modifiers
-        IncomingAngleModifier, InvertSineModifier, DizzyModifier, TornadoModifier,
+        IncomingAngleModifier, InvertSineModifier, DizzyModifier,
+        TornadoModifier, TornadoYModifier, TornadoZModifier,
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier,
-        BounceXModifier, BounceYModifier, BounceZModifier, BumpyModifier, BeatXModifier, BeatYModifier, BeatZModifier, 
-        ShrinkModifier, ZigZagXModifier, ZigZagYModifier, ZigZagZModifier, SawToothXModifier, SawToothYModifier, SawToothZModifier,
+        BounceXModifier, BounceYModifier, BounceZModifier, BounceAngleModifier, BounceScaleModifier,
+        BumpyModifier,
+        BeatXModifier, BeatYModifier, BeatZModifier, BeatAngleModifier, BeatScaleModifier,
+        ShrinkModifier,
+        ZigZagXModifier, ZigZagYModifier, ZigZagZModifier, ZigZagAngleModifier, ZigZagScaleModifier,
+        SawToothXModifier, SawToothYModifier, SawToothZModifier, SawToothAngleModifier, SawToothScaleModifier,
+        SquareXModifier, SquareYModifier, SquareZModifier, SquareAngleModifier, SquareScaleModifier,
         //Target Modifiers
         RotateModifier, StrumLineRotateModifier, JumpTargetModifier,
         LanesModifier,
@@ -145,7 +151,8 @@ class ModchartEditorState extends MusicBeatState
         NotesModifier,
         //Misc Modifiers
         StrumsModifier, InvertModifier, FlipModifier, JumpModifier,
-        StrumAngleModifier, EaseXModifier, EaseYModifier, EaseZModifier,
+        StrumAngleModifier,
+        EaseXModifier, EaseYModifier, EaseZModifier, EaseAngleModifier, EaseScaleModifier,
         ShakyNotesModifier,
         ArrowPath
     ];
@@ -2442,12 +2449,20 @@ class ModchartEditorState extends MusicBeatState
 		        explainString = "Modifier used to do a wave at Y poss of the notes and targets";
             case 'DrunkZModifier':
 		        explainString = "Modifier used to do a wave at Z (Far, Close) poss of the notes and targets";
+            case 'DrunkAngleModifier':
+                explainString = "Modifier used to do a wave at angle of the notes and targets";
+            case 'DrunkScaleModifier':
+                explainString = "Modifier used to do a wave at scale of the notes and targets";
             case 'TipsyXModifier':
 		        explainString = "Modifier similar to DrunkX but don't affect notes poss";
             case 'TipsyYModifier':
 		        explainString = "Modifier similar to DrunkY but don't affect notes poss";
             case 'TipsyZModifier':
 		        explainString = "Modifier similar to DrunkZ but don't affect notes poss";
+            case 'TipsyAngleModifier':
+                explainString = "Modifier similar to DrunkAngle but don't affect notes poss";
+            case 'TipsyScaleModifier':
+                explainString = "Modifier similar to DrunkScale but don't affect notes poss";
             case 'ReverseModifier':
 		        explainString = "Flip the scroll type (Upscroll/Downscroll)";
             case 'SplitModifier':
@@ -2504,12 +2519,20 @@ class ModchartEditorState extends MusicBeatState
 		        explainString = "Modifier used to move notes and targets Y with a small jump effect";
             case 'BeatZModifier':
 		        explainString = "Modifier used to move notes and targets Z with a small jump effect";
+            case 'BeatScaleModifier':
+                explainString = "Modifier used to scale notes and targets with a small jump effect";
+            case 'BeatAngleModifier':
+                explainString = "Modifier used to rotate notes and targets with a small jump effect";
             case 'BounceXModifier':
 		        explainString = "Modifier similar to beatX but it only affect notes X with a jump effect";
             case 'BounceYModifier':
 		        explainString = "Modifier similar to beatY but it only affect notes Y with a jump effect";
             case 'BounceZModifier':
 		        explainString = "Modifier similar to beatZ but it only affect notes Z with a jump effect";
+            case 'BounceScaleModifier':
+                explainString = "Modifier similar to beatScale but it only affect notes scale with a jump effect";
+            case 'BounceAngleModifier':
+                explainString = "Modifier similar to beatAngle but it only affect notes angle with a jump effect";
             case 'EaseCurveModifier':
 		        explainString = "This enables the EaseModifiers";
             case 'EaseCurveXModifier':
@@ -2540,6 +2563,10 @@ class ModchartEditorState extends MusicBeatState
 		        explainString = "Modifier similar to drunkY but this one will simulate a true wave in Y (don't affect the notes)";
             case 'WaveZModifier':
 		        explainString = "Modifier similar to drunkZ but this one will simulate a true wave in Z (don't affect the notes)";
+            case 'WaveScaleModifier':
+                explainString = "Modifier similar to drunkScale but this one will simulate a true wave in scale (don't affect the notes)";
+            case 'WaveAngleModifier':
+                explainString = "Modifier similar to drunkAngle but this one will simulate a true wave in angle (don't affect the notes)";
             case 'TimeStopModifier':
 		        explainString = "Modifier used to stop the notes at the top/bottom part of your screen to make it hard to read";
             case 'StrumAngleModifier':
@@ -2554,6 +2581,10 @@ class ModchartEditorState extends MusicBeatState
 		        explainString = "Modifier used to make notes go up to down on the screen";
             case 'EaseZModifier':
 		        explainString = "Modifier used to make notes go far to near right on the screen";
+            case 'EaseScaleModifier':
+                explainString = "Modifier used to make notes scale go far to near as scale";
+            case 'EaseAngleModifier':
+                explainString = "Modifier used to make notes angle go far to near as angle";
             case 'HiddenModifier':
                 explainString = "Modifier used to make an alpha boost on notes";
             case 'SuddenModifier':
@@ -2598,28 +2629,50 @@ class ModchartEditorState extends MusicBeatState
                 explainString = "Modifier similar to TanDrunk but uses cosecant instead of tan in Z";
             case 'TanDrunkAngleModifier':
                 explainString = "Modifier similar to TanDrunk but in angle";
-            case 'DrunkAngleModifier':
-                explainString = "Modifier similar to Drunk but in angle";
-            case 'WaveAngleModifier':
-                explainString = "Modifier similar to Wave but in angle";
+            case 'TanDrunkScaleModifier':
+                explainString = "Modifier similar to TanDrunk but in scale";
             case 'TanWaveAngleModifier':
                 explainString = "Modifier similar to TanWave but in angle";
+            case 'TanWaveScaleModifier':
+                explainString = "Modifier similar to TanWave but in scale";
             case 'ShakyNotesModifier':
                 explainString = "Modifier used to make notes shake in their on possition";
             case 'TornadoModifier':
                 explainString = "Modifier similar to invertSine, but notes will do their own path instead";
+            case 'TornadoYModifier':
+                explainString = "Modifier similar to invertSine, but only in Y";
+            case 'TornadoZModifier':
+                explainString = "Modifier similar to invertSine, but only in Z";
             case 'SawToothXModifier':
 		        explainString = "Modifier used to make notes do a Saw Effect into their X";
             case 'SawToothYModifier':
                 explainString = "Modifier used to make notes do a Saw Effect into their Y";
             case 'SawToothZModifier':
                 explainString = "Modifier used to make notes do a Saw Effect into their Z";
+            case 'SawToothAngleModifier':
+                explainString = "Modifier used to make notes do a Saw Effect into their angle";
+            case 'SawToothScaleModifier':
+                explainString = "Modifier used to make notes do a Saw Effect into their scale";
             case "ZigZagXModifier":
                 explainString = "Modifier used to make notes do a ZigZag Effect into their X";
             case "ZigZagYModifier":
                 explainString = "Modifier used to make notes do a ZigZag Effect into their Y";
             case "ZigZagZModifier":
                 explainString = "Modifier used to make notes do a ZigZag Effect into their Z";
+            case "ZigZagAngleModifier":
+                explainString = "Modifier used to make notes do a ZigZag Effect into their angle";
+            case "ZigZagScaleModifier":
+                explainString = "Modifier used to make notes do a ZigZag Effect into their scale";
+            case "SquareXModifier":
+                explainString = "Modifier used to make notes do a Square Effect into their X";
+            case "SquareYModifier":
+                explainString = "Modifier used to make notes do a Square Effect into their Y";
+            case "SquareZModifier":
+                explainString = "Modifier used to make notes do a Square Effect into their Z";
+            case "SquareAngleModifier":
+                explainString = "Modifier used to make notes do a Square Effect into their angle";
+            case "SquareScaleModifier":
+                explainString = "Modifier used to make notes do a Square Effect into their scale";
             case 'ArrowPath':
                 explainString = "This modifier its able to make custom paths for the mods so this should be a very helpful tool";
         }
