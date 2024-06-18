@@ -243,6 +243,16 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (notes.members[noteIndex].isSustainNote && !ModchartUtil.getDownscroll(instance))
             strumTimeOffset += Conductor.stepCrochet; //fix upscroll lol
         #end
+
+        if (notes.members[noteIndex].isSustainNote){
+            strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); 
+            if(ModchartUtil.getDownscroll(instance)){
+                strumTimeOffset -= Std.int(Conductor.stepCrochet); 
+                strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); 
+            }
+            
+        }
+
         var distance = (Conductor.songPosition - notes.members[noteIndex].strumTime) + strumTimeOffset;
         return distance*getCorrectScrollSpeed();
     }
@@ -432,8 +442,6 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         }
         //render that shit
         daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
-
-        // daNote.mesh.scale.x = NoteMovement.defaultScale[lane] * noteData.scaleX * (1/-thisNotePos.z); //fixes small gaps ig??
 
         daNote.mesh.cameras = this.cameras;
         daNote.mesh.draw();

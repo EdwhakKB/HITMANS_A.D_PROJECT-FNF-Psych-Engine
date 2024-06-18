@@ -7,6 +7,9 @@ import game.Note;
 #end
 import flixel.FlxStrip;
 
+import lime.math.Vector2;
+import flixel.math.FlxMath;
+
 class SustainStrip extends FlxStrip
 {
     private static final noteUV:Array<Float> = [
@@ -40,8 +43,39 @@ class SustainStrip extends FlxStrip
             indices.push(ind);
     }
 
+    //spiral holds test
+    private function rotateAround(origin:Vector2, point:Vector2, degrees:Float):Vector2
+    {
+        // public function rotateAround(origin, point, degrees):FlxBasePoint{
+        // public function rotateAround(origin, point, degrees){
+        var angle:Float = degrees * (Math.PI / 180);
+        var ox = origin.x;
+        var oy = origin.y;
+        var px = point.x;
+        var py = point.y;
+    
+        var qx = ox + FlxMath.fastCos(angle) * (px - ox) - FlxMath.fastSin(angle) * (py - oy);
+        var qy = oy + FlxMath.fastSin(angle) * (px - ox) + FlxMath.fastCos(angle) * (py - oy);
+    
+        // point.x = qx;
+        // point.y = qy;
+    
+        return (new Vector2(qx, qy));
+        // return FlxBasePoint.weak(qx, qy);
+        // return qx, qy;
+    }
+
+
+    //Set this to true for spiral holds!
+    //Note, they might cause some visual gaps. Maybe fix later?
+    public var spiralHolds:Bool = true; 
+
     public function constructVertices(noteData:NotePositionData, thisNotePos:Vector3D, nextHalfNotePos:NotePositionData, nextNotePos:NotePositionData, flipGraphic:Bool, reverseClip:Bool)
     {
+        var holdWidth = daNote.frameWidth;
+        var xOffset = daNote.frameWidth/6.5; //FUCK YOU, MAGIC NUMBER GO! MAKE THEM HOLDS CENTERED DAMNIT! 
+
+
         var yOffset = -1; //fix small gaps
         if (reverseClip)
             yOffset *= -1;
@@ -49,37 +83,238 @@ class SustainStrip extends FlxStrip
         var verts:Array<Float> = [];
         if (flipGraphic)
         {
-            verts.push(nextNotePos.x);
-            verts.push(nextNotePos.y); //slight offset to fix small gaps
-            verts.push(nextNotePos.x+((daNote.frameWidth*(1/-nextNotePos.z))*noteData.scaleX));
-            verts.push(nextNotePos.y);
+            var scaleTest = nextNotePos.scaleX;
+            //MAKE IT TAKE IN Z!
+            scaleTest *= (1/-nextNotePos.z);
+            var widthScaled = holdWidth * scaleTest;
+            var scaleChange = widthScaled - holdWidth;
+            var holdLeftSide = 0 - (scaleChange / 2);
+            var holdRightSide = widthScaled - (scaleChange / 2);
+            holdLeftSide -= xOffset;
+            holdRightSide -= xOffset;
 
-            verts.push(nextHalfNotePos.x);
-            verts.push(nextHalfNotePos.y);
-            verts.push(nextHalfNotePos.x+((daNote.frameWidth*(1/-nextHalfNotePos.z))*noteData.scaleX));
-            verts.push(nextHalfNotePos.y);
 
-            verts.push(thisNotePos.x);
-            verts.push(thisNotePos.y);
-            verts.push(thisNotePos.x+((daNote.frameWidth*(1/-thisNotePos.z))*nextNotePos.scaleX));
-            verts.push(thisNotePos.y);
+            var vert_X_L:Float = nextNotePos.x+holdLeftSide;
+            var vert_Y_L:Float = nextNotePos.y;
+            var vert_X_R:Float = nextNotePos.x+holdRightSide;
+            var vert_Y_R:Float = nextNotePos.y;
+
+            var calculateAngleDif:Float = 0.0;
+            if(spiralHolds){
+                var a:Float = (nextNotePos.y - thisNotePos.y) * -1.0; // height
+                var b:Float = (nextNotePos.x - thisNotePos.x); // length
+                var angle:Float = Math.atan(b / a);
+                angle *= (180 / Math.PI);
+                calculateAngleDif = angle;
+            }
+
+            if(spiralHolds){
+                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
+
+                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+
+                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_L = thing.x;
+                vert_Y_L = thing.y;
+
+                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
+                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_R = thing.x;
+                vert_Y_R = thing.y;
+            }
+
+            verts.push(vert_X_L);
+            verts.push(vert_Y_L);
+            verts.push(vert_X_R);
+            verts.push(vert_Y_R);
+
+            scaleTest = nextHalfNotePos.scaleX;
+            scaleTest *= (1/-nextHalfNotePos.z);
+            widthScaled = holdWidth * scaleTest;
+            scaleChange = widthScaled - holdWidth;
+            holdLeftSide = 0 - (scaleChange / 2);
+            holdRightSide = widthScaled - (scaleChange / 2);
+            holdLeftSide -= xOffset;
+            holdRightSide -= xOffset;
+
+            vert_X_L = nextHalfNotePos.x+holdLeftSide;
+            vert_Y_L = nextHalfNotePos.y;
+            vert_X_R = nextHalfNotePos.x+holdRightSide;
+            vert_Y_R = nextHalfNotePos.y;
+
+            if(spiralHolds){
+                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
+
+                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+
+                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_L = thing.x;
+                vert_Y_L = thing.y;
+
+                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
+                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_R = thing.x;
+                vert_Y_R = thing.y;
+            }
+
+            verts.push(vert_X_L);
+            verts.push(vert_Y_L);
+            verts.push(vert_X_R);
+            verts.push(vert_Y_R);
+
+            scaleTest = noteData.scaleX;
+            scaleTest *= (1/-thisNotePos.z);
+            widthScaled = holdWidth * scaleTest;
+            scaleChange = widthScaled - holdWidth;
+            holdLeftSide = 0 - (scaleChange / 2);
+            holdRightSide = widthScaled - (scaleChange / 2);
+            holdLeftSide -= xOffset;
+            holdRightSide -= xOffset;
+
+            vert_X_L = thisNotePos.x+holdLeftSide;
+            vert_Y_L = thisNotePos.y;
+            vert_X_R = thisNotePos.x+holdRightSide;
+            vert_Y_R = thisNotePos.y;
+
+            if(spiralHolds){
+                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
+
+                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+
+                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_L = thing.x;
+                vert_Y_L = thing.y;
+
+                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
+                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_R = thing.x;
+                vert_Y_R = thing.y;
+            }
+
+            verts.push(vert_X_L);
+            verts.push(vert_Y_L);
+            verts.push(vert_X_R);
+            verts.push(vert_Y_R);
         }
         else 
         {
-            verts.push(thisNotePos.x);
-            verts.push(thisNotePos.y); //fliped this with the down ones (last) to test if it bugs of it fixes itself
-            verts.push(thisNotePos.x+((daNote.frameWidth*(1/-thisNotePos.z))*noteData.scaleX));
-            verts.push(thisNotePos.y);
+            var scaleTest = noteData.scaleX;
+            scaleTest *= (1/-thisNotePos.z);
+            var widthScaled = holdWidth * scaleTest;
+            var scaleChange = widthScaled - holdWidth;
+            var holdLeftSide = 0 - (scaleChange / 2);
+            var holdRightSide = widthScaled - (scaleChange / 2);
+            holdLeftSide -= xOffset;
+            holdRightSide -= xOffset;
 
-            verts.push(nextHalfNotePos.x);
-            verts.push(nextHalfNotePos.y);
-            verts.push(nextHalfNotePos.x+((daNote.frameWidth*(1/-nextHalfNotePos.z))*noteData.scaleX));
-            verts.push(nextHalfNotePos.y);
+            var vert_X_L:Float = thisNotePos.x+holdLeftSide;
+            var vert_Y_L:Float = thisNotePos.y;
+            var vert_X_R:Float = thisNotePos.x+holdRightSide;
+            var vert_Y_R:Float = thisNotePos.y;
 
-            verts.push(nextNotePos.x);
-            verts.push(nextNotePos.y); //slight offset to fix small gaps
-            verts.push(nextNotePos.x+((daNote.frameWidth*(1/-nextNotePos.z))*nextNotePos.scaleX));
-            verts.push(nextNotePos.y);
+            var calculateAngleDif:Float = 0.0;
+            if(spiralHolds){
+                var a:Float = (thisNotePos.y - nextNotePos.y) * -1.0; // height
+                var b:Float = (thisNotePos.x - nextNotePos.x); // length
+                var angle:Float = Math.atan(b / a);
+                angle *= (180 / Math.PI);
+                calculateAngleDif = angle;
+            }
+            if(spiralHolds){
+                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
+
+                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+
+                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_L = thing.x;
+                vert_Y_L = thing.y;
+
+                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
+                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_R = thing.x;
+                vert_Y_R = thing.y;
+            }
+
+
+            verts.push(vert_X_L);
+            verts.push(vert_Y_L); 
+            verts.push(vert_X_R);
+            verts.push(vert_Y_R);
+
+            scaleTest = nextHalfNotePos.scaleX;
+            scaleTest *= (1/-nextHalfNotePos.z);
+            widthScaled = holdWidth * scaleTest;
+            scaleChange = widthScaled - holdWidth;
+            holdLeftSide = 0 - (scaleChange / 2);
+            holdRightSide = widthScaled - (scaleChange / 2);
+            holdLeftSide -= xOffset;
+            holdRightSide -= xOffset;
+
+            vert_X_L = nextHalfNotePos.x+holdLeftSide;
+            vert_Y_L = nextHalfNotePos.y;
+            vert_X_R = nextHalfNotePos.x+holdRightSide;
+            vert_Y_R = nextHalfNotePos.y;
+
+            if(spiralHolds){
+                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
+
+                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+
+                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_L = thing.x;
+                vert_Y_L = thing.y;
+
+                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
+                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_R = thing.x;
+                vert_Y_R = thing.y;
+            }
+
+            verts.push(vert_X_L);
+            verts.push(vert_Y_L);
+            verts.push(vert_X_R);
+            verts.push(vert_Y_R);
+
+
+            scaleTest = nextNotePos.scaleX;
+            scaleTest *= (1/-nextNotePos.z);
+            widthScaled = holdWidth * scaleTest;
+            scaleChange = widthScaled - holdWidth;
+            holdLeftSide = 0 - (scaleChange / 2);
+            holdRightSide = widthScaled - (scaleChange / 2);
+            holdLeftSide -= xOffset;
+            holdRightSide -= xOffset;
+
+            vert_X_L = nextNotePos.x+holdLeftSide;
+            vert_Y_L = nextNotePos.y;
+            vert_X_R = nextNotePos.x+holdRightSide;
+            vert_Y_R = nextNotePos.y;
+
+            if(spiralHolds){
+                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
+
+                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
+
+                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_L = thing.x;
+                vert_Y_L = thing.y;
+
+                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
+                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                vert_X_R = thing.x;
+                vert_Y_R = thing.y;
+            }
+
+            verts.push(vert_X_L);
+            verts.push(vert_Y_L);
+            verts.push(vert_X_R);
+            verts.push(vert_Y_R);
         }
         vertices = new DrawData(12, true, verts);
     }
