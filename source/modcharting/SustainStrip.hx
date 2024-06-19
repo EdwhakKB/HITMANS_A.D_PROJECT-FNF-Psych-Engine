@@ -68,7 +68,7 @@ class SustainStrip extends FlxStrip
 
     //Set this to true for spiral holds!
     //Note, they might cause some visual gaps. Maybe fix later?
-    public var spiralHolds:Bool = true; 
+    public var spiralHolds:Bool = false; //for now false cuz yeah 
 
     public function constructVertices(noteData:NotePositionData, thisNotePos:Vector3D, nextHalfNotePos:NotePositionData, nextNotePos:NotePositionData, flipGraphic:Bool, reverseClip:Bool)
     {

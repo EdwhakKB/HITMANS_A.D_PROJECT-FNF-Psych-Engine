@@ -40,6 +40,7 @@ using StringTools;
 //fix switching event type in editor so you can actually do set events
 //finish setting up tooltips in editor
 //start documenting more stuff idk
+//fix "reverse" modifier making holds going wrong if enabled
 
 typedef StrumNoteType = 
 #if (PSYCH || LEATHER) StrumNote
@@ -250,7 +251,13 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
                 strumTimeOffset -= Std.int(Conductor.stepCrochet); 
                 strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); 
             }
-            
+            // if (inEditor){
+            //     strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()) + 100; 
+            //     if(ModchartUtil.getDownscroll(instance)){
+            //         strumTimeOffset -= Std.int(Conductor.stepCrochet); 
+            //         strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed() + 100); 
+            //     }  
+            // }
         }
 
         var distance = (Conductor.songPosition - notes.members[noteIndex].strumTime) + strumTimeOffset;
