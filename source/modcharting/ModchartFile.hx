@@ -1,4 +1,5 @@
 package modcharting;
+
 import flixel.math.FlxMath;
 import haxe.Exception;
 import haxe.Json;
@@ -17,6 +18,7 @@ import sys.io.File;
 import sys.FileSystem;
 #end
 import hscript.*;
+
 using StringTools;
 
 typedef ModchartJson = 
@@ -24,8 +26,8 @@ typedef ModchartJson =
     var modifiers:Array<Array<Dynamic>>;
     var events:Array<Array<Dynamic>>;
     var playfields:Int;
+    var proxiefields:Int;
 }
-
 
 class ModchartFile
 {
@@ -67,6 +69,7 @@ class ModchartFile
         renderer.modchart = this;
         if (!ClientPrefs.getGameplaySetting('chaosmode', false)){
             loadPlayfields();
+            loadProxiefields();
             loadModifiers();
             loadEvents();
         }
@@ -255,7 +258,7 @@ class ModchartFile
         }
         else 
         {
-            json = {modifiers: [], events: [], playfields: 1};
+            json = {modifiers: [], events: [], playfields: 1, proxiefields: 1};
         }
         return json;
     }
@@ -264,6 +267,7 @@ class ModchartFile
         data.modifiers = [];
         data.events = [];
         data.playfields = 1;
+        data.proxiefields = 1;
     }
 
     public function loadModifiers()
@@ -287,6 +291,15 @@ class ModchartFile
         renderer.playfields = [];
         for (i in 0...data.playfields)
             renderer.addNewPlayfield(0,0,0,1);
+    }
+    public function loadProxiefields()
+    {
+        if (data == null || renderer == null)
+            return;
+
+        renderer.proxiefields = [];
+        for (i in 0...data.proxiefields)
+            renderer.addNewProxiefield(new Proxiefield.Proxie());
     }
     public function loadEvents()
     {
@@ -331,6 +344,7 @@ class ModchartFile
             return;
 
         data.playfields = renderer.playfields.length;
+        data.proxiefields = renderer.proxiefields.length;
         scriptListen = true;
     }
 }

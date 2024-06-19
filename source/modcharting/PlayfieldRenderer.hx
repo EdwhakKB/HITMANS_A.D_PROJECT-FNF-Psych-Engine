@@ -31,6 +31,9 @@ import PlayState;
 import Note;
 #end
 
+import HazardAFT_Capture.HazardAFT_CaptureMultiCam as MultiCamCapture;
+import modcharting.Proxiefield.Proxie as Proxy;
+
 using StringTools;
 
 //a few todos im gonna leave here:
@@ -57,6 +60,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     public var playStateInstance:PlayState;
     public var editorPlayStateInstance:editors.EditorPlayState;
     public var playfields:Array<Playfield> = []; //adding an extra playfield will add 1 for each player
+    public var proxiefields:Array<Proxiefield> = [];
 
     public var eventManager:ModchartEventManager;
     public var modifierTable:ModTable;
@@ -73,11 +77,12 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
     public var isEditor:Bool = false;
 
+    public var aftCapture:MultiCamCapture = null;
+
     private function get_modifiers() : Map<String, Modifier>
     {
         return modifierTable.modifiers; //back compat with lua modcharts
     }
-
 
     public function new(strumGroup:FlxTypedGroup<StrumNoteType>, notes:FlxTypedGroup<Note>,instance:ModchartMusicBeatState) 
     {
@@ -104,17 +109,26 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         eventManager = new ModchartEventManager(this);
         modifierTable = new ModTable(instance, this);
         addNewPlayfield(0,0,0);
+        addNewProxiefield(new Proxy());
         modchart = new ModchartFile(this);
     }
-
 
     public function addNewPlayfield(?x:Float = 0, ?y:Float = 0, ?z:Float = 0, ?alpha:Float = 1)
     {
         playfields.push(new Playfield(x,y,z,alpha));
     }
 
+    public function addNewProxiefield(proxy:Proxy)
+    {
+        proxiefields.push(new Proxiefield(proxy));
+    }
+
     override function update(elapsed:Float) 
     {
+        if (aftCapture != null)
+        {
+            aftCapture.update(elapsed);
+        }
         try {
             eventManager.update(elapsed);
             tweenManager.update(elapsed); //should be automatically paused when you pause in game
@@ -131,14 +145,25 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (alpha == 0 || !visible)
             return;
 
+        if (aftCapture != null)
+        {
+            for (pf in 0...proxiefields.length)
+            {
+                if (proxiefields[pf].sprite.graphic == null)
+                {
+                    proxiefields[pf].sprite.loadCapture(aftCapture.bitmap);
+                }
+            }
+        }
+
         strumGroup.cameras = this.cameras;
         notes.cameras = this.cameras;
         
         try {
             drawStuff(getNotePositions());
-            } catch(e) {
-                trace(e);
-            }
+        } catch(e) {
+            trace(e);
+        }
         //draw notes to screen
     }
 
