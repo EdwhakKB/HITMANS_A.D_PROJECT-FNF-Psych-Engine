@@ -238,9 +238,9 @@ class ModchartEditorState extends MusicBeatState
     }
     override public function create()
     {	
+        Paths.clearStoredMemory();
+        Paths.clearUnusedMemory();
 
-	Paths.clearStoredMemory();
-	Paths.clearUnusedMemory();
         camGame = new FlxCamera();
         camHUD = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
@@ -272,15 +272,14 @@ class ModchartEditorState extends MusicBeatState
         // Conductor.changeBPM(PlayState.SONG.bpm);
         // #end
 
-	if(FlxG.sound.music != null)
-		FlxG.sound.music.stop();
+	    if(FlxG.sound.music != null) FlxG.sound.music.stop();
 
         FlxG.mouse.visible = true;
 
         strumLine = new FlxSprite(ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 50).makeGraphic(FlxG.width, 10);
         if(ModchartUtil.getDownscroll(this)) strumLine.y = FlxG.height - 150;
-		
 		strumLine.scrollFactor.set();
+        add(strumLine);
 
         strumLineNotes = new FlxTypedGroup<StrumNoteType>();
 		add(strumLineNotes);
@@ -293,6 +292,9 @@ class ModchartEditorState extends MusicBeatState
 		playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
 		playfieldRenderer.cameras = [camHUD];
         playfieldRenderer.inEditor = true;
+        playfieldRenderer.aftCapture = new HazardAFT_Capture.HazardAFT_CaptureMultiCam([camHUD]);
+        playfieldRenderer.aftCapture.updateRate = 0.0;
+        playfieldRenderer.aftCapture.recursive = true;
 		add(playfieldRenderer);
 
         //strumLineNotes.cameras = [camHUD];
@@ -397,9 +399,6 @@ class ModchartEditorState extends MusicBeatState
         hideUI.y -= hideUI.height;
         hideUI.x -= hideUI.width;
         add(hideUI);
-
-
-        
     }
     var dirtyUpdateNotes:Bool = false;
     var dirtyUpdateEvents:Bool = false;
@@ -690,6 +689,12 @@ class ModchartEditorState extends MusicBeatState
         {
             playfieldRenderer.modchart.data.playfields = Std.int(playfieldCountStepper.value);
             playfieldRenderer.modchart.loadPlayfields();
+        }
+
+        if (playfieldRenderer.modchart.data.proxiefields != proxiefieldCountStepper.value)
+        {
+            playfieldRenderer.modchart.data.proxiefields = Std.int(proxiefieldCountStepper.value);
+            playfieldRenderer.modchart.loadProxiefields();
         }
 
 
@@ -1693,36 +1698,43 @@ class ModchartEditorState extends MusicBeatState
         return data;
     }
     //TODO: fix this shit
-    function convertModData(data:Array<Dynamic>, newType:String)
+    function convertModData(beforeData:Array<Dynamic>, newType:String):Array<Dynamic>
     {
-        switch(data[EVENT_TYPE]) //convert stuff over i guess
+        var ease:String = beforeData[EVENT_TYPE];
+        switch(ease) //convert stuff over i guess
         {
             case "ease": 
-                if (newType == 'set')
+                if (newType != 'ease')
                 {
                     trace('converting ease to set');
-                    var temp:Array<Dynamic> = [newType, [
-                        data[EVENT_DATA][EVENT_TIME],
-                        data[EVENT_DATA][EVENT_EASEDATA],
-                    ], data[EVENT_REPEAT]];
-                    data = temp.copy();
+                    return [newType, [
+                        beforeData[EVENT_DATA][EVENT_TIME],
+                        0,
+                        "NOEASE",
+                        beforeData[EVENT_DATA][EVENT_EASEDATA],
+                    ], beforeData[EVENT_REPEAT]];
                 }
             case "set": 
-                if (newType == 'ease')
+                if (newType != 'set')
                 {
                     trace('converting set to ease');
-                    var temp:Array<Dynamic> = [newType, [
-                        data[EVENT_DATA][EVENT_TIME],
+                    return [newType, [
+                        beforeData[EVENT_DATA][EVENT_TIME],
                         1,
                         "linear",
-                        data[EVENT_DATA][EVENT_SETDATA],
-                    ], data[EVENT_REPEAT]];
-                    trace(temp);
-                    data = temp.copy();
+                        beforeData[EVENT_DATA][EVENT_SETDATA],
+                    ], beforeData[EVENT_REPEAT]];
                 }
         } 
-        //trace(data);
-        return data;
+        return [newType, [
+            0,
+            0,
+            "",
+            ""
+        ], [false,
+            0,
+            0
+        ]];
     }
 
     function updateEventModData(shitToUpdate:String, isMod:Bool)
@@ -1891,12 +1903,15 @@ class ModchartEditorState extends MusicBeatState
         {
             var et = eventTypes[Std.parseInt(mod)];
             trace(et);
+
             var data = getCurrentEventInData();
             if (data != null)
             {
-                //if (data[EVENT_TYPE] != et)
-                data = convertModData(data, et);
-                highlightedEvent = data;
+                if (data[EVENT_TYPE] != et)
+                {
+                    var newData = convertModData(data, et);
+                    highlightedEvent = newData;
+                }
                 trace(highlightedEvent);
             }
             eventEaseInputText.alpha = 1;
@@ -2206,6 +2221,7 @@ class ModchartEditorState extends MusicBeatState
     }
     
     var playfieldCountStepper:FlxUINumericStepper;
+    var proxiefieldCountStepper:FlxUINumericStepper;
     function setupPlayfieldUI()
     {
         var tab_group = new FlxUI(null, UI_box);
@@ -2217,6 +2233,13 @@ class ModchartEditorState extends MusicBeatState
         tab_group.add(playfieldCountStepper);
         tab_group.add(makeLabel(playfieldCountStepper, 0, -15, "Playfield Count"));
         tab_group.add(makeLabel(playfieldCountStepper, 55, 25, "Don't add too many or the game will lag!!!"));
+
+        proxiefieldCountStepper = new FlxUINumericStepper(playfieldCountStepper.x + 50, 50, 1, 1, 1, 100, 0);
+        proxiefieldCountStepper.value = playfieldRenderer.modchart.data.proxiefields;
+        
+        tab_group.add(proxiefieldCountStepper);
+        tab_group.add(makeLabel(proxiefieldCountStepper, 0, -15, "Proxiefield Count"));
+       // tab_group.add(makeLabel(proxieCountStepper, 55, 25, "Don't add too many or the game will lag!!!"));
         UI_box.addGroup(tab_group);
     }
     var sliderRate:FlxUISlider;
