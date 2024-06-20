@@ -1251,6 +1251,7 @@ class PlayState extends MusicBeatState
 		}
 
 		callOnScripts('onCreatePost');
+		callOnScripts('onModchart');
 
 		// camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
 
@@ -1817,6 +1818,7 @@ class PlayState extends MusicBeatState
 				playfieldRenderer.modchart.loadEvents();
 				playfieldRenderer.update(0);
 				ModchartFuncs.loadLuaFunctions();
+				callOnScripts('onModchart');
 			}
 		}
 		if(startedCountdown) {
@@ -2245,6 +2247,7 @@ class PlayState extends MusicBeatState
 				playfieldRenderer.modchart.loadEvents();
 				playfieldRenderer.update(0);
 				ModchartFuncs.loadLuaFunctions();
+				callOnScripts('onModchart');
 			}
 			
 			trace("fixing modchart");

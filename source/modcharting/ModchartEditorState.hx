@@ -1837,10 +1837,14 @@ class ModchartEditorState extends MusicBeatState
         {
             updateEventModData(eventModInputText.text, true);
             var data = getCurrentEventInData();
+            var allData = EVENT_EASEDATA;
             if (data != null)
             {
+                if (data[EVENT_TYPE] == "set"){
+                    allData = EVENT_SETDATA;
+                }
                 highlightedEvent = data; 
-                eventDataInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASEDATA];
+                eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
                 dirtyUpdateEvents = true;
                 hasUnsavedChanges = true;
             }
@@ -1850,10 +1854,14 @@ class ModchartEditorState extends MusicBeatState
         {
             updateEventModData(eventValueInputText.text, false);
             var data = getCurrentEventInData();
+            var allData = EVENT_EASEDATA;
             if (data != null)
             {
+                if (data[EVENT_TYPE] == "set"){
+                    allData = EVENT_SETDATA;
+                }
                 highlightedEvent = data; 
-                eventDataInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASEDATA];
+                eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
                 dirtyUpdateEvents = true;
                 hasUnsavedChanges = true;
             }
@@ -1910,6 +1918,8 @@ class ModchartEditorState extends MusicBeatState
             {
                 if (data[EVENT_TYPE] == 'ease')
                     data[EVENT_DATA][EVENT_EASE] = eventEaseInputText.text;
+                else
+                    data[EVENT_DATA][EVENT_EASE] = 'linear';
             }
             dirtyUpdateEvents = true;
             hasUnsavedChanges = true;
@@ -1921,6 +1931,8 @@ class ModchartEditorState extends MusicBeatState
             {
                 if (data[EVENT_TYPE] == 'ease')
                     data[EVENT_DATA][EVENT_EASETIME] = eventTimeInputText.text;
+                else
+                    data[EVENT_DATA][EVENT_TIME] = 0;
             }
             dirtyUpdateEvents = true;
             hasUnsavedChanges = true;
@@ -1970,9 +1982,13 @@ class ModchartEditorState extends MusicBeatState
         eventDataInputText.callback = function(str:String, str2:String)
         {
             var data = getCurrentEventInData();
+            var allData = EVENT_EASEDATA;
             if (data != null)
             {
-                data[EVENT_DATA][EVENT_EASEDATA] = eventDataInputText.text;
+                if (data[EVENT_TYPE] == "set"){
+                    allData = EVENT_SETDATA;
+                }
+                data[EVENT_DATA][allData] = eventDataInputText.text;
                 highlightedEvent = data; 
                 dirtyUpdateEvents = true;
                 hasUnsavedChanges = true;
@@ -1982,11 +1998,15 @@ class ModchartEditorState extends MusicBeatState
         var add:FlxButton = new FlxButton(0, selectedEventDataStepper.y+30, 'Add', function ()
         {
             var data = addNewModData();
+            var allData = EVENT_EASEDATA;
             if (data != null)
             {
+                if (data[EVENT_TYPE] == "set"){
+                    allData = EVENT_SETDATA;
+                }
                 highlightedEvent = data; 
                 updateSelectedEventDataStepper();
-                eventDataInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASEDATA];
+                eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
                 eventModInputText.text = getEventModData(true);
                 eventValueInputText.text = getEventModData(false);
                 dirtyUpdateEvents = true;
@@ -1996,11 +2016,15 @@ class ModchartEditorState extends MusicBeatState
         var remove:FlxButton = new FlxButton(0, selectedEventDataStepper.y+50, 'Remove', function ()
         {
             var data = removeModData();
+            var allData = EVENT_EASEDATA;
             if (data != null)
             {
+                if (data[EVENT_TYPE] == "set"){
+                    allData = EVENT_SETDATA;
+                }
                 highlightedEvent = data; 
                 updateSelectedEventDataStepper();
-                eventDataInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASEDATA];
+                eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
                 eventModInputText.text = getEventModData(true);
                 eventValueInputText.text = getEventModData(false);
                 dirtyUpdateEvents = true;
@@ -2099,9 +2123,16 @@ class ModchartEditorState extends MusicBeatState
     function onSelectEvent(fromStackedEventStepper = false)
     {
         //update texts and stuff
+        var allData = EVENT_EASEDATA;
+        if (highlightedEvent != null){
+            if (highlightedEvent[EVENT_TYPE] == "set"){
+                allData = EVENT_SETDATA;
+            }
+        }
+
         updateSelectedEventDataStepper();
         eventTimeStepper.value = Std.parseFloat(highlightedEvent[EVENT_DATA][EVENT_TIME]);
-        eventDataInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASEDATA];
+        eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
 
         eventEaseInputText.alpha = 0.5;
         eventTimeInputText.alpha = 0.5;
@@ -2111,6 +2142,9 @@ class ModchartEditorState extends MusicBeatState
             eventTimeInputText.alpha = 1;
             eventEaseInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASE];
             eventTimeInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASETIME];
+        }else{
+            eventTimeInputText.text = "0";
+            eventEaseInputText.text = "Linear";
         }
         eventTypeDropDown.selectedLabel = highlightedEvent[EVENT_TYPE];
         eventModInputText.text = getEventModData(true);
@@ -2134,7 +2168,11 @@ class ModchartEditorState extends MusicBeatState
                 case "selectedEventMod": //stupid steppers which dont have normal callbacks
                     if (highlightedEvent != null)
                     {
-                        eventDataInputText.text = highlightedEvent[EVENT_DATA][EVENT_EASEDATA];
+                        var allData = EVENT_EASEDATA;
+                        if (highlightedEvent[EVENT_TYPE] == "set"){
+                            allData = EVENT_SETDATA;
+                        }
+                        eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
                         eventModInputText.text = getEventModData(true);
                         eventValueInputText.text = getEventModData(false);
                     }

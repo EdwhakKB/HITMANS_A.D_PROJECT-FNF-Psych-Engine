@@ -244,20 +244,26 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (notes.members[noteIndex].isSustainNote && !ModchartUtil.getDownscroll(instance))
             strumTimeOffset += Conductor.stepCrochet; //fix upscroll lol
         #end
-
+        var lane = getLane(noteIndex);
+        var noteDist = getNoteDist(noteIndex);
+        for (pf in 0...playfields.length)
+            noteDist = modifierTable.applyNoteDistMods(noteDist, lane, pf);
         if (notes.members[noteIndex].isSustainNote){
             strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); 
-            if(ModchartUtil.getDownscroll(instance)){
-                strumTimeOffset -= Std.int(Conductor.stepCrochet); 
-                strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); 
+            switch(ModchartUtil.getDownscroll(instance)){
+                case true:
+                    if (noteDist > 0){
+                        strumTimeOffset -= Std.int(Conductor.stepCrochet); 
+                        strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed());
+                    }else{
+                        strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed());
+                    }
+                case false:
+                    if(noteDist > 0){
+                        strumTimeOffset -= Std.int(Conductor.stepCrochet);
+                    }
             }
-            // if (inEditor){
-            //     strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()) + 100; 
-            //     if(ModchartUtil.getDownscroll(instance)){
-            //         strumTimeOffset -= Std.int(Conductor.stepCrochet); 
-            //         strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed() + 100); 
-            //     }  
-            // }
+            //FINALLY OMG I HATE THIS FUCKING MATH LMAO
         }
 
         var distance = (Conductor.songPosition - notes.members[noteIndex].strumTime) + strumTimeOffset;

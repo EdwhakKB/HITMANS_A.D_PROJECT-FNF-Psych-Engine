@@ -56,7 +56,7 @@ class ModchartFuncs
                 #end
                 Lua_helper.add_callback(funkin.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                     startMod(name,modClass,type,pf);
-                    // trace("Created mod:", name, modClass, type, pf);
+                    
                     PlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
                 });
                 Lua_helper.add_callback(funkin.lua, 'setMod', function(name:String, value:Float){
@@ -90,7 +90,7 @@ class ModchartFuncs
                     set(beat, argsAsString);
                 });
                 Lua_helper.add_callback(funkin.lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-                    ease(beat, time, easeStr, argsAsString);  
+                    ease(beat, time, easeStr, argsAsString);
                 });
                 Lua_helper.add_callback(funkin.lua, 'stepSet', function(beat:Float, argsAsString:String){
                     stepSet(beat, argsAsString);
