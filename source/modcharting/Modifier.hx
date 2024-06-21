@@ -2422,16 +2422,15 @@ class SquareScaleModifier extends Modifier
 
 class CenterModifier extends Modifier //DON'T FUCKING WORKS
 {
+    var differenceBetween:Float = 0;
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-       var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
-       var differenceBetween:Float = noteData.y - screenCenter;
+    {  
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+       differenceBetween = noteData.y - screenCenter;
        noteData.y -= currentValue * differenceBetween;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
-        var differenceBetween:Float = noteData.y - screenCenter;
         noteData.y -= currentValue * differenceBetween;  
     }
 }
