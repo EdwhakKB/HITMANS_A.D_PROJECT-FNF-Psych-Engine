@@ -2420,6 +2420,22 @@ class SquareScaleModifier extends Modifier
     }
 }
 
+class CenterModifier extends Modifier //DON'T FUCKING WORKS
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+       var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+       var differenceBetween:Float = noteData.y - screenCenter;
+       noteData.y -= currentValue * differenceBetween;
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        var differenceBetween:Float = noteData.y - screenCenter;
+        noteData.y -= currentValue * differenceBetween;  
+    }
+}
+
 
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
 class ArrowPath extends Modifier {

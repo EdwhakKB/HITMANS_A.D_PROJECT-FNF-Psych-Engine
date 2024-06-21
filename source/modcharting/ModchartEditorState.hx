@@ -124,7 +124,7 @@ class ModchartEditorState extends MusicBeatState
         TimeStopModifier, JumpNotesModifier,
         NotesModifier,
         //Misc Modifiers
-        StrumsModifier, InvertModifier, FlipModifier, JumpModifier,
+        StrumsModifier, InvertModifier, FlipModifier, JumpModifier, CenterModifier,
         StrumAngleModifier,
         EaseXModifier, EaseYModifier, EaseZModifier, EaseAngleModifier, EaseScaleModifier,
         ShakyNotesModifier,
@@ -1551,6 +1551,8 @@ class ModchartEditorState extends MusicBeatState
                     explainString = "Modifier used to make notes come faster and slower to target";
                 case 'JumpModifier':
                     explainString = "Modifier used to make notes and target jump";
+                case 'CenterModifier':
+                    explainString = "Modifier used to center notes on the screen";
                 case 'WaveXModifier':
                     explainString = "Modifier similar to drunkX but this one will simulate a true wave in X (don't affect the notes)";
                 case 'WaveYModifier':

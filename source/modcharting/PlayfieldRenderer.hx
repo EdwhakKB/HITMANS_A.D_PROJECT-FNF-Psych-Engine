@@ -38,12 +38,19 @@ using StringTools;
 
 //a few todos im gonna leave here:
 
+//--ZORO--
 //setup quaternions for everything else (incoming angles and the rotate mod)
 //do add and remove buttons on stacked events in editor
 //fix switching event type in editor so you can actually do set events
 //finish setting up tooltips in editor
 //start documenting more stuff idk
-//fix "reverse" modifier making holds going wrong if enabled
+
+//--EDWHAK--
+//finish editor itself and fix some errors zoro didn't
+//setup notePath stuff (in progress) -- im sorry but this is impossible for my brain, im not smart enough to figure it out (;-;)
+//Make editor optimized? (yeah idfk what causes a lag XD)
+//Lua support for editor or even playstate so player can see what kind of modchart they do
+//Grain shit for sustains (the higger value the most and most soft sustain looks) -- seems impossible
 
 typedef StrumNoteType = 
 #if (PSYCH || LEATHER) StrumNote
@@ -260,7 +267,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         return noteData;
     }
 
-    private function getNoteCurPos(noteIndex:Int, strumTimeOffset:Float = 0)
+    private function getNoteCurPos(noteIndex:Int, strumTimeOffset:Float = 0, ?daDistance:Float = 0)
     {
         #if PSYCH
         if (notes.members[noteIndex].isSustainNote && ModchartUtil.getDownscroll(instance))
@@ -269,11 +276,10 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (notes.members[noteIndex].isSustainNote && !ModchartUtil.getDownscroll(instance))
             strumTimeOffset += Conductor.stepCrochet; //fix upscroll lol
         #end
-        var lane = getLane(noteIndex);
-        var noteDist = getNoteDist(noteIndex);
-        for (pf in 0...playfields.length)
-            noteDist = modifierTable.applyNoteDistMods(noteDist, lane, pf);
         if (notes.members[noteIndex].isSustainNote){
+            //moved those inside holdsMath cuz they are only needed for sustains ig?
+            var noteDist = daDistance;
+
             strumTimeOffset += Std.int(Conductor.stepCrochet/getCorrectScrollSpeed()); 
             switch(ModchartUtil.getDownscroll(instance)){
                 case true:
@@ -337,7 +343,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
                 //         //sustainTimeThingy = (-NoteMovement.getFakeCrochet()/4)/songSpeed;
                 // }
                     
-                var curPos = getNoteCurPos(i, sustainTimeThingy);
+                var curPos = getNoteCurPos(i, sustainTimeThingy, noteDist);
                 curPos = modifierTable.applyCurPosMods(lane, curPos, pf);
 
                 if ((notes.members[i].wasGoodHit || (notes.members[i].prevNote.wasGoodHit)) && curPos >= 0 && notes.members[i].isSustainNote)
@@ -507,7 +513,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var pf:Int = noteData.playfieldIndex;
 
         var noteDist:Float = getNoteDist(noteData.index);
-        var curPos:Float = getNoteCurPos(noteData.index, timeOffset);
+        var curPos:Float = getNoteCurPos(noteData.index, timeOffset, noteDist);
     
         curPos = modifierTable.applyCurPosMods(lane, curPos, pf);
 

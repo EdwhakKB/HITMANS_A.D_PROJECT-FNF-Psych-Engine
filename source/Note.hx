@@ -457,6 +457,12 @@ class Note extends FlxSkewedSprite{
 			animation.play(colArray[noteData % 4] + 'holdend');
 			isHoldEnd = true;
 
+			// if (ClientPrefs.notesSkin[0] == 'NOTITG'){ //LMAO
+			// 	flipX = true;
+			// }else{
+			// 	flipX = false;
+			// }
+
 			updateHitbox();
 
 			offsetX -= width / 2;
