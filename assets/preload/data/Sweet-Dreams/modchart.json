@@ -163,21 +163,21 @@
 		],
 		[
 			"StealthTargetPF1",
-			"DarkModifier",
+			"TargetAlphaModifier",
 			"All",
 			1,
 			-1
 		],
 		[
 			"StealthTargetPF2",
-			"DarkModifier",
+			"TargetAlphaModifier",
 			"All",
 			2,
 			-1
 		],
 		[
 			"StealthNotesPF0",
-			"StealthModifier",
+			"NoteAlphaModifier",
 			"All",
 			0,
 			-1

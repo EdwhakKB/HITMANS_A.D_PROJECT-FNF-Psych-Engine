@@ -289,7 +289,15 @@ class Huds extends FlxGroup
 			// if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.sprTracker = healthBar;
 			add(healthBarBG);
 
-            iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true);
+			var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
+			switch(edwhakVariable.contains(PlayState.instance.boyfriend.curCharacter)){
+				case true:
+					iconP1 = new EditedHealthIcon('icon-edwhak-pl', true);
+				case false:
+					iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true);
+				default:
+					iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true); //if it crash for some reazon?
+			}
             iconP1.y = healthBar.y + iconsYOffset[0];
             iconP1.visible = !ClientPrefs.hideHud;
             iconP1.alpha = ClientPrefs.healthBarAlpha;

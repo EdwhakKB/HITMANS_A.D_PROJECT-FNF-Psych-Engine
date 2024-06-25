@@ -802,8 +802,8 @@ class EditorPlayState extends MusicBeatState
 							sortedNotesList.push(daNote);
 							//notesDatas.push(daNote.noteData);
 						}
-						if (!daNote.isSustainNote)
-							canMiss = true;
+						// if (!daNote.isSustainNote)
+						// 	canMiss = true;
 					}
 				});
 				sortedNotesList.sort(sortHitNotes);

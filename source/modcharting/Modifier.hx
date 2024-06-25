@@ -343,22 +343,32 @@ class TipsyScaleModifier extends Modifier
 
 class ReverseModifier extends Modifier 
 {
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {  
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        var differenceBetween:Float = noteData.y - screenCenter;
+        noteData.y += (currentValue*2) * differenceBetween * -1;
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var scrollSwitch = 520;
-        if (instance != null)
-            if (ModchartUtil.getDownscroll(instance))
-                scrollSwitch *= -1;
-        noteData.y += scrollSwitch * currentValue;
+        strumMath(noteData, lane, pf);
     }
-    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    {
-        return noteDist * (1-(currentValue*2));
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteMath(noteData, lane, 0, pf); //just reuse same thing
-    }
+    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     var scrollSwitch = 520;
+    //     if (instance != null)
+    //         if (ModchartUtil.getDownscroll(instance))
+    //             scrollSwitch *= -1;
+    //     noteData.y += scrollSwitch * currentValue;
+    // }
+    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     return noteDist * (1-(currentValue*2));
+    // }
+    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    // {
+    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
+    // }
 }
 class SplitModifier extends Modifier 
 {
@@ -369,37 +379,53 @@ class SplitModifier extends Modifier
         subValues.set('VarA', new ModifierSubValue(0.0));
         subValues.set('VarB', new ModifierSubValue(0.0));
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {  
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        var differenceBetween:Float = noteData.y - screenCenter;
+        var laneThing = lane % NoteMovement.keyCount;
+
+        if (laneThing > 1)
+            noteData.y += (subValues.get('VarA').value*2) * differenceBetween * -1;
+
+        if (laneThing < 2)
+            noteData.y += (subValues.get('VarB').value*2) * differenceBetween * -1;
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var scrollSwitch = 520;
-        if (instance != null)
-            if (ModchartUtil.getDownscroll(instance))
-                scrollSwitch *= -1;
-
-        var laneThing = lane % NoteMovement.keyCount;
-
-        if (laneThing > 1)
-            noteData.y += scrollSwitch * subValues.get('VarA').value;
-
-        if (laneThing < 2)
-            noteData.y += scrollSwitch * subValues.get('VarB').value;
+        strumMath(noteData, lane, pf);
     }
-    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    {
-        var laneThing = lane % NoteMovement.keyCount;
+    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     var scrollSwitch = 520;
+    //     if (instance != null)
+    //         if (ModchartUtil.getDownscroll(instance))
+    //             scrollSwitch *= -1;
 
-        if (laneThing > 1)
-            return noteDist * (1-(subValues.get('VarA').value*2));
+    //     var laneThing = lane % NoteMovement.keyCount;
 
-        if (laneThing < 2)
-            return noteDist * (1-(subValues.get('VarB').value*2));
+    //     if (laneThing > 1)
+    //         noteData.y += scrollSwitch * subValues.get('VarA').value;
 
-        return noteDist;
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteMath(noteData, lane, 0, pf); //just reuse same thing
-    }
+    //     if (laneThing < 2)
+    //         noteData.y += scrollSwitch * subValues.get('VarB').value;
+    // }
+    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     var laneThing = lane % NoteMovement.keyCount;
+
+    //     if (laneThing > 1)
+    //         return noteDist * (1-(subValues.get('VarA').value*2));
+
+    //     if (laneThing < 2)
+    //         return noteDist * (1-(subValues.get('VarB').value*2));
+
+    //     return noteDist;
+    // }
+    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    // {
+    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
+    // }
     override function reset()
     {
         super.reset();
@@ -416,37 +442,53 @@ class CrossModifier extends Modifier
         subValues.set('VarA', new ModifierSubValue(0.0));
         subValues.set('VarB', new ModifierSubValue(0.0));
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {  
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        var differenceBetween:Float = noteData.y - screenCenter;
+        var laneThing = lane % NoteMovement.keyCount;
+
+        if (laneThing > 0 && laneThing < 3)
+            noteData.y += (subValues.get('VarA').value*2) * differenceBetween * -1;
+
+        if (laneThing == 0 || laneThing == 3)
+            noteData.y += (subValues.get('VarB').value*2) * differenceBetween * -1;
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var scrollSwitch = 520;
-        if (instance != null)
-            if (ModchartUtil.getDownscroll(instance))
-                scrollSwitch *= -1;
-
-        var laneThing = lane % NoteMovement.keyCount;
-
-        if (laneThing > 0 && laneThing < 3)
-            noteData.y += scrollSwitch * subValues.get('VarA').value;
-
-        if (laneThing == 0 || laneThing == 3)
-            noteData.y += scrollSwitch * subValues.get('VarB').value;
+        strumMath(noteData, lane, pf);
     }
-    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    {
-        var laneThing = lane % NoteMovement.keyCount;
+    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     var scrollSwitch = 520;
+    //     if (instance != null)
+    //         if (ModchartUtil.getDownscroll(instance))
+    //             scrollSwitch *= -1;
 
-        if (laneThing > 0 && laneThing < 3)
-            return noteDist * (1-(subValues.get('VarA').value*2));
+    //     var laneThing = lane % NoteMovement.keyCount;
 
-        if (laneThing == 0 || laneThing == 3)
-            return noteDist * (1-(subValues.get('VarB').value*2));
+    //     if (laneThing > 0 && laneThing < 3)
+    //         noteData.y += scrollSwitch * subValues.get('VarA').value;
 
-        return noteDist;
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteMath(noteData, lane, 0, pf); //just reuse same thing
-    }
+    //     if (laneThing == 0 || laneThing == 3)
+    //         noteData.y += scrollSwitch * subValues.get('VarB').value;
+    // }
+    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     var laneThing = lane % NoteMovement.keyCount;
+
+    //     if (laneThing > 0 && laneThing < 3)
+    //         return noteDist * (1-(subValues.get('VarA').value*2));
+
+    //     if (laneThing == 0 || laneThing == 3)
+    //         return noteDist * (1-(subValues.get('VarB').value*2));
+
+    //     return noteDist;
+    // }
+    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    // {
+    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
+    // }
     override function reset()
     {
         super.reset();
@@ -463,32 +505,48 @@ class AlternateModifier extends Modifier
         subValues.set('VarA', new ModifierSubValue(0.0));
         subValues.set('VarB', new ModifierSubValue(0.0));
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {  
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        var differenceBetween:Float = noteData.y - screenCenter;
+        var laneThing = lane % NoteMovement.keyCount;
+
+        if (lane%2 == 1)
+            noteData.y += (subValues.get('VarA').value*2) * differenceBetween * -1;
+
+        if (lane%2 == 0)
+            noteData.y += (subValues.get('VarB').value*2) * differenceBetween * -1;
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var scrollSwitch = 520;
-        if (instance != null)
-            if (ModchartUtil.getDownscroll(instance))
-                scrollSwitch *= -1;
-        if (lane%2 == 1)
-            noteData.y += scrollSwitch * subValues.get('VarA').value;
-
-        if (lane%2 == 0)
-            noteData.y += scrollSwitch * subValues.get('VarB').value;
+        strumMath(noteData, lane, pf);
     }
-    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    {
-        if (lane%2 == 1)
-            return noteDist * (1-(subValues.get('VarA').value*2));
+    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     var scrollSwitch = 520;
+    //     if (instance != null)
+    //         if (ModchartUtil.getDownscroll(instance))
+    //             scrollSwitch *= -1;
+    //     if (lane%2 == 1)
+    //         noteData.y += scrollSwitch * subValues.get('VarA').value;
 
-        if (lane%2 == 0)
-            return noteDist * (1-(subValues.get('VarB').value*2));
+    //     if (lane%2 == 0)
+    //         noteData.y += scrollSwitch * subValues.get('VarB').value;
+    // }
+    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    // {
+    //     if (lane%2 == 1)
+    //         return noteDist * (1-(subValues.get('VarA').value*2));
 
-        return noteDist;
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteMath(noteData, lane, 0, pf); //just reuse same thing
-    }
+    //     if (lane%2 == 0)
+    //         return noteDist * (1-(subValues.get('VarB').value*2));
+
+    //     return noteDist;
+    // }
+    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    // {
+    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
+    // }
     override function reset()
     {
         super.reset();
@@ -740,19 +798,32 @@ class AlphaModifier extends Modifier
         noteMath(noteData, lane, 0, pf);
     }
 }
-class StealthModifier extends Modifier
+class NoteAlphaModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         noteData.alpha *= 1-currentValue;
     }
 }
-class DarkModifier extends Modifier
+class TargetAlphaModifier extends Modifier
 {
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
         noteData.alpha *= 1-currentValue;
     }
+}
+//same as alpha but changes notes glow!!!!!
+class StealthModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var stealthGlow:Float = currentValue*2;
+        noteData.stealthGlow += FlxMath.bound(stealthGlow, 0, 1); //clamp
+
+        var substractAlpha:Float = currentValue-0.5;
+        substractAlpha = FlxMath.bound(substractAlpha*2, 0, 1);
+        noteData.alpha *= 1-substractAlpha;
+    }       
 }
 class SuddenModifier extends Modifier
 {
@@ -2420,7 +2491,7 @@ class SquareScaleModifier extends Modifier
     }
 }
 
-class CenterModifier extends Modifier //DON'T FUCKING WORKS
+class CenterModifier extends Modifier
 {
     var differenceBetween:Float = 0;
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
@@ -2434,16 +2505,28 @@ class CenterModifier extends Modifier //DON'T FUCKING WORKS
         noteData.y -= currentValue * differenceBetween;  
     }
 }
-
+class Center2Modifier extends Modifier
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {  
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        var differenceBetween:Float = noteData.y - screenCenter;
+       noteData.y -= currentValue * differenceBetween;
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        strumMath(noteData, lane, pf);
+    }
+}
 
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
 class ArrowPath extends Modifier {
     public var _path: List<TimeVector> = null;
     public var _pathDistance: Float = 0;
 
-    override public function noteMath(noteData: NotePositionData, lane: Int, curPos: Float, pf: Int) {
-        if (Paths.fileExists("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path.txt", TEXT)){
-            var newPosition = executePath(0, curPos, lane, lane < 4 ? 0 : 1, new Vector4(noteData.x, noteData.y, noteData.z, 0));
+    override public function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int) {
+        if (Paths.fileExists("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt", TEXT)){
+            var newPosition = executePath(0, (curPos*0.45), lane, lane < 4 ? 0 : 1, new Vector4(noteData.x, noteData.y, noteData.z, 0));
             noteData.x = newPosition.x;
             noteData.y = newPosition.y;
             noteData.z = newPosition.z;
@@ -2453,6 +2536,7 @@ class ArrowPath extends Modifier {
         {
             subValues.set('x', new ModifierSubValue(0.0));
             subValues.set('y', new ModifierSubValue(0.0));
+            subValues.set('path', new ModifierSubValue(0.0));
             currentValue = 1.0;
         }
     override function incomingAngleMath(lane:Int, curPos:Float, pf:Int)
@@ -2465,8 +2549,8 @@ class ArrowPath extends Modifier {
             currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
         }
     public function loadPath() {
-        var file = CoolUtil.coolTextFile(Paths.modFolders("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path.txt"));
-        var file2 = CoolUtil.coolTextFile(Paths.getPreloadPath("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path.txt"));
+        var file = CoolUtil.coolTextFile(Paths.modFolders("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt"));
+        var file2 = CoolUtil.coolTextFile(Paths.getPreloadPath("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt"));
 
         var filePath = null;
         if (file != null) {

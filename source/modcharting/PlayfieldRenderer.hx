@@ -186,6 +186,11 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         strum.scale.y = strumData.scaleY;
         strum.skew.x = strumData.skewX;
         strum.skew.y = strumData.skewY;
+
+        strum.rgbShader.stealthGlow = strumData.stealthGlow;
+        strum.rgbShader.stealthGlowRed = strumData.glowRed;
+        strum.rgbShader.stealthGlowGreen = strumData.glowGreen;
+        strum.rgbShader.stealthGlowBlue = strumData.glowBlue;
     }
 
     private function getDataForStrum(i:Int, pf:Int)
@@ -223,6 +228,11 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         daNote.scale.y = noteData.scaleY;
         daNote.skew.x = noteData.skewX;
         daNote.skew.y = noteData.skewY;
+
+        daNote.rgbShader.stealthGlow = noteData.stealthGlow;
+        daNote.rgbShader.stealthGlowRed = noteData.glowRed;
+        daNote.rgbShader.stealthGlowGreen = noteData.glowGreen;
+        daNote.rgbShader.stealthGlowBlue = noteData.glowBlue;
     }
     private function createDataFromNote(noteIndex:Int, playfieldIndex:Int, curPos:Float, noteDist:Float, incomingAngle:Array<Float>)
     {
@@ -449,6 +459,11 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         // daNote.mesh.scrollFactor.y = daNote.scrollFactor.y;
         daNote.alpha = noteData.alpha;
         daNote.mesh.alpha = daNote.alpha;
+
+        daNote.rgbShader.parent.stealthGlow = noteData.stealthGlow;
+        daNote.rgbShader.parent.stealthGlowRed = noteData.glowRed;
+        daNote.rgbShader.parent.stealthGlowGreen = noteData.glowGreen;
+        daNote.rgbShader.parent.stealthGlowBlue = noteData.glowBlue;
 
         var songSpeed = getCorrectScrollSpeed();
         var lane = noteData.lane;

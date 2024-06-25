@@ -27,6 +27,11 @@ class NotePositionData implements IFlxDestroyable
     public var incomingAngleX:Float;
     public var incomingAngleY:Float;
     public var strumTime:Float;
+
+    public var stealthGlow:Float;
+    public var glowRed:Float;
+    public var glowGreen:Float;
+    public var glowBlue:Float;
     public function new() {}
     public function destroy() {}
     public static function get() :  NotePositionData
@@ -54,6 +59,11 @@ class NotePositionData implements IFlxDestroyable
         this.incomingAngleX = 0;
         this.incomingAngleY = 0;
         this.strumTime = 0;
+
+        this.stealthGlow = 0;
+        this.glowRed = 1;
+        this.glowGreen = 1;
+        this.glowBlue = 1;
     }
 
     public function setupNote(x:Float, y:Float, z:Float, lane:Int, scaleX:Float, scaleY:Float, skewX:Float, skewY:Float, pf:Int, alpha:Float, curPos:Float, noteDist:Float, iaX:Float, iaY:Float, strumTime:Float, index:Int)
@@ -76,5 +86,10 @@ class NotePositionData implements IFlxDestroyable
         this.incomingAngleX = iaX;
         this.incomingAngleY = iaY;
         this.strumTime = strumTime;
+
+        this.stealthGlow = 0;
+        this.glowRed = 1;
+        this.glowGreen = 1;
+        this.glowBlue = 1;
     }
 }

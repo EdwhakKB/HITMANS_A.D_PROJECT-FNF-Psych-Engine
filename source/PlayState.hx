@@ -3992,7 +3992,15 @@ class PlayState extends MusicBeatState
 							boyfriend.alpha = 0.00001;
 							boyfriend = boyfriendMap.get(value2);
 							boyfriend.alpha = lastAlpha;
-							hitmansHUD.iconP1.changeIcon(boyfriend.healthIcon);
+							var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
+							switch(edwhakVariable.contains(boyfriend.curCharacter)){
+								case true:
+									hitmansHUD.iconP1.changeIcon('icon-edwhak-pl');
+								case false:
+									hitmansHUD.iconP1.changeIcon(boyfriend.healthIcon);
+								default:
+									hitmansHUD.iconP1.changeIcon(boyfriend.healthIcon); //if it crash for some reazon?
+							}
 						}
 						setOnScripts('boyfriendName', boyfriend.curCharacter);
 
