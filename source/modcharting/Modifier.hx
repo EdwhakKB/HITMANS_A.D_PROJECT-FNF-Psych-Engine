@@ -671,6 +671,17 @@ class BumpyModifier extends Modifier
         noteData.z += currentValue * 40 * FlxMath.fastSin(curPos*0.01*subValues.get('speed').value);
     }
 }
+class TanBumpyModifier extends Modifier 
+{
+    override function setupSubValues()
+    {
+        subValues.set('speed', new ModifierSubValue(1.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.z += currentValue * 40 * Math.tan(curPos*0.01*subValues.get('speed').value);
+    }
+}
 
 class XModifier extends Modifier 
 {
@@ -825,74 +836,224 @@ class StealthModifier extends Modifier
         noteData.alpha *= 1-substractAlpha;
     }       
 }
+class DarkModifier extends Modifier
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        var stealthGlow:Float = currentValue*2;
+        noteData.stealthGlow += FlxMath.bound(stealthGlow, 0, 1); //clamp
+
+        var substractAlpha:Float = currentValue-0.5;
+        substractAlpha = FlxMath.bound(substractAlpha*2, 0, 1);
+        noteData.alpha *= 1-substractAlpha;
+    }       
+}
+class StealthColorModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('r', new ModifierSubValue(255.0));
+        subValues.set('g', new ModifierSubValue(255.0));
+        subValues.set('b', new ModifierSubValue(255.0));
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var red = subValues.get('r').value/255; //so i can get exact values instead of 0.7668676767676768
+        var green = subValues.get('g').value/255;
+        var blue = subValues.get('b').value/255;
+
+        noteData.glowRed *= red;
+        noteData.glowGreen *= green;
+        noteData.glowBlue *= blue;
+    }       
+}
 class SuddenModifier extends Modifier
 {
     override function setupSubValues()
     {
+        subValues.set('noglow', new ModifierSubValue(1.0)); //by default 1
+        subValues.set('start', new ModifierSubValue(5.0));
+        subValues.set('end', new ModifierSubValue(3.0));
         subValues.set('offset', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        if (curPos <= (subValues.get('offset').value*-100) && curPos >= ((subValues.get('offset').value*-100)-200))
+        var a:Float = FlxMath.remapToRange(curPos, (subValues.get('start').value*-100) + (subValues.get('offset').value*-100), 
+            (subValues.get('end').value*-100) + (subValues.get('offset').value*-100), 1, 0);
+        a = FlxMath.bound(a, 0, 1);
+
+        if (subValues.get('noglow').value >= 1.0)
         {
-            var hmult = -(curPos-(subValues.get('offset').value*-100))/200;
-            noteData.alpha *=(1-hmult)*currentValue;
-        } 
-        else if (curPos < ((subValues.get('offset').value*-100)-100))
-        {
-            noteData.alpha *=(1-currentValue);
+            noteData.alpha -= a*currentValue;
+            return;
         }
+
+        a *= currentValue;
+
+        if (subValues.get('noglow').value < 0.5)
+        {
+            var stealthGlow:Float = a*2;
+            noteData.stealthGlow += FlxMath.bound(stealthGlow, 0, 1); //clamp
+        }
+
+        var substractAlpha:Float = FlxMath.bound((a-0.5)*2, 0, 1);
+        noteData.alpha -= substractAlpha;
+
+        // var start = (subValues.get('start').value*-100) + (subValues.get('offset').value*-100);
+        // var end = (subValues.get('end').value*-100) + (subValues.get('offset').value*-100);
+
+        // if (curPos <= end && curPos >= start)
+        // {
+        //     var hmult = -(curPos-(subValues.get('offset').value*-100))/200;
+        //     noteData.alpha *=(1-hmult)*currentValue;
+        // } 
+        // else if (curPos < end)
+        // {
+        //     noteData.alpha *=(1-currentValue);
+        // }
     }
 }
 class HiddenModifier extends Modifier
 {
     override function setupSubValues()
     {
+        subValues.set('noglow', new ModifierSubValue(1.0)); //by default 1
+        subValues.set('start', new ModifierSubValue(5.0));
+        subValues.set('end', new ModifierSubValue(3.0));
         subValues.set('offset', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        if (curPos > ((subValues.get('offset').value*-100)-100))
+        var a:Float = FlxMath.remapToRange(curPos, (subValues.get('start').value*-100) + (subValues.get('offset').value*-100), 
+            (subValues.get('end').value*-100) + (subValues.get('offset').value*-100), 0, 1);
+        a = FlxMath.bound(a, 0, 1);
+
+        if (subValues.get('noglow').value >= 1.0)
         {
-            var hmult = (curPos-(subValues.get('offset').value*-100))/200;
-            noteData.alpha *=(1-hmult);
+            noteData.alpha -= a*currentValue;
+            return;
         }
+
+        a *= currentValue;
+
+        if (subValues.get('noglow').value < 0.5)
+        {
+            var stealthGlow:Float = a*2;
+            noteData.stealthGlow += FlxMath.bound(stealthGlow, 0, 1); //clamp
+        }
+
+        var substractAlpha:Float = FlxMath.bound((a-0.5)*2, 0, 1);
+        noteData.alpha -= substractAlpha;
+
+
+        // if (curPos > ((subValues.get('offset').value*-100)-100))
+        // {
+        //     var hmult = (curPos-(subValues.get('offset').value*-100))/200;
+        //     noteData.alpha *=(1-hmult);
+        // }
     }
 }
 class VanishModifier extends Modifier
 {
     override function setupSubValues()
     {
-        subValues.set('offsetIn', new ModifierSubValue(1.0));
-        subValues.set('offsetOut', new ModifierSubValue(0.0));
+        subValues.set('noglow', new ModifierSubValue(1.0)); //by default 1
+        subValues.set('start', new ModifierSubValue(4.75));
+        subValues.set('end', new ModifierSubValue(1.25));
+        subValues.set('offset', new ModifierSubValue(0.0));
+        subValues.set('size', new ModifierSubValue(1.95));
+
+        // subValues.set('offsetIn', new ModifierSubValue(1.0));
+        // subValues.set('offsetOut', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        if (curPos <= (subValues.get('offsetOut').value*-100) && curPos >= ((subValues.get('offsetOut').value*-100)-200))
+        var midPoint:Float = (subValues.get('start').value*-100) + (subValues.get('offset').value*-100);
+        midPoint/=2;
+
+        var sizeThingy:Float = (subValues.get('size').value*100)/2;
+
+        var a:Float = FlxMath.remapToRange(curPos, 
+           ( subValues.get('start').value*-100) + (subValues.get('offset').value*-100),
+            midPoint + sizeThingy + (subValues.get('offset').value*-100), 0, 1);
+
+        a = FlxMath.bound(a, 0, 1);
+
+        var b:Float = FlxMath.remapToRange(curPos, 
+            midPoint - sizeThingy + (subValues.get('offset').value*-100),
+            (subValues.get('end').value*-100) + (subValues.get('offset').value*-100), 0, 1);
+
+        b = FlxMath.bound(b, 0, 1);
+
+        var result:Float = a - b;
+
+        if (subValues.get('noglow').value >= 1.0)
         {
-            var hmult = -(curPos-(subValues.get('offsetOut').value*-100))/200;
-            noteData.alpha *=(1-hmult)*currentValue;
+            noteData.alpha -= result*currentValue;
+            return;
         }
-        else if (curPos > ((subValues.get('offsetIn').value*-100)-100))
+
+        result *= currentValue;
+
+        if (subValues.get('noglow').value < 0.5)
         {
-            var hmult = (curPos-(subValues.get('offsetIn').value*-100))/200;
-            noteData.alpha *=(1-hmult);
+            var stealthGlow:Float = result*2;
+            noteData.stealthGlow += FlxMath.bound(stealthGlow, 0, 1); //clamp
         }
-        else if (curPos < ((subValues.get('offsetOut').value*-100)-100))
-        {
-            noteData.alpha *=(1-currentValue);
-        }
+
+        var substractAlpha:Float = FlxMath.bound((result-0.5)*2, 0, 1);
+        noteData.alpha -= substractAlpha;
+
+
+
+        // if (curPos <= (subValues.get('offsetOut').value*-100) && curPos >= ((subValues.get('offsetOut').value*-100)-200))
+        // {
+        //     var hmult = -(curPos-(subValues.get('offsetOut').value*-100))/200;
+        //     noteData.alpha *=(1-hmult)*currentValue;
+        // }
+        // else if (curPos > ((subValues.get('offsetIn').value*-100)-100))
+        // {
+        //     var hmult = (curPos-(subValues.get('offsetIn').value*-100))/200;
+        //     noteData.alpha *=(1-hmult);
+        // }
+        // else if (curPos < ((subValues.get('offsetOut').value*-100)-100))
+        // {
+        //     noteData.alpha *=(1-currentValue);
+        // }
     }
 }
 class BlinkModifier extends Modifier
 {
     override function setupSubValues()
     {
+        subValues.set('noglow', new ModifierSubValue(1.0)); //by default 1
+        subValues.set('offset', new ModifierSubValue(0.0));
+
         subValues.set('speed', new ModifierSubValue(1.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.alpha *=(1-(currentValue*FlxMath.fastSin(((Conductor.songPosition*0.001)*(subValues.get('speed').value*10)))));
+        var a:Float = FlxMath.fastSin((Modifier.beat + (subValues.get('offset').value*-100))*subValues.get('speed').value* Math.PI)*2;
+        a = FlxMath.bound(a, 0, 1);
+
+        if (subValues.get('noglow').value >= 1.0)
+        {
+            noteData.alpha -= a*currentValue;
+            return;
+        }
+
+        a *= currentValue;
+
+        if (subValues.get('noglow').value < 0.5)
+        {
+            var stealthGlow:Float = a*2;
+            noteData.stealthGlow += FlxMath.bound(stealthGlow, 0, 1); //clamp
+        }
+
+        var substractAlpha:Float = FlxMath.bound((a-0.5)*2, 0, 1);
+        noteData.alpha -= substractAlpha;
+
+        // noteData.alpha *=(1-(currentValue*FlxMath.fastSin(((Conductor.songPosition*0.001)*(subValues.get('speed').value*10)))));
     }
 }
 
@@ -1331,6 +1492,25 @@ class JumpNotesModifier extends Modifier
         
 
         noteData.y += (beatVal*(Conductor.stepCrochet*currentValue))*renderer.getCorrectScrollSpeed()*0.45*scrollSwitch;
+    }
+}
+class DrivenModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSpeed = renderer.getCorrectScrollSpeed();
+
+        var scrollSwitch = 1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                scrollSwitch = -1;
+
+        
+        noteData.y += 0.45 *scrollSpeed * scrollSwitch * currentValue;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf); //just reuse same thing
     }
 }
 
@@ -2533,21 +2713,23 @@ class ArrowPath extends Modifier {
         }
     }
     override function setupSubValues()
-        {
-            subValues.set('x', new ModifierSubValue(0.0));
-            subValues.set('y', new ModifierSubValue(0.0));
-            subValues.set('path', new ModifierSubValue(0.0));
-            currentValue = 1.0;
-        }
+    {
+        subValues.set('x', new ModifierSubValue(0.0));
+        subValues.set('y', new ModifierSubValue(0.0));
+        subValues.set('path', new ModifierSubValue(0.0));
+        currentValue = 1.0;
+        baseValue = 0.0;
+    }
     override function incomingAngleMath(lane:Int, curPos:Float, pf:Int)
-        {
-            return [subValues.get('x').value, subValues.get('y').value];
-        }
+    {
+        return [subValues.get('x').value, subValues.get('y').value];
+    }
     override function reset()
-        {
-            super.reset();
-            currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
-        }
+    {
+        super.reset();
+        currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
+        baseValue = 0.0;
+    }
     public function loadPath() {
         var file = CoolUtil.coolTextFile(Paths.modFolders("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt"));
         var file2 = CoolUtil.coolTextFile(Paths.getPreloadPath("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt"));

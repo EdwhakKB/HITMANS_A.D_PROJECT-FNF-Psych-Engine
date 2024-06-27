@@ -51,6 +51,8 @@ using StringTools;
 //Make editor optimized? (yeah idfk what causes a lag XD)
 //Lua support for editor or even playstate so player can see what kind of modchart they do
 //Grain shit for sustains (the higger value the most and most soft sustain looks) -- seems impossible
+//Fix "Stealth" mods when using playfields (for some reason playfields ask a general change instead of individual even if they are their own note copy??)
+// ^^^ this also happens in "McMadness mod" in combo-meal song when notes goes timeStop (added playfields and got same result!!) interesting.
 
 typedef StrumNoteType = 
 #if (PSYCH || LEATHER) StrumNote
@@ -246,6 +248,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         var noteSkewY = notes.members[noteIndex].skew.y;
 
         var noteAlpha:Float = 1;
+
         #if PSYCH
         if (!notes.members[noteIndex].specialHurt){
             noteAlpha = notes.members[noteIndex].multAlpha;
@@ -409,6 +412,8 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             noteData.scaleX *= (1/-thisNotePos.z);
             noteData.scaleY *= (1/-thisNotePos.z);
         }
+
+        if (noteData.stealthGlow !=0) strumGroup.members[noteData.index].rgbShader.enabled = true; //enable stealthGlow once it finds its not 0?
         // noteData.skewX = skewX + noteData.skewX;
         // noteData.skewY = skewY + noteData.skewY;
 
@@ -460,10 +465,10 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         daNote.alpha = noteData.alpha;
         daNote.mesh.alpha = daNote.alpha;
 
-        daNote.rgbShader.parent.stealthGlow = noteData.stealthGlow;
-        daNote.rgbShader.parent.stealthGlowRed = noteData.glowRed;
-        daNote.rgbShader.parent.stealthGlowGreen = noteData.glowGreen;
-        daNote.rgbShader.parent.stealthGlowBlue = noteData.glowBlue;
+        // daNote.rgbShader.parent.stealthGlow = noteData.stealthGlow;
+        // daNote.rgbShader.parent.stealthGlowRed = noteData.glowRed;
+        // daNote.rgbShader.parent.stealthGlowGreen = noteData.glowGreen;
+        // daNote.rgbShader.parent.stealthGlowBlue = noteData.glowBlue;
 
         var songSpeed = getCorrectScrollSpeed();
         var lane = noteData.lane;

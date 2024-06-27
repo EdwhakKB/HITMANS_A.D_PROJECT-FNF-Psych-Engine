@@ -105,14 +105,14 @@ class ModchartEditorState extends MusicBeatState
         TwirlModifier, RollModifier,
         //Stealth Modifiers
         AlphaModifier, NoteAlphaModifier, TargetAlphaModifier,
-        StealthModifier,
+        StealthModifier, DarkModifier, StealthColorModifier,
         SuddenModifier, HiddenModifier, VanishModifier, BlinkModifier,
         //Path Modifiers
         IncomingAngleModifier, InvertSineModifier, DizzyModifier,
         TornadoModifier, TornadoYModifier, TornadoZModifier,
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier, EaseCurveScaleModifier,
         BounceXModifier, BounceYModifier, BounceZModifier, BounceAngleModifier, BounceScaleModifier,
-        BumpyModifier,
+        BumpyModifier, TanBumpyModifier, DrivenModifier,
         BeatXModifier, BeatYModifier, BeatZModifier, BeatAngleModifier, BeatScaleModifier,
         ShrinkModifier,
         ZigZagXModifier, ZigZagYModifier, ZigZagZModifier, ZigZagAngleModifier, ZigZagScaleModifier,
@@ -128,7 +128,7 @@ class ModchartEditorState extends MusicBeatState
         StrumsModifier, InvertModifier, FlipModifier, JumpModifier, CenterModifier,
         StrumAngleModifier,
         EaseXModifier, EaseYModifier, EaseZModifier, EaseAngleModifier, EaseScaleModifier,
-        ShakyNotesModifier,
+        ShakyNotesModifier, ParalysisModifier,
         ArrowPath
     ];
     public static var easeList:Array<String> = [
@@ -400,6 +400,8 @@ class ModchartEditorState extends MusicBeatState
         hideUI.y -= hideUI.height;
         hideUI.x -= hideUI.width;
         add(hideUI);
+
+        if (ClientPrefs.quantization && !PlayState.SONG.disableNoteRGB) setUpNoteQuant();
     }
     var dirtyUpdateNotes:Bool = false;
     var dirtyUpdateEvents:Bool = false;
@@ -1474,6 +1476,8 @@ class ModchartEditorState extends MusicBeatState
                     explainString = "Modifier similar to RotateModifier but this one doesn't need a extra value (can be used with Y, X and Z)";
                 case 'BumpyModifier':
                     explainString = "Modifier used to make notes jump a bit in their own Perspective poss";
+                case 'TanBumpyModifier':
+                    explainString = "Modifier similar to bumpy but it will use Tangent math instead of sin";
                 case 'XModifier':
                     explainString = "Moves notes and targets X";
                 case 'YModifier':
@@ -1500,6 +1504,12 @@ class ModchartEditorState extends MusicBeatState
                     explainString = "Modifier used to change notes alpha";
                 case 'TargetAlphaModifier':
                     explainString = "Modifier used to change targets alpha";
+                case 'StealthModifier':
+                    explainString = "Modifier used to change Note alpha with some glow effect";
+                case 'DarkModifier':
+                    explainString = "Modifier used to change Target alpha with some glow effect";
+                case 'StealthColorModifier':
+                    explainString = "Modifier used to change Glow color into stealth mods";
                 case 'InvertModifier':
                     explainString = "Modifier used to invert notes and targets X poss (down/left/right/up)";
                 case 'FlipModifier':
@@ -1670,6 +1680,8 @@ class ModchartEditorState extends MusicBeatState
                     explainString = "Modifier used to make notes do a Square Effect into their angle";
                 case "SquareScaleModifier":
                     explainString = "Modifier used to make notes do a Square Effect into their scale";
+                case 'ParalysisModifier':
+                    explainString = "Modifier used to make notes go into a small Paralysis (stop)";
                 case 'ArrowPath':
                     explainString = "This modifier its able to make custom paths for the mods so this should be a very helpful tool";
             }
