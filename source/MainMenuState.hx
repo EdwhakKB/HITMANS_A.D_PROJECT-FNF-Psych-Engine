@@ -439,7 +439,7 @@ class MainMenuState extends MusicBeatState
 			// 		});
 			// 	}
 			// }
-			if (FlxG.keys.justPressed.CONTROL && !selectedSomethin && !inCMD)
+			if (FlxG.keys.justPressed.CONTROL && !selectedSomethin && !inCMD && !inFolder)
 			{
 				inCMD = true;
 				openSubState(new CommandPromptSubstate());
