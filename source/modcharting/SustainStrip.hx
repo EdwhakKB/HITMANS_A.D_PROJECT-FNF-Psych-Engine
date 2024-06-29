@@ -68,7 +68,7 @@ class SustainStrip extends FlxStrip
 
     //Set this to true for spiral holds!
     //Note, they might cause some visual gaps. Maybe fix later?
-    public var spiralHolds:Bool = false; //for now false cuz yeah 
+    public var spiralHolds:Bool = true; //for now false cuz yeah 
 
     public function constructVertices(noteData:NotePositionData, thisNotePos:Vector3D, nextHalfNotePos:NotePositionData, nextNotePos:NotePositionData, flipGraphic:Bool, reverseClip:Bool)
     {
@@ -107,7 +107,7 @@ class SustainStrip extends FlxStrip
             if(spiralHolds){
                 var a:Float = (nextNotePos.y - thisNotePos.y) * -1.0; // height
                 var b:Float = (nextNotePos.x - thisNotePos.x); // length
-                var angle:Float = Math.atan(b / a);
+                var angle:Float = Math.atan2(b,a);
                 angle *= (180 / Math.PI);
                 calculateAngleDif = angle;
             }
@@ -223,7 +223,7 @@ class SustainStrip extends FlxStrip
             if(spiralHolds){
                 var a:Float = (thisNotePos.y - nextNotePos.y) * -1.0; // height
                 var b:Float = (thisNotePos.x - nextNotePos.x); // length
-                var angle:Float = Math.atan(b / a);
+                var angle:Float = Math.atan2(b,a);
                 angle *= (180 / Math.PI);
                 calculateAngleDif = angle;
             }
