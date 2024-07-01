@@ -3303,7 +3303,7 @@ class PlayState extends MusicBeatState
 						//Jesus fuck this took me so much mother fucking time AAAAAAAAAA
 						if(strumScroll && daNote.isSustainNote)
 						{
-							if (daNote.animation.curAnim.name.endsWith('end')) {
+							if (daNote.isHoldEnd) {
 								daNote.y += 10.5 * (fakeCrochet / 400) * 1.5 * songSpeed + (46 * (songSpeed - 1));
 								daNote.y -= 46 * (1 - (fakeCrochet / 600)) * songSpeed;
 								if(PlayState.isPixelStage) {
@@ -3433,7 +3433,7 @@ class PlayState extends MusicBeatState
 	function set_smoothNotes(noteGroup:Array<Note>, sustainScale:Float) {
 		for (note in noteGroup) {
 			if (note.isSustainNote && note.scale.y != sustainScale * (44 / (note.frameHeight * (PlayState.isPixelStage ? (PlayState.daPixelZoom * 1.222222222) : 1)))) {
-				if (!StringTools.endsWith(note.animation.curAnim.name, 'end')) {
+				if (note.isHoldEnd) {
 					note.scale.y = sustainScale * (44 / (note.frameHeight * (PlayState.isPixelStage ? (PlayState.daPixelZoom * 1.222222222) : 1)));
 					note.updateHitbox();
 				} else {
@@ -4817,7 +4817,7 @@ class PlayState extends MusicBeatState
 			vocals.volume = 1;
 
 		var time:Float = 0.15;
-		if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
+		if(note.isSustainNote && !note.isHoldEnd) {
 			time = 0.3;
 		}
 		StrumPlayAnim(true, Std.int(Math.abs(note.noteData)), time);

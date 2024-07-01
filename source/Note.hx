@@ -8,7 +8,13 @@ import flixel.math.FlxRect;
 import flixel.util.FlxColor;
 import flash.display.BitmapData;
 import editors.ChartingState;
-import flixel.addons.effects.FlxSkewedSprite;
+
+import openfl.filters.BitmapFilter;
+import openfl.filters.DropShadowFilter;
+import openfl.filters.ShaderFilter;
+// import flixel.addons.effects.FlxSkewedSprite;
+
+import modcharting.FlxFilteredSkewedSprite as FlxImprovedSprite;
 
 import RGBPalette;
 import RGBPalette.RGBShaderReference;
@@ -22,7 +28,7 @@ typedef EventNote = {
 	value2:String
 }
 
-class Note extends FlxSkewedSprite{
+class Note extends FlxImprovedSprite{
 
 	public var mesh:modcharting.SustainStrip = null; 
 	public var z:Float = 0;
@@ -57,7 +63,9 @@ class Note extends FlxSkewedSprite{
 	public var eventVal1:String = '';
 	public var eventVal2:String = '';
 
-	public var colorSwap:ColorSwap;
+	// public var colorSwap:ColorSwap;
+	public var stealth:modcharting.ModchartShaders.StealthEffect;
+	var filtahs:Array<BitmapFilter> = [];
 
 	public var rgbShader:RGBShaderReference;
 	public static var globalRgbShaders:Array<RGBPalette> = [];
@@ -413,22 +421,22 @@ class Note extends FlxSkewedSprite{
 
 		this.noteData = noteData;
 
-		if (ClientPrefs.notesSkin[0] == 'NOTITG'){
-			sustainRGB = false;
-		}else{
-			sustainRGB = true;
-		}
+		// if (ClientPrefs.notesSkin[0] == 'NOTITG'){
+		// 	sustainRGB = false;
+		// }else{
+		// 	sustainRGB = true;
+		// }
 
 		if(noteData > -1) {
 			texture = '';
 			if (quantizedNotes) rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalQuantRBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData, false) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
-			if(!sustainRGB && isSustainNote){
-				rgbShader.enabled = false;
-			}else if(sustainRGB && isSustainNote){
-				rgbShader.enabled = true;
-			}
+			// if(!sustainRGB && isSustainNote){
+			// 	rgbShader.enabled = false;
+			// }else if(sustainRGB && isSustainNote){
+			// 	rgbShader.enabled = true;
+			// }
 			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
 
 			x += swagWidth * (noteData);
@@ -439,6 +447,9 @@ class Note extends FlxSkewedSprite{
 			}
 		}
 
+		stealth = new modcharting.ModchartShaders.StealthEffect();
+		// filters = [new ShaderFilter(stealth.shader)]; //TODO: fix this shit
+		
 		// trace(prevNote);
 
 		if(prevNote!=null)
@@ -462,6 +473,14 @@ class Note extends FlxSkewedSprite{
 			// }else{
 			// 	flipX = false;
 			// }
+
+			if (ClientPrefs.notesSkin[0] == 'NOTITG'){
+				sustainRGB = false;
+			}else{
+				sustainRGB = true;
+			}
+
+			rgbShader.enabled = sustainRGB;
 
 			updateHitbox();
 
@@ -577,6 +596,7 @@ class Note extends FlxSkewedSprite{
 	var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
 	var lastNoteScaleToo:Float = 1;
 	public var originalHeightForCalcs:Float = 6;
+	public var updateHolds:Bool = false;
 	public function reloadNote(?prefix:String = '', ?texture:String = '', ?suffix:String = '') {
 		if(prefix == null) prefix = '';
 		if(texture == null) texture = '';
@@ -585,8 +605,10 @@ class Note extends FlxSkewedSprite{
 		var skin:String = texture;
 		if(texture.length < 1) {
 			skin = PlayState.SONG != null ? PlayState.SONG.arrowSkin : null;
+			updateHolds = false;
 			if(skin == null || skin.length < 1) {
 				skin = 'Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets';
+				updateHolds = true;
 			}
 		}
 
@@ -655,6 +677,12 @@ class Note extends FlxSkewedSprite{
 
 		if (isSustainNote)
 		{
+			if(updateHolds){ //doing this check because of custom notes with own holds???
+				if (ClientPrefs.notesSkin[2] != 'NONE') //if its none it will just use notesSkin[0] sustain instead?
+					frames = Paths.getSparrowAtlas('Skins/Holds/'+ClientPrefs.notesSkin[2]+'/SUSTAIN_assets');
+				// else
+				// 	frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets'); //avoid a crash
+			}
 			animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
 			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end');
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece');
@@ -662,6 +690,10 @@ class Note extends FlxSkewedSprite{
 
 		setGraphicSize(Std.int(width * 0.7));
 		updateHitbox();
+	}
+
+	function centerHolds(){
+		offsetX += width / 2;
 	}
 
 	function loadPixelNoteAnims() {
@@ -676,6 +708,8 @@ class Note extends FlxSkewedSprite{
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		stealth.update(elapsed);
 
 		if (mustPress)
 		{

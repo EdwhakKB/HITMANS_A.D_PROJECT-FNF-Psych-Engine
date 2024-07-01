@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="SUSTAIN_assets.png">
+<SubTexture name="blue hold end0000" x="114" y="0" width="114" height="49" frameX="0" frameY="0" frameWidth="114" frameHeight="50" />
+<SubTexture name="blue hold piece0000" x="0" y="0" width="114" height="77" frameX="0" frameY="0" frameWidth="114" frameHeight="77" />
+<SubTexture name="green hold end0000" x="114" y="0" width="114" height="49" frameX="0" frameY="0" frameWidth="114" frameHeight="50" />
+<SubTexture name="green hold piece0000" x="0" y="0" width="114" height="77" frameX="0" frameY="0" frameWidth="114" frameHeight="77" />
+<SubTexture name="purple hold end0000" x="114" y="0" width="114" height="49" frameX="0" frameY="0" frameWidth="114" frameHeight="50" />
+<SubTexture name="purple hold piece0000" x="0" y="0" width="114" height="77" frameX="0" frameY="0" frameWidth="114" frameHeight="77" />
+<SubTexture name="red hold end0000" x="114" y="0" width="114" height="49" frameX="0" frameY="0" frameWidth="114" frameHeight="50" />
+<SubTexture name="red hold piece0000" x="0" y="0" width="114" height="77" frameX="0" frameY="0" frameWidth="114" frameHeight="77" />
+</TextureAtlas>

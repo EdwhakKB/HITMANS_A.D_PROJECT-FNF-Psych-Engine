@@ -1191,3 +1191,60 @@ class MimicNoteOption extends SystemOptions
 		return "Mimic Note Alpha: < " + (HelperFunctions.truncateFloat(ClientPrefs.mimicNoteAlpha, 1)*100) + '%' + " >";
 	}
 }
+
+class HoldSkin extends SystemOptions
+{
+	var holdSkins = ['NONE', 'HEXAGONIC', 'CLASSIC', 'CIRCLE', 'STEPMANIA', 'TRIANGLE', 'INHUMAN'];
+    var intMoved:Int = 0;
+    public function new(desc:String)
+	{
+		super();
+		if (OptionsMenu.isInPause)
+			description = desc + " (RESTART REQUIRED)";
+		else
+			description = desc;
+		switch (FlxG.save.data.notesSkin[2])
+		{
+			case 'NONE':
+				intMoved = 0;
+			case 'HEXAGONIC':
+				intMoved = 1;
+			case 'CLASSIC':
+				intMoved = 2;
+			case 'CIRCLE':
+				intMoved = 3;
+			case 'STEPMANIA':
+				intMoved = 4;
+			case 'TRIANGLE':
+				intMoved = 5;
+			case 'INHUMAN':
+				intMoved = 6;
+		}
+	}
+	override function right():Bool
+	{
+		intMoved += 1;
+
+		if (intMoved > 5)
+			intMoved = 5;
+
+        ClientPrefs.notesSkin[2] = holdSkins[intMoved]; 
+		return true;
+	}
+
+	override function left():Bool
+	{
+		intMoved -= 1;
+
+		if (intMoved < 0)
+			intMoved = 0;
+
+		ClientPrefs.notesSkin[2] = holdSkins[intMoved]; 
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Hold Note Skin: < " + holdSkins[intMoved]  + " >";
+	}
+}

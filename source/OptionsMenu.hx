@@ -223,6 +223,7 @@ class OptionsMenu extends MusicBeatSubstate
 					new QuantizationOption("Allow note quantization"),
 					new QuantOption("Change the Quantize colors"),
 					new MineSkin("Change the Mine Note Skin"),
+					new HoldSkin("Change the Hold (Sustain) Skin"),
 					new MimicNoteOption("Change the Mimic note alpha"),
 				]),
 				new OptionCata(640, 100, "Misc", [
@@ -261,6 +262,7 @@ class OptionsMenu extends MusicBeatSubstate
 					new HealthBarVisibility("Toggles health bar transperancy"),
 					new QuantizationOption("Allow note quantization"),
 					new MineSkin("Change the Mine Note Skin"),
+					new HoldSkin("Change the Hold (Sustain) Skin"),
 				]),
 				new OptionCata(640, 100, "Misc", [
 					new FlashingLightsOption("If you're sensitive to flashing lights!"),

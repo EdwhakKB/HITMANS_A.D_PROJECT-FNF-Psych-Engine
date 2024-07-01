@@ -2699,31 +2699,31 @@ class Center2Modifier extends Modifier
     }
 }
 
-class StraightHoldsModifier extends Modifier //unused
-{
-    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    {
-        noteData.straightHold += currentValue;
-    }
-}
+// class StraightHoldsModifier extends Modifier //unused
+// {
+//     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+//     {
+//         noteData.straightHold += currentValue;
+//     }
+// }
 
-class LongHoldsModifier extends Modifier //unused
-{
-    override function setupSubValues()
-    {
-        baseValue = 1.0;
-        currentValue = 1.0;
-    }
-    override function curPosMath(lane:Int, curPos:Float, pf:Int)
-    {
-        if (notes.members[lane].isSustainNote) 
-            return curPos * currentValue;
-        else
-            return curPos;
+// class LongHoldsModifier extends Modifier //unused
+// {
+//     override function setupSubValues()
+//     {
+//         baseValue = 1.0;
+//         currentValue = 1.0;
+//     }
+//     override function curPosMath(lane:Int, curPos:Float, pf:Int)
+//     {
+//         if (notes.members[lane].isSustainNote) 
+//             return curPos * currentValue;
+//         else
+//             return curPos;
 
-        //if else then nothing??
-    }
-}
+//         //if else then nothing??
+//     }
+// }
 
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
 class ArrowPath extends Modifier {

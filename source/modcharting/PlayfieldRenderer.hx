@@ -517,9 +517,9 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         {
             if (noteData.isStrum) //draw strum
                 drawStrum(noteData);
-            else if (!notes.members[noteData.index].isSustainNote) //draw regular note
+            else if (!notes.members[noteData.index].isSustainNote) //draw note
                 drawNote(noteData);
-            else //draw sustain
+            else //draw Sustain
                 drawSustainNote(noteData);
 
         }

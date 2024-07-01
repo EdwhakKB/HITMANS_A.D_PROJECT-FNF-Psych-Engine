@@ -33,7 +33,7 @@ class NotePositionData implements IFlxDestroyable
     public var glowGreen:Float;
     public var glowBlue:Float;
 
-    public var straightHold:Float;
+    // public var straightHold:Float;
     public function new() {}
     public function destroy() {}
     public static function get() :  NotePositionData
@@ -67,7 +67,7 @@ class NotePositionData implements IFlxDestroyable
         this.glowGreen = 1;
         this.glowBlue = 1;
 
-        this.straightHold = 0; //why tf does a strum need a damn "straightHold" value XD?
+        // this.straightHold = 0; //why tf does a strum need a damn "straightHold" value XD?
     }
 
     public function setupNote(x:Float, y:Float, z:Float, lane:Int, scaleX:Float, scaleY:Float, skewX:Float, skewY:Float, pf:Int, alpha:Float, curPos:Float, noteDist:Float, iaX:Float, iaY:Float, strumTime:Float, index:Int)
@@ -96,6 +96,6 @@ class NotePositionData implements IFlxDestroyable
         this.glowGreen = 1;
         this.glowBlue = 1;
 
-        this.straightHold = 0; //different to up this doesn't break shit LOL
+        // this.straightHold = 0; //different to up this doesn't break shit LOL
     }
 }

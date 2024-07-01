@@ -24,7 +24,7 @@ class ClientPrefs {
     public static var countDownSounds:Array<String> = ["intro3", "intro2", "intro1", "introGo"];
     public static var ratingStyle:Array<Dynamic> = ["", null];
     public static var memoryDisplay:Bool = true;
-	public static var notesSkin:Array<String> = ['HITMANS', 'MIMIC'];
+	public static var notesSkin:Array<String> = ['HITMANS', 'MIMIC', 'NONE']; //notes, hurts, holds
 	public static var mineSkin:String = 'HITMANS';
 	public static var splashSkin:String = 'HITMANS';
 	public static var userName:String = '';
