@@ -274,6 +274,8 @@ class EditorPlayState extends MusicBeatState
 		}
 		#end
 
+		hitmansHUD.updateScore();
+
 		if (PlayState.SONG.notITG)
 			modcharting.ModchartFuncs.loadLuaEditorFunctions();
 
@@ -401,9 +403,9 @@ class EditorPlayState extends MusicBeatState
 		FlxG.sound.play(Paths.sound('introGo'), 0.6);
 	}
 
-	//var songScore:Int = 0;
-	var songHits:Int = 0;
-	var songMisses:Int = 0;
+	public var songScore:Int = 0;
+	public var songHits:Int = 0;
+	public var songMisses:Int = 0;
 	var startingSong:Bool = true;
 	private function generateSong():Void
 	{
@@ -537,6 +539,9 @@ class EditorPlayState extends MusicBeatState
 
 	public var noteKillOffset:Float = 350;
 	public var spawnTime:Float = 2000;
+
+	public var health:Float = 1;
+	public var shownHealth:Float = 1;
 	override function update(elapsed:Float) {
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
@@ -544,6 +549,8 @@ class EditorPlayState extends MusicBeatState
 			vocals.pause();
 			LoadingState.loadAndSwitchState(new editors.ChartingState());
 		}
+		hitmansHUD.health = health;
+		hitmansHUD.shownHealth = shownHealth;
 
 		callOnLuas('onUpdate', [elapsed]);
 		callOnLuas('update', [elapsed]);
@@ -560,8 +567,15 @@ class EditorPlayState extends MusicBeatState
 
 		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
 
+		if (health <= 0)
+			health = 0;
+		else if (health >= 2)
+			health = 2;
+
 		setOnLuas('curDecBeat', curDecBeat);
 		setOnLuas('curDecStep', curDecStep);
+
+		shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 15, 0, 1));
 
 		if (unspawnNotes[0] != null)
 		{
@@ -710,8 +724,7 @@ class EditorPlayState extends MusicBeatState
 							});
 
 							if(!daNote.ignoreNote) {
-								songMisses++;
-								vocals.volume = 0;
+								noteMiss();
 							}
 						}
 					}
@@ -1081,8 +1094,11 @@ class EditorPlayState extends MusicBeatState
 	{
 		combo = 0;
 
-		//songScore -= 10;
+		songScore -= 10;
 		songMisses++;
+		health -= 0.03;
+
+		hitmansHUD.updateScore();
 
 		// FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 		vocals.volume = 0;
@@ -1104,32 +1120,34 @@ class EditorPlayState extends MusicBeatState
 		//
 
 		var rating:FlxSprite = new FlxSprite();
-		//var score:Int = 350;
+		var score:Int = 450;
 
 		var daRating:String = "marvelous";
 
 		if (noteDiff > Conductor.safeZoneOffset * 0.8)
 		{
 			daRating = 'shit';
-			//score = 50;
+			score = 50;
 		}
 		else if (noteDiff > Conductor.safeZoneOffset * 0.6)
 		{
 			daRating = 'bad';
-			//score = 100;
+			score = 100;
 		}
 		else if (noteDiff > Conductor.safeZoneOffset * 0.4)
 		{
 			daRating = 'good';
-			//score = 200;
+			score = 200;
 		}
 		else if (noteDiff > Conductor.safeZoneOffset * 0.2)
 		{
 			daRating = 'sick';
-			//score = 200;
+			score += 350;
 		}
 
-		//songScore += score;
+		songScore += score;
+
+		hitmansHUD.updateScore();
 
 		/* if (combo > 60)
 				daRating = 'sick';

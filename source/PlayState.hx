@@ -2908,6 +2908,9 @@ class PlayState extends MusicBeatState
 		callOnScripts('onUpdate', [elapsed]);
 		if (notITGMod && SONG.notITG)
 			playfieldRenderer.speed = playbackRate; //LMAO IT LOOKS SOO GOOFY AS FUCK
+
+		hitmansHUD.health = health;
+		hitmansHUD.shownHealth = shownHealth;
 		
 		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
 

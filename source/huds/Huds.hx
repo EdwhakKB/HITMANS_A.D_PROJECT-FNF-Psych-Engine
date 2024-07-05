@@ -17,6 +17,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.util.FlxStringUtil;
+import editors.EditorPlayState;
 
 using StringTools;
 
@@ -291,20 +292,20 @@ class Huds extends FlxGroup
 			add(healthBarBG);
 
 			var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
-			switch(edwhakVariable.contains(PlayState.instance.boyfriend.curCharacter)){
+			switch(edwhakVariable.contains(PlayState.instance != null ? PlayState.instance.boyfriend.curCharacter : (PlayState.SONG != null ? PlayState.SONG.player1 : 'bf'))){
 				case true:
 					iconP1 = new EditedHealthIcon('icon-edwhak-pl', true);
 				case false:
-					iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true);
+					iconP1 = new EditedHealthIcon(PlayState.instance != null ? PlayState.instance.boyfriend.healthIcon : (PlayState.SONG != null ? PlayState.SONG.player1 : 'bf'), true);
 				default:
-					iconP1 = new EditedHealthIcon(PlayState.instance.boyfriend.healthIcon, true); //if it crash for some reazon?
+					iconP1 = new EditedHealthIcon(PlayState.instance != null ? PlayState.instance.boyfriend.healthIcon : (PlayState.SONG != null ? PlayState.SONG.player1 : 'bf'), true); //if it crash for some reazon?
 			}
             iconP1.y = healthBar.y + iconsYOffset[0];
             iconP1.visible = !ClientPrefs.hideHud;
             iconP1.alpha = ClientPrefs.healthBarAlpha;
             add(iconP1);
     
-            iconP2 = new EditedHealthIcon(PlayState.instance.dad.healthIcon, false);
+            iconP2 = new EditedHealthIcon(PlayState.instance != null ? PlayState.instance.dad.healthIcon : (PlayState.SONG != null ? PlayState.SONG.player2 : 'dad'), false);
             iconP2.y = healthBar.y + iconsYOffset[1];
             iconP2.visible = !ClientPrefs.hideHud;
             iconP2.alpha = ClientPrefs.healthBarAlpha;
@@ -324,7 +325,7 @@ class Huds extends FlxGroup
 			botplayTxt.font = (hudUsed == 'hitmans') ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf");
             botplayTxt.scrollFactor.set();
             botplayTxt.borderSize = 1.25;
-            botplayTxt.visible = PlayState.instance.cpuControlled;
+            botplayTxt.visible = PlayState.instance != null ? PlayState.instance.cpuControlled : false;
             add(botplayTxt);
             if(ClientPrefs.downScroll) {
                 botplayTxt.y = timeBarBG.y - 78;
@@ -332,7 +333,51 @@ class Huds extends FlxGroup
 
 			hudadded = true;
 			reloadHealthBarColors();
-			updateScore();
+			updateScore = function(){
+				if (hudadded)
+				{
+					var songScore:Int = 0;
+					var songMisses:Int = 0;
+					var ratingName:String = "";
+					var ratingPercent:Float = 0;
+					var ratingFC:String = "";
+
+					var isEditor:Bool = false;
+					if (FlxG.state is PlayState)
+					{
+						songScore = PlayState.instance.songScore;
+						songMisses = PlayState.instance.songMisses;
+						ratingName = PlayState.instance.ratingName;
+						ratingPercent = PlayState.instance.ratingPercent;
+						ratingFC = PlayState.instance.ratingFC;
+					}
+					else if (FlxG.state is EditorPlayState)
+					{
+						isEditor = true;
+
+						songScore = EditorPlayState.instance.songScore;
+						songMisses = EditorPlayState.instance.songMisses;
+					}
+		
+					// of course I would go back and fix my code, of COURSE @BeastlyGhost;
+					tempScore = 'Score: ' + songScore;
+					var ratingString = '';
+					
+					if (displayRatings)
+					{
+						ratingString = scoreSeparator + 'Misses: ' + songMisses;
+						if (!isEditor)
+						{
+							ratingString += scoreSeparator + 'Rating: ' + ratingName;
+							ratingString += (ratingName != '?' ? ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' : '');
+							ratingString += (ratingFC != null && ratingFC != '' ? ' - ' + ratingFC : '');
+						}
+					}
+		
+					tempScore += ratingString + '\n';
+					scoreTxt.text = tempScore;
+				}
+			};
 		}
 	}
 
@@ -352,9 +397,6 @@ class Huds extends FlxGroup
 		super.update(elapsed);
 		if (hudadded)
 		{
-			health = PlayState.instance.health;
-			shownHealth = PlayState.instance.shownHealth;
-
             // var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * PlayState.instance.playbackRate), 0, 1));
 			// iconP1.scale.set(mult, mult);
 			// iconP1.updateHitbox();
@@ -383,17 +425,20 @@ class Huds extends FlxGroup
 			}
 
         	//noteRating shit ig but only for x and y LOL
-            noteScore.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
-            noteScore.text = Std.string(PlayState.instance.combo);
+			if (FlxG.state is PlayState)
+			{
+				noteScore.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
+				noteScore.text = Std.string(PlayState.instance.combo);
 
-            switch (PlayState.instance.edwhakIsEnemy || PlayState.SONG.bossFight){
-                case true:
-                    noteScoreOp.text = Std.string(PlayState.instance.comboOp);
-                    noteScoreOp.alpha = PlayState.instance.comboOp <= 3 ? 0 : 1;
-                case false:
-                    noteScoreOp.text = Std.string(PlayState.instance.combo);
-                    noteScoreOp.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
-            }
+				switch (PlayState.instance.edwhakIsEnemy || PlayState.SONG.bossFight){
+					case true:
+						noteScoreOp.text = Std.string(PlayState.instance.comboOp);
+						noteScoreOp.alpha = PlayState.instance.comboOp <= 3 ? 0 : 1;
+					case false:
+						noteScoreOp.text = Std.string(PlayState.instance.combo);
+						noteScoreOp.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
+				}
+			}
 
 			// if (!separateTimeMovement)
 			// {
@@ -432,22 +477,25 @@ class Huds extends FlxGroup
 				timeTxt.y = timeBarBG.y - 10;
 			}
 
-			if (updateTime)
+			if (FlxG.state is PlayState)
 			{
-				var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
-				var secondsTotal:Int = Math.floor(curTime / 1000);
-				if (curTime < 0)
-					curTime = 0;
+				if (updateTime)
+				{
+					var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
+					var secondsTotal:Int = Math.floor(curTime / 1000);
+					if (curTime < 0)
+						curTime = 0;
 
-				songPercent = (curTime / PlayState.instance.songLength);
+					songPercent = (curTime / PlayState.instance.songLength);
 
-				if (secondsTotal < 0)
-					secondsTotal = 0;
+					if (secondsTotal < 0)
+						secondsTotal = 0;
 
-				timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+					timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
 
-				if (updateTimePos)
-					timeTxt.screenCenter(X);
+					if (updateTimePos)
+						timeTxt.screenCenter(X);
+				}
 			}
 		}
 	}
@@ -456,31 +504,8 @@ class Huds extends FlxGroup
 	public var scoreSeparator:String = ' | ';
 	public var displayRatings:Bool = true;
 
-	public function updateScore()
+	public dynamic function updateScore()
 	{
-		if (hudadded)
-		{
-			var songScore:Int = PlayState.instance.songScore;
-			var songMisses:Int = PlayState.instance.songMisses;
-			var ratingName:String = PlayState.instance.ratingName;
-			var ratingPercent:Float = PlayState.instance.ratingPercent;
-			var ratingFC:String = PlayState.instance.ratingFC;
-
-			// of course I would go back and fix my code, of COURSE @BeastlyGhost;
-			tempScore = 'Score: ' + songScore;
-			var ratingString = '';
-            
-            if (displayRatings)
-			{
-				ratingString = scoreSeparator + 'Misses: ' + songMisses;
-				ratingString += scoreSeparator + 'Rating: ' + ratingName;
-				ratingString += (ratingName != '?' ? ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' : '');
-				ratingString += (ratingFC != null && ratingFC != '' ? ' - ' + ratingFC : '');
-			}
-
-			tempScore += ratingString + '\n';
-			scoreTxt.text = tempScore;
-		}
 	}
 
 	public function reloadHealthBarColors()
@@ -530,7 +555,6 @@ class Huds extends FlxGroup
 
 	function getSongLengthFake():Float{
 		var songLengthDummy = PlayState.instance.songLength;
-
 		return songLengthDummy;
 	}
 
