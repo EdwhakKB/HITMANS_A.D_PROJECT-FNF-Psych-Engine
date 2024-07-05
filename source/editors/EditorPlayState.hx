@@ -130,7 +130,7 @@ class EditorPlayState extends MusicBeatState
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.scrollFactor.set();
-		bg.color = FlxColor.fromHSB(FlxG.random.int(0, 359), FlxG.random.float(0, 0.8), FlxG.random.float(0.3, 1));
+		bg.alpha = 0.5;
 		add(bg);
 
 		aftBitmap = new AFT_capture(camHUD);
@@ -188,6 +188,8 @@ class EditorPlayState extends MusicBeatState
 		hitmansHUD = new huds.Huds();
 		add(hitmansHUD);
 
+		strumLineNotes.cameras = notes.cameras = [camHUD, noteCameras0, noteCameras1];
+		
 		hitmansHUD.healthBar.cameras = [camInterfaz];
 		hitmansHUD.healthBarBG.cameras = [camInterfaz];
 
@@ -748,22 +750,24 @@ class EditorPlayState extends MusicBeatState
 		if (ClientPrefs.quantization)
 			noteQuantUpdatePost();
 
-		var leText = "Active Modifiers: \n";
-        for (modName => mod in playfieldRenderer.modifierTable.modifiers)
-        {
-            if (mod.currentValue != mod.baseValue)
-            {
-                leText += modName + ": " + FlxMath.roundDecimal(mod.currentValue, 2);
-                for (subModName => subMod in mod.subValues)
-                {
-                    leText += "    " + subModName + ": " + FlxMath.roundDecimal(subMod.value, 2);
-                }
-                leText += "\n";
-            }
-        }
+		if (PlayState.SONG.notITG){
+			var leText = "Active Modifiers: \n";
+			for (modName => mod in playfieldRenderer.modifierTable.modifiers)
+			{
+				if (mod.currentValue != mod.baseValue)
+				{
+					leText += modName + ": " + FlxMath.roundDecimal(mod.currentValue, 2);
+					for (subModName => subMod in mod.subValues)
+					{
+						leText += "    " + subModName + ": " + FlxMath.roundDecimal(subMod.value, 2);
+					}
+					leText += "\n";
+				}
+			}
 
-        activeModifiers.text = leText;
-		activeModifiers.screenCenter();
+			activeModifiers.text = leText;
+			activeModifiers.screenCenter();
+		}
 
 		callOnLuas('onUpdatePost', [elapsed]);
 		callOnLuas('updatePost', [elapsed]);

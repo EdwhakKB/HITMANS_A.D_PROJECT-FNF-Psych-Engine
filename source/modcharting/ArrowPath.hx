@@ -26,7 +26,7 @@ import openfl.Vector;
 import openfl.display.GraphicsPathCommand;
 // import funkin.play.notes.Strumline;
 import lime.math.Vector2;
-import funkin.graphics.ZSprite;
+// import funkin.graphics.ZSprite;
 // import funkin.play.notes.StrumlineNote;
 // import StrumNote as StrumLineNote;
 #if LEATHER
@@ -37,6 +37,7 @@ import game.Conductor;
 #else 
 import PlayState;
 import Note as StrumlineNote;
+import Conductor;
 #end
 
 typedef Strumline = 
@@ -70,6 +71,8 @@ class Arrowpath
   var colTransf:ColorTransform;
 
   var strum:Strumline;
+
+  var noteData:NotePositionData;
 
 
   //hazard told me this function its useless but i'll leave it here ig?
@@ -112,7 +115,7 @@ class Arrowpath
     ModConstants.applyPerspective(fakeNote, defaultLineSize, 1);
   }*/
 
-  var fakeNote:ZSprite;
+  // var fakeNote:ZSprite;
   var defaultLineSize:Float = 2;
 
   public function updateAFT():Void
@@ -123,17 +126,17 @@ class Arrowpath
 
     for (l in 0...NoteMovement.keyCount)
     {
-      var arrowPathAlpha:Float = strum.arrowPathAlpha[l]; //NoteData.arrowPathAlpha[l]; -- Must be added into NoteData
+      var arrowPathAlpha:Float = noteData.arrowPathAlpha; //NoteData.arrowPathAlpha[l]; -- Must be added into NoteData
       if (arrowPathAlpha <= 0) continue; // skip path if we can't see shit
 
-      var pathLength:Float = strum?.arrowpathLength[l] ?? 1500; //NoteData.arrowpathLength[l] != null ? NoteData.arrowpathLength[l] : 1500;
-      var pathBackLength:Float = strum?.arrowpathBackwardsLength[l] ?? 200; //NoteData.arrowpathBackwardsLength[l] != null ? NoteData.arrowpathBackwardsLength[l] : 200;
-      var holdGrain:Float = strum?.mods?.pathGrain ?? 50; // NoteData.pathGrain != null ? NoteData.pathGrain : 50;
-      var laneSpecificGrain:Float = strum?.mods?.pathGrain_Lane[l % 4] ?? 0; // NoteData.pathGrain_Lane[l % 4] != null ? NoteData.pathGrain_Lane[l % 4] : 0;
-      if (laneSpecificGrain > 0)
-      {
-        holdGrain = laneSpecificGrain;
-      }
+      var pathLength:Float = noteData.arrowPathLength != null ? noteData.arrowPathLength : 1500; //NoteData.arrowpathLength[l] != null ? NoteData.arrowpathLength[l] : 1500;
+      var pathBackLength:Float = noteData.arrowPathBackwardsLength != null ? noteData.arrowPathBackwardsLength : 200; //NoteData.arrowpathBackwardsLength[l] != null ? NoteData.arrowpathBackwardsLength[l] : 200;
+      var holdGrain:Float = noteData.pathGrain != null ? noteData.pathGrain : 50; // NoteData.pathGrain != null ? NoteData.pathGrain : 50;
+      // var laneSpecificGrain:Float = strum?.mods?.pathGrain_Lane[l % 4] ?? 0; // NoteData.pathGrain_Lane[l % 4] != null ? NoteData.pathGrain_Lane[l % 4] : 0;
+      // if (laneSpecificGrain > 0)
+      // {
+      //   holdGrain = laneSpecificGrain;
+      // }
       var fullLength:Float = pathLength + pathBackLength;
       var holdResolution:Int = Math.floor(fullLength / holdGrain); // use full sustain so the uv doesn't mess up? huh?
 
@@ -141,24 +144,24 @@ class Arrowpath
       var commands = new Vector<Int>();
       var data = new Vector<Float>();
 
-      var tim:Float = Conductor.instance?.songPosition ?? 0; //Conductor.instance.songPosition != null ? Conductor.instance.songPosition : 0; -- not every engine uses exact line, find out per engine
+      var tim:Float = Conductor.songPosition != null ? Conductor.songPosition : 0; //Conductor.instance.songPosition != null ? Conductor.instance.songPosition : 0; -- not every engine uses exact line, find out per engine
       tim -= pathBackLength;
       for (i in 0...holdResolution)
       {
         var timmy:Float = ((fullLength / holdResolution) * i);
-        setNotePos(fakeNote, tim + timmy, l); //must find a way to apply this into noteData system, im too stupid to do so
+        setNotePos(noteData, tim + timmy, l); //must find a way to apply this into noteData system, im too stupid to do so
 
-        var scaleX = FlxMath.remapToRange(fakeNote.scale.x, 0, NoteMovement.defaultScale[l], 0, 1);
+        var scaleX = FlxMath.remapToRange(noteData.scaleX, 0, NoteMovement.defaultScale[l], 0, 1);
         var lineSize:Float = defaultLineSize * scaleX;
 
-        var path2:Vector2 = new Vector2(fakeNote.x, fakeNote.y);
+        var path2:Vector2 = new Vector2(noteData.x, noteData.y);
 
         // if (FlxMath.inBounds(path2.x, 0, width) && FlxMath.inBounds(path2.y, 0, height))
         // {
         if (i == 0)
         {
           commands.push(GraphicsPathCommand.MOVE_TO);
-          flashGfx.lineStyle(lineSize, fakeNote.color, arrowPathAlpha);
+          flashGfx.lineStyle(lineSize, 0xFFFFFFFF, arrowPathAlpha);
         }
         else
         {
@@ -234,7 +237,7 @@ class Arrowpath
 
   public function new(s:Strumline, w:Int = -1, h:Int = -1)
   {
-    fakeNote = new ZSprite();
+    // fakeNote = new ZSprite();
     this.strum = s;
     // this.lane = col;
     height = h;

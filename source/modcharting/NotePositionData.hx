@@ -3,6 +3,8 @@ package modcharting;
 import flixel.util.FlxDestroyUtil.IFlxDestroyable;
 import flixel.util.FlxPool;
 
+using StringTools;
+
 class NotePositionData implements IFlxDestroyable
 {
 
@@ -32,6 +34,13 @@ class NotePositionData implements IFlxDestroyable
     public var glowRed:Float;
     public var glowGreen:Float;
     public var glowBlue:Float;
+
+    public var arrowPathAlpha:Float = 0;
+    public var arrowPathLength:Float = 0;
+    public var arrowPathBackwardsLength:Float = 0;
+
+    public var pathGrain:Float = 0;
+    // public var pathColor:StringTools.hex();
 
     // public var straightHold:Float;
     public function new() {}
@@ -67,6 +76,13 @@ class NotePositionData implements IFlxDestroyable
         this.glowGreen = 1;
         this.glowBlue = 1;
 
+        this.arrowPathAlpha = 0;
+        this.arrowPathLength = 0;
+        this.arrowPathBackwardsLength = 0;
+
+        this.pathGrain = 0;
+        // this.pathColor = "000000";
+
         // this.straightHold = 0; //why tf does a strum need a damn "straightHold" value XD?
     }
 
@@ -95,6 +111,13 @@ class NotePositionData implements IFlxDestroyable
         this.glowRed = 1;
         this.glowGreen = 1;
         this.glowBlue = 1;
+
+        this.arrowPathAlpha = 0;
+        this.arrowPathLength = 0;
+        this.arrowPathBackwardsLength = 0;
+
+        this.pathGrain = 0;
+        // this.pathColor = "000000";
 
         // this.straightHold = 0; //different to up this doesn't break shit LOL
     }
