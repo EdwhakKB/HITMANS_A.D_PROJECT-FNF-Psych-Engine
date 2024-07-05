@@ -293,6 +293,7 @@ class PlayState extends MusicBeatState
 
 	public var gfSpeed:Int = 1;
 	public var health:Float = 1;
+	public var shownHealth:Float = 1;
 	public var maxHealth:Float = 0; //Totally not stolen from Lullaby lol
 	public var combo:Int = 0;
 	public var comboOp:Int = 0;
@@ -3066,7 +3067,10 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (health <= 0 && practiceMode) health = 0;
+		if (health <= 0)
+			health = 0;
+		else if (health >= 2)
+			health = 2;
 		
 		if(!inCutscene) {
 			var lerpVal:Float = CoolUtil.boundTo(elapsed * 2.4 * cameraSpeed * playbackRate, 0, 1);
@@ -3149,7 +3153,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (health > 2) health = 2;
+		shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 15 * playbackRate, 0, 1));
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 

@@ -67,6 +67,7 @@ class Huds extends FlxGroup
 	public var healthBarBG:EditedAttachedSprite;
 	public var healthBar:EditedFlxBar;
 	public var health:Float = 1;
+	public var shownHealth:Float = 1;
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var coloredHealthBar:Bool;
@@ -279,7 +280,7 @@ class Huds extends FlxGroup
 				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.width - 100) : Std.int(healthBarBG.width - 8), //593
 				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.height - 40) : Std.int(healthBarBG.height - 8), //11
 				this,
-				'health', 0, 2
+				'shownHealth', 0, 2
 			);
             // if (ClientPrefs.hudStyle == 'CLASSIC') healthBar.scrollFactor.set();
             // healthBar
@@ -352,6 +353,7 @@ class Huds extends FlxGroup
 		if (hudadded)
 		{
 			health = PlayState.instance.health;
+			shownHealth = PlayState.instance.shownHealth;
 
             // var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * PlayState.instance.playbackRate), 0, 1));
 			// iconP1.scale.set(mult, mult);
