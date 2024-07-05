@@ -19,7 +19,10 @@ import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import openfl.events.KeyboardEvent;
+import flixel.addons.effects.FlxSkewedSprite;
+import flixel.FlxCamera;
 import editors.EditorLua;
+import HazardAFT_Capture as AFT_capture;
 
 using StringTools;
 
@@ -42,6 +45,22 @@ class EditorPlayState extends MusicBeatState
 
 	var startOffset:Float = 0;
 	var startPos:Float = 0;
+
+	public var camHUD:FlxCamera;
+	public var camInterfaz:FlxCamera;
+	public var camVisuals:FlxCamera;
+	public var camGame:FlxCamera;
+	public var camOther:FlxCamera;
+	public var camProxy:FlxCamera;
+
+	public var noteCameras0:FlxCamera;
+	public var noteCameras1:FlxCamera;
+
+	public var hitmansHUD:huds.Huds;
+
+	public var aftBitmap:AFT_capture; //hazzy stuff :3
+
+	public var modchartSkewedSprite:Map<String, FlxSkewedSprite> = new Map<String, FlxSkewedSprite>();
 
 	public function new(startPos:Float) {
 		this.startPos = startPos;
@@ -78,10 +97,45 @@ class EditorPlayState extends MusicBeatState
 	{
 		instance = this;
 
+		camGame = new FlxCamera();
+		camHUD = new FlxCamera();
+		camInterfaz = new FlxCamera();
+		camVisuals = new FlxCamera();
+		camOther = new FlxCamera();
+		camProxy = new FlxCamera();
+		camHUD.bgColor.alpha = 0;
+		camInterfaz.bgColor.alpha = 0;
+		camVisuals.bgColor.alpha = 0;
+		camOther.bgColor.alpha = 0;
+		camProxy.bgColor.alpha = 0;
+		noteCameras0 = new FlxCamera();
+		noteCameras0.bgColor.alpha = 0;
+		noteCameras0.visible = false;
+		noteCameras1 = new FlxCamera();
+		noteCameras1.bgColor.alpha = 0;
+		noteCameras1.visible = false;
+
+		FlxG.cameras.reset(camGame);
+		FlxG.cameras.add(camInterfaz, false);
+		FlxG.cameras.add(camHUD, false);
+
+		FlxG.cameras.add(noteCameras0, false);
+		FlxG.cameras.add(noteCameras1, false);
+		FlxG.cameras.add(camProxy, false);
+		FlxG.cameras.add(camVisuals, false);
+		FlxG.cameras.add(camOther, false);
+
+		FlxG.cameras.setDefaultDrawTarget(camGame, true);
+		CustomFadeTransition.nextCamera = camOther;
+
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.scrollFactor.set();
 		bg.color = FlxColor.fromHSB(FlxG.random.int(0, 359), FlxG.random.float(0, 0.8), FlxG.random.float(0.3, 1));
 		add(bg);
+
+		aftBitmap = new AFT_capture(camHUD);
+		aftBitmap.updateRate = 0.0;
+		aftBitmap.recursive = false;
 
 		modcharting.ModchartFuncs.editor = true;
 
@@ -124,35 +178,59 @@ class EditorPlayState extends MusicBeatState
 
 		generateSong();
 
-		scoreTxt = new FlxText(10, FlxG.height - 50, FlxG.width - 20, "Hits: 0 | Misses: 0", 20);
+		/*scoreTxt = new FlxText(10, FlxG.height - 50, FlxG.width - 20, "Hits: 0 | Misses: 0", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.visible = !ClientPrefs.hideHud;
-		add(scoreTxt);
+		add(scoreTxt);*/
+
+		hitmansHUD = new huds.Huds();
+		add(hitmansHUD);
+
+		hitmansHUD.healthBar.cameras = [camInterfaz];
+		hitmansHUD.healthBarBG.cameras = [camInterfaz];
+
+		hitmansHUD.ratings.cameras = [camVisuals];
+		hitmansHUD.ratingsOP.cameras = [camVisuals];
+		hitmansHUD.noteScore.cameras = [camVisuals];
+		hitmansHUD.noteScoreOp.cameras = [camVisuals];
+
+		hitmansHUD.iconP1.cameras = [camInterfaz];
+		hitmansHUD.iconP2.cameras = [camInterfaz];
+
+		hitmansHUD.scoreTxt.cameras = [camInterfaz];
+		hitmansHUD.botplayTxt.cameras = [camVisuals];
+		hitmansHUD.timeBar.cameras = [camInterfaz];
+		hitmansHUD.timeBarBG.cameras = [camInterfaz];
+		hitmansHUD.timeTxt.cameras = [camInterfaz];
 		
 		sectionTxt = new FlxText(10, 180, FlxG.width - 20, "Section: 0", 20);
 		sectionTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		sectionTxt.scrollFactor.set();
 		sectionTxt.borderSize = 1.25;
+		sectionTxt.camera = camHUD;
 		add(sectionTxt);
 		
 		beatTxt = new FlxText(10, sectionTxt.y + 30, FlxG.width - 20, "Beat: 0", 20);
 		beatTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		beatTxt.scrollFactor.set();
 		beatTxt.borderSize = 1.25;
+		beatTxt.camera = camHUD;
 		add(beatTxt);
 
 		stepTxt = new FlxText(10, beatTxt.y + 30, FlxG.width - 20, "Step: 0", 20);
 		stepTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		stepTxt.scrollFactor.set();
 		stepTxt.borderSize = 1.25;
+		stepTxt.camera = camHUD;
 		add(stepTxt);
 
 		var tipText:FlxText = new FlxText(10, FlxG.height - 24, 0, 'Press ESC to Go Back to Chart Editor', 16);
 		tipText.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		tipText.borderSize = 2;
 		tipText.scrollFactor.set();
+		tipText.camera = camHUD;
 		add(tipText);
 
 		if (PlayState.SONG.notITG){
@@ -161,12 +239,14 @@ class EditorPlayState extends MusicBeatState
 			activeModifiers.borderSize = 2;
 			activeModifiers.scrollFactor.set();
 			activeModifiers.screenCenter();
+			activeModifiers.camera = camHUD;
 			add(activeModifiers);
 
 			playfieldRenderer = new modcharting.PlayfieldRenderer(strumLineNotes, notes, this);
-			playfieldRenderer.camera = this.camera;
+			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1];
 			add(playfieldRenderer);
 		}
+		
 		#if (LUA_ALLOWED && MODS_ALLOWED)
 		for (notetype in noteTypeMap.keys()) {
 			var luaToLoad:String = Paths.modFolders('custom_notetypes/' + notetype + '.lua');
@@ -309,6 +389,7 @@ class EditorPlayState extends MusicBeatState
 
 		go.screenCenter();
 		go.antialiasing = ClientPrefs.globalAntialiasing;
+		go.camera = camHUD;
 		add(go);
 		FlxTween.tween(go, {y: go.y += 100, alpha: 0}, Conductor.crochet / 1000, {
 			ease: FlxEase.cubeInOut,
@@ -477,6 +558,8 @@ class EditorPlayState extends MusicBeatState
 			Conductor.songPosition += elapsed * 1000;
 		}
 
+		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
+
 		setOnLuas('curDecBeat', curDecBeat);
 		setOnLuas('curDecStep', curDecStep);
 
@@ -644,7 +727,7 @@ class EditorPlayState extends MusicBeatState
 		}
 
 		keyShit();
-		scoreTxt.text = 'Hits: ' + songHits + ' | Misses: ' + songMisses;
+		//scoreTxt.text = 'Hits: ' + songHits + ' | Misses: ' + songMisses;
 		sectionTxt.text = 'Section: ' + curSection;
 		beatTxt.text = 'Beat: ' + curBeat;
 		stepTxt.text = 'Step: ' + curStep;

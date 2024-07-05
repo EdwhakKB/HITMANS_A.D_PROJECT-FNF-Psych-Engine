@@ -185,10 +185,49 @@ class EditorLua {
 			}
 		});
 
+		Lua_helper.add_callback(lua, "makeLuaProxy", function(tag:String, x:Float, y:Float, ?camera:String = '') {
+			var micamara:FlxCamera = EditorPlayState.instance.camProxy;
+
+			if(EditorPlayState.instance.aftBitmap != null)
+			{
+				tag = tag.replace('.', '');
+				resetSkewedSpriteTag(tag);
+				var leSprite:flixel.addons.effects.FlxSkewedSprite = new flixel.addons.effects.FlxSkewedSprite(x, y);
+
+				leSprite.loadGraphic(EditorPlayState.instance.aftBitmap.bitmap); //idk if this even works but whatever
+				
+				leSprite.antialiasing = ClientPrefs.globalAntialiasing;
+				EditorPlayState.instance.modchartSkewedSprite.set(tag, leSprite);
+				leSprite.active = true;
+
+				if (camera != null && camera != '') {
+					leSprite.camera = cameraFromString(camera);
+				}else{
+					leSprite.camera = micamara;
+				}
+			}else{
+				trace('makeLuaProxy: attempted to make a proxy but aftBitmap is null!');
+				//luaTrace('makeLuaProxy: attempted to make a proxy but aftBitmap is null!', false, false, FlxColor.RED);
+			}
+		});
+
 		Discord.DiscordClient.addLuaCallbacks(lua);
 
 		call('onCreate', []);
 		#end
+	}
+
+	public function cameraFromString(cam:String):FlxCamera
+	{
+		switch(cam.toLowerCase()) {
+			case 'camhud' | 'hud': return EditorPlayState.instance.camHUD;
+			case 'notecameras0' | 'notes0': return EditorPlayState.instance.noteCameras0;
+			case 'notecameras1' | 'notes1': return EditorPlayState.instance.noteCameras1;
+			case 'camother' | 'other': return EditorPlayState.instance.camOther;
+			case 'caminterfaz' | 'interfaz': return EditorPlayState.instance.camInterfaz;
+			case 'camvisuals' | 'visuals': return EditorPlayState.instance.camVisuals;
+		}
+		return EditorPlayState.instance.camGame;
 	}
 	
 	public function call(event:String, args:Array<Dynamic>):Dynamic {
@@ -271,4 +310,18 @@ class EditorLua {
 		lua = null;
 		#end
 	}
+
+	function resetSkewedSpriteTag(tag:String) {
+        #if LUA_ALLOWED
+        if(!EditorPlayState.instance.modchartSkewedSprite.exists(tag)) {
+            return;
+        }
+        
+        var target:flixel.addons.effects.FlxSkewedSprite = EditorPlayState.instance.modchartSkewedSprite.get(tag);
+        target.kill();
+        EditorPlayState.instance.remove(target, true);
+        target.destroy();
+        EditorPlayState.instance.modchartSkewedSprite.remove(tag);
+        #end
+    }
 }
