@@ -220,7 +220,7 @@ class PlayState extends MusicBeatState
 	public static var forceMiddleScroll:Bool = false; //yeah
 	public static var forceRightScroll:Bool = false; //so modcharts that NEED rightscroll will be forced (mainly for player vs enemy classic stuff like bf vs someone)
 	public static var forcedAScroll:Bool = false; //if forced then it should disable "clientPrefs" stuff
-	var edwhakDrain:Float = 0.03;
+	var edwhakDrain:Float = 0.3; //0.3 or more if changed
 	public var edwhakIsEnemy:Bool = false;
 	public var allowEnemyDrain:Bool = false;
 	public var controlsPlayer2:Bool = false; //mega stupid shit that enables double play lmao, this is disabled in edwhak songs, in 2 ways(song name and dadname so you can't do shit) -Ed
@@ -3310,7 +3310,7 @@ class PlayState extends MusicBeatState
 						//Jesus fuck this took me so much mother fucking time AAAAAAAAAA
 						if(strumScroll && daNote.isSustainNote)
 						{
-							if (daNote.isHoldEnd) {
+							if (daNote.animation.curAnim.name.endsWith('end')) {
 								daNote.y += 10.5 * (fakeCrochet / 400) * 1.5 * songSpeed + (46 * (songSpeed - 1));
 								daNote.y -= 46 * (1 - (fakeCrochet / 600)) * songSpeed;
 								if(PlayState.isPixelStage) {
@@ -3440,7 +3440,7 @@ class PlayState extends MusicBeatState
 	function set_smoothNotes(noteGroup:Array<Note>, sustainScale:Float) {
 		for (note in noteGroup) {
 			if (note.isSustainNote && note.scale.y != sustainScale * (44 / (note.frameHeight * (PlayState.isPixelStage ? (PlayState.daPixelZoom * 1.222222222) : 1)))) {
-				if (note.isHoldEnd) {
+				if (!StringTools.endsWith(note.animation.curAnim.name, 'end')) {
 					note.scale.y = sustainScale * (44 / (note.frameHeight * (PlayState.isPixelStage ? (PlayState.daPixelZoom * 1.222222222) : 1)));
 					note.updateHitbox();
 				} else {
@@ -4209,6 +4209,8 @@ class PlayState extends MusicBeatState
 
 	public function rating():Void
 	{
+		resetPlayData();
+
 		var oldBest:Int = Highscore.getScore(SONG.song, storyDifficulty);
 
 		openSubState(new ResultScreen(Math.round(songScore), oldBest, maxCombo, Highscore.floorDecimal(ratingPercent * 100, 2), fantastics, excelents, greats, decents, wayoffs, songMisses));
@@ -4743,6 +4745,7 @@ class PlayState extends MusicBeatState
 
 	function opponentNoteHit(note:Note):Void
 	{
+		edwhakDrain = note.hitHealth+0.07; //force game to make this be 0.07 higher than player
 		// if (Paths.formatToSongPath(SONG.song) != 'tutorial')
 		//Edwhak HealthDrain but in source so people can't nerf how his songs works!
 		if (SONG.bossFight || edwhakIsEnemy){
@@ -4753,23 +4756,24 @@ class PlayState extends MusicBeatState
 				allowEnemyDrain = true;
 			}
 		}
+		var sustainDivider:Float = 5;
 		if (allowEnemyDrain){
 			switch (!ClientPrefs.casualMode){
 				case true:
 					if (edwhakIsEnemy){
 						if(health - edwhakDrain - 0.17 > maxHealth){
 							if (Note.instakill){
-								health -= edwhakDrain+0.02 * healthGain; //Same as up
+								health -= ((edwhakDrain+0.02) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //idfk if this even works LMAO
 							}else if (Note.tlove){
-								health -= edwhakDrain+0.03 * healthGain; //Same as up
+								health -= ((edwhakDrain+0.03) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Same as up
 							}else{
-								health -= edwhakDrain+0.005 * healthGain; //Added both because if i added only one it don't do shit idk why lmao
+								health -= ((edwhakDrain+0.005) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Added both because if i added only one it don't do shit idk why lmao
 							}
 						}
 					}else{
 						if(health - note.hitHealth - 0.05 > maxHealth){
 							if (!Note.instakill){
-								health -= note.hitHealth * healthGain;			
+								health -= (note.hitHealth * healthGain) / (note.isSustainNote ? sustainDivider : 1);			
 							}
 						}
 					}
@@ -4777,22 +4781,22 @@ class PlayState extends MusicBeatState
 					if (edwhakIsEnemy){
 						if(health - edwhakDrain - 0.17 > maxHealth){
 							if (Note.instakill){
-								health -= edwhakDrain+0.01 * healthGain; //Same as up
+								health -= ((edwhakDrain+0.01) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Same as up
 							}else if (Note.tlove){
-								health -= edwhakDrain+0.02 * healthGain; //Same as up
+								health -= ((edwhakDrain+0.02) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Same as up
 							}else{
-								health -= edwhakDrain+0.005 * healthGain; //Added both because if i added only one it don't do shit idk why lmao
+								health -= ((edwhakDrain+0.005) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Added both because if i added only one it don't do shit idk why lmao
 							}
 						}
 					}else{
 						if(health - note.hitHealth - 0.05 > maxHealth){
 							if (!Note.instakill){
-								health -= note.hitHealth * healthGain;
+								health -= (note.hitHealth * healthGain) / (note.isSustainNote ? sustainDivider : 1);
 							}
 						}
 					}		
 			}
-		}	
+		}
 		if(note.noteType == 'Hey!' && dad.animOffsets.exists('hey')) {
 			dad.playAnim('hey', true);
 			dad.specialAnim = true;
@@ -4824,7 +4828,7 @@ class PlayState extends MusicBeatState
 			vocals.volume = 1;
 
 		var time:Float = 0.15;
-		if(note.isSustainNote && !note.isHoldEnd) {
+		if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
 			time = 0.3;
 		}
 		StrumPlayAnim(true, Std.int(Math.abs(note.noteData)), time);
@@ -4982,18 +4986,13 @@ class PlayState extends MusicBeatState
 				popUpScore(note);
 			}
 
-			if (!ClientPrefs.casualMode){
-				if (!Note.edwhakIsPlayer){
-					health += note.hitHealth * healthGain;
-				}else if(Note.edwhakIsPlayer){
-					health += (note.hitHealth+0.012) * healthGain;
-				}
-			}else if(ClientPrefs.casualMode){
-				if (!Note.edwhakIsPlayer){
-					health += (note.hitHealth+0.007) * healthGain;
-				}else if(Note.edwhakIsPlayer){
-					health += (note.hitHealth+0.012) * healthGain;
-				}	
+			var sustainDivider:Float = 5;
+
+			switch(ClientPrefs.casualMode){
+				case false:
+					health += Note.edwhakIsPlayer ? ((note.hitHealth+0.012) * healthGain)/(note.isSustainNote ? sustainDivider : 1) : (note.hitHealth * healthGain)/(note.isSustainNote ? sustainDivider : 1); //now sustains gets 10 times less gain but still gain
+				case true:
+					health += Note.edwhakIsPlayer ? ((note.hitHealth+0.012) * healthGain)/(note.isSustainNote ? sustainDivider : 1) : ((note.hitHealth+0.007) * healthGain)/(note.isSustainNote ? sustainDivider : 1); //now sustains gets 10 times less gain but still gain
 			}
 
 			if(!note.noAnimation) {

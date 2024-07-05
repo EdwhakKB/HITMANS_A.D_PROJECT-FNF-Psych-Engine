@@ -474,7 +474,7 @@ class Note extends FlxImprovedSprite{
 			// 	flipX = false;
 			// }
 
-			if (ClientPrefs.notesSkin[0] == 'NOTITG'){
+			if (ClientPrefs.notesSkin[0] == 'NOTITG' && ClientPrefs.notesSkin[2] == 'NONE'){
 				sustainRGB = false;
 			}else{
 				sustainRGB = true;
@@ -690,10 +690,6 @@ class Note extends FlxImprovedSprite{
 
 		setGraphicSize(Std.int(width * 0.7));
 		updateHitbox();
-	}
-
-	function centerHolds(){
-		offsetX += width / 2;
 	}
 
 	function loadPixelNoteAnims() {
