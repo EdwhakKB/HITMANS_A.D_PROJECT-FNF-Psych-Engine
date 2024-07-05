@@ -342,7 +342,6 @@ class Huds extends FlxGroup
 					var ratingPercent:Float = 0;
 					var ratingFC:String = "";
 
-					var isEditor:Bool = false;
 					if (FlxG.state is PlayState)
 					{
 						songScore = PlayState.instance.songScore;
@@ -353,10 +352,11 @@ class Huds extends FlxGroup
 					}
 					else if (FlxG.state is EditorPlayState)
 					{
-						isEditor = true;
-
 						songScore = EditorPlayState.instance.songScore;
 						songMisses = EditorPlayState.instance.songMisses;
+						ratingName = EditorPlayState.instance.ratingName;
+						ratingPercent = EditorPlayState.instance.ratingPercent;
+						ratingFC = EditorPlayState.instance.ratingFC;
 					}
 		
 					// of course I would go back and fix my code, of COURSE @BeastlyGhost;
@@ -366,12 +366,9 @@ class Huds extends FlxGroup
 					if (displayRatings)
 					{
 						ratingString = scoreSeparator + 'Misses: ' + songMisses;
-						if (!isEditor)
-						{
-							ratingString += scoreSeparator + 'Rating: ' + ratingName;
-							ratingString += (ratingName != '?' ? ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' : '');
-							ratingString += (ratingFC != null && ratingFC != '' ? ' - ' + ratingFC : '');
-						}
+						ratingString += scoreSeparator + 'Rating: ' + ratingName;
+						ratingString += (ratingName != '?' ? ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' : '');
+						ratingString += (ratingFC != null && ratingFC != '' ? ' - ' + ratingFC : '');
 					}
 		
 					tempScore += ratingString + '\n';

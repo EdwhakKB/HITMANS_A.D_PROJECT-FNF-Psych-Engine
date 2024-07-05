@@ -14,6 +14,10 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxSound;
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
 
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
@@ -21,13 +25,60 @@ import flixel.input.keyboard.FlxKey;
 import openfl.events.KeyboardEvent;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxCamera;
-import editors.EditorLua;
+import editors.EditorFunkinLua;
+import flixel.util.FlxSave;
 import HazardAFT_Capture as AFT_capture;
+import Conductor.Rating;
+import flixel.addons.display.FlxRuntimeShader;
 
 using StringTools;
 
 class EditorPlayState extends MusicBeatState
 {
+	public static var ratingStuff:Array<Dynamic> = [
+		['You Suck!', 0.2], //From 0% to 19%
+		['F', 0.4], //From 20% to 39%
+		['E', 0.5], //From 40% to 49%
+		['D', 0.6], //From 50% to 59%
+		['C', 0.69], //From 60% to 68%
+		['B', 0.7], //69%
+		['A', 0.8], //From 70% to 79%
+		['S', 0.9], //From 80% to 89%
+		['S+', 1], //From 90% to 99%
+		['H', 1] //The value on this one isn't used actually, since Perfect is always "1"
+	];
+
+	// stores the last judgement object
+	public static var lastRating:FlxSprite;
+	// stores the last combo sprite object
+	public static var lastCombo:FlxSprite;
+	// stores the last combo score objects in an array
+	public static var lastScore:Array<FlxSprite> = [];
+
+	public static var tweenManager:FlxTweenManager = null;
+	public static var timerManager:FlxTimerManager = null;
+
+	public function createTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
+	{
+		var tween:FlxTween = tweenManager.tween(Object, Values, Duration, Options);
+		tween.manager = tweenManager;
+		return tween;
+	}
+
+	public function createTweenNum(FromValue:Float, ToValue:Float, Duration:Float = 1, ?Options:TweenOptions, ?TweenFunction:Float->Void):FlxTween
+	{
+		var tween:FlxTween = tweenManager.num(FromValue, ToValue, Duration, Options, TweenFunction);
+		tween.manager = tweenManager;
+		return tween;
+	}
+
+	public function createTimer(Time:Float = 1, ?OnComplete:FlxTimer->Void, Loops:Int = 1):FlxTimer
+	{
+		var timer:FlxTimer = new FlxTimer();
+		timer.manager = timerManager;
+		return timer.start(Time, OnComplete, Loops);
+	}
+
 	// Yes, this is mostly a copy of PlayState, it's kinda dumb to make a direct copy of it but... ehhh
 	private var strumLine:FlxSprite;
 	private var comboGroup:FlxTypedGroup<FlxSprite>;
@@ -40,11 +91,11 @@ class EditorPlayState extends MusicBeatState
 
 	public var activeModifiers:FlxText; //funny thing i added cuz why not?
 
-	var generatedMusic:Bool = false;
-	var vocals:FlxSound;
+	public var generatedMusic:Bool = false;
+	public var vocals:FlxSound;
 
-	var startOffset:Float = 0;
-	var startPos:Float = 0;
+	public var startOffset:Float = 0;
+	public var startPos:Float = 0;
 
 	public var camHUD:FlxCamera;
 	public var camInterfaz:FlxCamera;
@@ -60,6 +111,14 @@ class EditorPlayState extends MusicBeatState
 
 	public var aftBitmap:AFT_capture; //hazzy stuff :3
 
+	public var variables:Map<String, Dynamic> = new Map<String, Dynamic>();
+	public var modchartTweens:Map<String, FlxTween> = new Map<String, FlxTween>();
+	public var modchartSprites:Map<String, Dynamic> = new Map<String, Dynamic>();
+	public var modchartTimers:Map<String, FlxTimer> = new Map<String, FlxTimer>();
+	public var modchartSounds:Map<String, FlxSound> = new Map<String, FlxSound>();
+	public var modchartTexts:Map<String, ModchartText> = new Map<String, ModchartText>();
+	public var modchartSaves:Map<String, FlxSave> = new Map<String, FlxSave>();
+	public var modchartCameras:Map<String, FlxCamera> = new Map<String, FlxCamera>(); // FUCK!!!
 	public var modchartSkewedSprite:Map<String, FlxSkewedSprite> = new Map<String, FlxSkewedSprite>();
 
 	public function new(startPos:Float) {
@@ -91,11 +150,73 @@ class EditorPlayState extends MusicBeatState
 	var col3:FlxColor = 0xFFFFD700;
 	var col2:FlxColor = 0xFFFFD700;
 
-	public var luaArray:Array<EditorLua> = [];
+	public var luaArray:Array<EditorFunkinLua> = [];
+
+	public var songPercent:Float = 0;
+
+	public var ratingsData:Array<Rating> = [];
+	public var marvelouss:Int = 0;
+	public var sicks:Int = 0;
+	public var goods:Int = 0;
+	public var bads:Int = 0;
+	public var shits:Int = 0;
+
+	public var fantastics:Int = 0;
+	public var excelents:Int = 0;
+	public var greats:Int = 0;
+	public var decents:Int = 0;
+	public var wayoffs:Int = 0;
+
+	public var healthGain:Float = 1;
+	public var healthLoss:Float = 1;
+	public var instakillOnMiss:Bool = false;
+	public var cpuControlled:Bool = false;
+	public var practiceMode:Bool = false;
+	public var notITGMod:Bool = true;
+	public var chaosMod:Bool = false;
+	public var chaosDifficulty:Float = 1;
+	public var randomizedNotes:Bool = false;
 
 	override function create()
 	{
 		instance = this;
+	
+		tweenManager = new FlxTweenManager();
+		timerManager = new FlxTimerManager();
+
+		//Ratings
+		ratingsData.push(new Rating('marvelous')); //default rating
+
+		var rating:Rating = new Rating('sick');
+		rating.ratingMod = 1;
+		rating.score = 350;
+		ratingsData.push(rating);
+
+		var rating:Rating = new Rating('good');
+		rating.ratingMod = 0.7;
+		rating.score = 200;
+		ratingsData.push(rating);
+
+		var rating:Rating = new Rating('bad');
+		rating.ratingMod = 0.4;
+		rating.score = 100;
+		ratingsData.push(rating);
+
+		var rating:Rating = new Rating('shit');
+		rating.ratingMod = 0;
+		rating.score = 50;
+		ratingsData.push(rating);
+
+		// Gameplay settings
+		healthGain = ClientPrefs.getGameplaySetting('healthgain', 1);
+		healthLoss = ClientPrefs.getGameplaySetting('healthloss', 1);
+		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill', false);
+		notITGMod = ClientPrefs.getGameplaySetting('modchart', true);
+		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
+		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
+		chaosMod = ClientPrefs.getGameplaySetting('chaosmode', false);
+		chaosDifficulty = ClientPrefs.getGameplaySetting('chaosdifficulty', 1);
+		randomizedNotes = ClientPrefs.getGameplaySetting('randomnotes', false);
 
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -253,7 +374,7 @@ class EditorPlayState extends MusicBeatState
 		for (notetype in noteTypeMap.keys()) {
 			var luaToLoad:String = Paths.modFolders('custom_notetypes/' + notetype + '.lua');
 			if(sys.FileSystem.exists(luaToLoad)) {
-				luaArray.push(new EditorLua(luaToLoad));
+				luaArray.push(new EditorFunkinLua(luaToLoad));
 			}
 		}
 		#end
@@ -261,6 +382,8 @@ class EditorPlayState extends MusicBeatState
 		noteTypeMap = null;
 
 		FlxG.mouse.visible = false;
+
+		RecalculateRating();
 
 		#if LUA_ALLOWED
 		for (folder in Mods.directoriesWithFile(Paths.getPreloadPath(), 'data/' + PlayState.SONG.song + '/'))
@@ -270,13 +393,22 @@ class EditorPlayState extends MusicBeatState
 				for (file in sys.FileSystem.readDirectory(folder))
 				{
 					if(file.toLowerCase().endsWith('.lua'))
-						luaArray.push(new EditorLua(folder + file));
+						luaArray.push(new EditorFunkinLua(folder + file));
 				}
 			}
 		}
 		#end
 
 		hitmansHUD.updateScore();
+
+		for (i in 0...playerStrums.length) {
+			setOnLuas('defaultPlayerStrumX' + i, playerStrums.members[i].x);
+			setOnLuas('defaultPlayerStrumY' + i, playerStrums.members[i].y);
+		}
+		for (i in 0...opponentStrums.length) {
+			setOnLuas('defaultOpponentStrumX' + i, opponentStrums.members[i].x);
+			setOnLuas('defaultOpponentStrumY' + i, opponentStrums.members[i].y);
+		}
 
 		if (PlayState.SONG.notITG)
 			modcharting.ModchartFuncs.loadLuaEditorFunctions();
@@ -291,6 +423,7 @@ class EditorPlayState extends MusicBeatState
 			doNoteQuant();
 
 		super.create();
+		CustomFadeTransition.nextCamera = camOther;
 		callOnLuas('onCreatePost', []);
 	}
 
@@ -379,6 +512,71 @@ class EditorPlayState extends MusicBeatState
 			this2.rgbShader.enabled = false;
 		}
 	}
+
+	#if (!flash && sys)
+	public var runtimeShaders:Map<String, Array<String>> = new Map<String, Array<String>>();
+	public function createRuntimeShader(name:String):FlxRuntimeShader
+	{
+		if(!ClientPrefs.shaders) return new FlxRuntimeShader();
+
+		#if (!flash && MODS_ALLOWED && sys)
+		if(!runtimeShaders.exists(name) && !initLuaShader(name))
+		{
+			FlxG.log.warn('Shader $name is missing!');
+			return new FlxRuntimeShader();
+		}
+
+		var arr:Array<String> = runtimeShaders.get(name);
+		return new FlxRuntimeShader(arr[0], arr[1]);
+		#else
+		FlxG.log.warn("Platform unsupported for Runtime Shaders!");
+		return null;
+		#end
+	}
+
+	public function initLuaShader(name:String, ?glslVersion:Int = 120)
+	{
+		if(!ClientPrefs.shaders) return false;
+
+		if(runtimeShaders.exists(name))
+		{
+			FlxG.log.warn('Shader $name was already initialized!');
+			return true;
+		}
+
+		for (folder in Mods.directoriesWithFile(Paths.getPreloadPath(), 'shaders/'))
+		{
+			if(FileSystem.exists(folder))
+			{
+				var frag:String = folder + name + '.frag';
+				var vert:String = folder + name + '.vert';
+				var found:Bool = false;
+				if(FileSystem.exists(frag))
+				{
+					frag = File.getContent(frag);
+					found = true;
+				}
+				else frag = null;
+
+				if (FileSystem.exists(vert))
+				{
+					vert = File.getContent(vert);
+					found = true;
+				}
+				else vert = null;
+
+				if(found)
+				{
+					runtimeShaders.set(name, [frag, vert]);
+					//trace('Found shader $name!');
+					return true;
+				}
+			}
+		}
+		FlxG.log.warn('Missing shader $name .frag AND .vert files!');
+		return false;
+	}
+	#end
 
 	private function round(num:Float, numDecimalPlaces:Int){
 		var mult = 10^numDecimalPlaces;
@@ -595,6 +793,9 @@ class EditorPlayState extends MusicBeatState
 				unspawnNotes.splice(index, 1);
 			}
 		}
+
+		tweenManager.update(elapsed);
+		timerManager.update(elapsed);
 		
 		if (generatedMusic)
 		{
@@ -691,23 +892,7 @@ class EditorPlayState extends MusicBeatState
 
 				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent && !daNote.ignoreNote)
 				{
-					if (PlayState.SONG.needsVoices)
-						vocals.volume = 1;
-
-					var time:Float = 0.15;
-					if(daNote.isSustainNote && !daNote.animation.curAnim.name.endsWith('end')) {
-						time += 0.15;
-					}
-					StrumPlayAnim(true, Std.int(Math.abs(daNote.noteData)), time);
-					daNote.hitByOpponent = true;
-					opponentStrums.members[daNote.noteData].rgbShader.r = daNote.rgbShader.r;
-					opponentStrums.members[daNote.noteData].rgbShader.b = daNote.rgbShader.b;
-					if (!daNote.isSustainNote)
-					{
-						daNote.kill();
-						notes.remove(daNote, true);
-						daNote.destroy();
-					}
+					opponentNoteHit(daNote);
 				}
 
 				if (Conductor.songPosition > (noteKillOffset / PlayState.SONG.speed) + daNote.strumTime)
@@ -726,7 +911,7 @@ class EditorPlayState extends MusicBeatState
 							});
 
 							if(!daNote.ignoreNote) {
-								noteMiss();
+								noteMiss(daNote, false);
 							}
 						}
 					}
@@ -929,7 +1114,7 @@ class EditorPlayState extends MusicBeatState
 					}
 				}
 				else if (canMiss) {
-					noteMiss();
+					noteMiss(null, true);
 				}
 
 				//more accurate hit time for the ratings? part 2 (Now that the calculations are done, go back to the time it was before for not causing a note stutter)
@@ -1041,6 +1226,38 @@ class EditorPlayState extends MusicBeatState
 		}
 	}
 
+	public var comboOp:Int = 0;
+
+	function opponentNoteHit(note:Note)
+	{
+		if (PlayState.SONG.needsVoices)
+			vocals.volume = 1;
+
+		if (PlayState.SONG.bossFight){
+			if (!note.isSustainNote){
+				hitmansHUD.ratingsBumpScaleOP();
+				hitmansHUD.setRatingImageOP(0);
+				comboOp +=1;
+			}
+		}
+
+		var time:Float = 0.15;
+		if(note.isSustainNote && !note.animation.curAnim.name.endsWith('end')) {
+			time += 0.15;
+		}
+		StrumPlayAnim(true, Std.int(Math.abs(note.noteData)), time);
+		note.hitByOpponent = true;
+		callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
+		opponentStrums.members[note.noteData].rgbShader.r = note.rgbShader.r;
+		opponentStrums.members[note.noteData].rgbShader.b = note.rgbShader.b;
+		if (!note.isSustainNote)
+		{
+			note.kill();
+			notes.remove(note, true);
+			note.destroy();
+		}
+	}
+
 	var combo:Int = 0;
 	function goodNoteHit(note:Note):Void
 	{
@@ -1048,7 +1265,7 @@ class EditorPlayState extends MusicBeatState
 		{
 			switch(note.noteType) {
 				case 'Hurt Note': //Hurt note
-					noteMiss();
+					noteMiss(note, false);
 					--songMisses;
 
 					note.wasGoodHit = true;
@@ -1063,12 +1280,27 @@ class EditorPlayState extends MusicBeatState
 					return;
 			}
 
-			if (!note.isSustainNote)
+			if (!note.isSustainNote && !note.isHoldEnd)
 			{
+				hitmansHUD.ratingsBumpScale();
+				setRatingImage(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+				if (PlayState.SONG.bossFight){
+					hitmansHUD.ratingsBumpScaleOP();
+					hitmansHUD.setRatingImageOP(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+				}
 				combo += 1;
 				if(combo > 9999) combo = 9999;
 				popUpScore(note);
 				songHits++;
+			}
+
+			var sustainDivider:Float = 5;
+
+			switch(ClientPrefs.casualMode){
+				case false:
+					health += Note.edwhakIsPlayer ? ((note.hitHealth+0.012) * healthGain)/(note.isSustainNote ? sustainDivider : 1) : (note.hitHealth * healthGain)/(note.isSustainNote ? sustainDivider : 1); //now sustains gets 10 times less gain but still gain
+				case true:
+					health += Note.edwhakIsPlayer ? ((note.hitHealth+0.012) * healthGain)/(note.isSustainNote ? sustainDivider : 1) : ((note.hitHealth+0.007) * healthGain)/(note.isSustainNote ? sustainDivider : 1); //now sustains gets 10 times less gain but still gain
 			}
 
 			playerStrums.forEach(function(spr:StrumNote)
@@ -1082,6 +1314,11 @@ class EditorPlayState extends MusicBeatState
 			note.wasGoodHit = true;
 			vocals.volume = 1;
 
+			var isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
+			var leData:Int = Math.round(Math.abs(note.noteData));
+			var leType:String = note.noteType;
+			callOnLuas('goodNoteHit', [notes.members.indexOf(note),  Math.abs(note.noteData), note.noteType, note.isSustainNote]);
+
 			playerStrums.members[note.noteData].rgbShader.r = note.rgbShader.r;
 			playerStrums.members[note.noteData].rgbShader.b = note.rgbShader.b;
 
@@ -1094,18 +1331,44 @@ class EditorPlayState extends MusicBeatState
 		}
 	}
 
-	function noteMiss():Void
+	function noteMiss(note:Note, press:Bool):Void
 	{
 		combo = 0;
+
+		if (!press)
+		{
+			if (!note.isSustainNote)
+			{
+				if (!PlayState.SONG.bossFight){
+					hitmansHUD.ratingsBumpScaleOP();
+					hitmansHUD.ratingsOP.animation.play("miss");
+				}
+			}
+		}else{
+			if (!PlayState.SONG.bossFight){
+				hitmansHUD.ratingsBumpScaleOP();
+				hitmansHUD.ratingsOP.animation.play("miss");
+			}
+			hitmansHUD.ratings.animation.play("miss");
+			hitmansHUD.ratingsBumpScale();
+		}
 
 		songScore -= 10;
 		songMisses++;
 		health -= 0.03;
 
+		totalPlayed++;
+		RecalculateRating(true);
+
 		hitmansHUD.updateScore();
 
 		// FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 		vocals.volume = 0;
+
+		if (!press)
+		{
+			callOnLuas('noteMiss', [notes.members.indexOf(note), note.noteData, note.noteType, note.isSustainNote]);
+		}
 	}
 
 	var COMBO_X:Float = 400;
@@ -1126,159 +1389,22 @@ class EditorPlayState extends MusicBeatState
 		var rating:FlxSprite = new FlxSprite();
 		var score:Int = 450;
 
-		var daRating:String = "marvelous";
+		//tryna do MS based judgment due to popular demand
+		var daRating:Rating = Conductor.judgeNote(note, noteDiff);
 
-		if (noteDiff > Conductor.safeZoneOffset * 0.8)
-		{
-			daRating = 'shit';
-			score = 50;
-		}
-		else if (noteDiff > Conductor.safeZoneOffset * 0.6)
-		{
-			daRating = 'bad';
-			score = 100;
-		}
-		else if (noteDiff > Conductor.safeZoneOffset * 0.4)
-		{
-			daRating = 'good';
-			score = 200;
-		}
-		else if (noteDiff > Conductor.safeZoneOffset * 0.2)
-		{
-			daRating = 'sick';
-			score += 350;
-		}
+		totalNotesHit += daRating.ratingMod;
+		note.ratingMod = daRating.ratingMod;
+		if(!note.ratingDisabled) daRating.increase();
+		note.rating = daRating.name;
+		score = daRating.score;
 
 		songScore += score;
-
-		hitmansHUD.updateScore();
-
-		/* if (combo > 60)
-				daRating = 'sick';
-			else if (combo > 12)
-				daRating = 'good'
-			else if (combo > 4)
-				daRating = 'bad';
-			*/
-
-		var pixelShitPart1:String = "";
-		var pixelShitPart2:String = '';
-
-		if (PlayState.isPixelStage)
+		if (!note.ratingDisabled)
 		{
-			pixelShitPart1 = 'pixelUI/';
-			pixelShitPart2 = '-pixel';
+			songHits++;
+			totalPlayed++;
+			hitmansHUD.updateScore();
 		}
-
-		rating.loadGraphic(Paths.image(pixelShitPart1 + daRating + pixelShitPart2));
-		rating.screenCenter();
-		rating.x = coolText.x - 40;
-		rating.y -= 60;
-		rating.acceleration.y = 550;
-		rating.velocity.y -= FlxG.random.int(140, 175);
-		rating.velocity.x -= FlxG.random.int(0, 10);
-		rating.visible = !ClientPrefs.hideHud;
-		rating.x += ClientPrefs.comboOffset[0];
-		rating.y -= ClientPrefs.comboOffset[1];
-
-		var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
-		comboSpr.screenCenter();
-		comboSpr.x = coolText.x;
-		comboSpr.acceleration.y = 600;
-		comboSpr.velocity.y -= 150;
-		comboSpr.visible = !ClientPrefs.hideHud;
-		comboSpr.x += ClientPrefs.comboOffset[0];
-		comboSpr.y -= ClientPrefs.comboOffset[1];
-
-		comboSpr.velocity.x += FlxG.random.int(1, 10);
-		comboGroup.add(rating);
-
-		if (!PlayState.isPixelStage)
-		{
-			rating.setGraphicSize(Std.int(rating.width * 0.7));
-			rating.antialiasing = ClientPrefs.globalAntialiasing;
-			comboSpr.setGraphicSize(Std.int(comboSpr.width * 0.7));
-			comboSpr.antialiasing = ClientPrefs.globalAntialiasing;
-		}
-		else
-		{
-			rating.setGraphicSize(Std.int(rating.width * PlayState.daPixelZoom * 0.85));
-			comboSpr.setGraphicSize(Std.int(comboSpr.width * PlayState.daPixelZoom * 0.85));
-		}
-
-		comboSpr.updateHitbox();
-		rating.updateHitbox();
-
-		var seperatedScore:Array<Int> = [];
-
-		if(combo >= 1000) {
-			seperatedScore.push(Math.floor(combo / 1000) % 10);
-		}
-		seperatedScore.push(Math.floor(combo / 100) % 10);
-		seperatedScore.push(Math.floor(combo / 10) % 10);
-		seperatedScore.push(combo % 10);
-
-		var daLoop:Int = 0;
-		for (i in seperatedScore)
-		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			numScore.screenCenter();
-			numScore.x = coolText.x + (43 * daLoop) - 90;
-			numScore.y += 80;
-
-			numScore.x += ClientPrefs.comboOffset[2];
-			numScore.y -= ClientPrefs.comboOffset[3];
-
-			if (!PlayState.isPixelStage)
-			{
-				numScore.antialiasing = ClientPrefs.globalAntialiasing;
-				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
-			}
-			else
-			{
-				numScore.setGraphicSize(Std.int(numScore.width * PlayState.daPixelZoom));
-			}
-			numScore.updateHitbox();
-
-			numScore.acceleration.y = FlxG.random.int(200, 300);
-			numScore.velocity.y -= FlxG.random.int(140, 160);
-			numScore.velocity.x = FlxG.random.float(-5, 5);
-			numScore.visible = !ClientPrefs.hideHud;
-
-			insert(members.indexOf(strumLineNotes), numScore);
-
-			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
-				onComplete: function(tween:FlxTween)
-				{
-					numScore.destroy();
-				},
-				startDelay: Conductor.crochet * 0.002
-			});
-
-			daLoop++;
-		}
-		/* 
-			trace(combo);
-			trace(seperatedScore);
-			*/
-
-		coolText.text = Std.string(seperatedScore);
-		// comboGroup.add(coolText);
-
-		FlxTween.tween(rating, {alpha: 0}, 0.2, {
-			startDelay: Conductor.crochet * 0.001
-		});
-
-		FlxTween.tween(comboSpr, {alpha: 0}, 0.2, {
-			onComplete: function(tween:FlxTween)
-			{
-				coolText.destroy();
-				comboSpr.destroy();
-
-				rating.destroy();
-			},
-			startDelay: Conductor.crochet * 0.001
-		});
 	}
 
 	private function generateStaticArrows(player:Int):Void
@@ -1364,7 +1490,7 @@ class EditorPlayState extends MusicBeatState
 	}
 
 	public function callOnLuas(event:String, args:Array<Dynamic>, ignoreStops = true, exclusions:Array<String> = null):Dynamic {
-		var returnVal:Dynamic = EditorLua.Function_Continue;
+		var returnVal:Dynamic = EditorFunkinLua.Function_Continue;
 		#if LUA_ALLOWED
 		if(exclusions == null) exclusions = [];
 		for (script in luaArray) {
@@ -1372,11 +1498,11 @@ class EditorPlayState extends MusicBeatState
 				continue;
 
 			var ret:Dynamic = script.call(event, args);
-			if(ret == EditorLua.Function_Stop && !ignoreStops)
+			if(ret == EditorFunkinLua.Function_Stop && !ignoreStops)
 				break;
 			
 			// had to do this because there is a bug in haxe where Stop != Continue doesnt work
-			var bool:Bool = ret == EditorLua.Function_Continue;
+			var bool:Bool = ret == EditorFunkinLua.Function_Continue;
 			if(!bool && ret != 0) {
 				returnVal = cast ret;
 			}
@@ -1384,5 +1510,112 @@ class EditorPlayState extends MusicBeatState
 		#end
 		//trace(event, returnVal);
 		return returnVal;
+	}
+
+	public function setRatingImage(rat:Float){
+		if (rat >= 0){
+			if (rat <= ClientPrefs.marvelousWindow){
+				hitmansHUD.setRatingAnimation(rat);
+				//fantastics += 1;
+			} else if (rat <= ClientPrefs.sickWindow){
+				hitmansHUD.setRatingAnimation(rat);
+				//excelents += 1;
+			}else if (rat >= ClientPrefs.sickWindow && rat <= ClientPrefs.goodWindow){
+				hitmansHUD.setRatingAnimation(rat);
+				//greats += 1;
+			}else if (rat >= ClientPrefs.goodWindow && rat <= ClientPrefs.badWindow){
+				hitmansHUD.setRatingAnimation(rat);
+				//decents += 1;
+			}else if (rat >= ClientPrefs.badWindow){
+				hitmansHUD.setRatingAnimation(rat);
+				//wayoffs += 1;
+			}
+		} else {
+			if (rat >= ClientPrefs.marvelousWindow * -1){
+				hitmansHUD.setRatingAnimation(rat);
+				//fantastics += 1;
+			} else if (rat >= ClientPrefs.sickWindow * -1){
+				hitmansHUD.setRatingAnimation(rat);
+				//excelents += 1;
+			}else if (rat <= ClientPrefs.sickWindow * -1 && rat >= ClientPrefs.goodWindow * -1){
+				hitmansHUD.setRatingAnimation(rat);
+				//greats += 1;
+			}else if (rat <= ClientPrefs.goodWindow * -1 && rat >= ClientPrefs.badWindow * -1){
+				hitmansHUD.setRatingAnimation(rat);
+				//decents += 1;
+			}else if (rat <= ClientPrefs.badWindow * -1){
+				hitmansHUD.setRatingAnimation(rat);
+				//wayoffs += 1;
+			}
+		}
+	}
+
+	public function getLuaObject(tag:String, text:Bool=true):FlxSprite {
+		if(modchartSprites.exists(tag)) return modchartSprites.get(tag);
+		if(modchartSkewedSprite.exists(tag)) return modchartSkewedSprite.get(tag);
+		if(text && modchartTexts.exists(tag)) return modchartTexts.get(tag);
+		if(variables.exists(tag)) return variables.get(tag);
+		return null;
+	}
+
+	public function getControl(key:String) {
+		var pressed:Bool = Reflect.getProperty(controls, key);
+		//trace('Control result: ' + pressed);
+		return pressed;
+	}
+
+	public var totalPlayed:Int = 0;
+	public var totalNotesHit:Float = 0.0;
+
+	public var ratingName:String = '?';
+	public var ratingPercent:Float;
+	public var ratingFC:String;
+	public function RecalculateRating(badHit:Bool = false) {
+		setOnLuas('score', songScore);
+		setOnLuas('misses', songMisses);
+		setOnLuas('hits', songHits);
+
+		var ret:Dynamic = callOnLuas('onRecalculateRating', [], false);
+		if(ret != EditorFunkinLua.Function_Stop)
+		{
+			if(totalPlayed < 1) //Prevent divide by 0
+				ratingName = '?';
+			else
+			{
+				// Rating Percent
+				ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
+				//trace((totalNotesHit / totalPlayed) + ', Total: ' + totalPlayed + ', notes hit: ' + totalNotesHit);
+
+				// Rating Name
+				if(ratingPercent >= 1)
+				{
+					ratingName = ratingStuff[ratingStuff.length-1][0]; //Uses last string
+				}
+				else
+				{
+					for (i in 0...ratingStuff.length-1)
+					{
+						if(ratingPercent < ratingStuff[i][1])
+						{
+							ratingName = ratingStuff[i][0];
+							break;
+						}
+					}
+				}
+			}
+
+			// Rating FC
+			ratingFC = "";
+			if (marvelouss > 0) ratingFC = "MFC";
+			if (sicks > 0) ratingFC = "PFC";
+			if (goods > 0) ratingFC = "GFC";
+			if (bads > 0 || shits > 0) ratingFC = "FC";
+			if (songMisses > 0 && songMisses < 10) ratingFC = "GC";
+			else if (songMisses >= 10) ratingFC = "Clear";
+		}
+		hitmansHUD.updateScore(); // score will only update after rating is calculated, if it's a badHit, it shouldn't bounce -Ghost
+		setOnLuas('rating', ratingPercent);
+		setOnLuas('ratingName', ratingName);
+		setOnLuas('ratingFC', ratingFC);
 	}
 }

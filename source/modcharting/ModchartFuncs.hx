@@ -25,6 +25,7 @@ import modcharting.ModchartUtil;
 
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
+import editors.EditorFunkinLua;
 
 using StringTools;
 
@@ -161,6 +162,19 @@ class ModchartFuncs
                     stepEase(beat, time, easeStr, argsAsString);               
                 });
             }
+
+            #if hscript
+            if (EditorFunkinLua.hscript != null)
+            {
+                EditorFunkinLua.hscript.variables.set('Math', Math);
+                EditorFunkinLua.hscript.variables.set('PlayfieldRenderer', PlayfieldRenderer);
+                EditorFunkinLua.hscript.variables.set('ModchartUtil', ModchartUtil);
+                EditorFunkinLua.hscript.variables.set('Modifier', Modifier);
+                EditorFunkinLua.hscript.variables.set('NoteMovement', NoteMovement);
+                EditorFunkinLua.hscript.variables.set('NotePositionData', NotePositionData);
+                EditorFunkinLua.hscript.variables.set('ModchartFile', ModchartFile);
+            }
+            #end
         }
 
         #end
