@@ -25,7 +25,7 @@ import flixel.input.keyboard.FlxKey;
 import openfl.events.KeyboardEvent;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxCamera;
-import editors.EditorFunkinLua;
+import editors.EditorLua;
 import flixel.util.FlxSave;
 import HazardAFT_Capture as AFT_capture;
 import Conductor.Rating;
@@ -150,7 +150,7 @@ class EditorPlayState extends MusicBeatState
 	var col3:FlxColor = 0xFFFFD700;
 	var col2:FlxColor = 0xFFFFD700;
 
-	public var luaArray:Array<EditorFunkinLua> = [];
+	public var luaArray:Array<EditorLua> = [];
 
 	public var songPercent:Float = 0;
 
@@ -374,7 +374,7 @@ class EditorPlayState extends MusicBeatState
 		for (notetype in noteTypeMap.keys()) {
 			var luaToLoad:String = Paths.modFolders('custom_notetypes/' + notetype + '.lua');
 			if(sys.FileSystem.exists(luaToLoad)) {
-				luaArray.push(new EditorFunkinLua(luaToLoad));
+				luaArray.push(new EditorLua(luaToLoad));
 			}
 		}
 		#end
@@ -393,7 +393,7 @@ class EditorPlayState extends MusicBeatState
 				for (file in sys.FileSystem.readDirectory(folder))
 				{
 					if(file.toLowerCase().endsWith('.lua'))
-						luaArray.push(new EditorFunkinLua(folder + file));
+						luaArray.push(new EditorLua(folder + file));
 				}
 			}
 		}
@@ -1490,7 +1490,7 @@ class EditorPlayState extends MusicBeatState
 	}
 
 	public function callOnLuas(event:String, args:Array<Dynamic>, ignoreStops = true, exclusions:Array<String> = null):Dynamic {
-		var returnVal:Dynamic = EditorFunkinLua.Function_Continue;
+		var returnVal:Dynamic = EditorLua.Function_Continue;
 		#if LUA_ALLOWED
 		if(exclusions == null) exclusions = [];
 		for (script in luaArray) {
@@ -1498,11 +1498,11 @@ class EditorPlayState extends MusicBeatState
 				continue;
 
 			var ret:Dynamic = script.call(event, args);
-			if(ret == EditorFunkinLua.Function_Stop && !ignoreStops)
+			if(ret == EditorLua.Function_Stop && !ignoreStops)
 				break;
 			
 			// had to do this because there is a bug in haxe where Stop != Continue doesnt work
-			var bool:Bool = ret == EditorFunkinLua.Function_Continue;
+			var bool:Bool = ret == EditorLua.Function_Continue;
 			if(!bool && ret != 0) {
 				returnVal = cast ret;
 			}
@@ -1576,7 +1576,7 @@ class EditorPlayState extends MusicBeatState
 		setOnLuas('hits', songHits);
 
 		var ret:Dynamic = callOnLuas('onRecalculateRating', [], false);
-		if(ret != EditorFunkinLua.Function_Stop)
+		if(ret != EditorLua.Function_Stop)
 		{
 			if(totalPlayed < 1) //Prevent divide by 0
 				ratingName = '?';

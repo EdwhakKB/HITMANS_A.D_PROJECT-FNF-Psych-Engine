@@ -5,7 +5,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxAxes;
 
 #if LUA_ALLOWED
-import editors.EditorFunkinLua;
+import editors.EditorLua;
 #end
 
 #if HSCRIPT_ALLOWED
@@ -18,8 +18,8 @@ using StringTools;
 class SSHScriptEditor extends SScript
 {	
 	#if LUA_ALLOWED
-	public var parentLua:EditorFunkinLua;
-	public static function initHaxeModule(parent:EditorFunkinLua)
+	public var parentLua:EditorLua;
+	public static function initHaxeModule(parent:EditorLua)
 	{
 		#if (SScript >= "3.0.0")
 		if(parent.ssHscript == null)
@@ -30,7 +30,7 @@ class SSHScriptEditor extends SScript
 		#end
 	}
 
-	public static function initHaxeModuleCode(parent:EditorFunkinLua, code:String, ?varsToBring:Any = null)
+	public static function initHaxeModuleCode(parent:EditorLua, code:String, ?varsToBring:Any = null)
 	{
 		#if (SScript >= "3.0.0")
 		if(parent.ssHscript == null)
@@ -184,8 +184,8 @@ class SSHScriptEditor extends SScript
 				#if LUA_ALLOWED
 				if(parentLua != null)
 				{
-					EditorFunkinLua.lastCalledScript = parentLua;
-					EditorFunkinLua.luaTrace('$origin: ${parentLua.lastCalledFunction} - $msg', false, false, FlxColor.RED);
+					EditorLua.lastCalledScript = parentLua;
+					EditorLua.luaTrace('$origin: ${parentLua.lastCalledFunction} - $msg', false, false, FlxColor.RED);
 					return;
 				}
 				#end
@@ -282,7 +282,7 @@ class SSHScriptEditor extends SScript
 		if(!exists(funcToRun))
 		{
 			#if LUA_ALLOWED
-			EditorFunkinLua.luaTrace(origin + ' - No HScript function named: $funcToRun', false, false, FlxColor.RED);
+			EditorLua.luaTrace(origin + ' - No HScript function named: $funcToRun', false, false, FlxColor.RED);
 			#else
 			PlayState.instance.addTextToDebug(origin + ' - No HScript function named: $funcToRun', FlxColor.RED);
 			#end
@@ -299,7 +299,7 @@ class SSHScriptEditor extends SScript
 				#if LUA_ALLOWED
 				if(parentLua != null)
 				{
-					EditorFunkinLua.luaTrace('$origin: ${parentLua.lastCalledFunction} - $msg', false, false, FlxColor.RED);
+					EditorLua.luaTrace('$origin: ${parentLua.lastCalledFunction} - $msg', false, false, FlxColor.RED);
 					return null;
 				}
 				#end
@@ -319,7 +319,7 @@ class SSHScriptEditor extends SScript
 	}
 
 	#if LUA_ALLOWED
-	public static function implement(funk:EditorFunkinLua)
+	public static function implement(funk:EditorLua)
 	{
 		funk.addLocalCallback("runSSHaxeCode", function(codeToRun:String, ?varsToBring:Any = null, ?funcToRun:String = null, ?funcArgs:Array<Dynamic> = null):Dynamic {
 			#if (SScript >= "3.0.0")
@@ -329,17 +329,17 @@ class SSHScriptEditor extends SScript
 			if (retVal != null)
 			{
 				if(retVal.succeeded)
-					return (retVal.returnValue == null || EditorFunkinLua.isOfTypes(retVal.returnValue, [Bool, Int, Float, String, Array])) ? retVal.returnValue : null;
+					return (retVal.returnValue == null || EditorLua.isOfTypes(retVal.returnValue, [Bool, Int, Float, String, Array])) ? retVal.returnValue : null;
 
 				var e = retVal.exceptions[0];
 				if (e != null)
-					EditorFunkinLua.luaTrace(funk.ssHscript.origin + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);
+					EditorLua.luaTrace(funk.ssHscript.origin + ":" + funk.lastCalledFunction + " - " + e, false, false, FlxColor.RED);
 				return null;
 			}
 			else if (funk.ssHscript.returnValue != null)
 				return funk.ssHscript.returnValue;
 			#else
-			EditorFunkinLua.luaTrace("runHaxeCode: HScript isn't supported on this platform!", false, false, FlxColor.RED);
+			EditorLua.luaTrace("runHaxeCode: HScript isn't supported on this platform!", false, false, FlxColor.RED);
 			#end
 			return null;
 		});
@@ -351,13 +351,13 @@ class SSHScriptEditor extends SScript
 			{
 				var e = callValue.exceptions[0];
 				if (e != null)
-					EditorFunkinLua.luaTrace('ERROR (${funk.ssHscript.origin}: ${callValue.calledFunction}) - ' + e.message.substr(0, e.message.indexOf('\n')), false, false, FlxColor.RED);
+					EditorLua.luaTrace('ERROR (${funk.ssHscript.origin}: ${callValue.calledFunction}) - ' + e.message.substr(0, e.message.indexOf('\n')), false, false, FlxColor.RED);
 				return null;
 			}
 			else
 				return callValue.returnValue;
 			#else
-			EditorFunkinLua.luaTrace("runHaxeFunction: HScript isn't supported on this platform!", false, false, FlxColor.RED);
+			EditorLua.luaTrace("runHaxeFunction: HScript isn't supported on this platform!", false, false, FlxColor.RED);
 			#end
 		});
 		// This function is unnecessary because import already exists in SScript as a native feature

@@ -82,7 +82,7 @@ typedef LuaCamera =
 
 typedef  NewNote = Note; typedef StrumNew = StrumNote;
 
-class EditorFunkinLua {
+class EditorLua {
 	public static var Function_Stop:Dynamic = "##PSYCHLUA_FUNCTIONSTOP";
 	public static var Function_Continue:Dynamic = "##PSYCHLUA_FUNCTIONCONTINUE";
 	public static var Function_StopLua:Dynamic = "##PSYCHLUA_FUNCTIONSTOPLUA";
@@ -160,7 +160,7 @@ class EditorFunkinLua {
 		set('Function_Continue', Function_Continue);
 		set('luaDebugMode', false);
 		set('luaDeprecatedWarnings', true);
-		set('inChartEditor', false);
+		set('inChartEditor', true);
 
 		// Song/Week shit
 		set('curBpm', Conductor.bpm);
@@ -963,7 +963,7 @@ class EditorFunkinLua {
 						}
 					}
 				}
-				EditorPlayState.instance.luaArray.push(new EditorFunkinLua(cervix));
+				EditorPlayState.instance.luaArray.push(new EditorLua(cervix));
 				return;
 			}
 			luaTrace("addLuaScript: Script doesn't exist!", false, false, FlxColor.RED);
@@ -1895,7 +1895,7 @@ class EditorFunkinLua {
 				object.scrollFactor.set(scrollX, scrollY);
 			}
 		});
-		Lua_helper.add_callback(lua, "addLuaSprite", function(tag:String, front:Bool = false, position:Int = 0) {
+		/*Lua_helper.add_callback(lua, "addLuaSprite", function(tag:String, front:Bool = false, position:Int = 0) {
 			if(EditorPlayState.instance.modchartSprites.exists(tag)) {
 				var shit:ModchartSprite = EditorPlayState.instance.modchartSprites.get(tag);
 				if(!shit.wasAdded) {
@@ -1911,7 +1911,7 @@ class EditorFunkinLua {
 					//trace('added a thing: ' + tag);
 				}
 			}
-		});
+		});*/
 		Lua_helper.add_callback(lua, "addSkewedSprite", function(tag:String, front:Bool = false, position:Int = 0) {
 			if(EditorPlayState.instance.modchartSkewedSprite.exists(tag)) {
 				var spr:FlxSkewedSprite = EditorPlayState.instance.modchartSkewedSprite.get(tag);
@@ -3634,7 +3634,7 @@ class EditorFunkinLua {
 	}
 
 	public var lastCalledFunction:String = '';
-	public static var lastCalledScript:EditorFunkinLua = null;
+	public static var lastCalledScript:EditorLua = null;
 	public function call(func:String, args:Array<Dynamic>):Dynamic {
 		#if LUA_ALLOWED
 		if(closed) return Function_Continue;
@@ -3952,11 +3952,11 @@ class HScript
 			return false;
 		});
 		interp.variables.set('pushCustomCameraToLua', function(name:String, camera:FlxCamera){
-			return EditorFunkinLua.pushCustomCameras(name, camera);
+			return EditorLua.pushCustomCameras(name, camera);
 		});
 		interp.variables.set('startNewCustomCamera', function(name:String, newCamera:FlxCamera){
 			newCamera.bgColor.alpha = 0;
-			EditorFunkinLua.pushCustomCameras(name, newCamera);
+			EditorLua.pushCustomCameras(name, newCamera);
 			EditorPlayState.instance.variables.set(name, newCamera);
 			return newCamera;
 		});

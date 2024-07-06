@@ -97,29 +97,29 @@ class CoolUtil
 		return Math.max(min, Math.min(max, value));
 
 	public static function coolTextFile2(path:String):Array<String>
+	{
+		var daList:Array<String> = File.getContent(path).trim().split('\n');
+
+		for (i in 0...daList.length)
 		{
-			var daList:Array<String> = File.getContent(path).trim().split('\n');
-	
-			for (i in 0...daList.length)
-			{
-				daList[i] = daList[i].trim();
-			}
-	
-			return daList;
+			daList[i] = daList[i].trim();
 		}
+
+		return daList;
+	}
 	
 	inline public static function coolTextFile(path:String):Array<String>
-		{
-			var daList:String = null;
-			#if (sys && MODS_ALLOWED)
-			var formatted:Array<String> = path.split(':'); //prevent "shared:", "preload:" and other library names on file path
-			path = formatted[formatted.length-1];
-			if(FileSystem.exists(path)) daList = File.getContent(path);
-			#else
-			if(Assets.exists(path)) daList = Assets.getText(path);
-			#end
-			return daList != null ? listFromString(daList) : [];
-		}
+	{
+		var daList:String = null;
+		#if (sys && MODS_ALLOWED)
+		var formatted:Array<String> = path.split(':'); //prevent "shared:", "preload:" and other library names on file path
+		path = formatted[formatted.length-1];
+		if(FileSystem.exists(path)) daList = File.getContent(path);
+		#else
+		if(Assets.exists(path)) daList = Assets.getText(path);
+		#end
+		return daList != null ? listFromString(daList) : [];
+	}
 		
 	public static function listFromString(string:String):Array<String>
 	{

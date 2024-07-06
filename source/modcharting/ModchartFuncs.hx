@@ -25,7 +25,7 @@ import modcharting.ModchartUtil;
 
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
-import editors.EditorFunkinLua;
+import editors.EditorLua;
 
 using StringTools;
 
@@ -164,15 +164,15 @@ class ModchartFuncs
             }
 
             #if hscript
-            if (EditorFunkinLua.hscript != null)
+            if (EditorLua.hscript != null)
             {
-                EditorFunkinLua.hscript.variables.set('Math', Math);
-                EditorFunkinLua.hscript.variables.set('PlayfieldRenderer', PlayfieldRenderer);
-                EditorFunkinLua.hscript.variables.set('ModchartUtil', ModchartUtil);
-                EditorFunkinLua.hscript.variables.set('Modifier', Modifier);
-                EditorFunkinLua.hscript.variables.set('NoteMovement', NoteMovement);
-                EditorFunkinLua.hscript.variables.set('NotePositionData', NotePositionData);
-                EditorFunkinLua.hscript.variables.set('ModchartFile', ModchartFile);
+                EditorLua.hscript.variables.set('Math', Math);
+                EditorLua.hscript.variables.set('PlayfieldRenderer', PlayfieldRenderer);
+                EditorLua.hscript.variables.set('ModchartUtil', ModchartUtil);
+                EditorLua.hscript.variables.set('Modifier', Modifier);
+                EditorLua.hscript.variables.set('NoteMovement', NoteMovement);
+                EditorLua.hscript.variables.set('NotePositionData', NotePositionData);
+                EditorLua.hscript.variables.set('ModchartFile', ModchartFile);
             }
             #end
         }

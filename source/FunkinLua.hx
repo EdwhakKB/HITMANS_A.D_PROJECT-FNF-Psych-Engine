@@ -2052,7 +2052,7 @@ class FunkinLua {
 				object.scrollFactor.set(scrollX, scrollY);
 			}
 		});
-		/*Lua_helper.add_callback(lua, "addLuaSprite", function(tag:String, front:Bool = false) {
+		Lua_helper.add_callback(lua, "addLuaSprite", function(tag:String, front:Bool = false) {
 			if(PlayState.instance.modchartSprites.exists(tag)) {
 				var shit:ModchartSprite = PlayState.instance.modchartSprites.get(tag);
 				if(!shit.wasAdded) {
@@ -2081,7 +2081,7 @@ class FunkinLua {
 					//trace('added a thing: ' + tag);
 				}
 			}
-		});*/
+		});
 		Lua_helper.add_callback(lua, "addSkewedSprite", function(tag:String, front:Bool = false) {
 			if(PlayState.instance.modchartSkewedSprite.exists(tag)) {
 				var spr:FlxSkewedSprite = PlayState.instance.modchartSkewedSprite.get(tag);
