@@ -140,6 +140,7 @@ class OptionsState extends MusicBeatState
             else
             {
                 PauseSubState.goToOptions = false;
+				editors.EditorPauseSubState.goToOptions = false;
                 LoadingState.loadAndSwitchState(new PlayState());
             }
         }

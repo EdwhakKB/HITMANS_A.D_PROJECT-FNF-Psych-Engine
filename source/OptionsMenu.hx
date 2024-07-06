@@ -5,6 +5,7 @@ import flixel.input.gamepad.FlxGamepad;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import PauseSubState;
+import editors.EditorPauseSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
@@ -369,8 +370,16 @@ class OptionsMenu extends MusicBeatSubstate
 		#if cpp
 		if (isInPause)
 		{
-			add(PauseSubState.pauseMusic);
-			PauseSubState.pauseMusic.play();
+			if (PauseSubState.pauseMusic != null)
+			{
+				add(PauseSubState.pauseMusic);
+				PauseSubState.pauseMusic.play();
+			}
+			if (EditorPauseSubState.pauseMusic != null)
+			{
+				add(EditorPauseSubState.pauseMusic);
+				EditorPauseSubState.pauseMusic.play();
+			}
 		}
 		#end
 		switchCat(selectedCat);
@@ -481,10 +490,16 @@ class OptionsMenu extends MusicBeatSubstate
 		#if desktop
 		if (isInPause)
 		{
-			if (PauseSubState.pauseMusic.time == 0)
+			if (PauseSubState.pauseMusic != null && PauseSubState.pauseMusic.time == 0)
 			{
 				if (!PauseSubState.pauseMusic.playing)
 				    PauseSubState.pauseMusic.play();
+			}
+
+			if (EditorPauseSubState.pauseMusic != null && EditorPauseSubState.pauseMusic.time == 0)
+			{
+				if (!EditorPauseSubState.pauseMusic.playing)
+				    EditorPauseSubState.pauseMusic.play();
 			}
 		}
 		#end
@@ -622,6 +637,7 @@ class OptionsMenu extends MusicBeatSubstate
 				{
 					ClientPrefs.saveSettings();
 					PauseSubState.goBack = true;
+					EditorPauseSubState.goBack = true;
 					Paths.setCurrentLevel(''); //LMAO LMAO
 					close();
 				}
@@ -843,8 +859,17 @@ class OptionsMenu extends MusicBeatSubstate
 		#if desktop
 		if (isInPause)
 		{
-			PauseSubState.pauseMusic.pause();
-			remove(PauseSubState.pauseMusic);
+			if (PauseSubState.pauseMusic != null)
+			{
+				PauseSubState.pauseMusic.pause();
+				remove(PauseSubState.pauseMusic);
+			}
+
+			if (EditorPauseSubState.pauseMusic != null)
+			{
+				EditorPauseSubState.pauseMusic.pause();
+				remove(EditorPauseSubState.pauseMusic);
+			}
 		}
 		#end
 

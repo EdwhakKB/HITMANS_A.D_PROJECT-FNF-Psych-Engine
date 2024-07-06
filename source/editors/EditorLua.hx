@@ -215,6 +215,7 @@ class EditorLua {
 		// Gameplay settings
 		set('healthGainMult', EditorPlayState.instance.healthGain);
 		set('healthLossMult', EditorPlayState.instance.healthLoss);
+		set('playbackRate', EditorPlayState.instance.playbackRate);
 		set('instakillOnMiss', EditorPlayState.instance.instakillOnMiss);
 		set('botPlay', EditorPlayState.instance.cpuControlled);
 		set('practice', EditorPlayState.instance.practiceMode);
@@ -228,6 +229,14 @@ class EditorLua {
 			set('defaultOpponentStrumX' + i, 0);
 			set('defaultOpponentStrumY' + i, 0);
 		}
+
+		// Default character positions woooo
+		set('defaultBoyfriendX', EditorPlayState.instance.BF_X);
+		set('defaultBoyfriendY', EditorPlayState.instance.BF_Y);
+		set('defaultOpponentX', EditorPlayState.instance.DAD_X);
+		set('defaultOpponentY', EditorPlayState.instance.DAD_Y);
+		set('defaultGirlfriendX', EditorPlayState.instance.GF_X);
+		set('defaultGirlfriendY', EditorPlayState.instance.GF_Y);
 
 		// Character shit
 		set('boyfriendName', PlayState.SONG.player1);
@@ -272,6 +281,7 @@ class EditorLua {
 			{
 				EditorPlayState.instance.persistentUpdate = false;
 				EditorPlayState.instance.persistentDraw = true;
+				EditorPlayState.instance.paused = true;
 				if(FlxG.sound.music != null) {
 					FlxG.sound.music.pause();
 					EditorPlayState.instance.vocals.pause();
@@ -1061,7 +1071,7 @@ class EditorLua {
 			PlayState.SONG = Song.loadFromJson(poop, name);
 			PlayState.storyDifficulty = difficultyNum;
 			EditorPlayState.instance.persistentUpdate = false;
-			LoadingState.loadAndSwitchState(new EditorPlayState(0));
+			LoadingState.loadAndSwitchState(new PlayState());
 
 			FlxG.sound.music.pause();
 			FlxG.sound.music.volume = 0;
@@ -1460,6 +1470,38 @@ class EditorLua {
 			cancelTimer(tag);
 		});
 
+		/*Lua_helper.add_callback(lua, "getPropertyAdvanced", function(varsStr:String) {
+			var variables:Array<String> = varsStr.replace(' ', '').split(',');
+			var leClass:Class<Dynamic> = Type.resolveClass(variables[0]);
+			if(variables.length > 2) {
+				var curProp:Dynamic = Reflect.getProperty(leClass, variables[1]);
+				if(variables.length > 3) {
+					for (i in 2...variables.length-1) {
+						curProp = Reflect.getProperty(curProp, variables[i]);
+					}
+				}
+				return Reflect.getProperty(curProp, variables[variables.length-1]);
+			} else if(variables.length == 2) {
+				return Reflect.getProperty(leClass, variables[variables.length-1]);
+			}
+			return null;
+		});
+		Lua_helper.add_callback(lua, "setPropertyAdvanced", function(varsStr:String, value:Dynamic) {
+			var variables:Array<String> = varsStr.replace(' ', '').split(',');
+			var leClass:Class<Dynamic> = Type.resolveClass(variables[0]);
+			if(variables.length > 2) {
+				var curProp:Dynamic = Reflect.getProperty(leClass, variables[1]);
+				if(variables.length > 3) {
+					for (i in 2...variables.length-1) {
+						curProp = Reflect.getProperty(curProp, variables[i]);
+					}
+				}
+				return Reflect.setProperty(curProp, variables[variables.length-1], value);
+			} else if(variables.length == 2) {
+				return Reflect.setProperty(leClass, variables[variables.length-1], value);
+			}
+		});*/
+
 		//stupid bietch ass functions
 		Lua_helper.add_callback(lua, "addScore", function(value:Int = 0) {
 			EditorPlayState.instance.songScore += value;
@@ -1624,6 +1666,14 @@ class EditorLua {
 			}
 			return key;
 		});
+		Lua_helper.add_callback(lua, "addCharacterToList", function(name:String, type:String) {
+			var charType:Int = 0;
+			switch(type.toLowerCase()) {
+				case 'dad': charType = 1;
+				case 'gf' | 'girlfriend': charType = 2;
+			}
+			EditorPlayState.instance.addCharacterToList(name, charType);
+		});
 		Lua_helper.add_callback(lua, "precacheImage", function(name:String) {
 			Paths.image(name);
 		});
@@ -1633,11 +1683,111 @@ class EditorLua {
 		Lua_helper.add_callback(lua, "precacheMusic", function(name:String) {
 			CoolUtil.precacheMusic(name);
 		});
-		
+		Lua_helper.add_callback(lua, "triggerEvent", function(name:String, arg1:Dynamic, arg2:Dynamic) {
+			var value1:String = arg1;
+			var value2:String = arg2;
+			EditorPlayState.instance.triggerEventNote(name, value1, value2, Conductor.songPosition);
+			//trace('Triggered event: ' + name + ', ' + value1 + ', ' + value2);
+			return true;
+		});
+
+		Lua_helper.add_callback(lua, "startCountdown", function() {
+			EditorPlayState.instance.startCountdown();
+			return true;
+		});
+		Lua_helper.add_callback(lua, "endSong", function() {
+			EditorPlayState.instance.KillNotes();
+			EditorPlayState.instance.endSong();
+			return true;
+		});
+		Lua_helper.add_callback(lua, "startRating", function() {
+			EditorPlayState.instance.KillNotes();
+			EditorPlayState.instance.rating();
+			return true;
+		});
+		Lua_helper.add_callback(lua, "restartSong", function(?skipTransition:Bool = false) {
+			EditorPlayState.instance.persistentUpdate = false;
+			EditorPauseSubState.restartSong(skipTransition);
+			return true;
+		});
+		Lua_helper.add_callback(lua, "exitSong", function(?skipTransition:Bool = false) {
+			if(skipTransition)
+			{
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
+			}
+
+			EditorPlayState.cancelMusicFadeTween();
+			CustomFadeTransition.nextCamera = EditorPlayState.instance.camOther;
+			if(FlxTransitionableState.skipNextTransIn)
+				CustomFadeTransition.nextCamera = null;
+
+			if(PlayState.isStoryMode)
+				MusicBeatState.switchState(new StoryMenuState());
+			else
+				MusicBeatState.switchState(new FreeplayState());
+			
+			#if desktop DiscordClient.resetClientID(); #end
+
+			FlxG.sound.playMusic(Paths.music('bloodtained'));
+			EditorPlayState.changedDifficulty = false;
+			EditorPlayState.chartingMode = false;
+			EditorPlayState.instance.transitioning = true;
+			Mods.loadTopMod();
+			return true;
+		});
 		Lua_helper.add_callback(lua, "getSongPosition", function() {
 			return Conductor.songPosition;
 		});
 
+		Lua_helper.add_callback(lua, "getCharacterX", function(type:String) {
+			switch(type.toLowerCase()) {
+				case 'dad' | 'opponent':
+					return EditorPlayState.instance.dadGroup.x;
+				case 'gf' | 'girlfriend':
+					return EditorPlayState.instance.gfGroup.x;
+				default:
+					return EditorPlayState.instance.boyfriendGroup.x;
+			}
+		});
+		Lua_helper.add_callback(lua, "setCharacterX", function(type:String, value:Float) {
+			switch(type.toLowerCase()) {
+				case 'dad' | 'opponent':
+					EditorPlayState.instance.dadGroup.x = value;
+				case 'gf' | 'girlfriend':
+					EditorPlayState.instance.gfGroup.x = value;
+				default:
+					EditorPlayState.instance.boyfriendGroup.x = value;
+			}
+		});
+		Lua_helper.add_callback(lua, "getCharacterY", function(type:String) {
+			switch(type.toLowerCase()) {
+				case 'dad' | 'opponent':
+					return EditorPlayState.instance.dadGroup.y;
+				case 'gf' | 'girlfriend':
+					return EditorPlayState.instance.gfGroup.y;
+				default:
+					return EditorPlayState.instance.boyfriendGroup.y;
+			}
+		});
+		Lua_helper.add_callback(lua, "setCharacterY", function(type:String, value:Float) {
+			switch(type.toLowerCase()) {
+				case 'dad' | 'opponent':
+					EditorPlayState.instance.dadGroup.y = value;
+				case 'gf' | 'girlfriend':
+					EditorPlayState.instance.gfGroup.y = value;
+				default:
+					EditorPlayState.instance.boyfriendGroup.y = value;
+			}
+		});
+		Lua_helper.add_callback(lua, "cameraSetTarget", function(target:String) {
+			var isDad:Bool = false;
+			if(target == 'dad') {
+				isDad = true;
+			}
+			EditorPlayState.instance.moveCamera(isDad);
+			return isDad;
+		});
 		Lua_helper.add_callback(lua, "cameraShake", function(camera:String, intensity:Float, duration:Float) {
 			cameraFromString(camera).shake(intensity, duration);
 		});
@@ -1729,6 +1879,13 @@ class EditorLua {
 			if(obj != null) return obj.getScreenPosition().y;
 
 			return 0;
+		});
+		Lua_helper.add_callback(lua, "characterDance", function(character:String) {
+			switch(character.toLowerCase()) {
+				case 'dad': EditorPlayState.instance.dad.dance();
+				case 'gf' | 'girlfriend': if(EditorPlayState.instance.gf != null) EditorPlayState.instance.gf.dance();
+				default: EditorPlayState.instance.boyfriend.dance();
+			}
 		});
 
 		Lua_helper.add_callback(lua, "makeLuaSprite", function(tag:String, image:String, x:Float, y:Float) {
@@ -1895,7 +2052,7 @@ class EditorLua {
 				object.scrollFactor.set(scrollX, scrollY);
 			}
 		});
-		/*Lua_helper.add_callback(lua, "addLuaSprite", function(tag:String, front:Bool = false, position:Int = 0) {
+		Lua_helper.add_callback(lua, "addLuaSprite", function(tag:String, front:Bool = false) {
 			if(EditorPlayState.instance.modchartSprites.exists(tag)) {
 				var shit:ModchartSprite = EditorPlayState.instance.modchartSprites.get(tag);
 				if(!shit.wasAdded) {
@@ -1905,19 +2062,31 @@ class EditorLua {
 					}
 					else
 					{
+						var position:Int = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.gfGroup);
+						if(EditorPlayState.instance.members.indexOf(EditorPlayState.instance.boyfriendGroup) < position) {
+							position = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.boyfriendGroup);
+						} else if(EditorPlayState.instance.members.indexOf(EditorPlayState.instance.dadGroup) < position) {
+							position = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.dadGroup);
+						}
 						EditorPlayState.instance.insert(position, shit);
 					}
 					shit.wasAdded = true;
 					//trace('added a thing: ' + tag);
 				}
 			}
-		});*/
-		Lua_helper.add_callback(lua, "addSkewedSprite", function(tag:String, front:Bool = false, position:Int = 0) {
+		});
+		Lua_helper.add_callback(lua, "addSkewedSprite", function(tag:String, front:Bool = false) {
 			if(EditorPlayState.instance.modchartSkewedSprite.exists(tag)) {
 				var spr:FlxSkewedSprite = EditorPlayState.instance.modchartSkewedSprite.get(tag);
 				if(front)
 					getInstance().add(spr);
 				else{
+					var position:Int = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.gfGroup);
+					if(EditorPlayState.instance.members.indexOf(EditorPlayState.instance.boyfriendGroup) < position) {
+						position = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.boyfriendGroup);
+					} else if(EditorPlayState.instance.members.indexOf(EditorPlayState.instance.dadGroup) < position) {
+						position = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.dadGroup);
+					}
 					EditorPlayState.instance.insert(position, spr);
 				}
 		}});
@@ -2179,6 +2348,62 @@ class EditorLua {
 		});
 		Lua_helper.add_callback(lua, "getRandomBool", function(chance:Float = 50) {
 			return FlxG.random.bool(chance);
+		});
+		Lua_helper.add_callback(lua, "startDialogue", function(dialogueFile:String, music:String = null) {
+			EditorPlayState.instance.startCallback = null;
+
+			var path:String;
+			#if MODS_ALLOWED
+			path = Paths.modsJson(Paths.formatToSongPath(PlayState.SONG.song) + '/' + dialogueFile);
+			if(!FileSystem.exists(path))
+			#end
+				path = Paths.json(Paths.formatToSongPath(PlayState.SONG.song) + '/' + dialogueFile);
+
+			luaTrace('startDialogue: Trying to load dialogue: ' + path);
+
+			#if MODS_ALLOWED
+			if(FileSystem.exists(path))
+			#else
+			if(Assets.exists(path))
+			#end
+			{
+				var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
+				if(shit.dialogue.length > 0) {
+					EditorPlayState.instance.startDialogue(shit, music);
+					luaTrace('startDialogue: Successfully loaded dialogue', false, false, FlxColor.GREEN);
+					return true;
+				} else {
+					luaTrace('startDialogue: Your dialogue file is badly formatted!', false, false, FlxColor.RED);
+				}
+			} else {
+				luaTrace('startDialogue: Dialogue file not found', false, false, FlxColor.RED);
+				if(EditorPlayState.instance.endingSong) {
+					if (!EditorPlayState.inResultsScreen) EditorPlayState.instance.endSong();
+				} else {
+					if (!EditorPlayState.inResultsScreen) EditorPlayState.instance.startCountdown();
+				}
+			}
+			return false;
+		});
+
+		Lua_helper.add_callback(lua, "startVideo", function(videoFile:String) {
+			#if VIDEOS_ALLOWED
+			if(FileSystem.exists(Paths.video(videoFile))) {
+				EditorPlayState.instance.startVideo(videoFile);
+				return true;
+			} else {
+				luaTrace('startVideo: Video file not found: ' + videoFile, false, false, FlxColor.RED);
+			}
+			return false;
+
+			#else
+			if(EditorPlayState.instance.endingSong) {
+				EditorPlayState.instance.endSong();
+			} else {
+				EditorPlayState.instance.startCountdown();
+			}
+			return true;
+			#end
 		});
 
 		Lua_helper.add_callback(lua, "playMusic", function(sound:String, volume:Float = 1, loop:Bool = false) {
@@ -2588,6 +2813,20 @@ class EditorLua {
 				return true;
 			}
 			return false;
+		});
+		Lua_helper.add_callback(lua, "characterPlayAnim", function(character:String, anim:String, ?forced:Bool = false) {
+			luaTrace("characterPlayAnim is deprecated! Use playAnim instead", false, true);
+			switch(character.toLowerCase()) {
+				case 'dad':
+					if(EditorPlayState.instance.dad.animOffsets.exists(anim))
+						EditorPlayState.instance.dad.playAnim(anim, forced);
+				case 'gf' | 'girlfriend':
+					if(EditorPlayState.instance.gf != null && EditorPlayState.instance.gf.animOffsets.exists(anim))
+						EditorPlayState.instance.gf.playAnim(anim, forced);
+				default:
+					if(EditorPlayState.instance.boyfriend.animOffsets.exists(anim))
+						EditorPlayState.instance.boyfriend.playAnim(anim, forced);
+			}
 		});
 		Lua_helper.add_callback(lua, "luaSpriteMakeGraphic", function(tag:String, width:Int, height:Int, color:String) {
 			luaTrace("luaSpriteMakeGraphic is deprecated! Use makeGraphic instead", false, true);
@@ -3072,8 +3311,8 @@ class EditorLua {
 			return false;
 		});
 
-		/*Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
-            PlayState.threadBeat(beat, () -> {func;});
+		Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
+            EditorPlayState.threadBeat(beat, () -> {func;});
             // var retVal:Dynamic = null;
 
             // #if hscript
@@ -3094,7 +3333,7 @@ class EditorLua {
         });
 
 		Lua_helper.add_callback(lua, "threadUpdate", function(beatStart:Float, beatEnd:Float, func:Dynamic, onComp:Dynamic) {
-            PlayState.threadUpdate(beatStart, beatEnd, () -> {func;}, () -> {onComp;});
+            EditorPlayState.threadUpdate(beatStart, beatEnd, () -> {func;}, () -> {onComp;});
             // var retVal:Dynamic = null;
 
             // #if hscript
@@ -3112,7 +3351,7 @@ class EditorLua {
             // if(retVal != null && !isOfTypes(retVal, [Bool, Int, Float, String, Array])) retVal = null;
             // if(retVal == null) Lua.pushnil(lua);
             // return retVal;
-        });*/
+        });
 
 		Lua_helper.add_callback(lua, "makeLuaProxy", function(tag:String, x:Float, y:Float, ?camera:String = '') {
 			var micamara:FlxCamera = EditorPlayState.instance.camProxy;
@@ -3589,6 +3828,13 @@ class EditorLua {
 		if (lua_Cameras.exists(id))
             return lua_Cameras.get(id).cam;
 		
+		// pre defined names
+		switch(id)
+		{
+			case 'boyfriend' | 'bf':
+				@:privateAccess
+				return EditorPlayState.instance.boyfriend;
+		}
 
 		if (Std.parseInt(id) == null)
 			return Reflect.getProperty(getTargetInstance(), id);
@@ -3597,17 +3843,38 @@ class EditorLua {
 	}
 
 	public static inline function getTargetInstance()
-	{
-		return EditorPlayState.instance;
-	}
+		{
+			return EditorPlayState.instance;
+		}
 	
+		public static inline function getLowestCharacterGroup():FlxSpriteGroup
+		{
+			var group:FlxSpriteGroup = EditorPlayState.instance.gfGroup;
+			var pos:Int = EditorPlayState.instance.members.indexOf(group);
+	
+			var newPos:Int = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.boyfriendGroup);
+			if(newPos < pos)
+			{
+				group = EditorPlayState.instance.boyfriendGroup;
+				pos = newPos;
+			}
+			
+			newPos = EditorPlayState.instance.members.indexOf(EditorPlayState.instance.dadGroup);
+			if(newPos < pos)
+			{
+				group = EditorPlayState.instance.dadGroup;
+				pos = newPos;
+			}
+			return group;
+		}
+
 	public static function luaTrace(text:String, ignoreCheck:Bool = false, deprecated:Bool = false, color:FlxColor = FlxColor.WHITE) {
 		#if LUA_ALLOWED
 		if(ignoreCheck || getBool('luaDebugMode')) {
 			if(deprecated && !getBool('luaDeprecatedWarnings')) {
 				return;
 			}
-			//EditorPlayState.instance.addTextToDebug(text, color);
+			EditorPlayState.instance.addTextToDebug(text, color);
 			trace(text);
 		}
 		#end
