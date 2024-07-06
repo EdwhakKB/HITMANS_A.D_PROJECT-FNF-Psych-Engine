@@ -4093,7 +4093,7 @@ class EditorPlayState extends MusicBeatState
 
 	function opponentNoteHit(note:Note):Void
 	{
-		edwhakDrain = note.hitHealth+0.07; //force game to make this be 0.07 higher than player
+		edwhakDrain = note.hitHealth+0.007; //force game to make this be 0.07 higher than player
 		// if (Paths.formatToSongPath(PlayState.SONG.song) != 'tutorial')
 		//Edwhak HealthDrain but in source so people can't nerf how his songs works!
 		if (PlayState.SONG.bossFight || edwhakIsEnemy){
