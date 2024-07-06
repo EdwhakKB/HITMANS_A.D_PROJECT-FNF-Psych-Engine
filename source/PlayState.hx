@@ -220,7 +220,7 @@ class PlayState extends MusicBeatState
 	public static var forceMiddleScroll:Bool = false; //yeah
 	public static var forceRightScroll:Bool = false; //so modcharts that NEED rightscroll will be forced (mainly for player vs enemy classic stuff like bf vs someone)
 	public static var forcedAScroll:Bool = false; //if forced then it should disable "clientPrefs" stuff
-	var edwhakDrain:Float = 0.3; //0.3 or more if changed
+	var edwhakDrain:Float = 0.03; //0.03 or more if changed
 	public var edwhakIsEnemy:Bool = false;
 	public var allowEnemyDrain:Bool = false;
 	public var controlsPlayer2:Bool = false; //mega stupid shit that enables double play lmao, this is disabled in edwhak songs, in 2 ways(song name and dadname so you can't do shit) -Ed
