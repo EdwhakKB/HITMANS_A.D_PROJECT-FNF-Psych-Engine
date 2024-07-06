@@ -293,10 +293,10 @@ class PlayState extends MusicBeatState
 
 	public var gfSpeed:Int = 1;
 	public var health:Float = 1;
-	public var shownHealth:Float = 1;
 	public var maxHealth:Float = 0; //Totally not stolen from Lullaby lol
 	public var combo:Int = 0;
 	public var comboOp:Int = 0;
+	public var separateCombo:Bool = false;
 	private var maxCombo:Int = 0;
 
 	public var songPercent:Float = 0;
@@ -2065,7 +2065,7 @@ class PlayState extends MusicBeatState
 
 	public function updateScore(miss:Bool = false)
 	{
-		hitmansHUD.updateScore();
+		// hitmansHUD.updateScore();
 
 		if(ClientPrefs.scoreZoom && !miss && !cpuControlled)
 		{
@@ -2908,9 +2908,7 @@ class PlayState extends MusicBeatState
 		callOnScripts('onUpdate', [elapsed]);
 		if (notITGMod && SONG.notITG)
 			playfieldRenderer.speed = playbackRate; //LMAO IT LOOKS SOO GOOFY AS FUCK
-
-		hitmansHUD.health = health;
-		hitmansHUD.shownHealth = shownHealth;
+		
 		
 		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
 
@@ -3156,7 +3154,8 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 9 * playbackRate, 0, 1));
+		hitmansHUD.setHealth(health,elapsed,playbackRate);
+		hitmansHUD.setScore(songScore, songMisses, ratingName, ratingPercent, ratingFC, combo, comboOp, separateCombo);
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
@@ -3190,6 +3189,7 @@ class PlayState extends MusicBeatState
 					var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
 					if(curTime < 0) curTime = 0;
 					songPercent = (curTime / songLength);
+					hitmansHUD.setTime(songLength);
 				}
 			}
 
@@ -4753,6 +4753,7 @@ class PlayState extends MusicBeatState
 				hitmansHUD.ratingsBumpScaleOP();
 				hitmansHUD.setRatingImageOP(0);
 				comboOp +=1;
+				separateCombo = true;
 				allowEnemyDrain = true;
 			}
 		}

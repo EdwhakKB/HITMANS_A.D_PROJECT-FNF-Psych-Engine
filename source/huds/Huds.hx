@@ -68,7 +68,6 @@ class Huds extends FlxGroup
 	public var healthBarBG:EditedAttachedSprite;
 	public var healthBar:EditedFlxBar;
 	public var health:Float = 1;
-	public var shownHealth:Float = 1;
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
 	public var coloredHealthBar:Bool;
@@ -117,6 +116,14 @@ class Huds extends FlxGroup
 	var iconsYOffset:Array<Float> = [0,0];
 	var scoreOffset:Array<Float> = [0,0]; //upscroll/Downscroll
 	// var hudRating:String = ClientPrefs.hudStyle.toLowerCase();
+
+	public var songScore:Int = 0;
+	public var songMisses:Int = 0;
+	public var ratingName:String = "";
+	public var ratingPercent:Float = 0;
+	public var ratingFC:String = "";
+	
+	public var ratingString = '';
 
 	public function new()
 	{
@@ -281,8 +288,9 @@ class Huds extends FlxGroup
 				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.width - 100) : Std.int(healthBarBG.width - 8), //593
 				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.height - 40) : Std.int(healthBarBG.height - 8), //11
 				this,
-				'shownHealth', 0, 2
+				'health', 0, 2
 			);
+			healthBar.numDivisions = 1000;
             // if (ClientPrefs.hudStyle == 'CLASSIC') healthBar.scrollFactor.set();
             // healthBar
             healthBar.visible = !ClientPrefs.hideHud;
@@ -333,48 +341,6 @@ class Huds extends FlxGroup
 
 			hudadded = true;
 			reloadHealthBarColors();
-			updateScore = function(){
-				if (hudadded)
-				{
-					var songScore:Int = 0;
-					var songMisses:Int = 0;
-					var ratingName:String = "";
-					var ratingPercent:Float = 0;
-					var ratingFC:String = "";
-
-					if (FlxG.state is PlayState)
-					{
-						songScore = PlayState.instance.songScore;
-						songMisses = PlayState.instance.songMisses;
-						ratingName = PlayState.instance.ratingName;
-						ratingPercent = PlayState.instance.ratingPercent;
-						ratingFC = PlayState.instance.ratingFC;
-					}
-					else if (FlxG.state is EditorPlayState)
-					{
-						songScore = EditorPlayState.instance.songScore;
-						songMisses = EditorPlayState.instance.songMisses;
-						ratingName = EditorPlayState.instance.ratingName;
-						ratingPercent = EditorPlayState.instance.ratingPercent;
-						ratingFC = EditorPlayState.instance.ratingFC;
-					}
-		
-					// of course I would go back and fix my code, of COURSE @BeastlyGhost;
-					tempScore = 'Score: ' + songScore;
-					var ratingString = '';
-					
-					if (displayRatings)
-					{
-						ratingString = scoreSeparator + 'Misses: ' + songMisses;
-						ratingString += scoreSeparator + 'Rating: ' + ratingName;
-						ratingString += (ratingName != '?' ? ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' : '');
-						ratingString += (ratingFC != null && ratingFC != '' ? ' - ' + ratingFC : '');
-					}
-		
-					tempScore += ratingString + '\n';
-					scoreTxt.text = tempScore;
-				}
-			};
 		}
 	}
 
@@ -402,8 +368,8 @@ class Huds extends FlxGroup
 			// iconP2.scale.set(mult, mult);
 			// iconP2.updateHitbox();
     
-			iconP1.x = (hudUsed == 'hitmans') ? (FlxG.width - 160) : healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
-			iconP2.x = (hudUsed == 'hitmans') ? 0 : healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
+			iconP1.x = (hudUsed == 'hitmans') ? (FlxG.width - 160) : healthBar.x + (healthBar.width * (FlxMath.remapToRange(percent, 0, 100, 100, 0) * 0.01)) + (150 * iconP1.scale.x - 150) / 2 - iconOffset;
+			iconP2.x = (hudUsed == 'hitmans') ? 0 : healthBar.x + (healthBar.width * (FlxMath.remapToRange(percent, 0, 100, 100, 0) * 0.01)) - (150 * iconP2.scale.x) / 2 - iconOffset * 2;
 			
             if (healthBar.percent < 20)
 				iconP1.animation.curAnim.curFrame = 1;
@@ -422,42 +388,6 @@ class Huds extends FlxGroup
 			}
 
         	//noteRating shit ig but only for x and y LOL
-			if (FlxG.state is PlayState)
-			{
-				noteScore.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
-				noteScore.text = Std.string(PlayState.instance.combo);
-
-				switch (PlayState.instance.edwhakIsEnemy || PlayState.SONG.bossFight){
-					case true:
-						noteScoreOp.text = Std.string(PlayState.instance.comboOp);
-						noteScoreOp.alpha = PlayState.instance.comboOp <= 3 ? 0 : 1;
-					case false:
-						noteScoreOp.text = Std.string(PlayState.instance.combo);
-						noteScoreOp.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
-				}
-			}else if (FlxG.state is EditorPlayState)
-			{
-				noteScore.alpha = EditorPlayState.instance.combo <= 3 ? 0 : 1;
-				noteScore.text = Std.string(EditorPlayState.instance.combo);
-
-				switch (EditorPlayState.instance.edwhakIsEnemy || PlayState.SONG.bossFight){
-					case true:
-						noteScoreOp.text = Std.string(EditorPlayState.instance.comboOp);
-						noteScoreOp.alpha = EditorPlayState.instance.comboOp <= 3 ? 0 : 1;
-					case false:
-						noteScoreOp.text = Std.string(EditorPlayState.instance.combo);
-						noteScoreOp.alpha = EditorPlayState.instance.combo <= 3 ? 0 : 1;
-				}
-			}
-
-			// if (!separateTimeMovement)
-			// {
-			// 	for (i in [timeBarBG, timeTxt])
-			// 	{
-			// 		i.setPosition(timeBar.x, timeBar.y);
-			// 	}
-			// }
-			// if (!separateBarMovement) for (i in [healthBarBG]) i.setPosition(healthBar.x, healthBar.y);
 
 			if (!separateScoreMovement){
 				noteScore.x = (ratings.x-510) + comboOffset[0];
@@ -486,27 +416,6 @@ class Huds extends FlxGroup
 
 				timeTxt.y = timeBarBG.y - 10;
 			}
-
-			if (FlxG.state is PlayState)
-			{
-				if (updateTime)
-				{
-					var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
-					var secondsTotal:Int = Math.floor(curTime / 1000);
-					if (curTime < 0)
-						curTime = 0;
-
-					songPercent = (curTime / PlayState.instance.songLength);
-
-					if (secondsTotal < 0)
-						secondsTotal = 0;
-
-					timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
-
-					if (updateTimePos)
-						timeTxt.screenCenter(X);
-				}
-			}
 		}
 	}
 
@@ -514,8 +423,69 @@ class Huds extends FlxGroup
 	public var scoreSeparator:String = ' | ';
 	public var displayRatings:Bool = true;
 
-	public dynamic function updateScore()
-	{
+	public function setScore(score:Int, misses:Int, ratingn:String, ratingp:Float, fc:String, comboPL:Int, comboOP:Int, separateCombo:Bool){
+		if (hudadded)
+		{
+			songScore = score;
+			songMisses = misses;
+			ratingName = ratingn;
+			ratingPercent = ratingp;
+			ratingFC = fc;
+
+			// of course I would go back and fix my code, of COURSE @BeastlyGhost;
+			tempScore = 'Score: ' + songScore;
+			
+			if (displayRatings)
+			{
+				ratingString = scoreSeparator + 'Misses: ' + songMisses;
+				ratingString += scoreSeparator + 'Rating: ' + ratingName;
+				ratingString += (ratingName != '?' ? ' (' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%)' : '');
+				ratingString += (ratingFC != null && ratingFC != '' ? ' - ' + ratingFC : '');
+			}
+
+			tempScore += ratingString + '\n';
+			scoreTxt.text = tempScore;
+
+			noteScore.alpha = comboPL <= 3 ? 0 : 1;
+			noteScore.text = Std.string(comboPL);
+
+			if (separateCombo){
+				noteScoreOp.alpha = comboOP <= 3 ? 0 : 1;
+				noteScoreOp.text = Std.string(comboOP);
+			}else{
+				noteScoreOp.text = Std.string(comboPL);
+				noteScoreOp.alpha = comboPL <= 3 ? 0 : 1;
+			}
+		}
+	}
+
+	public function setTime(time:Float){
+		if (updateTime)
+		{
+			var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
+			var secondsTotal:Int = Math.floor(curTime / 1000);
+			if (curTime < 0)
+				curTime = 0;
+
+			songPercent = (curTime / time);
+
+			if (secondsTotal < 0)
+				secondsTotal = 0;
+
+			timeTxt.text = FlxStringUtil.formatTime(secondsTotal, false);
+
+			if (updateTimePos)
+				timeTxt.screenCenter(X);
+		}
+	}
+
+	var percent:Float = 1;
+	public function setHealth(curHealth:Float, elapsed:Float, playbackRate:Float){
+		if (hudadded){
+			health = curHealth;
+			percent = FlxMath.lerp(percent, (health*50), (elapsed * 10));
+			healthBar.percent = percent;
+		}
 	}
 
 	public function reloadHealthBarColors()
