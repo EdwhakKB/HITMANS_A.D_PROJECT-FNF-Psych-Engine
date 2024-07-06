@@ -3156,7 +3156,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 15 * playbackRate, 0, 1));
+		shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 9 * playbackRate, 0, 1));
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 

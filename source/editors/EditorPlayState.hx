@@ -936,7 +936,7 @@ class EditorPlayState extends MusicBeatState
 			activeModifiers.borderSize = 2;
 			activeModifiers.scrollFactor.set();
 			activeModifiers.screenCenter();
-			activeModifiers.camera = camHUD;
+			activeModifiers.camera = camInterfaz;
 			add(activeModifiers);
 
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
@@ -1149,7 +1149,7 @@ class EditorPlayState extends MusicBeatState
 		callOnScripts('onCreatePost');
 		callOnScripts('onModchart');
 
-		camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
+		//camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
 
 		if (ClientPrefs.quantization)
 			doNoteQuant();
@@ -2786,7 +2786,7 @@ class EditorPlayState extends MusicBeatState
 			}
 		}
 
-		shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 15 * playbackRate, 0, 1));
+		shownHealth = FlxMath.lerp(shownHealth, health, CoolUtil.boundTo(elapsed * 9 * playbackRate, 0, 1));
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 

@@ -435,6 +435,19 @@ class Huds extends FlxGroup
 						noteScoreOp.text = Std.string(PlayState.instance.combo);
 						noteScoreOp.alpha = PlayState.instance.combo <= 3 ? 0 : 1;
 				}
+			}else if (FlxG.state is EditorPlayState)
+			{
+				noteScore.alpha = EditorPlayState.instance.combo <= 3 ? 0 : 1;
+				noteScore.text = Std.string(EditorPlayState.instance.combo);
+
+				switch (EditorPlayState.instance.edwhakIsEnemy || PlayState.SONG.bossFight){
+					case true:
+						noteScoreOp.text = Std.string(EditorPlayState.instance.comboOp);
+						noteScoreOp.alpha = EditorPlayState.instance.comboOp <= 3 ? 0 : 1;
+					case false:
+						noteScoreOp.text = Std.string(EditorPlayState.instance.combo);
+						noteScoreOp.alpha = EditorPlayState.instance.combo <= 3 ? 0 : 1;
+				}
 			}
 
 			// if (!separateTimeMovement)
