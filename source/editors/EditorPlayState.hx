@@ -258,6 +258,8 @@ class EditorPlayState extends MusicBeatState
 	public var unspawnNotes:Array<Note> = [];
 	public var eventNotes:Array<EventNote> = [];
 
+	public var activeModifiers:FlxText; //funny thing i added cuz why not?
+
 	// public var modManager:ModManager;
 	// public var downscrollOffset = FlxG.height - 150;
 	// public var upscrollOffset = 50;
@@ -929,6 +931,14 @@ class EditorPlayState extends MusicBeatState
 		// add(strumLine);
 
 		if (PlayState.SONG.notITG && notITGMod){
+			activeModifiers = new FlxText(0,0); //no need add the text if MT isn't active (if you want your own template then add the text manually in the lua/Hx)
+			activeModifiers.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			activeModifiers.borderSize = 2;
+			activeModifiers.scrollFactor.set();
+			activeModifiers.screenCenter();
+			activeModifiers.camera = camHUD;
+			add(activeModifiers);
+
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
 			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1];
 			add(playfieldRenderer);
@@ -2539,6 +2549,25 @@ class EditorPlayState extends MusicBeatState
 		hitmansHUD.shownHealth = shownHealth;
 		
 		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
+
+		if (PlayState.SONG.notITG){
+			var leText = "Active Modifiers: \n";
+			for (modName => mod in playfieldRenderer.modifierTable.modifiers)
+			{
+				if (mod.currentValue != mod.baseValue)
+				{
+					leText += modName + ": " + FlxMath.roundDecimal(mod.currentValue, 2);
+					for (subModName => subMod in mod.subValues)
+					{
+						leText += "    " + subModName + ": " + FlxMath.roundDecimal(subMod.value, 2);
+					}
+					leText += "\n";
+				}
+			}
+
+			activeModifiers.text = leText;
+			activeModifiers.screenCenter();
+		}
 
 		// refresh(); //z sort shit LOL
 		// refreshZ();
