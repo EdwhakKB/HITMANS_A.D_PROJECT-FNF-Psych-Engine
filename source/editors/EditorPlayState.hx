@@ -3029,18 +3029,30 @@ class EditorPlayState extends MusicBeatState
 		}
 		checkEventNote();
 
-		#if debug
 		if(!endingSong && !startingSong) {
-			if (FlxG.keys.justPressed.ONE) {
+			if (FlxG.keys.justPressed.F1) {
 				KillNotes();
 				FlxG.sound.music.onComplete();
 			}
-			if(FlxG.keys.justPressed.TWO) { //Go 10 seconds into the future :O
+
+
+			if(FlxG.keys.justPressed.F5) { //Go 10 seconds into the past :O
+				setSongTime(Conductor.songPosition - 10000);
+				clearNotesBefore(Conductor.songPosition);
+			}
+			if(FlxG.keys.justPressed.F6) { //Go 10 seconds into the future :O
 				setSongTime(Conductor.songPosition + 10000);
 				clearNotesBefore(Conductor.songPosition);
 			}
+			if(FlxG.keys.justPressed.F7) {
+				//open a substate to pause the whole state, useful to check stuff, you do this glow lmao
+			}
+			if(FlxG.keys.justPressed.F8) {
+				cpuControlled = !cpuControlled;
+				hitmansHUD.botplayTxt.visible = !hitmansHUD.botplayTxt.visible;
+			}
 		}
-		#end
+
 		setOnScripts('cameraX', camFollowPos.x);
 		setOnScripts('cameraY', camFollowPos.y);
 		setOnScripts('botPlay', cpuControlled);
