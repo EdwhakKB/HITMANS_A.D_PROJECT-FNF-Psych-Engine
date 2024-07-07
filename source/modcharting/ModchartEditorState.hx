@@ -273,7 +273,6 @@ class ModchartEditorState extends MusicBeatState
         strumLine = new FlxSprite(ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X, 50).makeGraphic(FlxG.width, 10);
         if(ModchartUtil.getDownscroll(this)) strumLine.y = FlxG.height - 150;
 		strumLine.scrollFactor.set();
-        add(strumLine);
 
         strumLineNotes = new FlxTypedGroup<StrumNoteType>();
 		add(strumLineNotes);
