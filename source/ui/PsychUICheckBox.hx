@@ -3,6 +3,8 @@ package ui;
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
+import flixel.FlxG;
+import flixel.math.FlxPoint;
 
 class PsychUICheckBox extends FlxSpriteGroup
 {
@@ -33,7 +35,7 @@ class PsychUICheckBox extends FlxSpriteGroup
 
 	public function boxGraphic()
 	{
-		box.loadGraphic(Paths.image('psych-ui/checkbox', 'embed'), true, 16, 16);
+		box.loadGraphic(Paths.image('psychUI/checkbox'), true, 16, 16);
 		box.animation.add('false', [0]);
 		box.animation.add('true', [1]);
 		box.animation.play('false');
@@ -58,9 +60,8 @@ class PsychUICheckBox extends FlxSpriteGroup
 		}
 	}
 
-	function set_checked(v:Any)
+	function set_checked(v:Bool)
 	{
-		var v:Bool = (v != null && v != false);
 		box.animation.play(Std.string(v));
 		return (checked = v);
 	}

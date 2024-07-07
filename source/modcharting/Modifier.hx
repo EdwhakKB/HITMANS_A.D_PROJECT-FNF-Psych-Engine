@@ -2727,12 +2727,12 @@ class Center2Modifier extends Modifier
 
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
 class ArrowPath extends Modifier {
-    public var _path: List<TimeVector> = null;
-    public var _pathDistance: Float = 0;
+    public var _path:List<TimeVector> = null;
+    public var _pathDistance:Float = 0;
 
     override public function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int) {
         if (Paths.fileExists("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt", TEXT)){
-            var newPosition = executePath(0, (curPos*0.45), lane, lane < 4 ? 0 : 1, new Vector4(noteData.x, noteData.y, noteData.z, 0));
+            var newPosition = executePath(0, (curPos*0.45), lane, lane < 4 ? 0 : 1, new Vector4(noteData.x, noteData.y, noteData.z, 0), "data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt");
             noteData.x = newPosition.x;
             noteData.y = newPosition.y;
             noteData.z = newPosition.z;
@@ -2756,6 +2756,7 @@ class ArrowPath extends Modifier {
         currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
         baseValue = 0.0;
     }
+    public var firstPath:String = "";
     public function loadPath() {
         var file = CoolUtil.coolTextFile(Paths.modFolders("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt"));
         var file2 = CoolUtil.coolTextFile(Paths.getPreloadPath("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt"));
@@ -2768,6 +2769,8 @@ class ArrowPath extends Modifier {
         }else{
             return;
         }
+
+        firstPath = "data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt";
 
         // trace(filePath);
 
@@ -2853,8 +2856,8 @@ class ArrowPath extends Modifier {
     }
 
     // var strumTimeDiff = Conductor.songPosition - note.strumTime;     -- saw this in the Groovin.js
-    public function executePath(currentBeat, strumTimeDiff:Float, column, player, pos): Vector4 {
-        if (_path == null) {
+    public function executePath(currentBeat, strumTimeDiff:Float, column, player, pos, fp:String): Vector4 {
+        if (_path == null || (firstPath != fp && _path != null)) {
             loadPath();
         }
         var path = getPointAlongPath(strumTimeDiff / -1500.0 * _pathDistance);

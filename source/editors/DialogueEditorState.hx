@@ -13,13 +13,6 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.system.FlxSound;
 
-import flixel.addons.ui.FlxInputText;
-import flixel.addons.ui.FlxUI9SliceSprite;
-import flixel.addons.ui.FlxUI;
-import flixel.addons.ui.FlxUICheckBox;
-import flixel.addons.ui.FlxUIInputText;
-import flixel.addons.ui.FlxUINumericStepper;
-import flixel.addons.ui.FlxUITabMenu;
 import flixel.ui.FlxButton;
 import openfl.net.FileReference;
 import openfl.events.Event;
@@ -36,7 +29,7 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
 using StringTools;
 
-class DialogueEditorState extends MusicBeatState
+class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
 {
 	var character:DialogueCharacter;
 	var daText:TypedAlphabet;
@@ -127,54 +120,49 @@ class DialogueEditorState extends MusicBeatState
 		super.create();
 	}
 
-	var UI_box:FlxUITabMenu;
+	var UI_box:PsychUIBox;
 	function addEditorBox() {
-		var tabs = [
-			{name: 'Dialogue Box And BG', label: 'Dialogue Box And BG'},
-			{name: 'Dialogue Line', label: 'Dialogue Line'}
-		];
-		UI_box = new FlxUITabMenu(null, tabs, true);
-		UI_box.resize(250, 210);
-		UI_box.x = FlxG.width - UI_box.width - 10;
-		UI_box.y = 10;
+		UI_box = new PsychUIBox(FlxG.width - 260, 10, 250, 210, ['Dialogue Line', 'Dialogue Box']);
 		UI_box.scrollFactor.set();
-		UI_box.alpha = 0.8;
 		addDialogueLineUI();
 		addDialogueBoxUI();
 		add(UI_box);
 	}
 
-	var characterInputText:FlxUIInputText;
-	var lineInputText:FlxUIInputText;
-	var angryCheckbox:FlxUICheckBox;
-	var speedStepper:FlxUINumericStepper;
-	var soundInputText:FlxUIInputText;
+	var characterInputText:PsychUIInputText;
+	var lineInputText:PsychUIInputText;
+	var angryCheckbox:PsychUICheckBox;
+	var speedStepper:PsychUINumericStepper;
+	var soundInputText:PsychUIInputText;
 	function addDialogueLineUI() {
-		var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Dialogue Line";
+		var tab_group = UI_box.getTab('Dialogue Line').menu;
 
-		characterInputText = new FlxUIInputText(10, 20, 80, DialogueCharacter.DEFAULT_CHARACTER, 8);
-		blockPressWhileTypingOn.push(characterInputText);
+		characterInputText = new PsychUIInputText(10, 20, 80, DialogueCharacter.DEFAULT_CHARACTER, 8);
+		speedStepper = new PsychUINumericStepper(10, characterInputText.y + 40, 0.005, 0.05, 0, 0.5, 3);
 
-		speedStepper = new FlxUINumericStepper(10, characterInputText.y + 40, 0.005, 0.05, 0, 0.5, 3);
-
-		angryCheckbox = new FlxUICheckBox(speedStepper.x + 120, speedStepper.y, null, null, "Angry Textbox", 200);
-		angryCheckbox.callback = function()
+		angryCheckbox = new PsychUICheckBox(speedStepper.x + 120, speedStepper.y, "Angry Textbox", 200);
+		angryCheckbox.onClick = function()
 		{
 			updateTextBox();
 			dialogueFile.dialogue[curSelected].boxState = (angryCheckbox.checked ? 'angry' : 'normal');
 		};
 
-		soundInputText = new FlxUIInputText(10, speedStepper.y + 40, 150, '', 8);
-		blockPressWhileTypingOn.push(soundInputText);
-		
-		lineInputText = new FlxUIInputText(10, soundInputText.y + 35, 200, DEFAULT_TEXT, 8);
-		blockPressWhileTypingOn.push(lineInputText);
+		soundInputText = new PsychUIInputText(10, speedStepper.y + 40, 150, '', 8);
+		lineInputText = new PsychUIInputText(10, soundInputText.y + 35, 200, DEFAULT_TEXT, 8);
+		lineInputText.onPressEnter = function(e)
+		{
+			if(e.shiftKey)
+			{
+				lineInputText.text += '\n';
+				lineInputText.caretIndex++;
+			}
+			else PsychUIInputText.focusOn = null;
+		};
 
-		var loadButton:FlxButton = new FlxButton(20, lineInputText.y + 25, "Load Dialogue", function() {
+		var loadButton:PsychUIButton = new PsychUIButton(20, lineInputText.y + 25, "Load Dialogue", function() {
 			loadDialogue();
 		});
-		var saveButton:FlxButton = new FlxButton(loadButton.x + 120, loadButton.y, "Save Dialogue", function() {
+		var saveButton:PsychUIButton = new PsychUIButton(loadButton.x + 120, loadButton.y, "Save Dialogue", function() {
 			saveDialogue();
 		});
 
@@ -189,22 +177,17 @@ class DialogueEditorState extends MusicBeatState
 		tab_group.add(lineInputText);
 		tab_group.add(loadButton);
 		tab_group.add(saveButton);
-		UI_box.addGroup(tab_group);
 	}
 
-	var dialogueBoxInputText:FlxUIInputText;
-	var backgroundBoxInputText:FlxUIInputText;
+	var dialogueBoxInputText:PsychUIInputText;
+	var backgroundBoxInputText:PsychUIInputText;
 	function addDialogueBoxUI(){
-		var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Dialogue Box And BG";
+		var tab_group = UI_box.getTab('Dialogue Box').menu;
 		
-		dialogueBoxInputText = new FlxUIInputText(10, 20, 210, "", 8);
-		blockPressWhileTypingOn.push(dialogueBoxInputText);
+		dialogueBoxInputText = new PsychUIInputText(10, 20, 210, "", 8);
+		backgroundBoxInputText = new PsychUIInputText(10, dialogueBoxInputText.y + 40, 210, "", 8);
 
-		backgroundBoxInputText = new FlxUIInputText(10, dialogueBoxInputText.y + 40, 210, "", 8);
-		blockPressWhileTypingOn.push(backgroundBoxInputText);
-
-		var loadButton:FlxButton = new FlxButton(20, backgroundBoxInputText.y + 25, "Load Background", function() {
+		var loadButton:PsychUIButton = new PsychUIButton(20, backgroundBoxInputText.y + 25, "Load Background", function() {
 			changeBackground(dialogueFile.dialogue[curSelected].backgroundBg);
 		});
 
@@ -214,7 +197,6 @@ class DialogueEditorState extends MusicBeatState
 		tab_group.add(dialogueBoxInputText);
 		tab_group.add(backgroundBoxInputText);
 		tab_group.add(loadButton);
-		UI_box.addGroup(tab_group);
 	}
 
 	function copyDefaultLine():DialogueLine {
@@ -329,8 +311,8 @@ class DialogueEditorState extends MusicBeatState
 		#end
 	}
 
-	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
-		if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
+	public function UIEvent(id:String, sender:Dynamic) {
+		if(id == PsychUIInputText.CHANGE_EVENT && (sender is PsychUIInputText)) {
 			if (sender == characterInputText)
 			{
 				character.reloadCharacterJson(characterInputText.text);
@@ -372,7 +354,7 @@ class DialogueEditorState extends MusicBeatState
 			{
 				dialogueFile.dialogue[curSelected].backgroundBg = backgroundBoxInputText.text;
 			}
-		} else if(id == FlxUINumericStepper.CHANGE_EVENT && (sender == speedStepper)) {
+		} else if(id == PsychUINumericStepper.CHANGE_EVENT && (sender == speedStepper)) {
 			dialogueFile.dialogue[curSelected].speed = speedStepper.value;
 			if(Math.isNaN(dialogueFile.dialogue[curSelected].speed) || dialogueFile.dialogue[curSelected].speed == null || dialogueFile.dialogue[curSelected].speed < 0.001) {
 				dialogueFile.dialogue[curSelected].speed = 0.0;
@@ -384,7 +366,6 @@ class DialogueEditorState extends MusicBeatState
 
 	var curSelected:Int = 0;
 	var curAnim:Int = 0;
-	var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 	var transitioning:Bool = false;
 	override function update(elapsed:Float) {
 		if(transitioning) {
@@ -402,27 +383,8 @@ class DialogueEditorState extends MusicBeatState
 			}
 		}
 
-		var blockInput:Bool = false;
-		for (inputText in blockPressWhileTypingOn) {
-			if(inputText.hasFocus) {
-				FlxG.sound.muteKeys = [];
-				FlxG.sound.volumeDownKeys = [];
-				FlxG.sound.volumeUpKeys = [];
-				blockInput = true;
-
-				if(FlxG.keys.justPressed.ENTER) {
-					if(inputText == lineInputText) {
-						inputText.text += '\\n';
-						inputText.caretIndex += 2;
-					} else {
-						inputText.hasFocus = false;
-					}
-				}
-				break;
-			}
-		}
-
-		if(!blockInput) {
+		if(PsychUIInputText.focusOn == null)
+		{
 			FlxG.sound.muteKeys = TitleState.muteKeys;
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
@@ -478,6 +440,12 @@ class DialogueEditorState extends MusicBeatState
 				addNewBox(curSelected + 1);
 				changeText(1);
 			}
+		}
+		else
+		{
+			FlxG.sound.muteKeys = [];
+			FlxG.sound.volumeDownKeys = [];
+			FlxG.sound.volumeUpKeys = [];
 		}
 		super.update(elapsed);
 	}

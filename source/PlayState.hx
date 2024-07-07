@@ -3133,15 +3133,13 @@ class PlayState extends MusicBeatState
 			if (FlxG.keys.anyJustPressed(debugKeysModchart)){
 				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
 					antiCheat();
-					// openModchartEditor();
 				}else{
-					openSelectModchartEditorSubState();
+					openModchartEditor();
 				}
 			}else if (FlxG.keys.anyJustPressed(debugKeysChart))
 			{
 				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
 					antiCheat();
-					// openChartEditor();
 				}else{
 					openChartEditor();
 				}
@@ -3557,23 +3555,13 @@ class PlayState extends MusicBeatState
 		#end
 	}
 
-	function openSelectModchartEditorSubState()
-	{
-		openSubState(new SLSelectMDEditor());
-	}
-
 	function openModchartEditor(?old:Bool)
 	{
 		resetPlayData();
 		persistentUpdate = false;
 		paused = true;
 		cancelMusicFadeTween();
-		if (!old) {
-			MusicBeatState.switchState(new modcharting.NewModchartEditorState());
-		}
-		else {
-			MusicBeatState.switchState(new modcharting.ModchartEditorState());
-		}
+		MusicBeatState.switchState(new modcharting.ModchartEditorState());
 
 		chartingMode = true;
 	

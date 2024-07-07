@@ -1,10 +1,8 @@
 package;
 
 import flixel.input.FlxKeyManager;
-import flixel.addons.ui.FlxInputText;
 import flixel.addons.effects.FlxTrail;
 import flixel.addons.effects.FlxTrailArea;
-import flixel.addons.ui.FlxUIInputText;
 #if desktop
 import Discord.DiscordClient;
 #end

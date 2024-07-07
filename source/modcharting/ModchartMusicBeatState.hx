@@ -1,8 +1,8 @@
 package modcharting;
 
-import flixel.addons.ui.FlxUIState;
+import flixel.addons.transition.FlxTransitionableState;
 import modcharting.*;
-class ModchartMusicBeatState extends FlxUIState
+class ModchartMusicBeatState extends FlxTransitionableState
 {
     //just stores the renderer so instancing shit can work properly i guess
  	public var playfieldRenderer:PlayfieldRenderer;

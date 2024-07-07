@@ -320,7 +320,6 @@ class Script extends FlxBasic implements IFlxDestroyable {
 
 		set('Math', Math);
 		set('ModchartEditorState', modcharting.ModchartEditorState);
-		set('NewModchartEditorState', modcharting.NewModchartEditorState);
 		set('ModchartEvent', modcharting.ModchartEvent);
 		set('ModchartEventManager', modcharting.ModchartEventManager);
 		set('ModchartFile', modcharting.ModchartFile);

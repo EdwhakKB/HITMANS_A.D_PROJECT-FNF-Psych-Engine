@@ -5,6 +5,8 @@ import flixel.math.FlxPoint;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.group.FlxSpriteGroup;
+import flixel.FlxCamera;
+import flixel.util.FlxColor;
 
 class PsychUITab extends FlxSprite
 {

@@ -1,6 +1,8 @@
 package ui;
 
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
+import flixel.FlxG;
 
 class PsychUINumericStepper extends PsychUIInputText
 {
@@ -27,13 +29,13 @@ class PsychUINumericStepper extends PsychUIInputText
 		this.step = step;
 		_updateFilter();
 
-		buttonPlus = new FlxSprite(fieldWidth).loadGraphic(Paths.image('psych-ui/stepper_plus', 'embed'), true, 16, 16);
+		buttonPlus = new FlxSprite(fieldWidth).loadGraphic(Paths.image('psychUI/stepper_plus'), true, 16, 16);
 		buttonPlus.animation.add('normal', [0], false);
 		buttonPlus.animation.add('pressed', [1], false);
 		buttonPlus.animation.play('normal');
 		add(buttonPlus);
 		
-		buttonMinus = new FlxSprite(fieldWidth + buttonPlus.width).loadGraphic(Paths.image('psych-ui/stepper_minus', 'embed'), true, 16, 16);
+		buttonMinus = new FlxSprite(fieldWidth + buttonPlus.width).loadGraphic(Paths.image('psychUI/stepper_minus'), true, 16, 16);
 		buttonMinus.animation.add('normal', [0], false);
 		buttonMinus.animation.add('pressed', [1], false);
 		buttonMinus.animation.play('normal');
@@ -200,7 +202,7 @@ class PsychUINumericStepper extends PsychUIInputText
 		if(broadcastStepperEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
 	}
 
-	override function setGraphicSize(width:Float = 0, height:Float = 0)
+	override function setGraphicSize(width:Int = 0, height:Int = 0)
 	{
 		super.setGraphicSize(width, height);
 		behindText.setGraphicSize(width - 32, height - 2);

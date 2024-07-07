@@ -104,41 +104,6 @@ class NoteMovement
         #end
     }
 
-    public static function getDefaultStrumPosNewEditor(game:NewModchartEditorState)
-        {
-            #if ((PSYCH || LEATHER) && !DISABLE_MODCHART_EDITOR)
-            defaultStrumX = []; //reset
-            defaultStrumY = []; 
-            defaultSkewX = [];
-            defaultSkewY = [];
-            defaultScale = [];
-            arrowSizes = [];
-            keyCount = game.strumLineNotes.length-game.playerStrums.length; //base game doesnt have opponent strums as group
-            playerKeyCount = game.playerStrums.length;
-    
-            for (i in 0...game.strumLineNotes.members.length)
-            {
-                var strum = game.strumLineNotes.members[i];
-                defaultSkewX.push(strum.skew.x);
-                defaultSkewY.push(strum.skew.y);
-                defaultStrumX.push(strum.x);
-                defaultStrumY.push(strum.y);
-                #if LEATHER
-                var localKeyCount = (i < keyCount ? keyCount : playerKeyCount);
-                var s = Std.parseFloat(game.ui_settings[0]) * (Std.parseFloat(game.ui_settings[2]) - (Std.parseFloat(game.mania_size[localKeyCount-1])));
-                #else
-                var s = 0.7;
-                #end
-    
-                defaultScale.push(s);
-                arrowSizes.push(160*s);
-            }
-            #end
-            #if LEATHER
-            leatherEngineOffsetStuff.clear();
-            #end
-        }
-
     public static function setNotePath(daNote:Note, lane:Int, scrollSpeed:Float, curPos:Float, noteDist:Float, incomingAngleX:Float, incomingAngleY:Float)
     {
         daNote.x = defaultStrumX[lane];

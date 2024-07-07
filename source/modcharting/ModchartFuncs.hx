@@ -26,6 +26,7 @@ import modcharting.ModchartUtil;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import editors.EditorLua;
+import editors.EditorPlayState;
 
 using StringTools;
 
@@ -105,13 +106,25 @@ class ModchartFuncs
                 Lua_helper.add_callback(funkin.lua, 'setAdd', function(beat:Float, argsAsString:String){
                     setAdd(beat, argsAsString);
                 });
-                Lua_helper.add_callback(funkin.lua, 'getMod', function(name:String, base:Bool = false){
-                    var result = getMod(name, base);
-                    return result;
+                Lua_helper.add_callback(funkin.lua, 'getModifierValue', function(name:String, base:Bool = false){
+                    if (PlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                    {
+                        if (base)
+                            return PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue;
+                        else
+                            return PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).baseValue;
+                    }
+                    return 0;
                 });
-                Lua_helper.add_callback(funkin.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false){
-                    var result = getSubMod(name, subMod, base);
-                    return result;
+                Lua_helper.add_callback(funkin.lua, 'getModifierSubModValue', function(name:String, subMod:String){
+                    if (PlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                    {
+                        if (PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.exists(name))
+                        {
+                           return PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(name).baseValue;
+                        }
+                    }
+                    return 0;
                 });
             }
             #if hscript
@@ -129,12 +142,12 @@ class ModchartFuncs
         }
         else
         {
-            for (funkin in editors.EditorPlayState.instance.luaArray)
+            for (funkin in EditorPlayState.instance.luaArray)
             {
                 Lua_helper.add_callback(funkin.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
                     startMod(name,modClass,type,pf);
     
-                    editors.EditorPlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
+                    EditorPlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
                 });
                 Lua_helper.add_callback(funkin.lua, 'setMod', function(name:String, value:Float){
                     setMod(name, value);
@@ -181,13 +194,25 @@ class ModchartFuncs
                 Lua_helper.add_callback(funkin.lua, 'setAdd', function(beat:Float, argsAsString:String){
                     setAdd(beat, argsAsString);
                 });
-                Lua_helper.add_callback(funkin.lua, 'getMod', function(name:String, base:Bool = false){
-                    var result = getMod(name, base);
-                    return result;
+                Lua_helper.add_callback(funkin.lua, 'getModifierValue', function(name:String, base:Bool = false){
+                    if (EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                    {
+                        if (base)
+                            return EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue;
+                        else
+                            return EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).baseValue;
+                    }
+                    return 0;
                 });
-                Lua_helper.add_callback(funkin.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false){
-                    var result = getSubMod(name, subMod, base);
-                    return result;
+                Lua_helper.add_callback(funkin.lua, 'getModifierSubModValue', function(name:String, subMod:String, base:Bool = false){
+                    if (EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                    {
+                        if (EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.exists(subMod))
+                        {
+                            return EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subMod).baseValue;
+                        }
+                    }
+                    return 0;
                 });
             }
 
@@ -269,13 +294,55 @@ class ModchartFuncs
         parent.set('add', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
             add(beat, time, easeStr, argsAsString);
         });
-        parent.set('getMod', function(name:String, base:Bool = false){
-            var result = getMod(name, base);
-            return result;
+        parent.set('getModifierValue', function(name:String, base:Bool = false){
+            if (PlayState.instance == FlxG.state && PlayState.instance.playfieldRenderer != null)
+            {
+                if (PlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                {
+                    if (base)
+                        return PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue;
+                    else
+                        return PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).baseValue;
+                }
+                return 0;
+            }
+            else if (EditorPlayState.instance == FlxG.state && EditorPlayState.instance.playfieldRenderer != null)
+            {
+                if (EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                {
+                    if (base)
+                        return EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue;
+                    else
+                        return EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).baseValue;
+                }
+                return 0;
+            }
+            return 0;
         });
-        parent.set('getSubMod', function(name:String, subMod:String, base:Bool = false){
-            var result = getSubMod(name, subMod, base);
-            return result;
+        parent.set('getModifierSubModValue', function(name:String, subMod:String){
+            if (PlayState.instance == FlxG.state && PlayState.instance.playfieldRenderer != null)
+            {
+                if (PlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                {
+                    if (PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.exists(name))
+                    {
+                        return PlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(name).value;
+                    }
+                }
+                return 0;
+            }
+            else if (EditorPlayState.instance == FlxG.state && EditorPlayState.instance.playfieldRenderer != null)
+            {
+                if (EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                {
+                    if (EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.exists(subMod))
+                    {
+                        return EditorPlayState.instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subMod).value;
+                    }
+                }
+                return 0;
+            }
+            return 0;
         });
         #end
     }
@@ -568,14 +635,12 @@ class ModchartFuncs
                 instance.playfieldRenderer.modchart.data.events.push(["ease", [beat, time, ease, argsAsString]]);
             }
         }
-            
         if(Math.isNaN(time))
             time = 1;
 
         var args = argsAsString.trim().replace(' ', '').split(',');
 
         var func = function(arguments:Array<String>) {
-            
             for (i in 0...Math.floor(arguments.length/2))
             {
                 var name:String = Std.string(arguments[1 + (i*2)]);
@@ -592,7 +657,6 @@ class ModchartFuncs
                 }
                 else
                     instance.playfieldRenderer.modifierTable.tweenAdd(name,value,time*Conductor.crochet*0.001,ease, beat);
-                
             }
         };
         instance.playfieldRenderer.eventManager.addEvent(beat, func, args);
@@ -635,48 +699,8 @@ class ModchartFuncs
                             instance.playfieldRenderer.modifierTable.modifiers.get(modName).subValues.get(subModName).value += value;
                     }
                 }
-                    
+
             }
         }, args);
-    }
-    public static function getMod(name:String, base:Bool, ?instance:ModchartMusicBeatState = null):Dynamic
-    {
-        if (instance == null)
-        {
-            if (editor)
-                instance = editors.EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
-        }
-
-        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name)){
-            if (!base) return instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue;
-            else return instance.playfieldRenderer.modifierTable.modifiers.get(name).baseValue;
-        }
-        else
-            return 0;
-    }
-    public static function getSubMod(name:String, subValName:String, base:Bool,?instance:ModchartMusicBeatState = null):Dynamic
-    {
-        if (instance == null)
-        {
-            if (editor)
-                instance = editors.EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
-        }
-
-        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name)){
-            if (instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.exists(subValName)){
-                if (!base)
-                    return instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subValName).value;
-                else
-                    return instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subValName).baseValue;
-            }else{
-                return 0;
-            }
-        }
-        else
-            return 0;
     }
 }

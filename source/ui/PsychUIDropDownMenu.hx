@@ -4,6 +4,8 @@ import ui.PsychUIBox.UIStyleData;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
+import flixel.FlxG;
+import flixel.util.FlxColor;
 
 class PsychUIDropDownMenu extends PsychUIInputText
 {
@@ -22,11 +24,11 @@ class PsychUIDropDownMenu extends PsychUIInputText
 		super(x, y);
 		if(list == null) list = [];
 
-		setGraphicSize(width, 20);
+		setGraphicSize(Std.int(width), 20);
 		updateHitbox();
 		textObj.y += 2;
 
-		button = new FlxSprite(behindText.width + 1, 0).loadGraphic(Paths.image('psych-ui/dropdown_button', 'embed'), true, 20, 20);
+		button = new FlxSprite(behindText.width + 1, 0).loadGraphic(Paths.image('psychUI/dropdown_button'), true, 20, 20);
 		button.animation.add('normal', [0], false);
 		button.animation.add('pressed', [1], false);
 		button.animation.play('normal', true);
@@ -238,7 +240,7 @@ class PsychUIDropDownItem extends FlxSpriteGroup
 		super(x, y);
 
 		bg = new FlxSprite().makeGraphic(1, 1, FlxColor.WHITE);
-		bg.setGraphicSize(width, 20);
+		bg.setGraphicSize(Std.int(width), 20);
 		bg.updateHitbox();
 		add(bg);
 

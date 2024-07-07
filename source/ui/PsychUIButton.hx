@@ -4,6 +4,8 @@ import ui.PsychUIBox.UIStyleData;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
+import flixel.FlxG;
 
 class PsychUIButton extends FlxSpriteGroup
 {

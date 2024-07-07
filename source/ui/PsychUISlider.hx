@@ -3,6 +3,10 @@ package ui;
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.math.FlxMath;
+import flixel.FlxG;
+import flixel.math.FlxPoint;
 
 class PsychUISlider extends FlxSpriteGroup
 {

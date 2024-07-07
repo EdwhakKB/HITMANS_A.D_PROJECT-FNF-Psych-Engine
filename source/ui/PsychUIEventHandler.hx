@@ -1,5 +1,7 @@
 package ui;
 
+import flixel.FlxG;
+
 class PsychUIEventHandler
 {
 	public static function event(id:String, sender:Dynamic)

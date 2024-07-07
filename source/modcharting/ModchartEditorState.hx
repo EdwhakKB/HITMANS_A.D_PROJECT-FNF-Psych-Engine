@@ -4,8 +4,6 @@ import lime.utils.Assets;
 import flixel.graphics.frames.FlxFramesCollection;
 import flixel.util.FlxAxes;
 import flixel.math.FlxPoint;
-import flixel.addons.ui.FlxUIButton;
-import flixel.addons.ui.Anchor;
 import flixel.tweens.FlxEase;
 import haxe.Json;
 import openfl.net.FileReference;
@@ -30,12 +28,6 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.ui.FlxButton;
-import flixel.addons.ui.FlxUI;
-import flixel.addons.ui.FlxUICheckBox;
-import flixel.addons.ui.FlxUIInputText;
-import flixel.addons.ui.FlxUINumericStepper;
-import flixel.addons.ui.FlxUISlider;
-import flixel.addons.ui.FlxUITabMenu;
 import flixel.util.FlxDestroyUtil;
 import flixel.addons.transition.FlxTransitionableState;
 
@@ -47,6 +39,7 @@ import modcharting.*;
 import modcharting.PlayfieldRenderer.StrumNoteType;
 import modcharting.Modifier;
 import modcharting.ModchartFile;
+import ui.*;
 using StringTools;
 
 class ModchartEditorEvent extends FlxSprite
@@ -215,10 +208,10 @@ class ModchartEditorState extends MusicBeatState
     var highlightedEvent:Array<Dynamic> = null;
     var stackedHighlightedEvents:Array<Array<Dynamic>> = [];
 
-    var UI_box:FlxUITabMenu;
+    var UI_box:PsychUIBox;
 
-    var textBlockers:Array<FlxUIInputText> = [];
-    var scrollBlockers:Array<FlxUIDropDownMenuCustom> = [];
+    var textBlockers:Array<PsychUIInputText> = [];
+    var scrollBlockers:Array<PsychUIDropDownMenu> = [];
 
     var playbackSpeed:Float = 1;
 
@@ -350,25 +343,14 @@ class ModchartEditorState extends MusicBeatState
         debugText = new FlxText(0, gridSize*2, 0, "", 16);
         debugText.alignment = FlxTextAlign.LEFT;
         
-
-        var tabs = [
-            {name: "Editor", label: 'Editor'},
-			{name: "Modifiers", label: 'Modifiers'},
-			{name: "Events", label: 'Events'},
-			{name: "Playfields", label: 'Playfields'},
-		];
         
-        UI_box = new FlxUITabMenu(null, tabs, true);
-		UI_box.resize(FlxG.width-200, 550);
-		UI_box.x = 100;
-		UI_box.y = gridSize*2;
+        UI_box = new PsychUIBox(100, gridSize*2, FlxG.width-200, 500, ['Editor', 'Modifiers', 'Events', 'Playfields']);
 		UI_box.scrollFactor.set();
         add(UI_box);
 
         add(debugText);
 
         super.create(); //do here because tooltips be dumb
-        _ui.load(null);
         setupEditorUI();
         setupModifierUI();
         setupEventUI();
@@ -392,7 +374,7 @@ class ModchartEditorState extends MusicBeatState
                 UI_box.alpha = 0;
                 debugText.alpha = 0; 
             }else{
-                UI_box.alpha = 1;
+                UI_box.alpha = 0.5;
                 debugText.alpha = 1;
             }
             //camGame.visible = !camGame.visible;
@@ -459,23 +441,9 @@ class ModchartEditorState extends MusicBeatState
                     
         }
         selectedEventBox.visible = eventIsSelected;
-
-        var blockInput = false;
-        for (i in textBlockers)
-            if (i.hasFocus)
-            {
-                blockInput = true;
-                FlxG.sound.muteKeys = [];
-				FlxG.sound.volumeDownKeys = [];
-				FlxG.sound.volumeUpKeys = [];
-            }
-                
-        for (i in scrollBlockers)
-            if (i.dropPanel.visible)
-                blockInput = true;
         
 
-        if (!blockInput)
+        if(PsychUIInputText.focusOn == null)
         {
             FlxG.sound.muteKeys = TitleState.muteKeys;
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
@@ -552,6 +520,12 @@ class ModchartEditorState extends MusicBeatState
             //
             if (curSpeed != playbackSpeed)
                 dirtyUpdateEvents = true;
+        }
+        else
+        {
+            FlxG.sound.muteKeys = [];
+            FlxG.sound.volumeDownKeys = [];
+            FlxG.sound.volumeUpKeys = [];
         }
             
         if (playbackSpeed <= 0.5)
@@ -1261,13 +1235,13 @@ class ModchartEditorState extends MusicBeatState
         return grid;
     }
     var currentModifier:Array<Dynamic> = null;
-    var modNameInputText:FlxUIInputText;
-    var modClassInputText:FlxUIInputText;
+    var modNameInputText:PsychUIInputText;
+    var modClassInputText:PsychUIInputText;
     var explainText:FlxText;
-    var modTypeInputText:FlxUIInputText;
-    var playfieldStepper:FlxUINumericStepper;
-    var targetLaneStepper:FlxUINumericStepper;
-    var modifierDropDown:FlxUIDropDownMenuCustom;
+    var modTypeInputText:PsychUIInputText;
+    var playfieldStepper:PsychUINumericStepper;
+    var targetLaneStepper:PsychUINumericStepper;
+    var modifierDropDown:PsychUIDropDownMenu;
     var mods:Array<String> = [];
     var subMods:Array<String> = [""];
     
@@ -1278,8 +1252,8 @@ class ModchartEditorState extends MusicBeatState
             mods.push(playfieldRenderer.modchart.data.modifiers[i][MOD_NAME]);
         if (mods.length == 0)
             mods.push('');
-        modifierDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(mods, true));
-        eventModifierDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(mods, true));
+        modifierDropDown.list = mods;
+        eventModifierDropDown.list = mods;
 
     }
     function updateSubModList(modName:String)
@@ -1292,13 +1266,11 @@ class ModchartEditorState extends MusicBeatState
                 subMods.push(subModName);
             }
         }
-        subModDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(subMods, true));
+        subModDropDown.list = subMods;
     }
     function setupModifierUI()
     {
-        var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Modifiers";
-
+        var tab_group = UI_box.getTab('Modifiers').menu;
         
         for (i in 0...playfieldRenderer.modchart.data.modifiers.length)
             mods.push(playfieldRenderer.modchart.data.modifiers[i][MOD_NAME]);
@@ -1306,9 +1278,9 @@ class ModchartEditorState extends MusicBeatState
         if (mods.length == 0)
             mods.push('');
 
-        modifierDropDown = new FlxUIDropDownMenuCustom(25, 50, FlxUIDropDownMenuCustom.makeStrIdLabelArray(mods, true), function(mod:String)
+        modifierDropDown = new PsychUIDropDownMenu(25, 50, mods, function(id:Int, mod:String)
         {
-            var modName = mods[Std.parseInt(mod)];
+            var modName = mod;
             for (i in 0...playfieldRenderer.modchart.data.modifiers.length)
                 if (playfieldRenderer.modchart.data.modifiers[i][MOD_NAME] == modName)
                     currentModifier = playfieldRenderer.modchart.data.modifiers[i];
@@ -1325,14 +1297,12 @@ class ModchartEditorState extends MusicBeatState
             }   
         });
 
-        var refreshModifiers:FlxButton = new FlxButton(25+modifierDropDown.width+10, modifierDropDown.y, 'Refresh Modifiers', function ()
+        var refreshModifiers:PsychUIButton = new PsychUIButton(25+modifierDropDown.width+10, modifierDropDown.y, 'Refresh Modifiers', function ()
         {
             updateModList();
-        });
-        refreshModifiers.scale.y *= 1.5;
-        refreshModifiers.updateHitbox();
+        }, 80, 35);
 
-        var saveModifier:FlxButton = new FlxButton(refreshModifiers.x, refreshModifiers.y+refreshModifiers.height+20, 'Save Modifier', function ()
+        var saveModifier:PsychUIButton = new PsychUIButton(refreshModifiers.x, refreshModifiers.y+refreshModifiers.height+20, 'Save Modifier', function ()
         {
             var alreadyExists = false;
             for (i in 0...playfieldRenderer.modchart.data.modifiers.length)
@@ -1353,7 +1323,7 @@ class ModchartEditorState extends MusicBeatState
             hasUnsavedChanges = true;
         });
 
-        var removeModifier:FlxButton = new FlxButton(saveModifier.x, saveModifier.y+saveModifier.height+20, 'Remove Modifier', function ()
+        var removeModifier:PsychUIButton = new PsychUIButton(saveModifier.x, saveModifier.y+saveModifier.height+20, 'Remove Modifier', function ()
         {
             for (i in 0...playfieldRenderer.modchart.data.modifiers.length)
                 if (playfieldRenderer.modchart.data.modifiers[i][MOD_NAME] == modNameInputText.text)
@@ -1363,16 +1333,14 @@ class ModchartEditorState extends MusicBeatState
             dirtyUpdateModifiers = true;
             updateModList();
             hasUnsavedChanges = true;
-        });
-        removeModifier.scale.y *= 1.5;
-        removeModifier.updateHitbox();
+        }, 80, 35);
 
-        modNameInputText = new FlxUIInputText(modifierDropDown.x + 300, modifierDropDown.y, 160, '', 8);
-        modClassInputText = new FlxUIInputText(modifierDropDown.x + 500, modifierDropDown.y, 160, '', 8);
+        modNameInputText = new PsychUIInputText(modifierDropDown.x + 300, modifierDropDown.y, 160, '', 8);
+        modClassInputText = new PsychUIInputText(modifierDropDown.x + 500, modifierDropDown.y, 160, '', 8);
         explainText = new FlxText(modifierDropDown.x + 200, modifierDropDown.y + 200, 160, '', 8);
-        modTypeInputText = new FlxUIInputText(modifierDropDown.x + 700, modifierDropDown.y, 160, '', 8);
-        playfieldStepper = new FlxUINumericStepper(modifierDropDown.x + 900, modifierDropDown.y, 1, -1, -1, 100, 0);
-        targetLaneStepper = new FlxUINumericStepper(modifierDropDown.x + 900, modifierDropDown.y+300, 1, -1, -1, 100, 0);
+        modTypeInputText = new PsychUIInputText(modifierDropDown.x + 700, modifierDropDown.y, 160, '', 8);
+        playfieldStepper = new PsychUINumericStepper(modifierDropDown.x + 900, modifierDropDown.y, 1, -1, -1, 100, 0);
+        targetLaneStepper = new PsychUINumericStepper(modifierDropDown.x + 900, modifierDropDown.y+300, 1, -1, -1, 100, 0);
 
         textBlockers.push(modNameInputText);
         textBlockers.push(modClassInputText);
@@ -1386,23 +1354,20 @@ class ModchartEditorState extends MusicBeatState
             modClassList.push(Std.string(modifierList[i]).replace("modcharting.", ""));
         }
             
-        var modClassDropDown = new FlxUIDropDownMenuCustom(modClassInputText.x, modClassInputText.y+30, FlxUIDropDownMenuCustom.makeStrIdLabelArray(modClassList, true), function(mod:String)
+        var modClassDropDown = new PsychUIDropDownMenu(modClassInputText.x, modClassInputText.y+30, modClassList, function(id:Int, mod:String)
         {
-            modClassInputText.text = modClassList[Std.parseInt(mod)];
+            modClassInputText.text = mod;
             if (modClassInputText.text != '')
                 explainText.text = ('Current Modifier: ${modClassInputText.text}, Explaination: ' + modifierExplain(modClassInputText.text));
         });
         centerXToObject(modClassInputText, modClassDropDown);
         var modTypeList = ["All", "Player", "Opponent", "Lane"];
-        var modTypeDropDown = new FlxUIDropDownMenuCustom(modTypeInputText.x, modClassInputText.y+30, FlxUIDropDownMenuCustom.makeStrIdLabelArray(modTypeList, true), function(mod:String)
+        var modTypeDropDown = new PsychUIDropDownMenu(modTypeInputText.x, modClassInputText.y+30, modTypeList, function(id:Int, mod:String)
         {
-            modTypeInputText.text = modTypeList[Std.parseInt(mod)];
+            modTypeInputText.text = mod;
         });
         centerXToObject(modTypeInputText, modTypeDropDown);
         centerXToObject(modTypeInputText, explainText);
-
-        scrollBlockers.push(modTypeDropDown);
-        scrollBlockers.push(modClassDropDown);
 
         activeModifiersText = new FlxText(50, 180);
         tab_group.add(activeModifiersText);
@@ -1430,7 +1395,6 @@ class ModchartEditorState extends MusicBeatState
         tab_group.add(modifierDropDown);
         tab_group.add(modClassDropDown);
         tab_group.add(modTypeDropDown);
-        UI_box.addGroup(tab_group);
     }
 
     //Thanks to glowsoony for the idea lol
@@ -1815,33 +1779,31 @@ class ModchartEditorState extends MusicBeatState
         }
         return data;
     }
-    var eventTimeStepper:FlxUINumericStepper;
-    var eventModInputText:FlxUIInputText;
-    var eventValueInputText:FlxUIInputText;
-    var eventDataInputText:FlxUIInputText;
-    var eventModifierDropDown:FlxUIDropDownMenuCustom;
-    var eventTypeDropDown:FlxUIDropDownMenuCustom;
-    var eventEaseInputText:FlxUIInputText;
-    var eventTimeInputText:FlxUIInputText;
-    var selectedEventDataStepper:FlxUINumericStepper;
-    var repeatCheckbox:FlxUICheckBox;
-    var repeatBeatGapStepper:FlxUINumericStepper;
-    var repeatCountStepper:FlxUINumericStepper;
-    var easeDropDown:FlxUIDropDownMenuCustom;
-    var subModDropDown:FlxUIDropDownMenuCustom;
-    var builtInModDropDown:FlxUIDropDownMenuCustom;
-    var stackedEventStepper:FlxUINumericStepper;
+    var eventTimeStepper:PsychUINumericStepper;
+    var eventModInputText:PsychUIInputText;
+    var eventValueInputText:PsychUIInputText;
+    var eventDataInputText:PsychUIInputText;
+    var eventModifierDropDown:PsychUIDropDownMenu;
+    var eventTypeDropDown:PsychUIDropDownMenu;
+    var eventEaseInputText:PsychUIInputText;
+    var eventTimeInputText:PsychUIInputText;
+    var selectedEventDataStepper:PsychUINumericStepper;
+    var repeatCheckbox:PsychUICheckBox;
+    var repeatBeatGapStepper:PsychUINumericStepper;
+    var repeatCountStepper:PsychUINumericStepper;
+    var easeDropDown:PsychUIDropDownMenu;
+    var subModDropDown:PsychUIDropDownMenu;
+    var builtInModDropDown:PsychUIDropDownMenu;
+    var stackedEventStepper:PsychUINumericStepper;
     function setupEventUI()
     {
-        var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Events";
+        var tab_group = UI_box.getTab('Events').menu;
 
-        eventTimeStepper = new FlxUINumericStepper(850, 50, 0.25, 0, 0, 9999, 3);
+        eventTimeStepper = new PsychUINumericStepper(850, 50, 0.25, 0, 0, 9999, 3);
 
-
-        repeatCheckbox = new FlxUICheckBox(950, 50, null, null, "Repeat Event?");
+        repeatCheckbox = new PsychUICheckBox(950, 50, "Repeat Event?");
         repeatCheckbox.checked = false;
-        repeatCheckbox.callback = function()
+        repeatCheckbox.onClick = function()
         {
             var data = getCurrentEventInData();
             if (data != null)
@@ -1852,15 +1814,15 @@ class ModchartEditorState extends MusicBeatState
                 hasUnsavedChanges = true;
             }
         }
-        repeatBeatGapStepper = new FlxUINumericStepper(950, 100, 0.25, 0, 0, 9999, 3);
+        repeatBeatGapStepper = new PsychUINumericStepper(950, 100, 0.25, 0, 0, 9999, 3);
         repeatBeatGapStepper.name = 'repeatBeatGap';
-        repeatCountStepper = new FlxUINumericStepper(950, 150, 1, 1, 1, 9999, 3);
+        repeatCountStepper = new PsychUINumericStepper(950, 150, 1, 1, 1, 9999, 3);
         repeatCountStepper.name = 'repeatCount';
         centerXToObject(repeatCheckbox, repeatBeatGapStepper);
         centerXToObject(repeatCheckbox, repeatCountStepper);
 
-        eventModInputText = new FlxUIInputText(25, 50, 160, '', 8);
-        eventModInputText.callback = function(str:String, str2:String)
+        eventModInputText = new PsychUIInputText(25, 50, 160, '', 8);
+        eventModInputText.onChange = function(str:String, str2:String)
         {
             updateEventModData(eventModInputText.text, true);
             var data = getCurrentEventInData();
@@ -1876,8 +1838,8 @@ class ModchartEditorState extends MusicBeatState
                 hasUnsavedChanges = true;
             }
         };
-        eventValueInputText = new FlxUIInputText(25 + 200, 50, 160, '', 8);
-        eventValueInputText.callback = function(str:String, str2:String)
+        eventValueInputText = new PsychUIInputText(25 + 200, 50, 160, '', 8);
+        eventValueInputText.onChange = function(str:String, str2:String)
         {
             updateEventModData(eventValueInputText.text, false);
             var data = getCurrentEventInData();
@@ -1894,13 +1856,13 @@ class ModchartEditorState extends MusicBeatState
             }
         };
 
-        selectedEventDataStepper = new FlxUINumericStepper(25 + 400, 50, 1, 0, 0, 0, 0);
+        selectedEventDataStepper = new PsychUINumericStepper(25 + 400, 50, 1, 0, 0, 0, 0);
         selectedEventDataStepper.name = "selectedEventMod";        
 
-        stackedEventStepper = new FlxUINumericStepper(25 + 400, 200, 1, 0, 0, 0, 0);
+        stackedEventStepper = new PsychUINumericStepper(25 + 400, 200, 1, 0, 0, 0, 0);
         stackedEventStepper.name = "stackedEvent";    
 
-        var addStacked:FlxButton = new FlxButton(stackedEventStepper.x, stackedEventStepper.y+30, 'Add', function ()
+        var addStacked:PsychUIButton = new PsychUIButton(stackedEventStepper.x, stackedEventStepper.y+30, 'Add', function ()
         {
             var data = getCurrentEventInData();
             if (data != null)
@@ -1914,9 +1876,9 @@ class ModchartEditorState extends MusicBeatState
         });
         centerXToObject(stackedEventStepper, addStacked);
 
-        eventTypeDropDown = new FlxUIDropDownMenuCustom(25 + 500, 50, FlxUIDropDownMenuCustom.makeStrIdLabelArray(eventTypes, true), function(mod:String)
+        eventTypeDropDown = new PsychUIDropDownMenu(25 + 500, 50, eventTypes, function(id:Int, type:String)
         {
-            var et = eventTypes[Std.parseInt(mod)];
+            var et = type;
             trace(et);
 
             var data = getCurrentEventInData();
@@ -1939,9 +1901,9 @@ class ModchartEditorState extends MusicBeatState
             dirtyUpdateEvents = true;
             hasUnsavedChanges = true;
         });
-        eventEaseInputText = new FlxUIInputText(25 + 650, 50+100, 160, '', 8);
-        eventTimeInputText = new FlxUIInputText(25 + 650, 50, 160, '', 8);
-        eventEaseInputText.callback = function(str:String, str2:String)
+        eventEaseInputText = new PsychUIInputText(25 + 650, 50+100, 160, '', 8);
+        eventTimeInputText = new PsychUIInputText(25 + 650, 50, 160, '', 8);
+        eventEaseInputText.onChange = function(str:String, str2:String)
         {
             var data = getCurrentEventInData();
             if (data != null)
@@ -1954,7 +1916,7 @@ class ModchartEditorState extends MusicBeatState
             dirtyUpdateEvents = true;
             hasUnsavedChanges = true;
         }
-        eventTimeInputText.callback = function(str:String, str2:String)
+        eventTimeInputText.onChange = function(str:String, str2:String)
         {
             var data = getCurrentEventInData();
             if (data != null)
@@ -1968,29 +1930,29 @@ class ModchartEditorState extends MusicBeatState
             hasUnsavedChanges = true;
         }
 
-        easeDropDown = new FlxUIDropDownMenuCustom(25, eventEaseInputText.y+30, FlxUIDropDownMenuCustom.makeStrIdLabelArray(easeList, true), function(ease:String)
+        easeDropDown = new PsychUIDropDownMenu(25, eventEaseInputText.y+30, easeList, function(id:Int, ease:String)
         {
-            var easeStr = easeList[Std.parseInt(ease)];
+            var easeStr = ease;
             eventEaseInputText.text = easeStr;
-            eventEaseInputText.callback("", ""); //make sure it updates
+            eventEaseInputText.onChange("", ""); //make sure it updates
             hasUnsavedChanges = true;
         });
         centerXToObject(eventEaseInputText, easeDropDown);
 
 
-        eventModifierDropDown = new FlxUIDropDownMenuCustom(25, 50+20, FlxUIDropDownMenuCustom.makeStrIdLabelArray(mods, true), function(mod:String)
+        eventModifierDropDown = new PsychUIDropDownMenu(25, 50+20, mods, function(id:Int, mod:String)
         {
-            var modName = mods[Std.parseInt(mod)];
+            var modName = mod;
             eventModInputText.text = modName;
             updateSubModList(modName);
-            eventModInputText.callback("", ""); //make sure it updates
+            eventModInputText.onChange("", ""); //make sure it updates
             hasUnsavedChanges = true;
         });
         centerXToObject(eventModInputText, eventModifierDropDown);
         
-        subModDropDown = new FlxUIDropDownMenuCustom(25, 50+80, FlxUIDropDownMenuCustom.makeStrIdLabelArray(subMods, true), function(mod:String)
+        subModDropDown = new PsychUIDropDownMenu(25, 50+80, subMods, function(id:Int, subMod:String)
         {
-            var modName = subMods[Std.parseInt(mod)];
+            var modName = subMod;
             var splitShit = eventModInputText.text.split(":"); //use to get the normal mod
 
             if (modName == "")
@@ -2002,14 +1964,14 @@ class ModchartEditorState extends MusicBeatState
                 eventModInputText.text = splitShit[0] + ":" + modName;
             }
             
-            eventModInputText.callback("", ""); //make sure it updates
+            eventModInputText.onChange("", ""); //make sure it updates
             hasUnsavedChanges = true;
         });
         centerXToObject(eventModInputText, subModDropDown);
 
-        eventDataInputText = new FlxUIInputText(25, 300, 300, '', 8);
+        eventDataInputText = new PsychUIInputText(25, 300, 300, '', 8);
         //eventDataInputText.resize(300, 300);
-        eventDataInputText.callback = function(str:String, str2:String)
+        eventDataInputText.onChange = function(str:String, str2:String)
         {
             var data = getCurrentEventInData();
             var allData = EVENT_EASEDATA;
@@ -2025,7 +1987,7 @@ class ModchartEditorState extends MusicBeatState
             }
         };
 
-        var add:FlxButton = new FlxButton(0, selectedEventDataStepper.y+30, 'Add', function ()
+        var add:PsychUIButton = new PsychUIButton(0, selectedEventDataStepper.y+30, 'Add', function ()
         {
             var data = addNewModData();
             var allData = EVENT_EASEDATA;
@@ -2043,7 +2005,7 @@ class ModchartEditorState extends MusicBeatState
                 hasUnsavedChanges = true;
             }
         });
-        var remove:FlxButton = new FlxButton(0, selectedEventDataStepper.y+50, 'Remove', function ()
+        var remove:PsychUIButton = new PsychUIButton(0, selectedEventDataStepper.y+50, 'Remove', function ()
         {
             var data = removeModData();
             var allData = EVENT_EASEDATA;
@@ -2066,51 +2028,55 @@ class ModchartEditorState extends MusicBeatState
         tab_group.add(add);
         tab_group.add(remove);
 
-       
-        textBlockers.push(eventModInputText);
-        textBlockers.push(eventDataInputText);
-        textBlockers.push(eventValueInputText);
-        textBlockers.push(eventEaseInputText);
-        textBlockers.push(eventTimeInputText);
-        scrollBlockers.push(eventModifierDropDown);
-        scrollBlockers.push(eventTypeDropDown);
-        scrollBlockers.push(subModDropDown);
-        scrollBlockers.push(easeDropDown);
-
-        addUI(tab_group, "addStacked", addStacked, 'Add New Stacked Event', 'Adds a new stacked event and duplicates the current one.');
+        tab_group.add(addStacked);
+        /*addUI(tab_group, "addStacked", addStacked, 'Add New Stacked Event', 'Adds a new stacked event and duplicates the current one.');
 
         addUI(tab_group, "eventDataInputText", eventDataInputText, 'Raw Event Data', 'The raw data used in the event, you wont really need to use this.');
-        addUI(tab_group, "stackedEventStepper", stackedEventStepper, 'Stacked Event Stepper', 'Allows you to find/switch to stacked events.');
+        addUI(tab_group, "stackedEventStepper", stackedEventStepper, 'Stacked Event Stepper', 'Allows you to find/switch to stacked events.');*/
+        tab_group.add(eventDataInputText);
+        tab_group.add(stackedEventStepper);
         tab_group.add(makeLabel(stackedEventStepper, 0, -15, "Stacked Events Index"));
 
-        addUI(tab_group, "eventValueInputText", eventValueInputText, 'Event Value', 'The value that the modifier will change to.');
+        tab_group.add(eventValueInputText);
+        tab_group.add(eventModInputText);
+        /*addUI(tab_group, "eventValueInputText", eventValueInputText, 'Event Value', 'The value that the modifier will change to.');
         addUI(tab_group, "eventModInputText", eventModInputText, 'Event Modifier', 'The name of the modifier used in the event.');
 
         addUI(tab_group, "repeatBeatGapStepper", repeatBeatGapStepper, 'Repeat Beat Gap', 'The amount of beats in between each repeat.');
         addUI(tab_group, "repeatCheckbox", repeatCheckbox, 'Repeat', 'Check the box if you want the event to repeat.');
-        addUI(tab_group, "repeatCountStepper", repeatCountStepper, 'Repeat Count', 'How many times the event will repeat.');
+        addUI(tab_group, "repeatCountStepper", repeatCountStepper, 'Repeat Count', 'How many times the event will repeat.');*/
+        tab_group.add(repeatBeatGapStepper);
+        tab_group.add(repeatCheckbox);
+        tab_group.add(repeatCountStepper);
         tab_group.add(makeLabel(repeatBeatGapStepper, 0, -30, "How many beats in between\neach repeat?"));
         tab_group.add(makeLabel(repeatCountStepper, 0, -15, "How many times to repeat?"));
 
-        addUI(tab_group, "eventEaseInputText", eventEaseInputText, 'Event Ease', 'The easing function used by the event (only for "ease" type).');
-        addUI(tab_group, "eventTimeInputText", eventTimeInputText, 'Event Ease Time', 'How long the tween takes to finish in beats (only for "ease" type).');
+        /*addUI(tab_group, "eventEaseInputText", eventEaseInputText, 'Event Ease', 'The easing function used by the event (only for "ease" type).');
+        addUI(tab_group, "eventTimeInputText", eventTimeInputText, 'Event Ease Time', 'How long the tween takes to finish in beats (only for "ease" type).');*/
+        tab_group.add(eventEaseInputText);
+        tab_group.add(eventTimeInputText);
         tab_group.add(makeLabel(eventEaseInputText, 0, -15, "Event Ease"));
         tab_group.add(makeLabel(eventTimeInputText, 0, -15, "Event Ease Time (in Beats)"));
         tab_group.add(makeLabel(eventTypeDropDown, 0, -15, "Event Type"));
 
-        addUI(tab_group, "eventTimeStepper", eventTimeStepper, 'Event Time', 'The beat that the event occurs on.');
-        addUI(tab_group, "selectedEventDataStepper", selectedEventDataStepper, 'Selected Event', 'Which modifier event is selected within the event.');
+        /*addUI(tab_group, "eventTimeStepper", eventTimeStepper, 'Event Time', 'The beat that the event occurs on.');
+        addUI(tab_group, "selectedEventDataStepper", selectedEventDataStepper, 'Selected Event', 'Which modifier event is selected within the event.');*/
+        tab_group.add(eventTimeStepper);
+        tab_group.add(selectedEventDataStepper);
         tab_group.add(makeLabel(selectedEventDataStepper, 0, -15, "Selected Data Index"));
         tab_group.add(makeLabel(eventDataInputText, 0, -15, "Raw Event Data"));
         tab_group.add(makeLabel(eventValueInputText, 0, -15, "Event Value"));
         tab_group.add(makeLabel(eventModInputText, 0, -15, "Event Mod"));
         tab_group.add(makeLabel(subModDropDown, 0, -15, "Sub Mods"));
 
-        addUI(tab_group, "subModDropDown", subModDropDown, 'Sub Mods', 'Drop down for sub mods on the currently selected modifier, not all mods have them.');
+        tab_group.add(subModDropDown);
+        tab_group.add(eventModifierDropDown);
+        tab_group.add(eventTypeDropDown);
+        tab_group.add(easeDropDown);
+        /*addUI(tab_group, "subModDropDown", subModDropDown, 'Sub Mods', 'Drop down for sub mods on the currently selected modifier, not all mods have them.');
         addUI(tab_group, "eventModifierDropDown", eventModifierDropDown, 'Stored Modifiers', 'Drop down for stored modifiers.');
         addUI(tab_group, "eventTypeDropDown", eventTypeDropDown, 'Event Type', 'Drop down to swtich the event type, currently there is only "set" and "ease", "set" makes the event happen instantly, and "ease" has a time and an ease function to smoothly change the modifiers.');
-        addUI(tab_group, "easeDropDown", easeDropDown, 'Eases', 'Drop down that stores all the built-in easing functions.');
-        UI_box.addGroup(tab_group);
+        addUI(tab_group, "easeDropDown", easeDropDown, 'Eases', 'Drop down that stores all the built-in easing functions.');*/
     }
     function getCurrentEventInData() //find stored data to match with highlighted event
     {
@@ -2187,105 +2153,101 @@ class ModchartEditorState extends MusicBeatState
         dirtyUpdateEvents = true;
     }
 
-    override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>)
+    public function UIEvent(id:String, sender:Dynamic)
     {
-        if (id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper))
+        if (id == PsychUINumericStepper.CHANGE_EVENT && (sender is PsychUINumericStepper))
         {
-            var nums:FlxUINumericStepper = cast sender;
-            var wname = nums.name;
-            switch(wname)
+            if (sender == selectedEventDataStepper)
             {
-                case "selectedEventMod": //stupid steppers which dont have normal callbacks
-                    if (highlightedEvent != null)
-                    {
-                        var allData = EVENT_EASEDATA;
-                        if (highlightedEvent[EVENT_TYPE] == "set"){
-                            allData = EVENT_SETDATA;
-                        }
-                        eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
-                        eventModInputText.text = getEventModData(true);
-                        eventValueInputText.text = getEventModData(false);
+                if (highlightedEvent != null)
+                {
+                    var allData = EVENT_EASEDATA;
+                    if (highlightedEvent[EVENT_TYPE] == "set"){
+                        allData = EVENT_SETDATA;
                     }
-                case "repeatBeatGap":
-                    var data = getCurrentEventInData();
-                    if (data != null)
-                    {
-                        data[EVENT_REPEAT][EVENT_REPEATBEATGAP] = repeatBeatGapStepper.value;
-                        highlightedEvent = data;
-                        hasUnsavedChanges = true;
-                        dirtyUpdateEvents = true;
-                    }
-                case "repeatCount": 
-                    var data = getCurrentEventInData();
-                    if (data != null)
-                    {
-                        data[EVENT_REPEAT][EVENT_REPEATCOUNT] = repeatCountStepper.value;
-                        highlightedEvent = data;
-                        hasUnsavedChanges = true;
-                        dirtyUpdateEvents = true;
-                    }
-                case "stackedEvent": 
-                    if (highlightedEvent != null)
-                    {
-                        //trace(stackedHighlightedEvents);
-                        highlightedEvent = stackedHighlightedEvents[Std.int(stackedEventStepper.value)];
-                        onSelectEvent(true);
-                    }
+                    eventDataInputText.text = highlightedEvent[EVENT_DATA][allData];
+                    eventModInputText.text = getEventModData(true);
+                    eventValueInputText.text = getEventModData(false);
+                }
+            }
+            else if (sender == repeatBeatGapStepper)
+            {
+                var data = getCurrentEventInData();
+                if (data != null)
+                {
+                    data[EVENT_REPEAT][EVENT_REPEATBEATGAP] = repeatBeatGapStepper.value;
+                    highlightedEvent = data;
+                    hasUnsavedChanges = true;
+                    dirtyUpdateEvents = true;
+                }
+            }
+            else if (sender == repeatCountStepper)
+            { 
+                var data = getCurrentEventInData();
+                if (data != null)
+                {
+                    data[EVENT_REPEAT][EVENT_REPEATCOUNT] = repeatCountStepper.value;
+                    highlightedEvent = data;
+                    hasUnsavedChanges = true;
+                    dirtyUpdateEvents = true;
+                }
+            }
+            else if (sender == stackedEventStepper)
+            {
+                if (highlightedEvent != null)
+                {
+                    //trace(stackedHighlightedEvents);
+                    highlightedEvent = stackedHighlightedEvents[Std.int(stackedEventStepper.value)];
+                    onSelectEvent(true);
+                }
             }
         }
     }
     
-    var playfieldCountStepper:FlxUINumericStepper;
-    var proxiefieldCountStepper:FlxUINumericStepper;
+    var playfieldCountStepper:PsychUINumericStepper;
+    var proxiefieldCountStepper:PsychUINumericStepper;
     function setupPlayfieldUI()
     {
-        var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Playfields";
+        var tab_group = UI_box.getTab('Playfields').menu;
 
-        playfieldCountStepper = new FlxUINumericStepper(25, 50, 1, 1, 1, 100, 0);
+        playfieldCountStepper = new PsychUINumericStepper(25, 50, 1, 1, 1, 100, 0);
         playfieldCountStepper.value = playfieldRenderer.modchart.data.playfields;
         
         tab_group.add(playfieldCountStepper);
         tab_group.add(makeLabel(playfieldCountStepper, 0, -15, "Playfield Count"));
         tab_group.add(makeLabel(playfieldCountStepper, 55, 25, "Don't add too many or the game will lag!!!"));
 
-        proxiefieldCountStepper = new FlxUINumericStepper(playfieldCountStepper.x + 50, 50, 1, 1, 1, 100, 0);
+        proxiefieldCountStepper = new PsychUINumericStepper(playfieldCountStepper.x + 150, 50, 1, 1, 1, 100, 0);
         proxiefieldCountStepper.value = playfieldRenderer.modchart.data.proxiefields;
         
         tab_group.add(proxiefieldCountStepper);
         tab_group.add(makeLabel(proxiefieldCountStepper, 0, -15, "Proxiefield Count"));
        // tab_group.add(makeLabel(proxieCountStepper, 55, 25, "Don't add too many or the game will lag!!!"));
-        UI_box.addGroup(tab_group);
     }
-    var sliderRate:FlxUISlider;
+    var sliderRate:PsychUISlider;
+    var songSlider:PsychUISlider;
     function setupEditorUI()
     {
-        var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Editor";
+        var tab_group = UI_box.getTab('Editor').menu;
 
-        sliderRate = new FlxUISlider(this, 'playbackSpeed', 20, 120, 0.1, 3, 250, null, 5, FlxColor.WHITE, FlxColor.BLACK);
-		sliderRate.nameLabel.text = 'Playback Rate';
-        sliderRate.callback = function(val:Float)
-        {
+        sliderRate = new PsychUISlider(20, 120, function(val:Float) {
+            playbackSpeed = val;
             dirtyUpdateEvents = true;
-        };
+        }, playbackSpeed, 0.1, 3, 250, FlxColor.WHITE, FlxColor.RED);
+		sliderRate.label = 'Playback Rate';
 
-        var songSlider = new FlxUISlider(inst, 'time', 20, 200, 0, inst.length, 250, null, 5, FlxColor.WHITE, FlxColor.BLACK);
-		songSlider.valueLabel.visible = false;
-		songSlider.maxLabel.visible = false;
-		songSlider.minLabel.visible = false;
-        songSlider.nameLabel.text = 'Song Time';
-		songSlider.callback = function(fuck:Float)
-		{
-			vocals.time = inst.time;
-			Conductor.songPosition = inst.time;
+        songSlider = new PsychUISlider(20, 200, function(val:Float) {
+            inst.time = val;
+            vocals.time = inst.time;
+            Conductor.songPosition = inst.time;
             dirtyUpdateEvents = true;
             dirtyUpdateNotes = true;
-		};
+        }, inst.time, 0, inst.length, 250, FlxColor.WHITE, FlxColor.RED);
+        songSlider.label = 'Song Time';
 
-        var check_mute_inst = new FlxUICheckBox(10, 20, null, null, "Mute Instrumental (in editor)", 100);
+        var check_mute_inst = new PsychUICheckBox(10, 20, "Mute Instrumental (in editor)", 100);
 		check_mute_inst.checked = false;
-		check_mute_inst.callback = function()
+		check_mute_inst.onClick = function()
 		{
 			var vol:Float = 1;
 
@@ -2294,9 +2256,9 @@ class ModchartEditorState extends MusicBeatState
 
 			inst.volume = vol;
 		};
-        var check_mute_vocals = new FlxUICheckBox(check_mute_inst.x + 120, check_mute_inst.y, null, null, "Mute Main Vocals (in editor)", 100);
+        var check_mute_vocals = new PsychUICheckBox(check_mute_inst.x + 120, check_mute_inst.y, "Mute Main Vocals (in editor)", 100);
 		check_mute_vocals.checked = false;
-		check_mute_vocals.callback = function()
+		check_mute_vocals.onClick = function()
 		{
 			var vol:Float = 1;
 			if (check_mute_vocals.checked)
@@ -2306,28 +2268,28 @@ class ModchartEditorState extends MusicBeatState
 		};
 
 
-        var resetSpeed:FlxButton = new FlxButton(sliderRate.x+300, sliderRate.y, 'Reset', function ()
+        var resetSpeed:PsychUIButton = new PsychUIButton(sliderRate.x+300, sliderRate.y, 'Reset', function ()
         {
             playbackSpeed = 1.0;
         });
 
-        var saveJson:FlxUIButton = new FlxUIButton(20, 300, 'Save Modchart', function ()
+        var saveJson:PsychUIButton = new PsychUIButton(20, 300, 'Save Modchart', function ()
         {
             saveModchartJson(this);
         });
-        addUI(tab_group, "saveJson", saveJson, 'Save Modchart', 'Saves the modchart to a .json file which can be stored and loaded later.');
+        tab_group.add(saveJson);
+        //addUI(tab_group, "saveJson", saveJson, 'Save Modchart', 'Saves the modchart to a .json file which can be stored and loaded later.');
         //tab_group.addAsset(saveJson, "saveJson");
 		tab_group.add(sliderRate);
-        addUI(tab_group, "resetSpeed", resetSpeed, 'Reset Speed', 'Resets playback speed to 1.');
+        //addUI(tab_group, "resetSpeed", resetSpeed, 'Reset Speed', 'Resets playback speed to 1.');
+        tab_group.add(resetSpeed);
         tab_group.add(songSlider);
 
         tab_group.add(check_mute_inst);
         tab_group.add(check_mute_vocals);
-
-        UI_box.addGroup(tab_group);
     }
 
-    function addUI(tab_group:FlxUI, name:String, ui:FlxSprite, title:String = "", body:String = "", anchor:Anchor = null)
+    /*function addUI(tab_group:FlxUI, name:String, ui:FlxSprite, title:String = "", body:String = "", anchor:Anchor = null)
     {
         tooltips.add(ui, {
 			title: title,
@@ -2346,7 +2308,7 @@ class ModchartEditorState extends MusicBeatState
 		});
 
         tab_group.add(ui);
-    }
+    }*/
     function centerXToObject(obj1:FlxSprite, obj2:FlxSprite) //snap second obj to first
     {
         obj2.x = obj1.x + (obj1.width/2) - (obj2.width/2);
@@ -2440,27 +2402,21 @@ class ModchartEditorExitSubstate extends MusicBeatSubstate
         warning.y -= 150;
         add(warning);
 
-        var goBackButton:FlxUIButton = new FlxUIButton(0, 500, 'Go Back', function()
+        var goBackButton:PsychUIButton = new PsychUIButton(0, 500, 'Go Back', function()
         {
             close();
         });
         goBackButton.scale.set(2.5, 2.5);
         goBackButton.updateHitbox();
-        goBackButton.label.size = 12;
-        goBackButton.autoCenterLabel();
         goBackButton.x = (FlxG.width*0.3)-(goBackButton.width*0.5);
         add(goBackButton);
         
-        var exit:FlxUIButton = new FlxUIButton(0, 500, 'Exit without saving', function()
+        var exit:PsychUIButton = new PsychUIButton(0, 500, 'Exit without saving', function()
         {
             exitFunc();
         });
         exit.scale.set(2.5, 2.5);
         exit.updateHitbox();
-        exit.label.size = 12;
-        exit.label.fieldWidth = exit.width;
-        exit.autoCenterLabel();
-        
         exit.x = (FlxG.width*0.7)-(exit.width*0.5);
         add(exit);
 

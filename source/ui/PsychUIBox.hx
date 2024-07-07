@@ -3,6 +3,10 @@ package ui;
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import flixel.math.FlxPoint;
+import flixel.FlxCamera;
+import flixel.FlxG;
 
 typedef UIStyleData = {
 	var bgColor:FlxColor;
