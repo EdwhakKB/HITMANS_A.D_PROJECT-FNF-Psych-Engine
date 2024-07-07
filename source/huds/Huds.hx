@@ -290,7 +290,7 @@ class Huds extends FlxGroup
 				this,
 				'health', 0, 2
 			);
-			healthBar.numDivisions = 1000;
+			healthBar.numDivisions = 10000;
             // if (ClientPrefs.hudStyle == 'CLASSIC') healthBar.scrollFactor.set();
             // healthBar
             healthBar.visible = !ClientPrefs.hideHud;
