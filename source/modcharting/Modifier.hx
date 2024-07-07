@@ -855,6 +855,7 @@ class StealthColorModifier extends Modifier
         subValues.set('r', new ModifierSubValue(255.0));
         subValues.set('g', new ModifierSubValue(255.0));
         subValues.set('b', new ModifierSubValue(255.0));
+        currentValue = 1.0;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
@@ -865,7 +866,11 @@ class StealthColorModifier extends Modifier
         noteData.glowRed *= red;
         noteData.glowGreen *= green;
         noteData.glowBlue *= blue;
-    }       
+    }
+    override public function reset(){
+        super.reset();
+        currentValue = 1.0;
+    }
 }
 class SuddenModifier extends Modifier
 {
@@ -1773,12 +1778,11 @@ class SkewModifier extends Modifier
 {
     override function setupSubValues()
     {
-        baseValue = 0.0;
-        currentValue = 1.0;
         subValues.set('x', new ModifierSubValue(0.0));
         subValues.set('y', new ModifierSubValue(0.0));
         subValues.set('xDmod', new ModifierSubValue(0.0));
         subValues.set('yDmod', new ModifierSubValue(0.0));
+        currentValue = 1.0;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
@@ -1800,7 +1804,6 @@ class SkewModifier extends Modifier
     override function reset()
     {
         super.reset();
-        baseValue = 0.0;
         currentValue = 1.0;
     }
 }

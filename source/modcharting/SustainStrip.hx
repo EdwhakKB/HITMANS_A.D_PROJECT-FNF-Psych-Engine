@@ -75,10 +75,10 @@ class SustainStrip extends FlxStrip
         var holdWidth = daNote.frameWidth;
         var xOffset = daNote.frameWidth/6.5; //FUCK YOU, MAGIC NUMBER GO! MAKE THEM HOLDS CENTERED DAMNIT!
 
-        daNote.rgbShader.parent.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
-        daNote.rgbShader.parent.stealthGlowRed = noteData.glowRed;
-        daNote.rgbShader.parent.stealthGlowGreen = noteData.glowGreen;
-        daNote.rgbShader.parent.stealthGlowBlue = noteData.glowBlue;
+        daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
+        daNote.rgbShader.stealthGlowRed = noteData.glowRed;
+        daNote.rgbShader.stealthGlowGreen = noteData.glowGreen;
+        daNote.rgbShader.stealthGlowBlue = noteData.glowBlue;
 
         var yOffset = -1; //fix small gaps
         if (reverseClip)

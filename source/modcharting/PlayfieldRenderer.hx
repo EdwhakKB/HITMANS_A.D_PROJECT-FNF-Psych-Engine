@@ -361,7 +361,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
 
                 if ((notes.members[i].wasGoodHit || (notes.members[i].prevNote.wasGoodHit)) && curPos >= 0 && notes.members[i].isSustainNote)
                     curPos = 0; //sustain clip
-
+                
                 var incomingAngle:Array<Float> = modifierTable.applyIncomingAngleMods(lane, curPos, pf);
                 if (noteDist < 0)
                     incomingAngle[0] += 180; //make it match for both scrolls
@@ -464,11 +464,12 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         // daNote.mesh.scrollFactor.y = daNote.scrollFactor.y;
         daNote.alpha = noteData.alpha;
         daNote.mesh.alpha = daNote.alpha;
+        daNote.mesh.shader = daNote.rgbShader.parent.shader; //idfk if this works.
 
-        // daNote.rgbShader.parent.stealthGlow = noteData.stealthGlow;
-        // daNote.rgbShader.parent.stealthGlowRed = noteData.glowRed;
-        // daNote.rgbShader.parent.stealthGlowGreen = noteData.glowGreen;
-        // daNote.rgbShader.parent.stealthGlowBlue = noteData.glowBlue;
+        // daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
+        // daNote.rgbShader.stealthGlowRed = noteData.glowRed;
+        // daNote.rgbShader.stealthGlowGreen = noteData.glowGreen;
+        // daNote.rgbShader.stealthGlowBlue = noteData.glowBlue;
 
         var songSpeed = getCorrectScrollSpeed();
         var lane = noteData.lane;

@@ -64,8 +64,8 @@ class Note extends FlxImprovedSprite{
 	public var eventVal2:String = '';
 
 	// public var colorSwap:ColorSwap;
-	public var stealth:modcharting.ModchartShaders.StealthEffect;
-	var filtahs:Array<BitmapFilter> = [];
+	// public var stealth:modcharting.ModchartShaders.StealthEffect;
+	// var filtahs:Array<BitmapFilter> = [];
 
 	public var rgbShader:RGBShaderReference;
 	public static var globalRgbShaders:Array<RGBPalette> = [];
@@ -421,22 +421,22 @@ class Note extends FlxImprovedSprite{
 
 		this.noteData = noteData;
 
-		// if (ClientPrefs.notesSkin[0] == 'NOTITG'){
-		// 	sustainRGB = false;
-		// }else{
-		// 	sustainRGB = true;
-		// }
+		if (ClientPrefs.notesSkin[0] == 'NOTITG'){
+			sustainRGB = false;
+		}else{
+			sustainRGB = true;
+		}
 
 		if(noteData > -1) {
 			texture = '';
 			if (quantizedNotes) rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalQuantRBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData, false) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
-			// if(!sustainRGB && isSustainNote){
-			// 	rgbShader.enabled = false;
-			// }else if(sustainRGB && isSustainNote){
-			// 	rgbShader.enabled = true;
-			// }
+			if(!sustainRGB && isSustainNote){
+				rgbShader.enabled = false;
+			}else if(sustainRGB && isSustainNote){
+				rgbShader.enabled = true;
+			}
 			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
 
 			x += swagWidth * (noteData);
@@ -447,7 +447,7 @@ class Note extends FlxImprovedSprite{
 			}
 		}
 
-		stealth = new modcharting.ModchartShaders.StealthEffect();
+		// stealth = new modcharting.ModchartShaders.StealthEffect();
 		// filters = [new ShaderFilter(stealth.shader)]; //TODO: fix this shit
 		
 		// trace(prevNote);
@@ -474,13 +474,13 @@ class Note extends FlxImprovedSprite{
 			// 	flipX = false;
 			// }
 
-			if (ClientPrefs.notesSkin[0] == 'NOTITG' && ClientPrefs.notesSkin[2] == 'NONE'){
-				sustainRGB = false;
-			}else{
-				sustainRGB = true;
-			}
+			// if (ClientPrefs.notesSkin[0] == 'NOTITG'){
+			// 	sustainRGB = false;
+			// }else{
+			// 	sustainRGB = true;
+			// }
 
-			rgbShader.enabled = sustainRGB;
+			// rgbShader.enabled = sustainRGB;
 
 			updateHitbox();
 
@@ -705,7 +705,7 @@ class Note extends FlxImprovedSprite{
 	{
 		super.update(elapsed);
 
-		stealth.update(elapsed);
+		// stealth.update(elapsed);
 
 		if (mustPress)
 		{
