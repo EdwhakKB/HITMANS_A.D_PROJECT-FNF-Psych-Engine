@@ -60,20 +60,6 @@ class EditorPauseSubState extends MusicBeatSubstate
 		super();
 		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
 
-		if(EditorPlayState.chartingMode)
-		{
-			menuItemsOG.insert(2, 'Leave Charting Mode');
-			
-			var num:Int = 0;
-			if(!EditorPlayState.instance.startingSong)
-			{
-				num = 1;
-				menuItemsOG.insert(4, 'Skip Time');
-			}
-			menuItemsOG.insert(4 + num, 'End Song');
-			menuItemsOG.insert(5 + num, 'Toggle Practice Mode');
-			menuItemsOG.insert(6 + num, 'Toggle Botplay');
-		}
 		menuItems = menuItemsOG;
 
 		for (i in 0...CoolUtil.difficulties.length) {
