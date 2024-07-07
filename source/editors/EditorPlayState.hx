@@ -2346,7 +2346,7 @@ class EditorPlayState extends MusicBeatState
 
 	override function openSubState(SubState:FlxSubState)
 	{
-		if (paused)
+		if (paused || falsePaused)
 		{
 			if (FlxG.sound.music != null)
 			{
@@ -2371,6 +2371,8 @@ class EditorPlayState extends MusicBeatState
 
 		super.openSubState(SubState);
 	}
+
+	var falsePaused:Bool = false;
 
 	override function closeSubState()
 	{
@@ -2403,7 +2405,7 @@ class EditorPlayState extends MusicBeatState
 				openSubState(new GameplayChangersSubstate(true));
 			}
 		}
-		else if (paused){
+		else if (paused || falsePaused){
 				
 			if (FlxG.sound.music != null && !startingSong)
 			{
@@ -2423,6 +2425,7 @@ class EditorPlayState extends MusicBeatState
 			for (timer in modchartTimers) {
 				timer.active = true;
 			}
+			falsePaused = false;
 			paused = false;
 			callOnLuas('onResume', []);
 
@@ -3044,8 +3047,20 @@ class EditorPlayState extends MusicBeatState
 				setSongTime(Conductor.songPosition + 10000);
 				clearNotesBefore(Conductor.songPosition);
 			}
-			if(FlxG.keys.justPressed.F7) {
-				//open a substate to pause the whole state, useful to check stuff, you do this glow lmao
+			if(FlxG.keys.justPressed.F7 && !paused) {
+				if (!falsePaused)
+				{
+					persistentUpdate = false;
+					persistentDraw = true;
+					falsePaused = true;
+			
+					if(FlxG.sound.music != null) {
+						FlxG.sound.music.pause();
+						vocals.pause();
+					}
+					if (!inResultsScreen)
+						openSubState(new EmptyPauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+				}
 			}
 			if(FlxG.keys.justPressed.F8) {
 				cpuControlled = !cpuControlled;
@@ -3755,7 +3770,7 @@ class EditorPlayState extends MusicBeatState
 		var key:Int = getKeyFromEvent(eventKey);
 		//trace('Pressed: ' + eventKey);
 
-		if (!cpuControlled && startedCountdown && !paused && key > -1 && (FlxG.keys.checkStatus(eventKey, JUST_PRESSED) || ClientPrefs.controllerMode))
+		if (!cpuControlled && startedCountdown && !paused && !falsePaused && key > -1 && (FlxG.keys.checkStatus(eventKey, JUST_PRESSED) || ClientPrefs.controllerMode))
 		{
 			if(!boyfriend.stunned && generatedMusic && !endingSong)
 			{
@@ -3855,7 +3870,7 @@ class EditorPlayState extends MusicBeatState
 	{
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = getKeyFromEvent(eventKey);
-		if(!cpuControlled && startedCountdown && !paused && key > -1)
+		if(!cpuControlled && startedCountdown && !paused && !falsePaused && key > -1)
 		{
 			var spr:StrumNote = playerStrums.members[key];
 			if(spr != null)
