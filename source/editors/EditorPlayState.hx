@@ -3618,7 +3618,7 @@ class EditorPlayState extends MusicBeatState
 					{
 						var percent:Float = ratingPercent;
 						if(Math.isNaN(percent)) percent = 0;
-						Highscore.saveScore(PlayState.SONG.song, songScore, storyDifficulty, percent);
+						//Highscore.saveScore(PlayState.SONG.song, songScore, storyDifficulty, percent); //won't save score if you are testing
 					}
 				});
 			#else
@@ -3626,7 +3626,7 @@ class EditorPlayState extends MusicBeatState
 				{	
 					var percent:Float = ratingPercent;
 					if(Math.isNaN(percent)) percent = 0;
-					Highscore.saveScore(PlayState.SONG.song, songScore, storyDifficulty, percent);
+					//Highscore.saveScore(PlayState.SONG.song, songScore, storyDifficulty, percent); //won't save score if you are testing
 				}
 			#end
 		}

@@ -1840,7 +1840,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			FlxG.sound.muteKeys = TitleState.muteKeys;
 			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
-			/*if (FlxG.keys.justPressed.ESCAPE && !helpBg.visible)
+			if (FlxG.keys.justPressed.ESCAPE && !helpBg.visible)
 			{
 				if(FlxG.sound.music != null)
 					FlxG.sound.music.stop();
@@ -1852,12 +1852,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				}
 
 				autosaveSong();
-				playtesting = true;
-				playtestingTime = Conductor.songPosition;
-				playtestingOnComplete = FlxG.sound.music.onComplete;
-				LoadingState.loadAndSwitchState(new states.editors.EditorPlayState(playtestingTime));
+				LoadingState.loadAndSwitchState(new editors.EditorPlayState(Conductor.songPosition));
 			}
-			else */ if(FlxG.keys.justPressed.F1 || (helpBg.visible && FlxG.keys.justPressed.ESCAPE))
+			else if(FlxG.keys.justPressed.F1 || (helpBg.visible && FlxG.keys.justPressed.ESCAPE))
 			{
 				helpBg.visible = !helpBg.visible;
 				helpTexts.visible = helpBg.visible;
