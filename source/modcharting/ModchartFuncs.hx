@@ -99,6 +99,20 @@ class ModchartFuncs
                 Lua_helper.add_callback(funkin.lua, 'stepEase', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
                     stepEase(beat, time, easeStr, argsAsString);                
                 });
+                Lua_helper.add_callback(funkin.lua, 'add', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+                    add(beat, time, easeStr, argsAsString);
+                });
+                Lua_helper.add_callback(funkin.lua, 'setAdd', function(beat:Float, argsAsString:String){
+                    setAdd(beat, argsAsString);
+                });
+                Lua_helper.add_callback(funkin.lua, 'getMod', function(name:String, base:Bool = false){
+                    var result = getMod(name, base);
+                    return result;
+                });
+                Lua_helper.add_callback(funkin.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false){
+                    var result = getSubMod(name, subMod, base);
+                    return result;
+                });
             }
             #if hscript
             if (FunkinLua.hscript != null)
@@ -160,6 +174,20 @@ class ModchartFuncs
                 });
                 Lua_helper.add_callback(funkin.lua, 'stepEase', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
                     stepEase(beat, time, easeStr, argsAsString);               
+                });
+                Lua_helper.add_callback(funkin.lua, 'add', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+                    add(beat, time, easeStr, argsAsString);
+                });
+                Lua_helper.add_callback(funkin.lua, 'setAdd', function(beat:Float, argsAsString:String){
+                    setAdd(beat, argsAsString);
+                });
+                Lua_helper.add_callback(funkin.lua, 'getMod', function(name:String, base:Bool = false){
+                    var result = getMod(name, base);
+                    return result;
+                });
+                Lua_helper.add_callback(funkin.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false){
+                    var result = getSubMod(name, subMod, base);
+                    return result;
                 });
             }
 
@@ -234,6 +262,20 @@ class ModchartFuncs
         });
         parent.set('sEaseModValue', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
             stepEase(beat, time, easeStr, argsAsString);
+        });
+        parent.set('setAdd', function(beat:Float, argsAsString:String){
+            setAdd(beat, argsAsString);
+        });
+        parent.set('add', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+            add(beat, time, easeStr, argsAsString);
+        });
+        parent.set('getMod', function(name:String, base:Bool = false){
+            var result = getMod(name, base);
+            return result;
+        });
+        parent.set('getSubMod', function(name:String, subMod:String, base:Bool = false){
+            var result = getSubMod(name, subMod, base);
+            return result;
         });
         #end
     }
@@ -512,5 +554,129 @@ class ModchartFuncs
         var actualBeat = (step/4);
         ease(actualBeat, time, daease, argsAsString);
     }
-    
+
+    public static function add(beat:Float, time:Float, ease:String, argsAsString:String, ?instance:ModchartMusicBeatState = null) : Void
+    {
+        if (instance == null)
+        {
+            if (editor)
+                instance = editors.EditorPlayState.instance;
+            else
+                instance = PlayState.instance;
+            if (instance.playfieldRenderer.modchart.scriptListen)
+            {
+                instance.playfieldRenderer.modchart.data.events.push(["ease", [beat, time, ease, argsAsString]]);
+            }
+        }
+            
+        if(Math.isNaN(time))
+            time = 1;
+
+        var args = argsAsString.trim().replace(' ', '').split(',');
+
+        var func = function(arguments:Array<String>) {
+            
+            for (i in 0...Math.floor(arguments.length/2))
+            {
+                var name:String = Std.string(arguments[1 + (i*2)]);
+                var value:Float = Std.parseFloat(arguments[0 + (i*2)]);
+                if(Math.isNaN(value))
+                    value = 0;
+                var subModCheck = name.split(':');
+                if (subModCheck.length > 1)
+                {
+                    var modName = subModCheck[0];
+                    var subModName = subModCheck[1];
+                    //trace(subModCheck);
+                    instance.playfieldRenderer.modifierTable.tweenAddSubValue(modName,subModName,value,time*Conductor.crochet*0.001,ease, beat);
+                }
+                else
+                    instance.playfieldRenderer.modifierTable.tweenAdd(name,value,time*Conductor.crochet*0.001,ease, beat);
+                
+            }
+        };
+        instance.playfieldRenderer.eventManager.addEvent(beat, func, args);
+    }
+
+    public static function setAdd(beat:Float, argsAsString:String, ?instance:ModchartMusicBeatState = null)
+    {
+        if (instance == null)
+        {
+            if (editor)
+                instance = editors.EditorPlayState.instance;
+            else
+                instance = PlayState.instance;
+            if (instance.playfieldRenderer.modchart.scriptListen)
+            {
+                instance.playfieldRenderer.modchart.data.events.push(["set", [beat, argsAsString]]);
+            }
+        }
+        var args = argsAsString.trim().replace(' ', '').split(',');
+
+        instance.playfieldRenderer.eventManager.addEvent(beat, function(arguments:Array<String>) {
+            for (i in 0...Math.floor(arguments.length/2))
+            {
+                var name:String = Std.string(arguments[1 + (i*2)]);
+                var value:Float = Std.parseFloat(arguments[0 + (i*2)]);
+                if(Math.isNaN(value))
+                    value = 0;
+                if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
+                {
+                    instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue += value;
+                }
+                else 
+                {
+                    var subModCheck = name.split(':');
+                    if (subModCheck.length > 1)
+                    {
+                        var modName = subModCheck[0];
+                        var subModName = subModCheck[1];
+                        if (instance.playfieldRenderer.modifierTable.modifiers.exists(modName))
+                            instance.playfieldRenderer.modifierTable.modifiers.get(modName).subValues.get(subModName).value += value;
+                    }
+                }
+                    
+            }
+        }, args);
+    }
+    public static function getMod(name:String, base:Bool, ?instance:ModchartMusicBeatState = null):Dynamic
+    {
+        if (instance == null)
+        {
+            if (editor)
+                instance = editors.EditorPlayState.instance;
+            else
+                instance = PlayState.instance;
+        }
+
+        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name)){
+            if (!base) return instance.playfieldRenderer.modifierTable.modifiers.get(name).currentValue;
+            else return instance.playfieldRenderer.modifierTable.modifiers.get(name).baseValue;
+        }
+        else
+            return 0;
+    }
+    public static function getSubMod(name:String, subValName:String, base:Bool,?instance:ModchartMusicBeatState = null):Dynamic
+    {
+        if (instance == null)
+        {
+            if (editor)
+                instance = editors.EditorPlayState.instance;
+            else
+                instance = PlayState.instance;
+        }
+
+        if (instance.playfieldRenderer.modifierTable.modifiers.exists(name)){
+            if (instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.exists(subValName)){
+                if (!base)
+                    return instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subValName).value;
+                else
+                    return instance.playfieldRenderer.modifierTable.modifiers.get(name).subValues.get(subValName).baseValue;
+            }else{
+                return 0;
+            }
+        }
+        else
+            return 0;
+    }
 }
