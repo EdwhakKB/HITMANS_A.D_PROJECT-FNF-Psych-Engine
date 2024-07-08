@@ -1336,7 +1336,7 @@ class ModchartEditorState extends MusicBeatState
         var refreshModifiers:PsychUIButton = new PsychUIButton(25+modifierDropDown.width+10, modifierDropDown.y, 'Refresh Modifiers', function ()
         {
             updateModList();
-        }, 80, 25);
+        }, 80, 28);
 
         var saveModifier:PsychUIButton = new PsychUIButton(refreshModifiers.x, refreshModifiers.y+refreshModifiers.height+20, 'Save Modifier', function ()
         {
@@ -1369,7 +1369,7 @@ class ModchartEditorState extends MusicBeatState
             dirtyUpdateModifiers = true;
             updateModList();
             hasUnsavedChanges = true;
-        }, 80, 25);
+        }, 80, 28);
 
         modNameInputText = new PsychUIInputText(modifierDropDown.x + 300, modifierDropDown.y, 160, '', 8);
         modClassInputText = new PsychUIInputText(modifierDropDown.x + 500, modifierDropDown.y, 160, '', 8);
