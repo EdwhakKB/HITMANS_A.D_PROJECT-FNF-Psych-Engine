@@ -74,24 +74,41 @@ class ModchartEditorState extends MusicBeatState
         return Conductor.getBPMFromSeconds(time);
 	}
 
-   //pain
+    //pain
     //tried using a macro but idk how to use them lol
+    /**
+     * *Order for Modifiers with Transformationes like regular, Drunk, Bumpy, ZigZag all have this order
+     * *X, Y, Z, Angle, Scale, ScaleX, ScaleY, Skew, SkewY, SkewZ
+     * *Other Modifiers edit the notes or strums or both or just the lanes, some edit the way the notes spawn, begin, move.
+     */
     public static var modifierList:Array<Class<Modifier>> = [
         //Basic Modifiers with no curpos math
-        XModifier, YModifier, YDModifier, ZModifier, 
-        ConfusionModifier, MiniModifier,
+        XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier,
         ScaleModifier, ScaleXModifier, ScaleYModifier, 
         SkewModifier, SkewXModifier, SkewYModifier,
+        MiniModifier,
         //Modifiers with curpos math!!!
         //Drunk Modifiers
-        DrunkXModifier, DrunkYModifier, DrunkZModifier, DrunkAngleModifier, DrunkScaleModifier,
-        TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier, TanDrunkAngleModifier, TanDrunkScaleModifier,
-        CosecantXModifier, CosecantYModifier, CosecantZModifier, CosecantAngleModifier, CosecantScaleModifier,
+        DrunkXModifier, DrunkYModifier, DrunkZModifier, DrunkAngleModifier, 
+        DrunkScaleModifier,  DrunkScaleXModifier, DrunkScaleYModifier, 
+        DrunkSkewModifier,  DrunkSkewXModifier, DrunkSkewYModifier, 
+        TanDrunkXModifier, TanDrunkYModifier, TanDrunkZModifier, TanDrunkAngleModifier, 
+        TanDrunkScaleModifier, TanDrunkScaleXModifier, TanDrunkScaleYModifier,
+        TanDrunkSkewModifier, TanDrunkSkewXModifier, TanDrunkSkewYModifier,
+        CosecantXModifier, CosecantYModifier, CosecantZModifier, CosecantAngleModifier, 
+        CosecantScaleModifier, CosecantScaleXModifier, CosecantScaleYModifier,
+        CosecantSkewModifier, CosecantSkewXModifier, CosecantSkewYModifier,
         //Tipsy Modifiers
-        TipsyXModifier, TipsyYModifier, TipsyZModifier, TipsyAngleModifier, TipsyScaleModifier,
+        TipsyXModifier, TipsyYModifier, TipsyZModifier, TipsyAngleModifier, 
+        TipsyScaleModifier, TipsyScaleXModifier, TipsyScaleYModifier,
+        TipsySkewModifier, TipsySkewXModifier, TipsySkewYModifier,
         //Wave Modifiers
-        WaveXModifier, WaveYModifier, WaveZModifier, WaveAngleModifier, WaveScaleModifier,
-        TanWaveXModifier, TanWaveYModifier, TanWaveZModifier, TanWaveAngleModifier, TanWaveScaleModifier,
+        WaveXModifier, WaveYModifier, WaveZModifier, WaveAngleModifier, 
+        WaveScaleModifier, WaveScaleXModifier, WaveScaleYModifier,
+        WaveSkewModifier, WaveSkewXModifier, WaveSkewYModifier,
+        TanWaveXModifier, TanWaveYModifier, TanWaveZModifier, TanWaveAngleModifier,
+        TanWaveScaleModifier, TanWaveScaleXModifier, TanWaveScaleYModifier,
+        TanWaveSkewModifier, TanWaveSkewXModifier, TanWaveSkewYModifier,
         //Scroll Modifiers
         ReverseModifier, CrossModifier, SplitModifier, AlternateModifier,
         SpeedModifier, BoostModifier, BrakeModifier, BoomerangModifier, WaveingModifier,
@@ -103,14 +120,32 @@ class ModchartEditorState extends MusicBeatState
         //Path Modifiers
         IncomingAngleModifier, InvertSineModifier, DizzyModifier,
         TornadoModifier, TornadoYModifier, TornadoZModifier,
-        EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier, EaseCurveScaleModifier,
-        BounceXModifier, BounceYModifier, BounceZModifier, BounceAngleModifier, BounceScaleModifier,
-        BumpyModifier, TanBumpyModifier, DrivenModifier,
-        BeatXModifier, BeatYModifier, BeatZModifier, BeatAngleModifier, BeatScaleModifier,
+        EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier, 
+        EaseCurveScaleModifier, EaseCurveScaleXModifier, EaseCurveScaleYModifier,
+        EaseCurveSkewModifier, EaseCurveSkewXModifier, EaseCurveSkewYModifier,
+        BounceXModifier, BounceYModifier, BounceZModifier, BounceAngleModifier, 
+        BounceScaleModifier, BounceScaleXModifier, BounceScaleYModifier,
+        BounceSkewModifier, BounceSkewXModifier, BounceSkewYModifier,
+        BumpyXModifier, BumpyYModifier, BumpyModifier, BumpyAngleModifier,
+        BumpyScaleModifier, BumpyScaleXModifier, BumpyScaleYModifier,
+        BumpySkewModifier, BumpySkewXModifier, BumpySkewYModifier,
+        TanBumpyXModifier, TanBumpyYModifier, TanBumpyModifier, TanBumpyAngleModifier,
+        TanBumpyScaleModifier, TanBumpyScaleXModifier, TanBumpyScaleYModifier,
+        TanBumpySkewModifier, TanBumpySkewXModifier, TanBumpySkewYModifier,
+        DrivenModifier,
+        BeatXModifier, BeatYModifier, BeatZModifier, BeatAngleModifier, 
+        BeatScaleModifier, BeatScaleXModifier, BeatScaleYModifier,
+        BeatSkewModifier, BeatSkewXModifier, BeatSkewYModifier,
         ShrinkModifier,
-        ZigZagXModifier, ZigZagYModifier, ZigZagZModifier, ZigZagAngleModifier, ZigZagScaleModifier,
-        SawToothXModifier, SawToothYModifier, SawToothZModifier, SawToothAngleModifier, SawToothScaleModifier,
-        SquareXModifier, SquareYModifier, SquareZModifier, SquareAngleModifier, SquareScaleModifier,
+        ZigZagXModifier, ZigZagYModifier, ZigZagZModifier, ZigZagAngleModifier, 
+        ZigZagScaleModifier, ZigZagScaleXModifier, ZigZagScaleYModifier,
+        ZigZagSkewModifier, ZigZagSkewXModifier, ZigZagSkewYModifier,
+        SawToothXModifier, SawToothYModifier, SawToothZModifier, SawToothAngleModifier, 
+        SawToothScaleModifier, SawToothScaleXModifier, SawToothScaleYModifier,
+        SawToothSkewModifier, SawToothSkewXModifier, SawToothSkewYModifier,
+        SquareXModifier, SquareYModifier, SquareZModifier, SquareAngleModifier, 
+        SquareScaleModifier, SquareScaleXModifier, SquareScaleYModifier,
+        SquareSkewModifier, SquareSkewXModifier, SquareSkewYModifier,
         //Target Modifiers
         RotateModifier, StrumLineRotateModifier, JumpTargetModifier,
         LanesModifier,
@@ -120,7 +155,9 @@ class ModchartEditorState extends MusicBeatState
         //Misc Modifiers
         StrumsModifier, InvertModifier, FlipModifier, JumpModifier, CenterModifier,
         StrumAngleModifier,
-        EaseXModifier, EaseYModifier, EaseZModifier, EaseAngleModifier, EaseScaleModifier,
+        EaseXModifier, EaseYModifier, EaseZModifier, EaseAngleModifier, 
+        EaseScaleModifier, EaseScaleXModifier, EaseScaleYModifier,
+        EaseSkewModifier, EaseSkewXModifier, EaseSkewYModifier,
         ShakyNotesModifier, ParalysisModifier,
         ArrowPath
     ];
@@ -1299,7 +1336,7 @@ class ModchartEditorState extends MusicBeatState
         var refreshModifiers:PsychUIButton = new PsychUIButton(25+modifierDropDown.width+10, modifierDropDown.y, 'Refresh Modifiers', function ()
         {
             updateModList();
-        }, 80, 35);
+        }, 80, 25);
 
         var saveModifier:PsychUIButton = new PsychUIButton(refreshModifiers.x, refreshModifiers.y+refreshModifiers.height+20, 'Save Modifier', function ()
         {
@@ -1332,7 +1369,7 @@ class ModchartEditorState extends MusicBeatState
             dirtyUpdateModifiers = true;
             updateModList();
             hasUnsavedChanges = true;
-        }, 80, 35);
+        }, 80, 25);
 
         modNameInputText = new PsychUIInputText(modifierDropDown.x + 300, modifierDropDown.y, 160, '', 8);
         modClassInputText = new PsychUIInputText(modifierDropDown.x + 500, modifierDropDown.y, 160, '', 8);
