@@ -3978,7 +3978,7 @@ class Center2Modifier extends Modifier
     }
 }
 
-class SpiralHoldsModifier extends Modifier //unused
+class SpiralHoldsModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
