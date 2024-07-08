@@ -115,34 +115,43 @@ class ModchartEditorState extends MusicBeatState
         TwirlModifier, RollModifier,
         //Stealth Modifiers
         AlphaModifier, NoteAlphaModifier, TargetAlphaModifier,
-        StealthModifier, DarkModifier, StealthColorModifier,
+        StealthModifier, DarkModifier, StealthColorModifier, DarkColorModifier, SDColorModifier,
         SuddenModifier, HiddenModifier, VanishModifier, BlinkModifier,
         //Path Modifiers
         IncomingAngleModifier, InvertSineModifier, DizzyModifier,
+        //Tornado Modifiers
         TornadoModifier, TornadoYModifier, TornadoZModifier,
+        //EaseCurve Modifiers
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier, 
         EaseCurveScaleModifier, EaseCurveScaleXModifier, EaseCurveScaleYModifier,
         EaseCurveSkewModifier, EaseCurveSkewXModifier, EaseCurveSkewYModifier,
+        //Bounce Modifiers
         BounceXModifier, BounceYModifier, BounceZModifier, BounceAngleModifier, 
         BounceScaleModifier, BounceScaleXModifier, BounceScaleYModifier,
         BounceSkewModifier, BounceSkewXModifier, BounceSkewYModifier,
+        //Bumpy Modifiers
         BumpyXModifier, BumpyYModifier, BumpyModifier, BumpyAngleModifier,
         BumpyScaleModifier, BumpyScaleXModifier, BumpyScaleYModifier,
         BumpySkewModifier, BumpySkewXModifier, BumpySkewYModifier,
+        //TanBumpy Modifiers
         TanBumpyXModifier, TanBumpyYModifier, TanBumpyModifier, TanBumpyAngleModifier,
         TanBumpyScaleModifier, TanBumpyScaleXModifier, TanBumpyScaleYModifier,
         TanBumpySkewModifier, TanBumpySkewXModifier, TanBumpySkewYModifier,
-        DrivenModifier,
+        //Beat Modifiers
         BeatXModifier, BeatYModifier, BeatZModifier, BeatAngleModifier, 
         BeatScaleModifier, BeatScaleXModifier, BeatScaleYModifier,
         BeatSkewModifier, BeatSkewXModifier, BeatSkewYModifier,
+        //Shrink Mod
         ShrinkModifier,
+        //ZigZag Modifiers
         ZigZagXModifier, ZigZagYModifier, ZigZagZModifier, ZigZagAngleModifier, 
         ZigZagScaleModifier, ZigZagScaleXModifier, ZigZagScaleYModifier,
         ZigZagSkewModifier, ZigZagSkewXModifier, ZigZagSkewYModifier,
+        //SawTooth Modifiers
         SawToothXModifier, SawToothYModifier, SawToothZModifier, SawToothAngleModifier, 
         SawToothScaleModifier, SawToothScaleXModifier, SawToothScaleYModifier,
         SawToothSkewModifier, SawToothSkewXModifier, SawToothSkewYModifier,
+        //Square Modifiers
         SquareXModifier, SquareYModifier, SquareZModifier, SquareAngleModifier, 
         SquareScaleModifier, SquareScaleXModifier, SquareScaleYModifier,
         SquareSkewModifier, SquareSkewXModifier, SquareSkewYModifier,
@@ -152,12 +161,14 @@ class ModchartEditorState extends MusicBeatState
         //Notes Modifiers
         TimeStopModifier, JumpNotesModifier,
         NotesModifier,
-        //Misc Modifiers
+        //Strum Modifiers
         StrumsModifier, InvertModifier, FlipModifier, JumpModifier, CenterModifier,
-        StrumAngleModifier,
+        StrumAngleModifier, DrivenModifier, CenterModifier,
+        //Ease Modifiers
         EaseXModifier, EaseYModifier, EaseZModifier, EaseAngleModifier, 
         EaseScaleModifier, EaseScaleXModifier, EaseScaleYModifier,
         EaseSkewModifier, EaseSkewXModifier, EaseSkewYModifier,
+        //misc
         ShakyNotesModifier, ParalysisModifier,
         ArrowPath
     ];

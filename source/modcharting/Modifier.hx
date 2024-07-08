@@ -1242,6 +1242,58 @@ class StealthColorModifier extends Modifier
         currentValue = 1.0;
     }
 }
+class DarkColorModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('r', new ModifierSubValue(255.0));
+        subValues.set('g', new ModifierSubValue(255.0));
+        subValues.set('b', new ModifierSubValue(255.0));
+        currentValue = 1.0;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        var red = subValues.get('r').value/255; //so i can get exact values instead of 0.7668676767676768
+        var green = subValues.get('g').value/255;
+        var blue = subValues.get('b').value/255;
+
+        noteData.glowRed *= red;
+        noteData.glowGreen *= green;
+        noteData.glowBlue *= blue;
+    }
+    override public function reset(){
+        super.reset();
+        currentValue = 1.0;
+    }
+}
+class SDColorModifier extends Modifier
+{
+    override function setupSubValues()
+    {
+        subValues.set('r', new ModifierSubValue(255.0));
+        subValues.set('g', new ModifierSubValue(255.0));
+        subValues.set('b', new ModifierSubValue(255.0));
+        currentValue = 1.0;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        var red = subValues.get('r').value/255; //so i can get exact values instead of 0.7668676767676768
+        var green = subValues.get('g').value/255;
+        var blue = subValues.get('b').value/255;
+
+        noteData.glowRed *= red;
+        noteData.glowGreen *= green;
+        noteData.glowBlue *= blue;
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        strumMath(noteData, lane, pf);
+    }
+    override public function reset(){
+        super.reset();
+        currentValue = 1.0;
+    }
+}
 class SuddenModifier extends Modifier
 {
     override function setupSubValues()
