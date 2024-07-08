@@ -3978,6 +3978,13 @@ class Center2Modifier extends Modifier
     }
 }
 
+class SpiralHoldsModifier extends Modifier //unused
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.spiralHold += currentValue;
+    }
+}
 // class StraightHoldsModifier extends Modifier //unused
 // {
 //     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)

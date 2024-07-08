@@ -40,6 +40,8 @@ class NotePositionData implements IFlxDestroyable
     public var arrowPathBackwardsLength:Float = 0;
 
     public var pathGrain:Float = 0;
+
+    public var spiralHold:Float = 0;
     // public var pathColor:StringTools.hex();
 
     // public var straightHold:Float;
@@ -81,6 +83,8 @@ class NotePositionData implements IFlxDestroyable
         this.arrowPathBackwardsLength = 0;
 
         this.pathGrain = 0;
+
+        this.spiralHold = 0;
         // this.pathColor = "000000";
 
         // this.straightHold = 0; //why tf does a strum need a damn "straightHold" value XD?
@@ -117,6 +121,8 @@ class NotePositionData implements IFlxDestroyable
         this.arrowPathBackwardsLength = 0;
 
         this.pathGrain = 0;
+
+        this.spiralHold = 0;
         // this.pathColor = "000000";
 
         // this.straightHold = 0; //different to up this doesn't break shit LOL

@@ -465,6 +465,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         daNote.alpha = noteData.alpha;
         daNote.mesh.alpha = daNote.alpha;
         daNote.mesh.shader = daNote.rgbShader.parent.shader; //idfk if this works.
+        daNote.mesh.spiralHolds = (noteData.spiralHold >= 1); //if noteData its 1 spiral holds mod should be enabled?
 
         // daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
         // daNote.rgbShader.stealthGlowRed = noteData.glowRed;

@@ -169,7 +169,7 @@ class ModchartEditorState extends MusicBeatState
         EaseScaleModifier, EaseScaleXModifier, EaseScaleYModifier,
         EaseSkewModifier, EaseSkewXModifier, EaseSkewYModifier,
         //misc
-        ShakyNotesModifier, ParalysisModifier,
+        ShakyNotesModifier, ParalysisModifier, SpiralHoldsModifier,
         ArrowPath
     ];
     public static var easeList:Array<String> = [
