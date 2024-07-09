@@ -3463,7 +3463,7 @@ class TornadoZModifier extends Modifier
 }
 class TornadoAngleModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3482,7 +3482,7 @@ class TornadoAngleModifier extends Modifier
 }
 class TornadoScaleModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3502,7 +3502,7 @@ class TornadoScaleModifier extends Modifier
 }
 class TornadoScaleXModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3521,7 +3521,7 @@ class TornadoScaleXModifier extends Modifier
 }
 class TornadoScaleYModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3540,7 +3540,7 @@ class TornadoScaleYModifier extends Modifier
 }
 class TornadoSkewModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3560,7 +3560,7 @@ class TornadoSkewModifier extends Modifier
 }
 class TornadoSkewXModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3579,7 +3579,7 @@ class TornadoSkewXModifier extends Modifier
 }
 class TornadoSkewYModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3599,7 +3599,7 @@ class TornadoSkewYModifier extends Modifier
 
 class TanTornadoModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3618,7 +3618,7 @@ class TanTornadoModifier extends Modifier
 }
 class TanTornadoYModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3637,7 +3637,7 @@ class TanTornadoYModifier extends Modifier
 }
 class TanTornadoZModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3656,7 +3656,7 @@ class TanTornadoZModifier extends Modifier
 }
 class TanTornadoAngleModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3675,7 +3675,7 @@ class TanTornadoAngleModifier extends Modifier
 }
 class TanTornadoScaleModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3695,7 +3695,7 @@ class TanTornadoScaleModifier extends Modifier
 }
 class TanTornadoScaleXModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3714,7 +3714,7 @@ class TanTornadoScaleXModifier extends Modifier
 }
 class TanTornadoScaleYModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3733,7 +3733,7 @@ class TanTornadoScaleYModifier extends Modifier
 }
 class TanTornadoSkewModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3753,7 +3753,7 @@ class TanTornadoSkewModifier extends Modifier
 }
 class TanTornadoSkewXModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
@@ -3772,7 +3772,7 @@ class TanTornadoSkewXModifier extends Modifier
 }
 class TanTornadoSkewYModifier extends Modifier
 {
-    override function setupInformation()
+    override function setupSubValues()
     {
         subValues.set('speed', new ModifierSubValue(1.0));
     }
