@@ -120,7 +120,12 @@ class ModchartEditorState extends MusicBeatState
         //Path Modifiers
         IncomingAngleModifier, InvertSineModifier, DizzyModifier,
         //Tornado Modifiers
-        TornadoModifier, TornadoYModifier, TornadoZModifier,
+        TornadoModifier, TornadoYModifier, TornadoZModifier, TornadoAngleModifier,
+        TornadoScaleModifier, TornadoScaleXModifier, TornadoScaleYModifier,
+        TornadoSkewModifier, TornadoSkewXModifier, TornadoSkewYModifier,
+        TanTornadoModifier, TanTornadoYModifier, TanTornadoZModifier, TanTornadoAngleModifier,
+        TanTornadoScaleModifier, TanTornadoScaleXModifier, TanTornadoScaleYModifier,
+        TanTornadoSkewModifier, TanTornadoSkewXModifier, TanTornadoSkewYModifier,
         //EaseCurve Modifiers
         EaseCurveModifier, EaseCurveXModifier, EaseCurveYModifier, EaseCurveZModifier, EaseCurveAngleModifier, 
         EaseCurveScaleModifier, EaseCurveScaleXModifier, EaseCurveScaleYModifier,
