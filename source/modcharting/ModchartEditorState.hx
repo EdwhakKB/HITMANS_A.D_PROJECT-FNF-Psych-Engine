@@ -168,6 +168,10 @@ class ModchartEditorState extends MusicBeatState
         EaseXModifier, EaseYModifier, EaseZModifier, EaseAngleModifier, 
         EaseScaleModifier, EaseScaleXModifier, EaseScaleYModifier,
         EaseSkewModifier, EaseSkewXModifier, EaseSkewYModifier,
+        //Attenuate Modifiers
+        AttenuateModifier, AttenuateYModifier, AttenuateZModifier, AttenuateAngleModifier, 
+        AttenuateScaleModifier, AttenuateScaleXModifier, AttenuateScaleYModifier,
+        AttenuateSkewModifier, AttenuateSkewXModifier, AttenuateSkewYModifier,
         //misc
         ShakyNotesModifier, ParalysisModifier, SpiralHoldsModifier,
         ArrowPath

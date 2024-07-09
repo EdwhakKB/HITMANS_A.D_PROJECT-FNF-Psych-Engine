@@ -3985,6 +3985,216 @@ class SpiralHoldsModifier extends Modifier
         noteData.spiralHold += currentValue;
     }
 }
+
+class AttenuateModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.x += newPos * curVal * p;
+        noteData.x += curVal * p *0.5;
+    }
+}
+class AttenuateYModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.y += newPos * curVal * p;
+        noteData.y += curVal * p *0.5;
+    }
+}
+class AttenuateZModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.z += newPos * curVal * p;
+        noteData.z += curVal * p *0.5;
+    }
+}
+class AttenuateAngleModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.angle += newPos * curVal * p;
+        noteData.angle += curVal * p *0.5;
+    }
+}
+class AttenuateScaleModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.scaleX *= 1+(newPos * curVal * p);
+        noteData.scaleX *= 1+(curVal * p *0.1);
+
+        noteData.scaleY *= 1+(newPos * curVal * p);
+        noteData.scaleY *= 1+(curVal * p *0.1);
+    }
+}
+class AttenuateScaleXModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.scaleX *= 1+(newPos * curVal * p);
+        noteData.scaleX *= 1+(curVal * p * 0.1);
+    }
+}
+class AttenuateScaleYModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.scaleY *= 1+(newPos * curVal * p);
+        noteData.scaleY *= 1+(curVal * p * 0.1);
+    }
+}
+class AttenuateSkewModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.skewX += newPos * curVal * p;
+        noteData.skewX += curVal * p *0.5;
+
+        noteData.skewY += newPos * curVal * p;
+        noteData.skewY += curVal * p *0.5;
+    }
+}
+class AttenuateSkewXModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.skewX += newPos * curVal * p;
+        noteData.skewX += curVal * p *0.5;
+    }
+}
+class AttenuateSkewYModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var scrollSwitch = 1;
+            if (instance != null)
+                if (ModchartUtil.getDownscroll(instance))
+                    scrollSwitch *= -1;
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd,0,NoteMovement.keyCount,NoteMovement.keyCount*-1*0.5,NoteMovement.keyCount*0.5);
+
+        var p = curPos * scrollSwitch;
+        p = (p * p) * 0.1;
+
+        var curVal = currentValue * 0.0015;
+
+        noteData.skewY += newPos * curVal * p;
+        noteData.skewY += curVal * p *0.5;
+    }
+}
+
+
+
 // class StraightHoldsModifier extends Modifier //unused
 // {
 //     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
