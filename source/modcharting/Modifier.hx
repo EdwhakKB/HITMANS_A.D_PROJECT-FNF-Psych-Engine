@@ -1884,7 +1884,7 @@ class BounceSkewYModifier extends Modifier
 
 class EaseCurveModifier extends Modifier
 {
-    public var easeFunc = FlxEase.linear;
+    public var easeFunc = ImprovedEases.linear;
     public function setEase(ease:String)
     {
         easeFunc = ModchartUtil.getFlxEaseByString(ease);

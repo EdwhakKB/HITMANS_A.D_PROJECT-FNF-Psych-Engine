@@ -230,47 +230,127 @@ class ModchartUtil
     }
 
     public static function getFlxEaseByString(?ease:String = '') {
-		switch(ease.toLowerCase().trim()) {
-			case 'backin': return FlxEase.backIn;
-			case 'backinout': return FlxEase.backInOut;
-			case 'backout': return FlxEase.backOut;
-			case 'bouncein': return FlxEase.bounceIn;
-			case 'bounceinout': return FlxEase.bounceInOut;
-			case 'bounceout': return FlxEase.bounceOut;
-			case 'circin': return FlxEase.circIn;
-			case 'circinout': return FlxEase.circInOut;
-			case 'circout': return FlxEase.circOut;
-			case 'cubein': return FlxEase.cubeIn;
-			case 'cubeinout': return FlxEase.cubeInOut;
-			case 'cubeout': return FlxEase.cubeOut;
-			case 'elasticin': return FlxEase.elasticIn;
-			case 'elasticinout': return FlxEase.elasticInOut;
-			case 'elasticout': return FlxEase.elasticOut;
-			case 'expoin': return FlxEase.expoIn;
-			case 'expoinout': return FlxEase.expoInOut;
-			case 'expoout': return FlxEase.expoOut;
-			case 'quadin': return FlxEase.quadIn;
-			case 'quadinout': return FlxEase.quadInOut;
-			case 'quadout': return FlxEase.quadOut;
-			case 'quartin': return FlxEase.quartIn;
-			case 'quartinout': return FlxEase.quartInOut;
-			case 'quartout': return FlxEase.quartOut;
-			case 'quintin': return FlxEase.quintIn;
-			case 'quintinout': return FlxEase.quintInOut;
-			case 'quintout': return FlxEase.quintOut;
-			case 'sinein': return FlxEase.sineIn;
-			case 'sineinout': return FlxEase.sineInOut;
-			case 'sineout': return FlxEase.sineOut;
-			case 'smoothstepin': return FlxEase.smoothStepIn;
-			case 'smoothstepinout': return FlxEase.smoothStepInOut;
-			case 'smoothstepout': return FlxEase.smoothStepInOut;
-			case 'smootherstepin': return FlxEase.smootherStepIn;
-			case 'smootherstepinout': return FlxEase.smootherStepInOut;
-			case 'smootherstepout': return FlxEase.smootherStepOut;
-		}
-		return FlxEase.linear;
+		switch (ease.toLowerCase().trim())
+        {
+            case 'backin':
+                return ImprovedEases.backIn;
+            case 'backinout':
+                return ImprovedEases.backInOut;
+            case 'backout':
+                return ImprovedEases.backOut;
+            case 'backoutin':
+                return ImprovedEases.backOutIn;
+            case 'bounce':
+                return ImprovedEases.bounce;
+            case 'bouncein':
+                return ImprovedEases.bounceIn;
+            case 'bounceinout':
+                return ImprovedEases.bounceInOut;
+            case 'bounceout':
+                return ImprovedEases.bounceOut;
+            case 'bounceoutin':
+                return ImprovedEases.bounceOutIn;
+            case 'bell':
+                return ImprovedEases.bell;
+            case 'circin':
+                return ImprovedEases.circIn;
+            case 'circinout':
+                return ImprovedEases.circInOut;
+            case 'circout':
+                return ImprovedEases.circOut;
+            case 'circoutin':
+                return ImprovedEases.circOutIn;
+            case 'cubein':
+                return ImprovedEases.cubeIn;
+            case 'cubeinout':
+                return ImprovedEases.cubeInOut;
+            case 'cubeout':
+                return ImprovedEases.cubeOut;
+            case 'cubeoutin':
+                return ImprovedEases.cubeOutIn;
+            case 'elasticin':
+                return ImprovedEases.elasticIn;
+            case 'elasticinout':
+                return ImprovedEases.elasticInOut;
+            case 'elasticout':
+                return ImprovedEases.elasticOut;
+            case 'elasticoutin':
+                return ImprovedEases.elasticOutIn;
+            case 'expoin':
+                return ImprovedEases.expoIn;
+            case 'expoinout':
+                return ImprovedEases.expoInOut;
+            case 'expoout':
+                return ImprovedEases.expoOut;
+            case 'expooutin':
+                return ImprovedEases.expoOutIn;
+            case 'inverse':
+                return ImprovedEases.inverse;
+            case 'instant':
+                return ImprovedEases.instant;
+            case 'pop':
+                return ImprovedEases.pop;
+            case 'popelastic':
+                return ImprovedEases.popElastic;
+            case 'pulse':
+                return ImprovedEases.pulse;
+            case 'pulseelastic':
+                return ImprovedEases.pulseElastic;
+            case 'quadin':
+                return ImprovedEases.quadIn;
+            case 'quadinout':
+                return ImprovedEases.quadInOut;
+            case 'quadout':
+                return ImprovedEases.quadOut;
+            case 'quadoutin':
+                return ImprovedEases.quadOutIn;
+            case 'quartin':
+                return ImprovedEases.quartIn;
+            case 'quartinout':
+                return ImprovedEases.quartInOut;
+            case 'quartout':
+                return ImprovedEases.quartOut;
+            case 'quartoutin':
+                return ImprovedEases.quartOutIn;
+            case 'quintin':
+                return ImprovedEases.quintIn;
+            case 'quintinout':
+                return ImprovedEases.quintInOut;
+            case 'quintout':
+                return ImprovedEases.quintOut;
+            case 'quintoutin':
+                return ImprovedEases.quintOutIn;
+            case 'sinein':
+                return ImprovedEases.sineIn;
+            case 'sineinout':
+                return ImprovedEases.sineInOut;
+            case 'sineout':
+                return ImprovedEases.sineOut;
+            case 'sineoutin':
+                return ImprovedEases.sineOutIn;
+            case 'spike':
+                return ImprovedEases.spike;
+            case 'smoothstepin':
+                return ImprovedEases.smoothStepIn;
+            case 'smoothstepinout':
+                return ImprovedEases.smoothStepInOut;
+            case 'smoothstepout':
+                return ImprovedEases.smoothStepOut;
+            case 'smootherstepin':
+                return ImprovedEases.smootherStepIn;
+            case 'smootherstepinout':
+                return ImprovedEases.smootherStepInOut;
+            case 'smootherstepout':
+                return ImprovedEases.smootherStepOut;
+            case 'tap':
+                return ImprovedEases.tap;
+            case 'tapelastic':
+                return ImprovedEases.tapElastic;
+            case 'tri':
+                return ImprovedEases.tri;
+        }
+        return ImprovedEases.linear;
 	}
-
 
     public static function getTimeFromBeat(beat:Float)
     {
