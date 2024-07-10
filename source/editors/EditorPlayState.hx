@@ -899,9 +899,6 @@ class EditorPlayState extends MusicBeatState
 		doof.finishThing = startCountdown;
 		doof.nextDialogueThing = startNextDialogue;
 		doof.skipDialogueThing = skipDialogue;
-
-		Conductor.songPosition = -5000;
-
 		
 		forceMiddleScroll = PlayState.SONG.middleScroll;
 		forceRightScroll = PlayState.SONG.rightScroll;
@@ -1982,21 +1979,6 @@ class EditorPlayState extends MusicBeatState
 			case "digital massacre":
 				NewHitmansGameOver.characterName = 'HITMANS';
 		}
-
-		if(backwardsSkip){
-			if(startOnTime > 0)
-			{
-				setSongTime(startOnTime - 500);
-				trace("dumb: " + startOnTime);
-			}
-		}	
-		else
-			startOnTime = 0;
-
-		/*if(timeToStart > 0){
-			setSongTime(timeToStart);
-			timeToStart = 0;
-		}*/
 
 		if(paused) {
 			//trace('Oopsie doopsie! Paused sound');
