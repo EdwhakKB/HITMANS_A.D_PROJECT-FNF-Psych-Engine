@@ -238,17 +238,17 @@ class ModchartFile
                     {
                         var scriptStr = null;
                         var script = null;
-                        #if HScriptImproved
-			            var justFilePlace = folderShit + file;
-                        script = codenameengine.scripting.Script.create(justFilePlace);
-                        if (PlayState.instance == flixel.FlxG.state)
-                            PlayState.instance.scripts.add(script);
-                        script.load();
-                        hasImproved = true;
-                        #else
+                        // #if HScriptImproved
+			            // var justFilePlace = folderShit + file;
+                        // script = codenameengine.scripting.Script.create(justFilePlace);
+                        // if (PlayState.instance == flixel.FlxG.state)
+                        //     PlayState.instance.scripts.add(script);
+                        // script.load();
+                        // hasImproved = true;
+                        // #else
                         scriptStr = File.getContent(folderShit + file);
                         script = new CustomModifierScript(scriptStr);
-                        #end
+                        // #end
                         customModifiers.set(file.replace(".hx", ""), script);
                         trace('loaded custom mod: ' + file);
                     }
