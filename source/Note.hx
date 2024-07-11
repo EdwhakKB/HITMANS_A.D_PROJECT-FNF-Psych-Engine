@@ -433,9 +433,9 @@ class Note extends FlxImprovedSprite{
 			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData, false) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
 			if(!sustainRGB && isSustainNote){
-				rgbShader.enabled = false;
-			}else if(sustainRGB && isSustainNote){
 				rgbShader.enabled = true;
+			}else if(sustainRGB && isSustainNote){
+				rgbShader.enabled = true; //no need force ig?
 			}
 			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
 
@@ -482,6 +482,11 @@ class Note extends FlxImprovedSprite{
 
 			// rgbShader.enabled = sustainRGB;
 
+			if (!sustainRGB){
+				rgbShader.r = 64; //make sure it gets forced for PF renderer too //well it don't "XD"
+				rgbShader.g = 64;
+				rgbShader.b = 64;
+			}
 			updateHitbox();
 
 			offsetX -= width / 2;
