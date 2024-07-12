@@ -16,6 +16,8 @@ class RGBPalette {
 	public var stealthGlowRed(default, set):Float;
 	public var stealthGlowGreen(default, set):Float;
 	public var stealthGlowBlue(default, set):Float;
+
+	public var enabled(default, set):Bool;
 	
 
 	private function set_r(color:FlxColor) {
@@ -63,6 +65,12 @@ class RGBPalette {
 		return value;
 	}
 
+	private function set_enabled(value:Bool) {
+		enabled = value;
+		shader.enableRGB.value = [enabled];
+		return value;
+	}
+
 	
 
 	public function new()
@@ -76,6 +84,8 @@ class RGBPalette {
 		stealthGlowRed = 1.0;
 		stealthGlowGreen = 1.0;
 		stealthGlowBlue = 1.0;
+
+		enabled = true;
 	}
 }
 
@@ -86,12 +96,13 @@ class RGBShaderReference
 	public var g(default, set):FlxColor;
 	public var b(default, set):FlxColor;
 	public var mult(default, set):Float;
-	public var enabled(default, set):Bool = true;
 
 	public var stealthGlow(default, set):Float;
 	public var stealthGlowRed(default, set):Float;
 	public var stealthGlowGreen(default, set):Float;
 	public var stealthGlowBlue(default, set):Float;
+
+	public var enabled(default, set):Bool = true;
 
 	public var parent:RGBPalette;
 	private var _owner:FlxSprite;
@@ -139,8 +150,8 @@ class RGBShaderReference
 	}
 	private function set_enabled(value:Bool)
 	{
-		_owner.shader = value ? parent.shader : null;
-		return (enabled = value);
+		if(allowNew && value != _original.enabled) cloneOriginal();
+		return (enabled = parent.enabled = value);
 	}
 
 	private function set_stealthGlow(value:Float) {
@@ -179,6 +190,7 @@ class RGBShaderReference
 			parent.stealthGlowGreen = _original.stealthGlowGreen;
 			parent.stealthGlowBlue = _original.stealthGlowBlue;
 
+			parent.enabled = _original.enabled;
 			_owner.shader = parent.shader;
 			//trace('created new shader');
 		}
@@ -199,6 +211,8 @@ class RGBPaletteShader extends FlxShader {
 		uniform float _stealthG;
 		uniform float _stealthB;
 
+		uniform bool enableRGB;
+
 		vec4 flixel_texture2DCustom(sampler2D bitmap, vec2 coord) {
 			vec4 color = flixel_texture2D(bitmap, coord);
 			if (!hasTransform) {
@@ -209,12 +223,14 @@ class RGBPaletteShader extends FlxShader {
 				return color * openfl_Alphav;
 			}
 
-			vec4 newColor = color;
-			newColor.rgb = min(color.r * r + color.g * g + color.b * b, vec3(1.0));
-			newColor.a = color.a;
-			
-			color = mix(color, newColor, mult);
-
+			if(enableRGB){ //make sure this shit loads the "RGB" changes? but still able to use "stealth" (added for those mods who use stealth)
+				vec4 newColor = color;
+				newColor.rgb = min(color.r * r + color.g * g + color.b * b, vec3(1.0));
+				newColor.a = color.a;
+				
+				color = mix(color, newColor, mult);
+			}
+				
 			vec4 glow = vec4(_stealthR,_stealthG,_stealthB,1.0);
 			glow *=  color.a;
 			color = mix(color, glow, _stealthGlow);
