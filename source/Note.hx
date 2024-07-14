@@ -229,6 +229,7 @@ class Note extends FlxImprovedSprite{
 						else
 							missHealth = 0.3;
 					}
+					sustainRGB = true;
 					hurtNote = true;
 					hitCausesMiss = true;
 				case 'Invisible Hurt Note':
@@ -247,6 +248,7 @@ class Note extends FlxImprovedSprite{
 					} else {
 						missHealth = 0.15;
 					}
+					sustainRGB = true;
 					hurtNote = true;
 					specialHurt = true;
 					hitCausesMiss = true;
@@ -474,7 +476,7 @@ class Note extends FlxImprovedSprite{
 			// 	flipX = false;
 			// }
 
-			if (ClientPrefs.notesSkin[0] == 'NOTITG'){
+			if (ClientPrefs.notesSkin[0] == 'NOTITG'){ //make sure the game only forces this for notITG sking ig?
 				sustainRGB = false;
 			}else{
 				sustainRGB = true;
