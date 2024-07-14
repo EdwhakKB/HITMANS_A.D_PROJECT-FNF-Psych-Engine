@@ -1890,6 +1890,7 @@ class EaseCurveModifier extends Modifier
         easeFunc = ModchartUtil.getFlxEaseByString(ease);
     }
 }
+
 class EaseCurveXModifier extends EaseCurveModifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
