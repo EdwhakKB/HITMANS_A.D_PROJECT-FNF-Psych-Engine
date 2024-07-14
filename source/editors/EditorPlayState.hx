@@ -138,7 +138,7 @@ class EditorPlayState extends MusicBeatState
 {
 	public var startOffset:Float = 0;
 	public var startPos:Float = 0;
-	var timerToStart:Float = 0;
+	public var timerToStart:Float = 0;
 	public function new(startPos:Float){
 		this.startPos = startPos;
 		Conductor.songPosition = startPos - startOffset;
@@ -627,6 +627,17 @@ class EditorPlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
+		// Gameplay settings
+		healthGain = ClientPrefs.getGameplaySetting('healthgain', 1);
+		healthLoss = ClientPrefs.getGameplaySetting('healthloss', 1);
+		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill', false);
+		notITGMod = ClientPrefs.getGameplaySetting('modchart', true);
+		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
+		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
+		chaosMod = ClientPrefs.getGameplaySetting('chaosmode', false);
+		chaosDifficulty = ClientPrefs.getGameplaySetting('chaosdifficulty', 1);
+		randomizedNotes = ClientPrefs.getGameplaySetting('randomnotes', false);
+		
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -1188,10 +1199,6 @@ class EditorPlayState extends MusicBeatState
 		}
 		Paths.clearUnusedMemory();
 
-		if(timeToStart > 0){						
-			clearNotesBefore(timeToStart);
-		}
-
 		CustomFadeTransition.nextCamera = camOther;
 
 		// refresh(); //z sort shit LOL
@@ -1720,6 +1727,18 @@ class EditorPlayState extends MusicBeatState
 
 			var swagCounter:Int = 0;
 
+			if (startPos > 0)
+			{
+				clearNotesBefore(startPos);
+				setSongTime(startPos - 350);
+				return;
+			}
+			else if (skipCountdown)
+			{
+				setSongTime(0);
+				return;
+			}
+
 			backwardsSkip=false;
 
 			startTimer = new FlxTimer().start(Conductor.crochet / 1000 / playbackRate, function(tmr:FlxTimer)
@@ -1976,8 +1995,10 @@ class EditorPlayState extends MusicBeatState
 		//FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		FlxG.sound.music.pitch = playbackRate;
 		FlxG.sound.music.onComplete = finishSong.bind();
-		FlxG.sound.music.time = vocals.time = startPos;
 		vocals.play();
+		
+		setSongTime(Math.max(0, startPos - 500));
+		startPos = 0;
 
 		NewHitmansGameOver.characterName = dad.curCharacter;
 		
