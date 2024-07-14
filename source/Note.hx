@@ -421,22 +421,22 @@ class Note extends FlxImprovedSprite{
 
 		this.noteData = noteData;
 
-		if (ClientPrefs.notesSkin[0] == 'NOTITG'){
-			sustainRGB = false;
-		}else{
-			sustainRGB = true;
-		}
+		// if (ClientPrefs.notesSkin[0] == 'NOTITG'){ //make sure hurts don't get affected by this shit ig?
+		// 	sustainRGB = false;
+		// }else{
+		// 	sustainRGB = true;
+		// }
 
 		if(noteData > -1) {
 			texture = '';
 			if (quantizedNotes) rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalQuantRBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData, false) : initializeGlobalHurtRGBShader(noteData));
 			// shader = rgbShader.shader;
-			if(!sustainRGB && isSustainNote){
-				rgbShader.enabled = true;
-			}else if(sustainRGB && isSustainNote){
-				rgbShader.enabled = true; //no need force ig?
-			}
+			// if(!sustainRGB && isSustainNote && !hurtNote){
+			// 	rgbShader.enabled = false;
+			// }else if(sustainRGB && isSustainNote){
+			// 	rgbShader.enabled = true; //no need force ig?
+			// }
 			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
 
 			x += swagWidth * (noteData);
@@ -474,19 +474,14 @@ class Note extends FlxImprovedSprite{
 			// 	flipX = false;
 			// }
 
-			// if (ClientPrefs.notesSkin[0] == 'NOTITG'){
-			// 	sustainRGB = false;
-			// }else{
-			// 	sustainRGB = true;
-			// }
-
-			// rgbShader.enabled = sustainRGB;
-
-			if (!sustainRGB){
-				rgbShader.r = 64; //make sure it gets forced for PF renderer too //well it don't "XD"
-				rgbShader.g = 64;
-				rgbShader.b = 64;
+			if (ClientPrefs.notesSkin[0] == 'NOTITG'){
+				sustainRGB = false;
+			}else{
+				sustainRGB = true;
 			}
+
+			rgbShader.enabled = sustainRGB;
+
 			updateHitbox();
 
 			offsetX -= width / 2;
