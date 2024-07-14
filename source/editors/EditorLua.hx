@@ -4157,6 +4157,89 @@ class EditorLua {
 		#end
 	}
 
+	public function get(var_name:String, type:Dynamic):Dynamic
+	{
+		var result:Any = null;
+
+		Lua.getglobal(lua, var_name);
+		result = Convert.fromLua(lua, -1);
+		Lua.pop(lua, 1);
+
+		if (result == null) return null;
+		else
+		{
+			var result = convert(result, type);
+			return result;
+		}
+	}
+
+	public static function convert(v:Any, type:String):Dynamic
+	{
+		if (Std.isOfType(v, String) && type != null)
+		{
+		var v:String = v;
+		if (type.substr(0, 4) == 'array')
+		{
+			if (type.substr(4) == 'float')
+			{
+				var array:Array<String> = v.split(',');
+				var array2:Array<Float> = new Array();
+
+				for (vars in array)
+				{
+					array2.push(Std.parseFloat(vars));
+				}
+
+				return array2;
+			}
+			else if (type.substr(4) == 'int')
+				{
+				var array:Array<String> = v.split(',');
+				var array2:Array<Int> = new Array();
+
+				for (vars in array)
+				{
+					array2.push(Std.parseInt(vars));
+				}
+
+				return array2;
+			}
+			else
+			{
+				var array:Array<String> = v.split(',');
+				return array;
+			}
+		}
+		else if (type == 'float')
+		{
+			return Std.parseFloat(v);
+		}
+		else if (type == 'int')
+		{
+			return Std.parseInt(v);
+		}
+		else if (type == 'bool')
+		{
+			if (v == 'true')
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return v;
+		}
+		}
+		else
+		{
+			return v;
+		}
+	}
+
 	public static inline function getInstance()
 	{
 		return EditorPlayState.instance;
