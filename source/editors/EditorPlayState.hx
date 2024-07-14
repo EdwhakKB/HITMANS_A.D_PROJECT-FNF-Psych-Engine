@@ -2237,10 +2237,6 @@ class EditorPlayState extends MusicBeatState
 		}
 		checkEventNote();
 		generatedMusic = true;
-	
-		function set_chromaIntensity(value:Float):Float {
-			throw new haxe.exceptions.NotImplementedException();
-		}
 	}
 
 	function eventPushed(event:EventNote) {

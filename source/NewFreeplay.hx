@@ -120,10 +120,11 @@ class NewFreeplay extends MusicBeatState
 			var box:FlxSprite = new FlxSprite();
 			box.loadGraphic(Paths.image('freeplay/EmptyBox'));
 			// box.x=FlxG.width / 2 -(box.width/16);
-			box.x = 10;
-			box.y = FlxG.height / 2 - (box.height / 2) + (i * 415);
+			box.x = -80;
+			box.y = FlxG.height / 2 - (box.height / 2) + (i * 415) - 250;
 			box.antialiasing = ClientPrefs.globalAntialiasing;
 			box.ID = i;
+			box.visible = true;
 			grupo.add(box);
 
 			var imageShow:String = WeekData.weeksList[i];
@@ -144,10 +145,11 @@ class NewFreeplay extends MusicBeatState
   			imagen.loadGraphic(Paths.image(imagenPath+imagePH));
 
 			// imagen.x=FlxG.width / 2 -(imagen.width/16);
-			imagen.x = 10;
-			imagen.y = FlxG.height / 2 - (imagen.height / 2) + (i * 415);
+			imagen.x = -80;
+			imagen.y = FlxG.height / 2 - (imagen.height / 2) + (i * 415) - 250;
 			imagen.antialiasing = ClientPrefs.globalAntialiasing;
 			imagen.ID = i;
+			imagen.visible = true;
 			grupoImagen.add(imagen);
 		}
 		WeekData.setDirectoryFromWeek();
@@ -506,7 +508,7 @@ class NewFreeplay extends MusicBeatState
 					itext.offset.x = 0;
 				}
 				itext.y = (FlxG.height / 2) - (songs[curSelected].songName.length * 70 / 2) + 70 * i;
-				itext.x = (FlxG.width / 4)- (songs[curSelected].songName.length * 70 / 2) + 70 * i;
+				itext.x = (FlxG.width / 4)- (songs[curSelected].songName.length * 70 / 2) + 70 + 400;
 				grupoTexto.add(itext);
 			}
 		}
