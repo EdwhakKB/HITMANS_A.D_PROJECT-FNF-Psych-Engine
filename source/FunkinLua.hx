@@ -3326,6 +3326,7 @@ class FunkinLua {
 		});
 
 		Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
+			trace('beat, $beat, func, $func');
             PlayState.threadBeat(beat, func);
             // var retVal:Dynamic = null;
 
@@ -3347,6 +3348,7 @@ class FunkinLua {
         });
 
 		Lua_helper.add_callback(lua, "threadUpdate", function(beatStart:Float, beatEnd:Float, func:Dynamic, onComp:Dynamic) {
+			trace('beatStart, $beatStart, beatEnd, $beatEnd, func, $func, onComp, $onComp');
             PlayState.threadUpdate(beatStart, beatEnd, func, onComp);
             // var retVal:Dynamic = null;
 
