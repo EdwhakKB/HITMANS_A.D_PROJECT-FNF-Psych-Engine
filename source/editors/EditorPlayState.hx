@@ -4852,11 +4852,11 @@ class EditorPlayState extends MusicBeatState
 	public function getOnScripts(variable:String, arg:String, exclusions:Array<String> = null)
 	{
 		if(exclusions == null) exclusions = [];
-		//getOnLuas(variable, arg, exclusions);
+		getOnLuas(variable, arg, exclusions);
 		getOnHScript(variable, exclusions);
 	}
 
-	/*public function getOnLuas(variable:String, arg:String, exclusions:Array<String> = null)
+	public function getOnLuas(variable:String, arg:String, exclusions:Array<String> = null)
 	{
 		#if LUA_ALLOWED
 		if(exclusions == null) exclusions = [];
@@ -4867,7 +4867,7 @@ class EditorPlayState extends MusicBeatState
 			script.get(variable, arg);
 		}
 		#end
-	}*/
+	}
 
 	public function getOnHScript(variable:String, exclusions:Array<String> = null)
 	{
