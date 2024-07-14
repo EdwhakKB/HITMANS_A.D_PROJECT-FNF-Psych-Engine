@@ -3312,7 +3312,7 @@ class EditorLua {
 		});
 
 		Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
-            EditorPlayState.threadBeat(beat, () -> {func;});
+            EditorPlayState.threadBeat(beat, func);
             // var retVal:Dynamic = null;
 
             // #if hscript
@@ -3333,7 +3333,7 @@ class EditorLua {
         });
 
 		Lua_helper.add_callback(lua, "threadUpdate", function(beatStart:Float, beatEnd:Float, func:Dynamic, onComp:Dynamic) {
-            EditorPlayState.threadUpdate(beatStart, beatEnd, () -> {func;}, () -> {onComp;});
+            EditorPlayState.threadUpdate(beatStart, beatEnd, func, onComp);
             // var retVal:Dynamic = null;
 
             // #if hscript

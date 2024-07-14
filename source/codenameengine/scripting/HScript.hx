@@ -107,6 +107,8 @@ class HScript extends Script {
 		#if HSCRIPT_ALLOWED
 		if (PlayState.instance == flixel.FlxG.state)
 			PlayState.instance.addTextToDebug('$fn, $err', flixel.util.FlxColor.RED, 16);
+		else if (editors.EditorPlayState.instance == flixel.FlxG.state)
+			editors.EditorPlayState.instance.addTextToDebug('$fn, $err', flixel.util.FlxColor.RED, 16);
 		#end
 	}
 

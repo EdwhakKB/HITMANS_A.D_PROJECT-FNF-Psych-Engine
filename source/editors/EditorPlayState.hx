@@ -104,16 +104,34 @@ import codenameengine.scripting.Script as HScriptCode;
 
 import HazardAFT_Capture as AFT_capture;
 
-typedef ThreadBeatList = {
-	beat:Float,
-	func:Dynamic
+@:structInit
+class ThreadBeatList 
+{
+	public var beat:Float = 0;
+	public var func:Void->Void;
+
+	public function new(newBeat:Float, newFunc:Dynamic)
+	{
+		this.beat = newBeat;
+		this.func = () -> newFunc;
+	}
 }
 
-typedef ThreadUpdateList = {
-	startbeat:Float,
-	endbeat:Float,
-	func:Dynamic,
-	oncompletefunc:Dynamic
+@:structInit
+class ThreadUpdateList 
+{
+	public var startbeat:Float;
+	public var endbeat:Float;
+	public var func:Void->Void;
+	public var oncompletefunc:Void->Void;
+
+	public function new(startBeat:Float, endBeat:Float, newFunc:Dynamic, onCompleteFunc:Dynamic)
+	{
+		this.startbeat = startBeat;
+		this.endbeat = endBeat;
+		this.func = () -> newFunc;
+		this.oncompletefunc = () -> onCompleteFunc;
+	}
 }
 
 class EditorPlayState extends MusicBeatState
@@ -554,7 +572,7 @@ class EditorPlayState extends MusicBeatState
 		instance = this;
 
 		#if (HSCRIPT_ALLOWED && HScriptImproved)
-		if (scripts == null) (scripts = new codenameengine.scripting.ScriptPack("PlayState")).setParent(this);
+		if (scripts == null) (scripts = new codenameengine.scripting.ScriptPack("EditorPlayState")).setParent(this);
 		#end
 
 		debugKeysChart = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
@@ -1958,6 +1976,7 @@ class EditorPlayState extends MusicBeatState
 		//FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 		FlxG.sound.music.pitch = playbackRate;
 		FlxG.sound.music.onComplete = finishSong.bind();
+		FlxG.sound.music.time = vocals.time = startPos;
 		vocals.play();
 
 		NewHitmansGameOver.characterName = dad.curCharacter;
@@ -2011,24 +2030,14 @@ class EditorPlayState extends MusicBeatState
 
 	public static function threadBeat(beat:Float, func:Dynamic)
 	{
-		threadbeat.push(
-		{
-			beat: beat,
-			func: func
-		});
+		threadbeat.push(new ThreadBeatList(beat, func));
 	}
 
 	public static var threadupdate:Array<ThreadUpdateList> = [];
 
 	public static function threadUpdate(startBeat:Float, endBeat:Float, func:Dynamic, onCompleteFunc:Dynamic)
 	{
-		threadupdate.push(
-		{
-			startbeat: startBeat,
-			endbeat: endBeat,
-			func: func,
-			oncompletefunc: onCompleteFunc
-		});
+		threadupdate.push(new ThreadUpdateList(startBeat, endBeat, func, onCompleteFunc));
 	}
 
 	var debugNum:Int = 0;
@@ -2777,18 +2786,15 @@ class EditorPlayState extends MusicBeatState
 
 		if (startingSong)
 		{
-			if (startedCountdown)
-			{
-				timerToStart -= elapsed * 1000 * playbackRate;
-				Conductor.songPosition = startPos - timerToStart;
-				if(timerToStart < 0) {
-					startSong();
-				}
+			timerToStart -= FlxG.elapsed * 1000 * playbackRate;
+			Conductor.songPosition = startPos - timerToStart;
+			if(timerToStart < 0) {
+				startSong();
 			}
 		}
 		else
 		{
-			Conductor.songPosition += elapsed * 1000 * playbackRate;
+			Conductor.songPosition += FlxG.elapsed * 1000 * playbackRate;
 			if (!paused)
 			{
 				songTime += FlxG.game.ticks - previousFrameTime;
@@ -5027,7 +5033,7 @@ class EditorPlayState extends MusicBeatState
 
 				if (!file.contains('stages')){
 					//Set the things first
-					script.set("PlayState.SONG", PlayState.SONG);
+					script.set("SONG", PlayState.SONG);
 				}else{
 					script.set("game", PlayState.instance);
 				}

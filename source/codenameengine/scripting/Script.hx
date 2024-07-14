@@ -7,6 +7,7 @@ import hscript.IHScriptCustomConstructor;
 import flixel.util.FlxStringUtil;
 import flixel.FlxBasic;
 import flixel.FlxG;
+import editors.EditorPlayState;
 
 @:allow(codenameengine.scripting.ScriptPack)
 /**
@@ -56,6 +57,7 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			"FlxColor"		  => CoolUtil.getMacroAbstractClass("flixel.util.FlxColor"),
 			"Mods"		  => Mods,
 			"PlayState"		 => PlayState,
+			"EditorPlayState" => editors.EditorPlayState,
 			"GameOverSubstate"  => GameOverSubstate,
 			"HealthIcon"		=> HealthIcon,
 			"Note"			  => Note,
@@ -188,11 +190,13 @@ class Script extends FlxBasic implements IFlxDestroyable {
 		set('setVar', function(name:String, value:Dynamic)
 		{
 			if (PlayState.instance == FlxG.state) PlayState.instance.variables.set(name, value);
+			else if (EditorPlayState.instance == FlxG.state) EditorPlayState.instance.variables.set(name, value);
 		});
 		set('getVar', function(name:String)
 		{
 			var result:Dynamic = null;
 			if (PlayState.instance == FlxG.state) if(PlayState.instance.variables.exists(name)) result = PlayState.instance.variables.get(name);
+			else if (EditorPlayState.instance == FlxG.state) if(EditorPlayState.instance.variables.exists(name)) result = EditorPlayState.instance.variables.get(name);
 			return result;
 		});
 		set('removeVar', function(name:String)
@@ -203,6 +207,12 @@ class Script extends FlxBasic implements IFlxDestroyable {
 					PlayState.instance.variables.remove(name);
 					return true;
 				}
+			}else if (EditorPlayState.instance == FlxG.state){
+				if(EditorPlayState.instance.variables.exists(name))
+				{
+					EditorPlayState.instance.variables.remove(name);
+					return true;
+				}
 			}
 			return false;
 		});
@@ -210,6 +220,8 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			if(color == null) color = flixel.util.FlxColor.WHITE;
 			if (PlayState.instance == FlxG.state)
 				PlayState.instance.addTextToDebug(text, color);
+			else if (EditorPlayState.instance == FlxG.state)
+				EditorPlayState.instance.addTextToDebug(text, color);
 			else trace(text);
 		});
 
@@ -341,12 +353,19 @@ class Script extends FlxBasic implements IFlxDestroyable {
 		set('BeatXModifier', modcharting.Modifier.BeatXModifier);
 		if (PlayState.instance != null && PlayState.SONG != null && PlayState.SONG.notITG && PlayState.instance.notITGMod)
 			modcharting.ModchartFuncs.loadHScriptFunctions(this);
+		else if (EditorPlayState.instance != null && PlayState.SONG != null && PlayState.SONG.notITG)
+			modcharting.ModchartFuncs.loadHScriptFunctions(this);
 
 		if(PlayState.instance == FlxG.state)
 		{
 			set('addBehindGF', PlayState.instance.addBehindGF);
 			set('addBehindDad', PlayState.instance.addBehindDad);
 			set('addBehindBF', PlayState.instance.addBehindBF);
+		}else if (EditorPlayState.instance == FlxG.state)
+		{
+			set('addBehindGF', EditorPlayState.instance.addBehindGF);
+			set('addBehindDad', EditorPlayState.instance.addBehindDad);
+			set('addBehindBF', EditorPlayState.instance.addBehindBF);
 		}
 
 		set('setVarFromClass', function(instance:String, variable:String, value:Dynamic)
