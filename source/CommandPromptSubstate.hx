@@ -374,6 +374,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 
 				var miCrash = new FlxSprite();
 				miCrash.makeGraphic(FlxG.width, FlxG.height, 0xff0874ab);
+				miCrash.cameras = [camOther];
 				add(miCrash);
 
 				if(lime.system.System.platformLabel != null && lime.system.System.platformLabel != "") {
@@ -389,6 +390,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 				caritatriste.x -= 360;
 				caritatriste.y -= 160;
 				caritatriste.antialiasing = true;
+				caritatriste.cameras = [camOther];
 				add(caritatriste);
 				
 				var text:FlxText = new FlxText(caritatriste.x, caritatriste.y + 180, 0, "");
@@ -396,18 +398,21 @@ class CommandPromptSubstate extends MusicBeatSubstate
 				text.scrollFactor.set();
 				text.antialiasing = true;
 				text.text = "Your device ran into a problem and needs to restart. We're just \ncollecting some error info, and then we'll restart for you.";
+				text.cameras = [camOther];
 				add(text);
 
 				var completeText:FlxText = new FlxText(text.x + 40, text.y + 75, 0, "complete");
 				completeText.setFormat(Paths.font("Consolas-Bold.ttf"), 20, FlxColor.WHITE, LEFT,FlxColor.BLACK);
 				completeText.scrollFactor.set();
 				completeText.antialiasing = true;
+				completeText.cameras = [camOther];
 				add(completeText);
 
 				micrashPercentText = new FlxText(text.x, completeText.y, 0, "");
 				micrashPercentText.setFormat(Paths.font("Consolas-Bold.ttf"), 20, FlxColor.WHITE, LEFT,FlxColor.BLACK);
 				micrashPercentText.scrollFactor.set();
 				micrashPercentText.antialiasing = true;
+				micrashPercentText.cameras = [camOther];
 				add(micrashPercentText);
 
 				var moreInfo:FlxText = new FlxText(text.x + 130, text.y + 140, 0, "");
@@ -415,6 +420,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 				moreInfo.scrollFactor.set();
 				moreInfo.antialiasing = true;
 				moreInfo.text = "For more information about this issue and possible fixes, visit \nhttps://www.windows.com/stopcode \n\n\nIf you call a support person, give them this info: \nStop Code: ";
+				moreInfo.cameras = [camOther];
 				add(moreInfo);
 				moreInfo.text += errors[Std.random(errors.length)];
 
@@ -423,6 +429,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 				miQR.scrollFactor.set(0, 0);
 				miQR.setGraphicSize(Std.int(miQR.width * 0.1));
 				miQR.antialiasing = true;
+				miQR.cameras = [camOther];
 				add(miQR);
 				FlxG.sound.play(Paths.sound('Edwhak/bluescreenofdeath'), 1, true);
 				//I asked a hacker to do this lmao
