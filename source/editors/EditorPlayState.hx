@@ -1731,6 +1731,17 @@ class EditorPlayState extends MusicBeatState
 			{
 				clearNotesBefore(startPos);
 				setSongTime(startPos - 350);
+				if (PlayState.SONG.notITG && notITGMod){
+					playfieldRenderer.modifierTable.clear();
+					playfieldRenderer.modchart.loadModifiers();
+					playfieldRenderer.tweenManager.completeAll();
+					playfieldRenderer.eventManager.clearEvents();
+					playfieldRenderer.modifierTable.resetMods();
+					playfieldRenderer.modchart.loadEvents();
+					playfieldRenderer.update(0);
+					ModchartFuncs.loadLuaFunctions();
+					callOnScripts('onModchart');
+				}
 				return;
 			}
 			else if (skipCountdown)
@@ -2549,10 +2560,6 @@ class EditorPlayState extends MusicBeatState
 	var resetted:Bool = false;
 	override public function update(elapsed:Float)
 	{
-		/*if (FlxG.keys.justPressed.NINE)
-		{
-			iconP1.swapOldIcon();
-		}*/
 		callOnScripts('onUpdate', [elapsed]);
 		if (notITGMod && PlayState.SONG.notITG)
 			playfieldRenderer.speed = playbackRate; //LMAO IT LOOKS SOO GOOFY AS FUCK
@@ -2577,6 +2584,8 @@ class EditorPlayState extends MusicBeatState
 
 			activeModifiers.text = leText;
 			activeModifiers.screenCenter();
+
+			if (FlxG.keys.justPressed.NINE) activeModifiers.visible = !activeModifiers.visible;
 		}
 
 		// refresh(); //z sort shit LOL
@@ -2788,10 +2797,18 @@ class EditorPlayState extends MusicBeatState
 
 		if (!endingSong && !inCutscene)
 		{
-			if (FlxG.keys.anyJustPressed(debugKeysModchart) || FlxG.keys.anyJustPressed(debugKeysChart)) 
+			if (FlxG.keys.anyJustPressed(debugKeysModchart)){
+				if (hitmansSongs.contains(PlayState.SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
+					antiCheat();
+				}else{
+					openModchartEditor();
+				}
+			}else if (FlxG.keys.anyJustPressed(debugKeysChart))
 			{
 				if (hitmansSongs.contains(PlayState.SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
 					antiCheat();
+				}else{
+					openChartEditor();
 				}
 			}
 		}
@@ -3047,10 +3064,32 @@ class EditorPlayState extends MusicBeatState
 			if(FlxG.keys.justPressed.F5) { //Go 10 seconds into the past :O
 				setSongTime(Conductor.songPosition - 10000);
 				clearNotesBefore(Conductor.songPosition);
+				if (PlayState.SONG.notITG && notITGMod){
+					playfieldRenderer.modifierTable.clear();
+					playfieldRenderer.modchart.loadModifiers();
+					playfieldRenderer.tweenManager.completeAll();
+					playfieldRenderer.eventManager.clearEvents();
+					playfieldRenderer.modifierTable.resetMods();
+					playfieldRenderer.modchart.loadEvents();
+					playfieldRenderer.update(0);
+					ModchartFuncs.loadLuaFunctions();
+					callOnScripts('onModchart');
+				}
 			}
 			if(FlxG.keys.justPressed.F6) { //Go 10 seconds into the future :O
 				setSongTime(Conductor.songPosition + 10000);
 				clearNotesBefore(Conductor.songPosition);
+				if (PlayState.SONG.notITG && notITGMod){
+					playfieldRenderer.modifierTable.clear();
+					playfieldRenderer.modchart.loadModifiers();
+					playfieldRenderer.tweenManager.completeAll();
+					playfieldRenderer.eventManager.clearEvents();
+					playfieldRenderer.modifierTable.resetMods();
+					playfieldRenderer.modchart.loadEvents();
+					playfieldRenderer.update(0);
+					ModchartFuncs.loadLuaFunctions();
+					callOnScripts('onModchart');
+				}
 			}
 			if(FlxG.keys.justPressed.F7 && !paused) {
 				if (!falsePaused)
@@ -3194,6 +3233,37 @@ class EditorPlayState extends MusicBeatState
 		PlayState.deathCounter = 0;
 		PlayState.seenCutscene = false;
 		PlayState.startOnTime = 0;
+	}
+
+	function openChartEditor()
+	{
+		resetPlayData();
+		persistentUpdate = false;
+		paused = true;
+		cancelMusicFadeTween();
+		MusicBeatState.switchState(new ChartingState());
+		chartingMode = true;
+
+		#if desktop
+		DiscordClient.changePresence("Chart Editor", null, null, true);
+		DiscordClient.resetClientID();
+		#end
+	}
+
+	function openModchartEditor(?old:Bool)
+	{
+		resetPlayData();
+		persistentUpdate = false;
+		paused = true;
+		cancelMusicFadeTween();
+		MusicBeatState.switchState(new modcharting.ModchartEditorState());
+
+		chartingMode = true;
+	
+		#if desktop
+		DiscordClient.changePresence("Modchart Editor", null, null, true);
+		DiscordClient.resetClientID();
+		#end
 	}
 
 	public function checkEventNote() {

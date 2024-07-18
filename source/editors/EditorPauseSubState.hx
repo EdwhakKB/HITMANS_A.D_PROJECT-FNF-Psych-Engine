@@ -291,12 +291,18 @@ class EditorPauseSubState extends MusicBeatSubstate
 						pauseMusic.destroy();
 
 						Mods.loadTopMod();
-						MusicBeatState.switchState(new MainMenuState());
+						if(PlayState.isStoryMode) {
+							MusicBeatState.switchState(new StoryMenuState());
+						} else {
+							MusicBeatState.switchState(new FreeplayState());
+						}
 						EditorPlayState.cancelMusicFadeTween();
 						FlxG.sound.playMusic(Paths.music('bloodstained'));
-						PlayState.changedDifficulty = false;
 						EditorPlayState.chartingMode = false;
 						EditorPlayState.resetPlayData();
+						PlayState.changedDifficulty = false;
+						PlayState.chartingMode = false;
+						PlayState.resetPlayData();
 				}
 			}
 		}
