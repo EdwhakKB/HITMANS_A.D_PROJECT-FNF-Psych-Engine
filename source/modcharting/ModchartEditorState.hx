@@ -422,7 +422,7 @@ class ModchartEditorState extends MusicBeatState
         debugText.alignment = FlxTextAlign.LEFT;
         
         
-        UI_box = new PsychUIBox(100, gridSize*2, FlxG.width-200, 500, ['Editor', 'Modifiers', 'Events', 'Playfields']);
+        UI_box = new PsychUIBox(100, gridSize*2, FlxG.width-200, 500, ['Editor', 'Events', 'Modifiers', 'Playfields']);
 		UI_box.scrollFactor.set();
         add(UI_box);
 

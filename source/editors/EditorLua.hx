@@ -119,6 +119,7 @@ class EditorLua {
 		lua_Cameras.set("visuals", {cam: EditorPlayState.instance.camVisuals, shaders: [], shaderNames: []});
 		lua_Cameras.set("notecameras1", {cam: EditorPlayState.instance.noteCameras1, shaders: [], shaderNames: []});
 		lua_Cameras.set("notecameras0", {cam: EditorPlayState.instance.noteCameras0, shaders: [], shaderNames: []});
+		lua_Cameras.set("proxy", {cam: EditorPlayState.instance.camProxy, shaders: [], shaderNames: []});
 		lua_Cameras.set("hud", {cam: EditorPlayState.instance.camHUD, shaders: [], shaderNames: []});
         lua_Cameras.set("other", {cam: EditorPlayState.instance.camOther, shaders: [], shaderNames: []});
 
@@ -3311,8 +3312,8 @@ class EditorLua {
 			return false;
 		});
 
-		Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
-            EditorPlayState.threadBeat(beat, func);
+		// Lua_helper.add_callback(lua, "threadBeat", function(beat:Float, func:Dynamic) {
+        //     EditorPlayState.threadBeat(beat, func);
             // var retVal:Dynamic = null;
 
             // #if hscript
@@ -3330,10 +3331,10 @@ class EditorLua {
             // if(retVal != null && !isOfTypes(retVal, [Bool, Int, Float, String, Array])) retVal = null;
             // if(retVal == null) Lua.pushnil(lua);
             // return retVal;
-        });
+        // });
 
-		Lua_helper.add_callback(lua, "threadUpdate", function(beatStart:Float, beatEnd:Float, func:Dynamic, onComp:Dynamic) {
-            EditorPlayState.threadUpdate(beatStart, beatEnd, func, onComp);
+		// Lua_helper.add_callback(lua, "threadUpdate", function(beatStart:Float, beatEnd:Float, func:Dynamic, onComp:Dynamic) {
+        //     EditorPlayState.threadUpdate(beatStart, beatEnd, func, onComp);
             // var retVal:Dynamic = null;
 
             // #if hscript
@@ -3351,7 +3352,7 @@ class EditorLua {
             // if(retVal != null && !isOfTypes(retVal, [Bool, Int, Float, String, Array])) retVal = null;
             // if(retVal == null) Lua.pushnil(lua);
             // return retVal;
-        });
+        // });
 
 		Lua_helper.add_callback(lua, "makeLuaProxy", function(tag:String, x:Float, y:Float, ?camera:String = '') {
 			var micamara:FlxCamera = EditorPlayState.instance.camProxy;
@@ -3865,6 +3866,7 @@ class EditorLua {
 				case 'camhud' | 'hud': return EditorPlayState.instance.camHUD;
 				case 'notecameras0' | 'notes0': return EditorPlayState.instance.noteCameras0;
 				case 'notecameras1' | 'notes1': return EditorPlayState.instance.noteCameras1;
+				case 'camproxy' | 'proxy': return EditorPlayState.instance.camProxy;
 				case 'camother' | 'other': return EditorPlayState.instance.camOther;
 				case 'caminterfaz' | 'interfaz': return EditorPlayState.instance.camInterfaz;
 				case 'camvisuals' | 'visuals': return EditorPlayState.instance.camVisuals;
@@ -3887,6 +3889,7 @@ class EditorLua {
             case 'camhud' | 'hud': return lua_Cameras.get("hud");
 			case 'notecameras0' | 'notes0': return lua_Cameras.get("notecameras0");
 			case 'notecameras1' | 'notes1': return lua_Cameras.get("notecameras1");
+			case 'camproxy' | 'proxy': return lua_Cameras.get("proxy");
 			case 'camother' | 'other': return lua_Cameras.get("other");
 			case 'caminterfaz' | 'interfaz': return lua_Cameras.get("interfaz");
 			case 'camvisuals' | 'visuals': return lua_Cameras.get("visuals");

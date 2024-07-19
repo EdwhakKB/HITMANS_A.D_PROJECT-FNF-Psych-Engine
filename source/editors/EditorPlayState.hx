@@ -368,6 +368,8 @@ class EditorPlayState extends MusicBeatState
 	public var camProxy:FlxCamera;
 	public var cameraSpeed:Float = 1;
 
+	var modifiersCamera:FlxCamera;
+
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
 
@@ -558,7 +560,7 @@ class EditorPlayState extends MusicBeatState
 	{
 		//trace('Playback Rate: ' + playbackRate);
 
-		ModchartFuncs.editor = false;
+		ModchartFuncs.editor = true;
 
 		tweenManager = new FlxTweenManager();
 		timerManager = new FlxTimerManager();
@@ -633,7 +635,7 @@ class EditorPlayState extends MusicBeatState
 		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill', false);
 		notITGMod = ClientPrefs.getGameplaySetting('modchart', true);
 		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
-		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
+		cpuControlled = true; //ClientPrefs.getGameplaySetting('botplay', false) -- set to true so test visuals its easier??
 		chaosMod = ClientPrefs.getGameplaySetting('chaosmode', false);
 		chaosDifficulty = ClientPrefs.getGameplaySetting('chaosdifficulty', 1);
 		randomizedNotes = ClientPrefs.getGameplaySetting('randomnotes', false);
@@ -642,11 +644,13 @@ class EditorPlayState extends MusicBeatState
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
 		camInterfaz = new FlxCamera();
+		modifiersCamera = new FlxCamera();
 		camVisuals = new FlxCamera();
 		camOther = new FlxCamera();
 		camProxy = new FlxCamera();
 		camHUD.bgColor.alpha = 0;
 		camInterfaz.bgColor.alpha = 0;
+		modifiersCamera.bgColor.alpha = 0;
 		camVisuals.bgColor.alpha = 0;
 		camOther.bgColor.alpha = 0;
 		camProxy.bgColor.alpha = 0;
@@ -659,6 +663,7 @@ class EditorPlayState extends MusicBeatState
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camInterfaz, false);
+		FlxG.cameras.add(modifiersCamera, false);
 		FlxG.cameras.add(camHUD, false);
 
 		FlxG.cameras.add(noteCameras0, false);
@@ -962,7 +967,7 @@ class EditorPlayState extends MusicBeatState
 			activeModifiers.borderSize = 2;
 			activeModifiers.scrollFactor.set();
 			activeModifiers.screenCenter();
-			activeModifiers.camera = camInterfaz;
+			activeModifiers.camera = modifiersCamera;
 			add(activeModifiers);
 
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
@@ -1098,7 +1103,7 @@ class EditorPlayState extends MusicBeatState
 		}
 
 		if (notITGMod && PlayState.SONG.notITG)
-			ModchartFuncs.loadLuaFunctions();
+			ModchartFuncs.loadLuaEditorFunctions();
 
 		if (boyfriend.LNoteColors != null && boyfriend.DNoteColors != null && boyfriend.UNoteColors != null && boyfriend.RNoteColors != null)
 		{
@@ -1739,7 +1744,7 @@ class EditorPlayState extends MusicBeatState
 					playfieldRenderer.modifierTable.resetMods();
 					playfieldRenderer.modchart.loadEvents();
 					playfieldRenderer.update(0);
-					ModchartFuncs.loadLuaFunctions();
+					ModchartFuncs.loadLuaEditorFunctions();
 					callOnScripts('onModchart');
 				}
 				return;
@@ -3072,7 +3077,7 @@ class EditorPlayState extends MusicBeatState
 					playfieldRenderer.modifierTable.resetMods();
 					playfieldRenderer.modchart.loadEvents();
 					playfieldRenderer.update(0);
-					ModchartFuncs.loadLuaFunctions();
+					ModchartFuncs.loadLuaEditorFunctions();
 					callOnScripts('onModchart');
 				}
 			}
@@ -3087,7 +3092,7 @@ class EditorPlayState extends MusicBeatState
 					playfieldRenderer.modifierTable.resetMods();
 					playfieldRenderer.modchart.loadEvents();
 					playfieldRenderer.update(0);
-					ModchartFuncs.loadLuaFunctions();
+					ModchartFuncs.loadLuaEditorFunctions();
 					callOnScripts('onModchart');
 				}
 			}
@@ -3108,8 +3113,8 @@ class EditorPlayState extends MusicBeatState
 			}
 			if(FlxG.keys.justPressed.F8) {
 				cpuControlled = !cpuControlled;
-				hitmansHUD.botplayTxt.visible = !hitmansHUD.botplayTxt.visible;
 			}
+			hitmansHUD.botplayTxt.visible = cpuControlled;
 		}
 
 		setOnScripts('cameraX', camFollowPos.x);
