@@ -3,6 +3,7 @@ package modcharting;
 import flixel.tweens.FlxEase;
 import flixel.math.FlxMath;
 import flixel.math.FlxAngle;
+import lime.math.Vector2;
 import openfl.geom.Vector3D;
 import flixel.FlxG;
 
@@ -227,6 +228,27 @@ class ModchartUtil
         pos.z *= radius;
 
         return pos;
+    }
+
+    public static function rotateAround(origin:Vector2, point:Vector2, degrees:Float):Vector2
+    {
+        // public function rotateAround(origin, point, degrees):FlxBasePoint{
+        // public function rotateAround(origin, point, degrees){
+        var angle:Float = degrees * (Math.PI / 180);
+        var ox = origin.x;
+        var oy = origin.y;
+        var px = point.x;
+        var py = point.y;
+    
+        var qx = ox + FlxMath.fastCos(angle) * (px - ox) - FlxMath.fastSin(angle) * (py - oy);
+        var qy = oy + FlxMath.fastSin(angle) * (px - ox) + FlxMath.fastCos(angle) * (py - oy);
+    
+        // point.x = qx;
+        // point.y = qy;
+    
+        return (new Vector2(qx, qy));
+        // return FlxBasePoint.weak(qx, qy);
+        // return qx, qy;
     }
 
     public static function getFlxEaseByString(?ease:String = '') {

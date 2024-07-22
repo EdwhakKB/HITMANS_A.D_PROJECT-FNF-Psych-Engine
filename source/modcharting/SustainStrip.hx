@@ -43,29 +43,6 @@ class SustainStrip extends FlxStrip
             indices.push(ind);
     }
 
-    //spiral holds test
-    private function rotateAround(origin:Vector2, point:Vector2, degrees:Float):Vector2
-    {
-        // public function rotateAround(origin, point, degrees):FlxBasePoint{
-        // public function rotateAround(origin, point, degrees){
-        var angle:Float = degrees * (Math.PI / 180);
-        var ox = origin.x;
-        var oy = origin.y;
-        var px = point.x;
-        var py = point.y;
-    
-        var qx = ox + FlxMath.fastCos(angle) * (px - ox) - FlxMath.fastSin(angle) * (py - oy);
-        var qy = oy + FlxMath.fastSin(angle) * (px - ox) + FlxMath.fastCos(angle) * (py - oy);
-    
-        // point.x = qx;
-        // point.y = qy;
-    
-        return (new Vector2(qx, qy));
-        // return FlxBasePoint.weak(qx, qy);
-        // return qx, qy;
-    }
-
-
     //Set this to true for spiral holds!
     //Note, they might cause some visual gaps. Maybe fix later?
     public var spiralHolds:Bool = false; //for now false cuz yeah 
@@ -118,12 +95,12 @@ class SustainStrip extends FlxStrip
 
                 var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
 
-                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_L = thing.x;
                 vert_Y_L = thing.y;
 
                 rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_R = thing.x;
                 vert_Y_R = thing.y;
             }
@@ -153,12 +130,12 @@ class SustainStrip extends FlxStrip
 
                 var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
 
-                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_L = thing.x;
                 vert_Y_L = thing.y;
 
                 rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_R = thing.x;
                 vert_Y_R = thing.y;
             }
@@ -188,12 +165,12 @@ class SustainStrip extends FlxStrip
 
                 var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
 
-                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_L = thing.x;
                 vert_Y_L = thing.y;
 
                 rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_R = thing.x;
                 vert_Y_R = thing.y;
             }
@@ -233,12 +210,12 @@ class SustainStrip extends FlxStrip
 
                 var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
 
-                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_L = thing.x;
                 vert_Y_L = thing.y;
 
                 rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_R = thing.x;
                 vert_Y_R = thing.y;
             }
@@ -269,12 +246,12 @@ class SustainStrip extends FlxStrip
 
                 var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
 
-                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_L = thing.x;
                 vert_Y_L = thing.y;
 
                 rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_R = thing.x;
                 vert_Y_R = thing.y;
             }
@@ -305,12 +282,12 @@ class SustainStrip extends FlxStrip
 
                 var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
 
-                var thing:Vector2 = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_L = thing.x;
                 vert_Y_L = thing.y;
 
                 rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
+                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
                 vert_X_R = thing.x;
                 vert_Y_R = thing.y;
             }

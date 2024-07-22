@@ -1,5 +1,6 @@
 package;
 
+import modcharting.ZProjectSprite_Note;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -31,6 +32,7 @@ typedef EventNote = {
 class Note extends FlxImprovedSprite{
 
 	public var mesh:modcharting.SustainStrip = null; 
+	public var noteMesh:modcharting.ZProjectSprite_Note;
 	public var z:Float = 0;
 	public var extraData:Map<String,Dynamic> = [];
 
@@ -195,6 +197,15 @@ class Note extends FlxImprovedSprite{
 			rgbShader.g = arrQuantRGB[0];
 			rgbShader.b = arrQuantRGB[2];
 		}	
+	}
+
+	public function setupMesh():Void
+	{
+		if (noteMesh == null){
+			noteMesh = new ZProjectSprite_Note();
+			noteMesh.spriteGraphic = this;
+		}
+		noteMesh.setUp();
 	}
 
 	private function set_noteType(value:String):String 
@@ -518,6 +529,7 @@ class Note extends FlxImprovedSprite{
 			earlyHitMult = 1;
 		}
 		x += offsetX;
+		//setupMesh();
 	}
 	
 	function round(num: Float, numDecimalPlaces: Int = 0): Float {
@@ -737,6 +749,8 @@ class Note extends FlxImprovedSprite{
 			if (alpha > 0.3)
 				alpha = 0.3;
 		}
+
+		if (noteMesh!=null) noteMesh.updateCol();
 	}
 
 	@:noCompletion

@@ -14,6 +14,7 @@ using StringTools;
 class StrumNote extends FlxImprovedSprite
 {
 	public var rgbShader:RGBShaderReference;
+	public var strumMesh:modcharting.ZProjectSprite_Note;
 	private var colorSwap:ColorSwap;
 	public var resetAnim:Float = 0;
 	public var noteData:Int = 0;
@@ -33,6 +34,17 @@ class StrumNote extends FlxImprovedSprite
 		}
 		return value;
 	}
+
+	public function setupMesh():Void
+	{
+		if(strumMesh == null)
+		{
+			strumMesh = new modcharting.ZProjectSprite_Note();
+			strumMesh.spriteGraphic = this;
+		}
+		strumMesh.setUp();
+	}
+
 	public var useRGBShader:Bool = true;
 	var rgb9:Bool = false;
 	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String = 'shared', ?quantizedNotes:Bool = false, ?loadShader:Bool = true) {
@@ -69,6 +81,8 @@ class StrumNote extends FlxImprovedSprite
 		if (daTexture != null) texture = daTexture else texture = skin;
 
 		scrollFactor.set();
+
+		//setupMesh();
 	}
 
 	public function reloadNote()
@@ -142,6 +156,7 @@ class StrumNote extends FlxImprovedSprite
 				resetAnim = 0;
 			}
 		}
+		if (strumMesh!=null) strumMesh.updateCol();
 		super.update(elapsed);
 	}
 

@@ -4523,7 +4523,19 @@ class AttenuateSkewYModifier extends Modifier
 }
 
 
-
+class AngleXModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.angleX += currentValue;
+        //noteData.scaleY *= currentValue;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.angleX += currentValue;
+        //noteData.scaleY *= currentValue;
+    }
+}
 // class StraightHoldsModifier extends Modifier //unused
 // {
 //     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)

@@ -177,6 +177,8 @@ class ModTable
                     #if PSYCH
                     if (PlayState.instance == FlxG.state)
                         PlayState.instance.callOnScripts("onModifierComplete", [modifier, []]);
+                    // else if (EditorPlayState.instance == FlxG.state)
+                    //     EditorPlayState.instance.callOnScripts("onModifierComplete", [modifier, []]);
                     #end
                 }
             });
@@ -218,6 +220,8 @@ class ModTable
                         #if PSYCH
                         if (PlayState.instance == FlxG.state)
                             PlayState.instance.callOnScripts("onModifierComplete", [modifier, subValue]);
+                        // else if (EditorPlayState.instance == FlxG.state)
+                        //     EditorPlayState.instance.callOnScripts("onModifierComplete", [modifier, subValue]);
                         #end
                     },
                     onUpdate: function(twn:FlxTween) {
@@ -257,6 +261,8 @@ class ModTable
                     #if PSYCH
                     if (PlayState.instance == FlxG.state)
                         PlayState.instance.callOnScripts("onModifierComplete", [modifier, []]);
+                    // else if (EditorPlayState.instance == FlxG.state)
+                    //     EditorPlayState.instance.callOnScripts("onModifierComplete", [modifier, []]);
                     #end
                 }
             });
@@ -298,6 +304,8 @@ class ModTable
                         #if PSYCH
                         if (PlayState.instance == FlxG.state)
                             PlayState.instance.callOnScripts("onModifierComplete", [modifier, subValue]);
+                        // else if (EditorPlayState.instance == FlxG.state)
+                        //     EditorPlayState.instance.callOnScripts("onModifierComplete", [modifier, subValue]);
                         #end
                     },
                     onUpdate: function(twn:FlxTween) {
