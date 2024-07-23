@@ -334,7 +334,7 @@ class ZProjectSprite_Note extends FlxSprite
 
       // getScreenPosition(_point, camera).subtractPoint(offset);
       getScreenPosition(_point, camera);
-      camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, spriteGraphic.shader != null ? spriteGraphic.shader : null);
+      camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, spriteGraphic.shader != null ? spriteGraphic.shader : null);
       // camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
       // trace("we do be drawin... something?\n verts: \n" + vertices);
     }

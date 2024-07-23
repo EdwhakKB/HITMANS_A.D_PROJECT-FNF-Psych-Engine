@@ -179,7 +179,9 @@ class ModchartEditorState extends MusicBeatState
         AttenuateSkewModifier, AttenuateSkewXModifier, AttenuateSkewYModifier,
         //misc
         ShakyNotesModifier, ParalysisModifier, SpiralHoldsModifier,
-        ArrowPath
+        ArrowPath,
+        //Angle Modifiers,
+        AngleXModifier, AngleYModifier, AngleZModifier
     ];
     public static var easeList:Array<String> = [
         "backIn",
@@ -972,6 +974,7 @@ class ModchartEditorState extends MusicBeatState
 
         inst.onComplete = function()
         {
+            inst.time = 0;
             inst.pause();
             Conductor.songPosition = 0;
             if(vocals != null) {
