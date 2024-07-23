@@ -435,7 +435,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             return;
         var changeX:Bool = noteData.z != 0;
         var strumNote = strumGroup.members[noteData.index];
-        // if (strumNote.strumMesh == null) strumNote.setupMesh(); //silly ah thing // do it only 1 time
+        if (strumNote.strumMesh == null) strumNote.setupMesh(); //silly ah thing // do it only 1 time
         var thisNotePos;
         if (changeX)
             thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(strumNote.width/2), noteData.y+(strumNote.height/2), noteData.z*0.001), 
@@ -455,32 +455,33 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         if (noteData.stealthGlow !=0) strumGroup.members[noteData.index].rgbShader.enabled = true; //enable stealthGlow once it finds its not 0?
         // noteData.skewX = skewX + noteData.skewX;
         // noteData.skewY = skewY + noteData.skewY;
-        // strumNote.strumMesh.x = noteData.x;
-        // strumNote.strumMesh.y = noteData.y;
-        // strumNote.strumMesh.z = noteData.z;
+        strumNote.strumMesh.x = noteData.x;
+        strumNote.strumMesh.y = noteData.y;
+        strumNote.strumMesh.z = noteData.z;
 
-        // strumNote.strumMesh.scaleX = noteData.scaleX;
-        // strumNote.strumMesh.scaleY = noteData.scaleY;
-        // strumNote.strumMesh.scaleZ = noteData.scaleZ;
+        strumNote.strumMesh.scaleX = noteData.scaleX;
+        strumNote.strumMesh.scaleY = noteData.scaleY;
+        strumNote.strumMesh.scaleZ = noteData.scaleZ;
 
-        // strumNote.strumMesh.skewX = noteData.skewX;
-        // strumNote.strumMesh.skewY = noteData.skewY;
-        // strumNote.strumMesh.skewZ = noteData.skewZ;
+        strumNote.strumMesh.skewX = noteData.skewX;
+        strumNote.strumMesh.skewY = noteData.skewY;
+        strumNote.strumMesh.skewZ = noteData.skewZ;
 
-        // strumNote.strumMesh.angleX = noteData.angleX;
-        // strumNote.strumMesh.angleY = noteData.angleY;
-        // strumNote.strumMesh.angleZ = noteData.angleZ;
+        strumNote.strumMesh.angleX = noteData.angleX;
+        strumNote.strumMesh.angleY = noteData.angleY;
+        strumNote.strumMesh.angleZ = noteData.angle;
 
-        // strumNote.strumMesh.offset = strumNote.offset;
+        strumNote.strumMesh.offset = strumNote.offset;
 
         addDataToStrum(noteData, strumGroup.members[noteData.index]); //set position and stuff before drawing
         // strumNote.strumMesh.cameras = this.cameras;
-        // strumNote.strumMesh.updateTris();
+        strumGroup.members[noteData.index].strumMesh.cameras = this.cameras;
+        strumGroup.members[noteData.index].strumMesh.updateTris();
 
-        // strumNote.strumMesh.drawManual();
-        strumGroup.members[noteData.index].cameras = this.cameras;
+        strumGroup.members[noteData.index].strumMesh.drawManual();
+        // strumGroup.members[noteData.index].cameras = this.cameras;
 
-        strumGroup.members[noteData.index].draw();
+        // strumGroup.members[noteData.index].draw();
     }
     private function drawNote(noteData:NotePositionData)
     {
@@ -488,7 +489,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             return;
         var changeX:Bool = noteData.z != 0;
         var daNote = notes.members[noteData.index];
-        // if (daNote.noteMesh == null) daNote.setupMesh(); //silly ah thing // do it only 1 time
+        if (daNote.noteMesh == null) daNote.setupMesh(); //silly ah thing // do it only 1 time
         var thisNotePos;
         if (changeX)
             thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(daNote.width/2)+ModchartUtil.getNoteOffsetX(daNote, instance), noteData.y+(daNote.height/2), noteData.z*0.001), 
@@ -505,36 +506,36 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             noteData.scaleY *= (1/-thisNotePos.z);
         }
 
-        // daNote.noteMesh.x = noteData.x;
-        // daNote.noteMesh.y = noteData.y;
-        // daNote.noteMesh.z = noteData.z;
+        daNote.noteMesh.x = noteData.x;
+        daNote.noteMesh.y = noteData.y;
+        daNote.noteMesh.z = noteData.z;
 
-        // daNote.noteMesh.scaleX = noteData.scaleX;
-        // daNote.noteMesh.scaleY = noteData.scaleY;
-        // daNote.noteMesh.scaleZ = noteData.scaleZ;
+        daNote.noteMesh.scaleX = noteData.scaleX;
+        daNote.noteMesh.scaleY = noteData.scaleY;
+        daNote.noteMesh.scaleZ = noteData.scaleZ;
 
-        // daNote.noteMesh.skewX = noteData.skewX;
-        // daNote.noteMesh.skewY = noteData.skewY;
-        // daNote.noteMesh.skewZ = noteData.skewZ;
+        daNote.noteMesh.skewX = noteData.skewX;
+        daNote.noteMesh.skewY = noteData.skewY;
+        daNote.noteMesh.skewZ = noteData.skewZ;
 
-        // daNote.noteMesh.angleX = noteData.angleX;
-        // daNote.noteMesh.angleY = noteData.angleY;
-        // daNote.noteMesh.angleZ = noteData.angleZ;
+        daNote.noteMesh.angleX = noteData.angleX;
+        daNote.noteMesh.angleY = noteData.angleY;
+        daNote.noteMesh.angleZ = noteData.angle;
 
-        // daNote.noteMesh.offset = daNote.offset;
+        daNote.noteMesh.offset = daNote.offset;
 
         // noteData.skewX = skewX + noteData.skewX;
         // noteData.skewY = skewY + noteData.skewY;
         //set note position using the position data
         addDataToNote(noteData, notes.members[noteData.index]); 
-        // daNote.noteMesh.cameras = this.cameras;
-        // daNote.noteMesh.updateTris();
+        daNote.noteMesh.cameras = this.cameras;
+        daNote.noteMesh.updateTris();
 
-        // daNote.noteMesh.drawManual();
+        daNote.noteMesh.drawManual();
         //make sure it draws on the correct camera
-        notes.members[noteData.index].cameras = this.cameras;
+        // notes.members[noteData.index].cameras = this.cameras;
         //draw it
-        notes.members[noteData.index].draw();
+        // notes.members[noteData.index].draw();
     }
     private function drawSustainNote(noteData:NotePositionData)
     {

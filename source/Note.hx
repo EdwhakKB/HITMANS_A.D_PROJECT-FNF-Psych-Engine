@@ -750,6 +750,11 @@ class Note extends FlxImprovedSprite{
 				alpha = 0.3;
 		}
 
+	}
+
+	override function updateColorTransform():Void
+	{
+		super.updateColorTransform();
 		if (noteMesh!=null) noteMesh.updateCol();
 	}
 
