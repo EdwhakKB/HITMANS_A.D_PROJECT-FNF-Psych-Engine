@@ -5127,7 +5127,7 @@ class EditorPlayState extends MusicBeatState
 					//Set the things first
 					script.set("SONG", PlayState.SONG);
 				}else{
-					script.set("game", PlayState.instance);
+					script.set("game", EditorPlayState.instance);
 				}
 
 				//Then CALL SCRIPT
