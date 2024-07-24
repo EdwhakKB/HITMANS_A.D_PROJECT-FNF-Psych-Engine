@@ -423,9 +423,9 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             return;
         var changeX:Bool = noteData.z != 0;
         var strumNote = strumGroup.members[noteData.index];
-        if (strumNote.initialized == false){
+        if (strumNote.initialized == false && strumNote.hasSetupRender == false){
             strumNote.initialized = true;
-            strumNote.setUp();
+            strumNote.setUpThreeDRender();
         }
         var thisNotePos;
         if (changeX)
@@ -475,9 +475,9 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             return;
         var changeX:Bool = noteData.z != 0;
         var daNote = notes.members[noteData.index];
-        if (daNote.initialized == false){
+        if (daNote.initialized == false && daNote.hasSetupRender == false){
             daNote.initialized = true;
-            daNote.setUp();
+            daNote.setUpThreeDRender();
         }
         var thisNotePos;
         if (changeX)

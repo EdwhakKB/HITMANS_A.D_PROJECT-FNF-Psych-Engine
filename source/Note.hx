@@ -610,7 +610,6 @@ class Note extends FlxImprovedSprite
 			earlyHitMult = 1;
 		}
 		x += offsetX;
-		//setUp();
 	}
 	
 	function round(num: Float, numDecimalPlaces: Int = 0): Float {
@@ -833,7 +832,18 @@ class Note extends FlxImprovedSprite
 
 	}
 
-	
+	public var drawManual:Bool = false;
+	public var hasSetupRender:Bool = false;
+  
+	public function setUpThreeDRender():Void
+	{
+	  if (!hasSetupRender)
+	  {
+		drawManual = true;
+		setUp();
+		hasSetupRender = true;
+	  }
+	}
 
 	public function setUp():Void
 	{
@@ -943,30 +953,37 @@ class Note extends FlxImprovedSprite
 	@:access(flixel.FlxCamera)
 	override public function draw():Void
 	{
-		if (alpha <= 0 || vertices == null || indices == null || uvtData == null || _point == null || offset == null)
+		if (drawManual)
 		{
-		return;
-		}
+			if (alpha <= 0 || vertices == null || indices == null || uvtData == null || _point == null || offset == null)
+			{
+			return;
+			}
 
-		for (camera in cameras)
+			for (camera in cameras)
+			{
+				if (!camera.visible || !camera.exists) continue;
+				//if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
+
+				// memory leak with drawTriangles :c
+
+				getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
+				var newGraphic:FlxGraphic = cast mapData();
+				camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
+				// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
+				// trace("we do be drawin... something?\n verts: \n" + vertices);
+			}
+
+			// trace("we do be drawin tho");
+
+			#if FLX_DEBUG
+			if (FlxG.debugger.drawDebug) drawDebug();
+			#end
+		}
+		else
 		{
-			if (!camera.visible || !camera.exists) continue;
-			//if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
-
-			// memory leak with drawTriangles :c
-
-			getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
-			var newGraphic:FlxGraphic = cast mapData();
-			camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
-			// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
-			// trace("we do be drawin... something?\n verts: \n" + vertices);
+			super.draw();
 		}
-
-		// trace("we do be drawin tho");
-
-		#if FLX_DEBUG
-		if (FlxG.debugger.drawDebug) drawDebug();
-		#end
 	}
 
 	public function applyPerspective(pos:Vector3D, xPercent:Float = 0, yPercent:Float = 0):Vector2
@@ -1210,6 +1227,8 @@ class Note extends FlxImprovedSprite
 		alphas = new Map();
 		indexes = new Map();
 		glist = [];
+		drawManual = false;
+		hasSetupRender = false;
 		super.destroy();
 	}
 }
