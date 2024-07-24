@@ -437,7 +437,6 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             return;
         var changeX:Bool = noteData.z != 0;
         var strumNote = strumGroup.members[noteData.index];
-        //if (strumNote.strumMesh == null) strumNote.setupMesh(); //silly ah thing // do it only 1 time
         var thisNotePos;
         if (changeX)
             thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x+(strumNote.width/2), noteData.y+(strumNote.height/2), noteData.z*0.001), 

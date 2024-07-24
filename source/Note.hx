@@ -832,12 +832,6 @@ class Note extends FlxImprovedSprite
 
 	}
 
-	override function updateColorTransform():Void
-	{
-		super.updateColorTransform();
-		if (noteMesh!=null) noteMesh.updateCol();
-	}
-
 	override public function destroy():Void
 	{
 		vertices = null;

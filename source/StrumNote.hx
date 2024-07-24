@@ -1,6 +1,5 @@
 package;
 
-import modcharting.ZProjectSprite_Note;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
@@ -247,19 +246,12 @@ class StrumNote extends FlxImprovedSprite
 		super.update(elapsed);
 	}
 
-	override function updateColorTransform():Void
-	{
-		super.updateColorTransform();
-		if (strumMesh!=null) strumMesh.updateCol();
-	}
-
 	public function playAnim(anim:String, ?force:Bool = false) {
 		animation.play(anim, force);
 		if(animation.curAnim != null)
 			{
 				centerOffsets();
 				centerOrigin();
-				if(strumMesh!=null) strumMesh.updateCol();
 			}
 		if(loadShader && useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
 	}
