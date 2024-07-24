@@ -38,6 +38,7 @@ class StrumNote extends FlxImprovedSprite
 	 public var oanim:String = "";
    
 	 // If set, will reference this sprites graphic! Very useful for animations!
+   public var initialized:Bool = false;
 	 public var projectionEnabled:Bool = true;
    
 	 public var angleX:Float = 0;
@@ -169,7 +170,7 @@ class StrumNote extends FlxImprovedSprite
 
 		scrollFactor.set();
 
-		setUp();
+		//setUp();
 	}
 
 	public function reloadNote()
@@ -380,7 +381,7 @@ class StrumNote extends FlxImprovedSprite
 	getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
 	var newGraphic:FlxGraphic = cast mapData();
 
-	camera.drawTriangles(graphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
+	camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
 	// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
 	// trace("we do be drawin... something?\n verts: \n" + vertices);
 	}

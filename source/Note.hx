@@ -60,6 +60,7 @@ class Note extends FlxImprovedSprite
   public var oanim:String = "";
 
   // If set, will reference this sprites graphic! Very useful for animations!
+  public var initialized:Bool = false; //if this is false it won't use most of functions
   public var projectionEnabled:Bool = true;
 
   public var angleX:Float = 0;
@@ -122,7 +123,7 @@ class Note extends FlxImprovedSprite
 
   // <----
 	public var mesh:modcharting.SustainStrip = null; 
-	public var z:Float = 0;
+	public var z:Float = 200 / 0.7;
 	public var extraData:Map<String,Dynamic> = [];
 
 	public var strumTime:Float = 0;
@@ -609,7 +610,7 @@ class Note extends FlxImprovedSprite
 			earlyHitMult = 1;
 		}
 		x += offsetX;
-		setUp();
+		//setUp();
 	}
 	
 	function round(num: Float, numDecimalPlaces: Int = 0): Float {
@@ -832,344 +833,351 @@ class Note extends FlxImprovedSprite
 
 	}
 
-	override public function destroy():Void
-	{
-		vertices = null;
-		indices = null;
-		uvtData = null;
-		for (i in glist)
-		  i.destroy();
-		alphas = new Map();
-		indexes = new Map();
-		glist = [];
-		super.destroy();
-	}
+	
 
 	public function setUp():Void
-  {
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-
-    this.active = true; // This NEEDS to be true for the note to be drawn!
-    updateColorTransform();
-    var noteIndices:Array<Int> = [];
-    for (x in 0...subdivisions - 1)
-    {
-      for (y in 0...subdivisions - 1)
-      {
-        var funny2:Int = x * (subdivisions);
-        var funny:Int = y + funny2;
-        noteIndices.push(0 + funny);
-        noteIndices.push(5 + funny);
-        noteIndices.push(1 + funny);
-
-        noteIndices.push(5 + funny);
-        noteIndices.push(1 + funny);
-        noteIndices.push(6 + funny);
-      }
-    }
-
-    // trace("\nindices: \n" + noteIndices);
-
-    // indices = new DrawData<Int>(12, true, TRIANGLE_VERTEX_INDICES);
-    indices = new DrawData<Int>(noteIndices.length, true, noteIndices);
-
-    // UV coordinates are normalized, so they range from 0 to 1.
-    var i:Int = 0;
-    for (x in 0...subdivisions) // x
-    {
-      for (y in 0...subdivisions) // y
-      {
-        uvtData[i * 2] = (1 / (subdivisions - 1)) * x;
-        uvtData[i * 2 + 1] = (1 / (subdivisions - 1)) * y;
-        i++;
-      }
-    }
-
-    // trace("\nuv: \n" + uvtData);
-    updateTris();
-  }
-
-  public function updateTris(debugTrace:Bool = false):Void
-  {
-    var w:Float = frameWidth;
-    var h:Float = frameHeight;
-
-    var i:Int = 0;
-    for (x in 0...subdivisions) // x
-    {
-      for (y in 0...subdivisions) // y
-      {
-        var point2D:Vector2;
-        var point3D:Vector3D = new Vector3D(0, 0, 0);
-        point3D.x = (w / (subdivisions - 1)) * x;
-        point3D.y = (h / (subdivisions - 1)) * y;
-
-        if (true)
-        {
-          // skew funny
-          var xPercent:Float = x / (subdivisions - 1);
-          var yPercent:Float = y / (subdivisions - 1);
-          var xPercent_SkewOffset:Float = xPercent - skewY_offset;
-          var yPercent_SkewOffset:Float = yPercent - skewX_offset;
-          // Keep math the same as skewedsprite for parity reasons.
-          point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
-          point3D.y += xPercent_SkewOffset * Math.tan(skewY * FlxAngle.TO_RAD) * w;
-          point3D.z += yPercent_SkewOffset * Math.tan(skewZ * FlxAngle.TO_RAD) * h;
-
-          // scale
-          var newWidth:Float = (scaleX - 1) * (xPercent - 0.5);
-          point3D.x += (newWidth) * w;
-          newWidth = (scaleY - 1) * (yPercent - 0.5);
-          point3D.y += (newWidth) * h;
-
-          // _skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
-          // _skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-
-          point2D = applyPerspective(point3D, xPercent, yPercent);
-        }
-        else
-        {
-          // point2D = new Vector2(point3D.x, point3D.y);
-          point2D = applyPerspective(point3D);
-        }
-        vertices[i * 2] = point2D.x;
-        vertices[i * 2 + 1] = point2D.y;
-        i++;
-      }
-    }
-
-    if (debugTrace) trace("\nverts: \n" + vertices + "\n");
-
-    // temp fix for now I guess lol?
-    flipX = false;
-    flipY = false;
-  }
-
-  @:access(flixel.FlxCamera)
-  override public function draw():Void
-  {
-    if (alpha <= 0 || vertices == null || indices == null || uvtData == null || _point == null || offset == null)
 	{
-	return;
+		this.x = 0;
+		this.y = 0;
+		this.z = 0;
+
+		this.active = true; // This NEEDS to be true for the note to be drawn!
+		updateColorTransform();
+		var noteIndices:Array<Int> = [];
+		for (x in 0...subdivisions - 1)
+		{
+			for (y in 0...subdivisions - 1)
+			{
+				var funny2:Int = x * (subdivisions);
+				var funny:Int = y + funny2;
+				noteIndices.push(0 + funny);
+				noteIndices.push(5 + funny);
+				noteIndices.push(1 + funny);
+
+				noteIndices.push(5 + funny);
+				noteIndices.push(1 + funny);
+				noteIndices.push(6 + funny);
+			}
+		}
+
+		// trace("\nindices: \n" + noteIndices);
+
+		// indices = new DrawData<Int>(12, true, TRIANGLE_VERTEX_INDICES);
+		indices = new DrawData<Int>(noteIndices.length, true, noteIndices);
+
+		// UV coordinates are normalized, so they range from 0 to 1.
+		var i:Int = 0;
+		for (x in 0...subdivisions) // x
+		{
+			for (y in 0...subdivisions) // y
+			{
+				uvtData[i * 2] = (1 / (subdivisions - 1)) * x;
+				uvtData[i * 2 + 1] = (1 / (subdivisions - 1)) * y;
+				i++;
+			}
+		}
+
+		// trace("\nuv: \n" + uvtData);
+		updateTris();
 	}
 
-	for (camera in cameras)
+	public function updateTris(debugTrace:Bool = false):Void
 	{
-	if (!camera.visible || !camera.exists) continue;
-	//if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
+		var w:Float = frameWidth;
+		var h:Float = frameHeight;
 
-	// memory leak with drawTriangles :c
+		var i:Int = 0;
+		for (x in 0...subdivisions) // x
+		{
+			for (y in 0...subdivisions) // y
+			{
+			var point2D:Vector2;
+			var point3D:Vector3D = new Vector3D(0, 0, 0);
+			point3D.x = (w / (subdivisions - 1)) * x;
+			point3D.y = (h / (subdivisions - 1)) * y;
 
-	getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
-	var newGraphic:FlxGraphic = cast mapData();
-	camera.drawTriangles(graphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
-	// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
-	// trace("we do be drawin... something?\n verts: \n" + vertices);
+			if (true)
+			{
+				// skew funny
+				var xPercent:Float = x / (subdivisions - 1);
+				var yPercent:Float = y / (subdivisions - 1);
+				var xPercent_SkewOffset:Float = xPercent - skewY_offset;
+				var yPercent_SkewOffset:Float = yPercent - skewX_offset;
+				// Keep math the same as skewedsprite for parity reasons.
+				point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
+				point3D.y += xPercent_SkewOffset * Math.tan(skewY * FlxAngle.TO_RAD) * w;
+				point3D.z += yPercent_SkewOffset * Math.tan(skewZ * FlxAngle.TO_RAD) * h;
+
+				// scale
+				var newWidth:Float = (scaleX - 1) * (xPercent - 0.5);
+				point3D.x += (newWidth) * w;
+				newWidth = (scaleY - 1) * (yPercent - 0.5);
+				point3D.y += (newWidth) * h;
+
+				// _skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
+				// _skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
+
+				point2D = applyPerspective(point3D, xPercent, yPercent);
+
+				point2D.x += (frameWidth - frameWidth) / 2;
+          		point2D.y += (frameHeight - frameHeight) / 2;
+			}
+			else
+			{
+				// point2D = new Vector2(point3D.x, point3D.y);
+				point2D = applyPerspective(point3D);
+			}
+			vertices[i * 2] = point2D.x;
+			vertices[i * 2 + 1] = point2D.y;
+			i++;
+			}
+		}
+
+		if (debugTrace) trace("\nverts: \n" + vertices + "\n");
+
+		// temp fix for now I guess lol?
+		flipX = false;
+		flipY = false;
 	}
 
-	// trace("we do be drawin tho");
+	@:access(flixel.FlxCamera)
+	override public function draw():Void
+	{
+		if (alpha <= 0 || vertices == null || indices == null || uvtData == null || _point == null || offset == null)
+		{
+		return;
+		}
 
-	#if FLX_DEBUG
-	if (FlxG.debugger.drawDebug) drawDebug();
-	#end
-  }
+		for (camera in cameras)
+		{
+			if (!camera.visible || !camera.exists) continue;
+			//if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
 
-  public function applyPerspective(pos:Vector3D, xPercent:Float = 0, yPercent:Float = 0):Vector2
-  {
-    // return new Vector2(pos.x, pos.y);
+			// memory leak with drawTriangles :c
 
-    var w:Float = frameWidth;
-    var h:Float = frameHeight;
+			getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
+			var newGraphic:FlxGraphic = cast mapData();
+			camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
+			// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
+			// trace("we do be drawin... something?\n verts: \n" + vertices);
+		}
 
-    var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
+		// trace("we do be drawin tho");
 
-    // pos_modified.x -= spriteGraphic.offset.x;
-    // pos_modified.y -= spriteGraphic.offset.y;
+		#if FLX_DEBUG
+		if (FlxG.debugger.drawDebug) drawDebug();
+		#end
+	}
 
-    var rotateModPivotPoint:Vector2 = new Vector2(w / 2, h / 2);
-    rotateModPivotPoint.x += pivotOffsetX;
-    rotateModPivotPoint.y += pivotOffsetY;
-    var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.x, pos_modified.y), angleZ);
-    pos_modified.x = thing.x;
-    pos_modified.y = thing.y;
+	public function applyPerspective(pos:Vector3D, xPercent:Float = 0, yPercent:Float = 0):Vector2
+	{
+		// return new Vector2(pos.x, pos.y);
 
-    var rotateModPivotPoint:Vector2 = new Vector2(w / 2, 0);
-    rotateModPivotPoint.x += pivotOffsetX;
-    rotateModPivotPoint.y += pivotOffsetZ;
-    var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.x, pos_modified.z), angleY);
-    pos_modified.x = thing.x;
-    pos_modified.z = thing.y;
+		var w:Float = frameWidth;
+		var h:Float = frameHeight;
 
-    var rotateModPivotPoint:Vector2 = new Vector2(0, h / 2);
-    rotateModPivotPoint.x += pivotOffsetZ;
-    rotateModPivotPoint.y += pivotOffsetY;
-    var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.z, pos_modified.y), angleX);
-    pos_modified.z = thing.x;
-    pos_modified.y = thing.y;
+		var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
 
-    // Apply offset here before it gets affected by z projection!
-    // point3D.x -= offset.x;
-    // point3D.y -= offset.y;
+		// pos_modified.x -= spriteGraphic.offset.x;
+		// pos_modified.y -= spriteGraphic.offset.y;
 
-    pos_modified.x -= offset.x;
-    pos_modified.y -= offset.y;
+		var rotateModPivotPoint:Vector2 = new Vector2(w / 2, h / 2);
+		rotateModPivotPoint.x += pivotOffsetX;
+		rotateModPivotPoint.y += pivotOffsetY;
+		var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.x, pos_modified.y), angleZ);
+		pos_modified.x = thing.x;
+		pos_modified.y = thing.y;
 
-    pos_modified.x += moveX;
-    pos_modified.y += moveY;
-    pos_modified.z += moveZ;
+		var rotateModPivotPoint:Vector2 = new Vector2(w / 2, 0);
+		rotateModPivotPoint.x += pivotOffsetX;
+		rotateModPivotPoint.y += pivotOffsetZ;
+		var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.x, pos_modified.z), angleY);
+		pos_modified.x = thing.x;
+		pos_modified.z = thing.y;
 
-    if (projectionEnabled)
-    {
-      pos_modified.x += this.x;
-      pos_modified.y += this.y;
-      pos_modified.z += this.z; // ?????
+		var rotateModPivotPoint:Vector2 = new Vector2(0, h / 2);
+		rotateModPivotPoint.x += pivotOffsetZ;
+		rotateModPivotPoint.y += pivotOffsetY;
+		var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.z, pos_modified.y), angleX);
+		pos_modified.z = thing.x;
+		pos_modified.y = thing.y;
 
-      pos_modified.x += fovOffsetX;
-      pos_modified.y += fovOffsetY;
-      pos_modified.z *= 0.001;
+		// Apply offset here before it gets affected by z projection!
+		// point3D.x -= offset.x;
+		// point3D.y -= offset.y;
 
-      // var noteWidth:Float = w * xPercent;
-      // var noteHeight:Float = h * yPercent;
+		pos_modified.x -= offset.x;
+		pos_modified.y -= offset.y;
 
-      // var noteWidth:Float = w * 0;
-      // var noteHeight:Float = h * 0;
+		pos_modified.x += moveX;
+		pos_modified.y += moveY;
+		pos_modified.z += moveZ;
 
-      // var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, (noteWidth * 0.5), (noteHeight * 0.5));
-      var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, 0, 0);
+		if (projectionEnabled)
+		{
+			pos_modified.x += this.x;
+			pos_modified.y += this.y;
+			pos_modified.z += this.z; // ?????
 
-      thisNotePos.x -= this.x;
-      thisNotePos.y -= this.y;
-      thisNotePos.z -= this.z * 0.001; // ?????
+			pos_modified.x += fovOffsetX;
+			pos_modified.y += fovOffsetY;
+			pos_modified.z *= 0.001;
 
-      thisNotePos.x -= fovOffsetX;
-      thisNotePos.y -= fovOffsetY;
-      return new Vector2(thisNotePos.x, thisNotePos.y);
-    }
-    else
-    {
-      return new Vector2(pos_modified.x, pos_modified.y);
-    }
-  }
+			// var noteWidth:Float = w * xPercent;
+			// var noteHeight:Float = h * yPercent;
 
-  public var zNear:Float = 0.0;
-  public var zFar:Float = 100.0;
+			// var noteWidth:Float = w * 0;
+			// var noteHeight:Float = h * 0;
 
-  // https://github.com/TheZoroForce240/FNF-Modcharting-Tools/blob/main/source/modcharting/ModchartUtil.hx
-  public function perspectiveMath_OLD(pos:Vector3D, offsetX:Float = 0, offsetY:Float = 0):Vector3D
-  {
-    try
-    {
-      var _FOV:Float = this.fov;
+			// var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, (noteWidth * 0.5), (noteHeight * 0.5));
+			var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, 0, 0);
 
-      _FOV *= (Math.PI / 180.0);
+			thisNotePos.x -= this.x;
+			thisNotePos.y -= this.y;
+			thisNotePos.z -= this.z * 0.001; // ?????
 
-      var newz:Float = pos.z - 1;
-      var zRange:Float = zNear - zFar;
-      var tanHalfFOV:Float = 1;
-      var dividebyzerofix:Float = FlxMath.fastCos(_FOV * 0.5);
-      if (dividebyzerofix != 0)
-      {
-        tanHalfFOV = FlxMath.fastSin(_FOV * 0.5) / dividebyzerofix;
-      }
+			thisNotePos.x -= fovOffsetX;
+			thisNotePos.y -= fovOffsetY;
+			return new Vector2(thisNotePos.x, thisNotePos.y);
+		}
+		else
+		{
+			return new Vector2(pos_modified.x, pos_modified.y);
+		}
+	}
 
-      if (pos.z > 1) newz = 0;
+	public var zNear:Float = 0.0;
+	public var zFar:Float = 100.0;
 
-      var xOffsetToCenter:Float = pos.x - (FlxG.width * 0.5);
-      var yOffsetToCenter:Float = pos.y - (FlxG.height * 0.5);
+	// https://github.com/TheZoroForce240/FNF-Modcharting-Tools/blob/main/source/modcharting/ModchartUtil.hx
+	public function perspectiveMath_OLD(pos:Vector3D, offsetX:Float = 0, offsetY:Float = 0):Vector3D
+	{
+		try
+		{
+			var _FOV:Float = this.fov;
 
-      var zPerspectiveOffset:Float = (newz + (2 * zFar * zNear / zRange));
+			_FOV *= (Math.PI / 180.0);
 
-      // divide by zero check
-      if (zPerspectiveOffset == 0) zPerspectiveOffset = 0.001;
+			var newz:Float = pos.z - 1;
+			var zRange:Float = zNear - zFar;
+			var tanHalfFOV:Float = 1;
+			var dividebyzerofix:Float = FlxMath.fastCos(_FOV * 0.5);
+			if (dividebyzerofix != 0)
+			{
+				tanHalfFOV = FlxMath.fastSin(_FOV * 0.5) / dividebyzerofix;
+			}
 
-      xOffsetToCenter += (offsetX * -zPerspectiveOffset);
-      yOffsetToCenter += (offsetY * -zPerspectiveOffset);
+			if (pos.z > 1) newz = 0;
 
-      xOffsetToCenter += (0 * -zPerspectiveOffset);
-      yOffsetToCenter += (0 * -zPerspectiveOffset);
+			var xOffsetToCenter:Float = pos.x - (FlxG.width * 0.5);
+			var yOffsetToCenter:Float = pos.y - (FlxG.height * 0.5);
 
-      var xPerspective:Float = xOffsetToCenter * (1 / tanHalfFOV);
-      var yPerspective:Float = yOffsetToCenter * tanHalfFOV;
-      xPerspective /= -zPerspectiveOffset;
-      yPerspective /= -zPerspectiveOffset;
+			var zPerspectiveOffset:Float = (newz + (2 * zFar * zNear / zRange));
 
-      pos.x = xPerspective + (FlxG.width * 0.5);
-      pos.y = yPerspective + (FlxG.height * 0.5);
-      pos.z = zPerspectiveOffset;
-      return pos;
-    }
-    catch (e)
-    {
-      trace("OH GOD OH FUCK IT NEARLY DIED CUZ OF: \n" + e.toString());
-      return pos;
-    }
-  }
+			// divide by zero check
+			if (zPerspectiveOffset == 0) zPerspectiveOffset = 0.001;
 
-  public var typeOffsetX:Float = 0;
-  public var typeOffsetY:Float = 0;
+			xOffsetToCenter += (offsetX * -zPerspectiveOffset);
+			yOffsetToCenter += (offsetY * -zPerspectiveOffset);
 
-  public function updateObjectPosition(obj:Note):Void
-  {
-    obj.updateHitbox();
+			xOffsetToCenter += (0 * -zPerspectiveOffset);
+			yOffsetToCenter += (0 * -zPerspectiveOffset);
 
-    var note:Note = cast obj;
-    if (isSustainNote)
-    {
-      obj.centerOrigin();
-      obj.centerOffsets();
-    }
-    note.offset.x += note.typeOffsetX;
-    note.offset.y += note.typeOffsetY;
-  }
+			var xPerspective:Float = xOffsetToCenter * (1 / tanHalfFOV);
+			var yPerspective:Float = yOffsetToCenter * tanHalfFOV;
+			xPerspective /= -zPerspectiveOffset;
+			yPerspective /= -zPerspectiveOffset;
 
-  function mapData():FlxGraphic
-  {
-    if (gpix == null || alpha != oalp || !animation.curAnim.finished || oanim != animation.curAnim.name)
-    {
-      if (!alphas.exists(noteType))
-      {
-        alphas.set(noteType, new Map());
-        indexes.set(noteType, new Map());
-      }
-      if (!alphas.get(noteType).exists(animation.curAnim.name))
-      {
-        alphas.get(noteType).set(animation.curAnim.name, new Map());
-        indexes.get(noteType).set(animation.curAnim.name, new Map());
-      }
-      if (!alphas.get(noteType).get(animation.curAnim.name).exists(animation.curAnim.curFrame))
-      {
-        alphas.get(noteType).get(animation.curAnim.name).set(animation.curAnim.curFrame, []);
-        indexes.get(noteType).get(animation.curAnim.name).set(animation.curAnim.curFrame, []);
-      }
-      if (!alphas.get(noteType)
-        .get(animation.curAnim.name)
-        .get(animation.curAnim.curFrame)
-        .contains(alpha))
-      {
-        var pix:FlxGraphic = FlxGraphic.fromFrame(frame, true);
-        var nalp:Array<Float> = alphas.get(noteType).get(animation.curAnim.name).get(animation.curAnim.curFrame);
-        var nindex:Array<Int> = indexes.get(noteType).get(animation.curAnim.name).get(animation.curAnim.curFrame);
-        pix.bitmap.colorTransform(pix.bitmap.rect, colorTransform);
-        glist.push(pix);
-        nalp.push(alpha);
-        nindex.push(glist.length - 1);
-        alphas.get(noteType).get(animation.curAnim.name).set(animation.curAnim.curFrame, nalp);
-        indexes.get(noteType).get(animation.curAnim.name).set(animation.curAnim.curFrame, nindex);
-      }
-      var dex = alphas.get(noteType)
-        .get(animation.curAnim.name)
-        .get(animation.curAnim.curFrame)
-        .indexOf(alpha);
-      gpix = glist[
-        indexes.get(noteType).get(animation.curAnim.name).get(animation.curAnim.curFrame)[dex]
-      ];
-      oalp = alpha;
-      oanim = animation.curAnim.name;
-    }
-    return gpix;
-  }
+			pos.x = xPerspective + (FlxG.width * 0.5);
+			pos.y = yPerspective + (FlxG.height * 0.5);
+			pos.z = zPerspectiveOffset;
+			return pos;
+		}
+		catch (e)
+		{
+			trace("OH GOD OH FUCK IT NEARLY DIED CUZ OF: \n" + e.toString());
+			return pos;
+		}
+	}
+
+	public var typeOffsetX:Float = 0;
+	public var typeOffsetY:Float = 0;
+
+	public function updateObjectPosition(obj:Note):Void
+	{
+		// obj.updateHitbox();
+
+		// var note:Note = cast obj;
+		if (isSustainNote)
+		{
+			obj.centerOrigin();
+			obj.centerOffsets();
+		}
+		// note.offset.x += note.typeOffsetX;
+		// note.offset.y += note.typeOffsetY;
+	}
+
+	function mapData():FlxGraphic
+	{
+		if (gpix == null || alpha != oalp || !animation.curAnim.finished || oanim != animation.curAnim.name)
+		{
+		if (!alphas.exists(noteType))
+		{
+			alphas.set(noteType, new Map());
+			indexes.set(noteType, new Map());
+		}
+		if (!alphas.get(noteType).exists(animation.curAnim.name))
+		{
+			alphas.get(noteType).set(animation.curAnim.name, new Map());
+			indexes.get(noteType).set(animation.curAnim.name, new Map());
+		}
+		if (!alphas.get(noteType)
+			.get(animation.curAnim.name)
+			.exists(animation.curAnim.curFrame))
+		{
+			alphas.get(noteType)
+			.get(animation.curAnim.name)
+			.set(animation.curAnim.curFrame, []);
+			indexes.get(noteType)
+			.get(animation.curAnim.name)
+			.set(animation.curAnim.curFrame, []);
+		}
+		if (!alphas.get(noteType)
+			.get(animation.curAnim.name)
+			.get(animation.curAnim.curFrame)
+			.contains(alpha))
+		{
+			var pix:FlxGraphic = FlxGraphic.fromFrame(frame, true);
+			var nalp:Array<Float> = alphas.get(noteType)
+			.get(animation.curAnim.name)
+			.get(animation.curAnim.curFrame);
+			var nindex:Array<Int> = indexes.get(noteType)
+			.get(animation.curAnim.name)
+			.get(animation.curAnim.curFrame);
+			pix.bitmap.colorTransform(pix.bitmap.rect, colorTransform);
+			glist.push(pix);
+			nalp.push(alpha);
+			nindex.push(glist.length - 1);
+			alphas.get(noteType)
+			.get(animation.curAnim.name)
+			.set(animation.curAnim.curFrame, nalp);
+			indexes.get(noteType)
+			.get(animation.curAnim.name)
+			.set(animation.curAnim.curFrame, nindex);
+		}
+		var dex = alphas.get(noteType)
+			.get(animation.curAnim.name)
+			.get(animation.curAnim.curFrame)
+			.indexOf(alpha);
+		gpix = glist[
+			indexes.get(noteType)
+			.get(animation.curAnim.name)
+			.get(animation.curAnim.curFrame)[dex]];
+		oalp = alpha;
+		oanim = animation.curAnim.name;
+		}
+		return gpix;
+	}
 
 	@:noCompletion
 	override function set_clipRect(rect:FlxRect):FlxRect
@@ -1180,5 +1188,28 @@ class Note extends FlxImprovedSprite
 			frame = frames.frames[animation.frameIndex];
 
 		return rect;
+	}
+
+	public override function kill():Void
+	{
+		super.kill();
+	}
+	
+	public override function revive():Void
+	{
+		super.revive();
+	}
+	
+	override public function destroy():Void
+	{
+		vertices = null;
+		indices = null;
+		uvtData = null;
+		for (i in glist)
+		i.destroy();
+		alphas = new Map();
+		indexes = new Map();
+		glist = [];
+		super.destroy();
 	}
 }
