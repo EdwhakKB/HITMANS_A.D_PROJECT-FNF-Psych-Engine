@@ -374,13 +374,12 @@ class StrumNote extends FlxImprovedSprite
 	for (camera in cameras)
 	{
 	if (!camera.visible || !camera.exists) continue;
-	// if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
+	//if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
 
 	// memory leak with drawTriangles :c
 
 	getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
 	var newGraphic:FlxGraphic = cast mapData();
-
 	camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
 	// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
 	// trace("we do be drawin... something?\n verts: \n" + vertices);

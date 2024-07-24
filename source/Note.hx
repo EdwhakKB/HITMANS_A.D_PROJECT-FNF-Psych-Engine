@@ -249,9 +249,9 @@ class Note extends FlxImprovedSprite
 
 	private function set_texture(value:String):String {
 		if(texture != value) {
+			texture = value;
 			reloadNote('', value);
 		}
-		texture = value;
 		return value;
 	}
 
@@ -1206,7 +1206,7 @@ class Note extends FlxImprovedSprite
 		indices = null;
 		uvtData = null;
 		for (i in glist)
-		i.destroy();
+			i.destroy();
 		alphas = new Map();
 		indexes = new Map();
 		glist = [];
