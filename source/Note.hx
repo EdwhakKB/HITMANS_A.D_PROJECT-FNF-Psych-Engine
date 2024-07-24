@@ -829,6 +829,13 @@ class Note extends FlxImprovedSprite
 			if (alpha > 0.3)
 				alpha = 0.3;
 		}
+
+	}
+
+	override function updateColorTransform():Void
+	{
+		super.updateColorTransform();
+		if (noteMesh!=null) noteMesh.updateCol();
 	}
 
 	override public function destroy():Void
