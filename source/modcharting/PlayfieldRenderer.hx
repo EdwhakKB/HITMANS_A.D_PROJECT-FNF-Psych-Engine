@@ -237,7 +237,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     {
         daNote.x = noteData.x;
         daNote.y = noteData.y;
-        // daNote.z = noteData.z;
+        //daNote.z = noteData.z;
         daNote.angle = noteData.angle;
         daNote.alpha = noteData.alpha;
         daNote.scale.x = noteData.scaleX;
@@ -266,7 +266,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     {
         var noteX = notes.members[noteIndex].x;
         var noteY = notes.members[noteIndex].y;
-        var noteZ = 0;
+        var noteZ = notes.members[noteIndex].z;
         var lane = getLane(noteIndex);
         var noteScaleX = NoteMovement.defaultScale[lane];
         var noteScaleY = NoteMovement.defaultScale[lane];
