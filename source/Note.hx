@@ -1032,8 +1032,8 @@ class Note extends FlxImprovedSprite
 
 		if (projectionEnabled)
 		{
-			pos_modified.x += this.x;
-			pos_modified.y += this.y;
+			pos_modified.x += this.x + (width/2);
+			pos_modified.y += this.y + (height/2);
 			pos_modified.z += this.z; // ?????
 
 			pos_modified.x += fovOffsetX;
@@ -1047,7 +1047,14 @@ class Note extends FlxImprovedSprite
 			// var noteHeight:Float = h * 0;
 
 			// var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, (noteWidth * 0.5), (noteHeight * 0.5));
-			var thisNotePos = perspectiveMath_OLD(new Vector3D(pos_modified.x+(width/2)+offsetX, pos_modified.y+(height/2), pos_modified.z*0.001), -(width/2), -(height/2));
+
+			//quick notes -Ed
+			// so the one that uses MT method (new Vector3D etc etc) fixes the z calculation, that being good ig, but the problem comes when you use 3D mods
+			// when used, notes won't get the right 3D position. (only apply for Note.hx not strums (until centered2 its added))
+			// the fix for note perspective to properly work its down and its the one used, but that breaks Z mod, there must be a way to fix both at the same time.
+
+			// var thisNotePos = perspectiveMath_OLD(new Vector3D(pos_modified.x+(width/2)+offsetX, pos_modified.y+(height/2), pos_modified.z*0.001), -(width/2), -(height/2));
+			var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, -(width/2), -(height/2));
 
 			thisNotePos.x -= this.x;
 			thisNotePos.y -= this.y;
