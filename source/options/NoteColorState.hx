@@ -86,6 +86,13 @@ class NoteColorState extends MusicBeatState
 	private var noteDescText:FlxText;
 	public var noteTypeStuff:Array<String> = ['Left Note', 'Down Note', 'Up Note', 'Right Note', 'Hurt Note'];
 	public var quantTypeStuff:Array<String> = ['4th Note', '8th Note', '12th Note', '16th Note', '24th Note', '32th Note', '48th Note', '64th Note', 'Unknown Note'];
+
+	public var noteSplashSkin:String = null;
+	public var notePack:String = null;
+	public var noteSplashAlpha:Float = 0.6;
+	public var hurtNoteAlpha:Float = 0.6;
+	public var sustainNoteAlpha:Float = 0.6;
+
 	override public function create()
 	{
 		#if desktop
@@ -93,9 +100,6 @@ class NoteColorState extends MusicBeatState
 		#end
 
 		presetSelected = 0;
-		for(i in 0...hsvPreset.length-1) {
-			if(hsvPreset[i] == ClientPrefs.notePreset) presetSelected = i;
-		}
 
 		camGame = new FlxCamera();
 		camNoteColor = new FlxCamera();
@@ -164,13 +168,8 @@ class NoteColorState extends MusicBeatState
 		noteHSVText.x += 125;
 		add(noteHSVText);
 
-		for(i in 0...ClientPrefs.arrowRGB.length) {
+		for(i in 0...4) {
 			var yPos:Float = (125 * i) + 125;
-			for(j in 0...3) {
-				var optionText:Alphabet = new Alphabet(230 + (225 * j) + 250, yPos + 15, Std.string(ClientPrefs.arrowRGB[i][j]), true);
-				optionText.cameras = [camNoteColor];
-				grpNumbers.add(optionText);
-			}
 
 			var note:FlxSprite = new FlxSprite(230, yPos - 40);
 			var hold:FlxSprite = new FlxSprite(note.x+215, note.y+50);
@@ -236,19 +235,10 @@ class NoteColorState extends MusicBeatState
 				grpHoldEnds.add(holdend);
 				grpNotes.add(note);
 			}
-
-			var noteShader:ColorSwap = new ColorSwap();
-			note.shader = noteShader.shader;
-			hold.shader = noteShader.shader;
-			holdend.shader = noteShader.shader;
-			noteShader.hue = ClientPrefs.noteHSV[i][0] / 360;
-			noteShader.saturation = ClientPrefs.noteHSV[i][1] / 100;
-			noteShader.brightness = ClientPrefs.noteHSV[i][2] / 100;
-			shaderNoteArray.push(noteShader);
 		}
 
 		// noteSplash = new FlxSprite();
-		// noteSplash.frames = Paths.getSparrowAtlas('splashes/splashes-'+ClientPrefs.noteSplashSkin.toLowerCase());
+		// noteSplash.frames = Paths.getSparrowAtlas('splashes/splashes-'+noteSplashSkin.toLowerCase());
 		// noteSplash.animation.addByPrefix("1", "note splash purple 1", 24, false);
 		// noteSplash.animation.addByPrefix("2", "note splash purple 2", 24, false);
 		// noteSplash.animation.play('1');
@@ -320,14 +310,6 @@ class NoteColorState extends MusicBeatState
 		noteDescText.cameras = [camHUD];
 		add(noteDescText);
 
-		switch(ClientPrefs.pauseMusic) {
-			case 'Fallen Memories': Conductor.changeBPM(90);
-			case 'Gettin Freaky': Conductor.changeBPM(102);
-			case 'System Processes': Conductor.changeBPM(70);
-			case 'Breaking Point': Conductor.changeBPM(110);
-			case 'Horizons': Conductor.changeBPM(100);
-		}
-
 		setSelections();
 	}
 
@@ -369,47 +351,11 @@ class NoteColorState extends MusicBeatState
 		}
 
 		if(controls.UI_LEFT_P || controls.UI_RIGHT_P) {
-			if(controls.UI_RIGHT_P) {
-				if(ClientPrefs.notePreset == 'Custom')
-					presetSelected = 0;
-				else
-					presetSelected += 1;
-			} else {
-				if(ClientPrefs.notePreset == 'Fallen')
-					presetSelected = hsvPreset.length-1;
-				else
-					presetSelected -= 1;
-			}
-
-			ClientPrefs.notePreset = hsvPreset[presetSelected];
-			switch(ClientPrefs.notePreset) {
-				case 'Fallen': curHSVPreset = [[-85, -20, 0], [-125, -35, 0], [180, -50, 0], [-125, -75, 0], [-95, 0, 0]];
-				case 'Funkin': curHSVPreset = [[-60, 0, 0], [180, 0, 0], [120, 0, 0], [0, 0, 0], [0, 0, 0]];
-				case 'Nostalgia': curHSVPreset = [[55, -20, 0], [180, 0, 0], [0, -100, 0], [55, -20, 0], [0, 0, 0]];
-				case 'Soft': curHSVPreset = [[-35, -45, 0], [25, -65, 0], [-75, -35, 0], [180, -45, 0], [-35, -25, 0]];
-				case 'Pastel': curHSVPreset = [[-85, -25, 0], [-135, -25, 0], [120, -25, 0], [0, -25, 0], [120, -50, 0]];
-				case 'Sunrise': curHSVPreset = [[45, -35, 0], [30, -35, 0], [15, -35, 0], [0, -35, 0], [-0, -35, 0]];
-				case 'Midnight': curHSVPreset = [[-100, -35, 0], [-155, -70, 0], [-130, -35, 0], [-100, -35, 0], [-155, -70, 0]];
-				case 'QT': curHSVPreset = [[-130, -40, 0], [-180, -35, 0], [-80, -25, 0], [-30, -5, 0], [0, 0, 0]];
-				case 'Inhuman': curHSVPreset = [[0, -75, 0], [0, 0, 0], [0, -75, 0], [0, 0, 0], [0, 0, 0]];
-				case 'Hitman': curHSVPreset = [[125, 0, 0], [125, -85, 0], [125, 0, 0], [125, -85, 0], [0, 0, 0]];
-				case 'Groovin': curHSVPreset = [[-35, 0, 0], [-180, 0, 0], [-35, 0, 0], [-180, 0, 0], [-85, 0, 0]];
-				case 'Mami': curHSVPreset = [[-45, -30, 0], [0, -15, 0], [-145, -15, 0], [-85, -15, 0], [45, 0, 0]];
-				case 'Anby': curHSVPreset = [[0, -100, 0], [-100, -60, 0], [180, -60, 0], [0, -100, 0], [-125, -40, 0]];
-				case 'Luis': curHSVPreset = [[-25, -15, 0], [0, -40, 0], [-140, -25, 0], [0, -15, 0], [0, 0, 0]];
-				case 'Hazard': curHSVPreset = [[125, -20, 0], [-150, -20, 0], [0, -20, 0], [60, -20, 0], [0, -20, -25]];
-				case 'Natumi': curHSVPreset = [[-65, -25, 0], [-15, -25, 0], [-65, -25, 0], [-15, -25, 0], [-25, 0, 0]];
-				case 'Crystarlya': curHSVPreset = [[30, -10, 0], [-165, -10, 0], [90, -10, 0], [50, -10, 0], [0, 0, 0]];
-				case 'Luna': curHSVPreset = [[-90, -25, 0], [-100, -25, 0], [-110, -25, 0], [-120, -25, 0], [-130, -25, 0]];
-				case 'Custom': curHSVPreset = ClientPrefs.customNoteHSV;
-			}
-			ClientPrefs.noteHSV = curHSVPreset;
 			ClientPrefs.saveSettings();
 
-			titleText.text = '< "'+ ClientPrefs.notePreset +'" Preset >';
+			titleText.text = '< "'+ '' +'" Preset >';
 			titleText.screenCenter(X);
 
-			for(i in 0...3) for (j in 0...ClientPrefs.noteHSV.length) defaultValue(j, i);
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 			
@@ -430,7 +376,6 @@ class NoteColorState extends MusicBeatState
 
 		if(FlxG.keys.justPressed.CONTROL) {
 			persistentUpdate = false;
-			openSubState(new options.NoteExtraSubState());
 		}
 
 		if(FlxG.keys.justPressed.SHIFT && !onPresets) {
@@ -462,7 +407,7 @@ class NoteColorState extends MusicBeatState
 				onPresets = !onPresets;
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				if(onPresets) {
-					titleText.text = '< "'+ ClientPrefs.notePreset +'" Preset >';
+					titleText.text = '< "'+ '' +'" Preset >';
 					descText.text = "TAB - Note Colors | SPACE - Show/Hide Description";
 				} else {
 					titleText.text = '< Note Colors >';
@@ -496,14 +441,6 @@ class NoteColorState extends MusicBeatState
 	}
 
 	function setSelections() {
-		if(curNoteSelected < 0) curNoteSelected = ClientPrefs.noteHSV.length-1;
-		if(curNoteSelected >= ClientPrefs.noteHSV.length) curNoteSelected = 0;
-		if(curQuantSelected < 0) curQuantSelected = ClientPrefs.quantHSV.length-1;
-		if(curQuantSelected >= ClientPrefs.quantHSV.length) curQuantSelected = 0;
-
-		curNoteValue = ClientPrefs.noteHSV[curNoteSelected][noteTypeSelected];
-		if(ClientPrefs.notePreset == 'Custom') curNoteValue = ClientPrefs.customNoteHSV[curNoteSelected][noteTypeSelected];
-		curQuantValue = ClientPrefs.quantHSV[curQuantSelected][quantTypeSelected];
 		updateValue();
 
 		for(i in 0...grpNumbers.length) {
@@ -517,11 +454,11 @@ class NoteColorState extends MusicBeatState
 
 		for(i in 0...grpNotes.length) {
 			var item = grpNotes.members[i];
-			if(i == 4) item.alpha = ClientPrefs.hurtNoteAlpha * (3/5);
+			if(i == 4) item.alpha = hurtNoteAlpha * (3/5);
 			else item.alpha = 0.6;
 			item.scale.set(0.5, 0.5);
 			if(curNoteSelected == i) {
-				if(i == 4) item.alpha = ClientPrefs.hurtNoteAlpha;
+				if(i == 4) item.alpha = hurtNoteAlpha;
 				else item.alpha = 1;
 				item.scale.set(0.75, 0.75);
 				noteHSVText.y = item.y;
@@ -532,24 +469,24 @@ class NoteColorState extends MusicBeatState
 
 		for(i in 0...grpHolds.length) {
 			var item = grpHolds.members[i];
-			item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
-			if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+			item.alpha = sustainNoteAlpha * (3/5);
+			if(i == 4) item.alpha *= hurtNoteAlpha;
 			item.scale.set(0.5, 15.43);
 			if(curNoteSelected == i) {
-				item.alpha = ClientPrefs.sustainNoteAlpha;
-				if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+				item.alpha = sustainNoteAlpha;
+				if(i == 4) item.alpha *= hurtNoteAlpha;
 				item.scale.set(0.75, 15.18);
 			}
 		}
 
 		for(i in 0...grpHoldEnds.length) {
 			var item = grpHoldEnds.members[i];
-			item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
-			if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+			item.alpha = sustainNoteAlpha * (3/5);
+			if(i == 4) item.alpha *= hurtNoteAlpha;
 			item.scale.set(0.5, 0.5);
 			if(curNoteSelected == i) {
-				item.alpha = ClientPrefs.sustainNoteAlpha;
-				if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+				item.alpha = sustainNoteAlpha;
+				if(i == 4) item.alpha *= hurtNoteAlpha;
 				item.scale.set(0.75, 0.75);
 				item.x = grpHolds.members[i].x + grpHolds.members[i].height + 425;
 			}
@@ -579,20 +516,20 @@ class NoteColorState extends MusicBeatState
 
 		for(i in 0...grpQuantHolds.length) {
 			var item = grpQuantHolds.members[i];
-			item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
+			item.alpha = sustainNoteAlpha * (3/5);
 			item.scale.set(0.5, 15.43);
 			if(curQuantSelected == i) {
-				item.alpha = ClientPrefs.sustainNoteAlpha;
+				item.alpha = sustainNoteAlpha;
 				item.scale.set(0.75, 15.18);
 			}
 		}
 
 		for(i in 0...grpQuantHoldEnds.length) {
 			var item = grpQuantHoldEnds.members[i];
-			item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
+			item.alpha = sustainNoteAlpha * (3/5);
 			item.scale.set(0.5, 0.5);
 			if(curQuantSelected == i) {
-				item.alpha = ClientPrefs.sustainNoteAlpha;
+				item.alpha = sustainNoteAlpha;
 				item.scale.set(0.75, 0.75);
 				item.x = grpQuantHolds.members[i].x + grpQuantHolds.members[i].height + 425;
 			}
@@ -610,11 +547,6 @@ class NoteColorState extends MusicBeatState
 	function changeSelection(change:Int = 0) {
 		if(onColorMenu) {
 			curNoteSelected += change;
-			if(curNoteSelected < 0) curNoteSelected = ClientPrefs.noteHSV.length-1;
-			if(curNoteSelected >= ClientPrefs.noteHSV.length) curNoteSelected = 0;
-
-			curNoteValue = ClientPrefs.noteHSV[curNoteSelected][noteTypeSelected];
-			if(ClientPrefs.notePreset == 'Custom') curNoteValue = ClientPrefs.customNoteHSV[curNoteSelected][noteTypeSelected];
 			updateValue();
 	
 			for(i in 0...grpNumbers.length) {
@@ -628,11 +560,11 @@ class NoteColorState extends MusicBeatState
 
 			for(i in 0...grpNotes.length) {
 				var item = grpNotes.members[i];
-				if(i == 4) item.alpha = ClientPrefs.hurtNoteAlpha * (3/5);
+				if(i == 4) item.alpha = hurtNoteAlpha * (3/5);
 				else item.alpha = 0.6;
 				item.scale.set(0.5, 0.5);
 				if(curNoteSelected == i) {
-					if(i == 4) item.alpha = ClientPrefs.hurtNoteAlpha;
+					if(i == 4) item.alpha = hurtNoteAlpha;
 					else item.alpha = 1;
 					item.scale.set(0.75, 0.75);
 					noteHSVText.y = item.y;
@@ -643,34 +575,30 @@ class NoteColorState extends MusicBeatState
 
 			for(i in 0...grpHolds.length) {
 				var item = grpHolds.members[i];
-				item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
-				if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+				item.alpha = sustainNoteAlpha * (3/5);
+				if(i == 4) item.alpha *= hurtNoteAlpha;
 				item.scale.set(0.5, 15.43);
 				if(curNoteSelected == i) {
-					item.alpha = ClientPrefs.sustainNoteAlpha;
-					if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+					item.alpha = sustainNoteAlpha;
+					if(i == 4) item.alpha *= hurtNoteAlpha;
 					item.scale.set(0.75, 15.18);
 				}
 			}
 
 			for(i in 0...grpHoldEnds.length) {
 				var item = grpHoldEnds.members[i];
-				item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
-				if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+				item.alpha = sustainNoteAlpha * (3/5);
+				if(i == 4) item.alpha *= hurtNoteAlpha;
 				item.scale.set(0.5, 0.5);
 				if(curNoteSelected == i) {
-					item.alpha = ClientPrefs.sustainNoteAlpha;
-					if(i == 4) item.alpha *= ClientPrefs.hurtNoteAlpha;
+					item.alpha = sustainNoteAlpha;
+					if(i == 4) item.alpha *= hurtNoteAlpha;
 					item.scale.set(0.75, 0.75);
 					item.x = grpHolds.members[i].x + grpHolds.members[i].height + 425;
 				}
 			}
 		} else {
 			curQuantSelected += change;
-			if(curQuantSelected < 0) curQuantSelected = ClientPrefs.quantHSV.length-1;
-			if(curQuantSelected >= ClientPrefs.quantHSV.length) curQuantSelected = 0;
-
-			curQuantValue = ClientPrefs.quantHSV[curQuantSelected][quantTypeSelected];
 			updateValue();
 	
 			for(i in 0...grpQuantNumbers.length) {
@@ -697,20 +625,20 @@ class NoteColorState extends MusicBeatState
 
 			for(i in 0...grpQuantHolds.length) {
 				var item = grpQuantHolds.members[i];
-				item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
+				item.alpha = sustainNoteAlpha * (3/5);
 				item.scale.set(0.5, 15.43);
 				if(curQuantSelected == i) {
-					item.alpha = ClientPrefs.sustainNoteAlpha;
+					item.alpha = sustainNoteAlpha;
 					item.scale.set(0.75, 15.18);
 				}
 			}
 
 			for(i in 0...grpQuantHoldEnds.length) {
 				var item = grpQuantHoldEnds.members[i];
-				item.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
+				item.alpha = sustainNoteAlpha * (3/5);
 				item.scale.set(0.5, 0.5);
 				if(curQuantSelected == i) {
-					item.alpha = ClientPrefs.sustainNoteAlpha;
+					item.alpha = sustainNoteAlpha;
 					item.scale.set(0.75, 0.75);
 					item.x = grpQuantHolds.members[i].x + grpQuantHolds.members[i].height + 425;
 				}
@@ -732,8 +660,6 @@ class NoteColorState extends MusicBeatState
 			if(noteTypeSelected < 0) noteTypeSelected = 2;
 			if(noteTypeSelected > 2) noteTypeSelected = 0;
 
-			curNoteValue = ClientPrefs.noteHSV[curNoteSelected][noteTypeSelected];
-			if(ClientPrefs.notePreset == 'Custom') curNoteValue = ClientPrefs.customNoteHSV[curNoteSelected][noteTypeSelected];
 			updateValue();
 	
 			for(i in 0...grpNumbers.length) {
@@ -746,7 +672,6 @@ class NoteColorState extends MusicBeatState
 			if(quantTypeSelected < 0) quantTypeSelected = 2;
 			if(quantTypeSelected > 2) quantTypeSelected = 0;
 
-			curQuantValue = ClientPrefs.quantHSV[curQuantSelected][quantTypeSelected];
 			updateValue();
 	
 			for(i in 0...grpQuantNumbers.length) {
@@ -759,32 +684,7 @@ class NoteColorState extends MusicBeatState
 
 	function defaultValue(selected:Int, type:Int) {
 		if(onColorMenu) {
-			if(ClientPrefs.notePreset == 'Custom') {
-				switch(type) {
-					case 0: shaderNoteArray[selected].hue = ClientPrefs.customNoteHSV[selected][type]/360;
-					case 1: shaderNoteArray[selected].saturation = ClientPrefs.customNoteHSV[selected][type]/100;
-					case 2: shaderNoteArray[selected].brightness = ClientPrefs.customNoteHSV[selected][type]/100;
-				}
-		
-				var item = grpNumbers.members[(selected * 3) + type];
-				item.text = Std.string(ClientPrefs.customNoteHSV[selected][type]);
-		
-				var add = (40 * (item.letters.length - 1)) / 2;
-				for(letter in item.letters) letter.offset.x += add;
-
-			} else {
-				switch(type) {
-					case 0: shaderNoteArray[selected].hue = ClientPrefs.noteHSV[selected][type]/360;
-					case 1: shaderNoteArray[selected].saturation = ClientPrefs.noteHSV[selected][type]/100;
-					case 2: shaderNoteArray[selected].brightness = ClientPrefs.noteHSV[selected][type]/100;
-				}
-		
-				var item = grpNumbers.members[(selected * 3) + type];
-				item.text = Std.string(ClientPrefs.noteHSV[selected][type]);
-		
-				var add = (40 * (item.letters.length - 1)) / 2;
-				for(letter in item.letters) letter.offset.x += add;
-			}
+			
 		} 
 	}
 
@@ -801,8 +701,6 @@ class NoteColorState extends MusicBeatState
 			if(roundedValue > max) curNoteValue = max;
 
 			roundedValue = Math.round(curNoteValue);
-			ClientPrefs.noteHSV[curNoteSelected][noteTypeSelected] = roundedValue;
-			if(ClientPrefs.notePreset == 'Custom') ClientPrefs.customNoteHSV[curNoteSelected][noteTypeSelected] = roundedValue;
 	
 			switch(noteTypeSelected) {
 				case 0: shaderNoteArray[curNoteSelected].hue = roundedValue / 360;
@@ -830,7 +728,6 @@ class NoteColorState extends MusicBeatState
 			if(roundedValue > max) curQuantValue = max;
 
 			roundedValue = Math.round(curQuantValue);
-			ClientPrefs.quantHSV[curQuantSelected][quantTypeSelected] = roundedValue;
 	
 			switch(quantTypeSelected) {
 				case 0: shaderQuantArray[curQuantSelected].hue = roundedValue / 360;
@@ -852,8 +749,6 @@ class NoteColorState extends MusicBeatState
 	function resetValue(selected:Int, type:Int) {
 		if(onColorMenu) {
 			curNoteValue = 0;
-			ClientPrefs.noteHSV[selected][type] = 0;
-			ClientPrefs.customNoteHSV[selected][type] = 0;
 			switch(type) {
 				case 0: shaderNoteArray[selected].hue = 0;
 				case 1: shaderNoteArray[selected].saturation = 0;
@@ -867,7 +762,6 @@ class NoteColorState extends MusicBeatState
 			for(letter in item.letters) letter.offset.x += add;
 		} else {
 			curQuantValue = quantPresetDefault[selected][type];
-			ClientPrefs.quantHSV[selected][type] = quantPresetDefault[selected][type];
 			switch(type) {
 				case 0: shaderQuantArray[selected].hue = quantPresetDefault[selected][type]/360;
 				case 1: shaderQuantArray[selected].saturation = quantPresetDefault[selected][type]/100;
@@ -883,10 +777,10 @@ class NoteColorState extends MusicBeatState
 	}
 
 	function updateNotes() {
-		var newNoteSuffix:String = ClientPrefs.noteSkin.toLowerCase();
-		var newHurtNoteSuffix:String = ClientPrefs.hurtNoteSkin.toLowerCase();
-		var newHoldSuffix:String = ClientPrefs.sustainSkin.toLowerCase();
-		if(ClientPrefs.hurtNoteSkin == 'Note') newHurtNoteSuffix = newNoteSuffix;
+		var newNoteSuffix:String = ClientPrefs.notesSkin[0].toLowerCase();
+		var newHurtNoteSuffix:String = ClientPrefs.notesSkin[1].toLowerCase();
+		var newHoldSuffix:String = ClientPrefs.notesSkin[2].toLowerCase();
+		if(ClientPrefs.notesSkin[1] == 'Note') newHurtNoteSuffix = newNoteSuffix;
 	
 		for(i in 0...grpNotes.length) {
 			var note = grpNotes.members[i];
@@ -894,33 +788,33 @@ class NoteColorState extends MusicBeatState
 			var holdend = grpHoldEnds.members[i];
 			var animations:Array<String> = ['purple0', 'blue0', 'green0', 'red0'];
 			if(i < 4) {
-				note.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/notes-'+newNoteSuffix);
+				note.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/notes-'+newNoteSuffix);
 				note.animation.addByPrefix('idle', animations[i]);
 				note.animation.play('idle');
 				note.antialiasing = ClientPrefs.globalAntialiasing;
 	
-				hold.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
+				hold.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
 				hold.animation.addByPrefix('idle', 'purple hold piece0');
 				hold.animation.play('idle');
 				hold.antialiasing = ClientPrefs.globalAntialiasing;
 	
-				holdend.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
+				holdend.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
 				holdend.animation.addByPrefix('idle', 'purple hold end0');
 				holdend.animation.play('idle');
 				holdend.antialiasing = ClientPrefs.globalAntialiasing;
 			} else if(i == 4) {
-				note.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/hurt/hurts-'+newHurtNoteSuffix);
+				note.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/hurt/hurts-'+newHurtNoteSuffix);
 				note.animation.addByPrefix('idle', 'purple0');
 				note.animation.play('idle');
 				note.antialiasing = ClientPrefs.globalAntialiasing;
 				note.angle = 0;
 	
-				hold.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/holds/hurt/hurtholds-'+newHoldSuffix);
+				hold.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/hurt/hurtholds-'+newHoldSuffix);
 				hold.animation.addByPrefix('idle', 'purple hold piece0');
 				hold.animation.play('idle');
 				hold.antialiasing = ClientPrefs.globalAntialiasing;
 	
-				holdend.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/holds/hurt/hurtholds-'+newHoldSuffix);
+				holdend.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/hurt/hurtholds-'+newHoldSuffix);
 				holdend.animation.addByPrefix('idle', 'purple hold end0');
 				holdend.animation.play('idle');
 				holdend.antialiasing = ClientPrefs.globalAntialiasing;
@@ -929,21 +823,21 @@ class NoteColorState extends MusicBeatState
 			if(!changingNote) {
 				if(curNoteSelected == i) {
 					note.alpha = 1;
-					hold.alpha = ClientPrefs.sustainNoteAlpha;
-					holdend.alpha = ClientPrefs.sustainNoteAlpha;
+					hold.alpha = sustainNoteAlpha;
+					holdend.alpha = sustainNoteAlpha;
 					if(i == 4) {
-						note.alpha = ClientPrefs.hurtNoteAlpha;
-						hold.alpha *= ClientPrefs.hurtNoteAlpha;
-						holdend.alpha *= ClientPrefs.hurtNoteAlpha;
+						note.alpha = hurtNoteAlpha;
+						hold.alpha *= hurtNoteAlpha;
+						holdend.alpha *= hurtNoteAlpha;
 					}
 				} else {
 					note.alpha = 0.6;
-					hold.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
-					holdend.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
+					hold.alpha = sustainNoteAlpha * (3/5);
+					holdend.alpha = sustainNoteAlpha * (3/5);
 				    if(i == 4) {
-						note.alpha = ClientPrefs.hurtNoteAlpha * (3/5);
-						hold.alpha *= ClientPrefs.hurtNoteAlpha;
-						holdend.alpha *= ClientPrefs.hurtNoteAlpha;
+						note.alpha = hurtNoteAlpha * (3/5);
+						hold.alpha *= hurtNoteAlpha;
+						holdend.alpha *= hurtNoteAlpha;
 					}
 				}
 			} else {
@@ -953,12 +847,12 @@ class NoteColorState extends MusicBeatState
 					holdend.alpha = 1;
 				} else {
 					note.alpha = 0.2;
-					hold.alpha = ClientPrefs.sustainNoteAlpha/5;
-					holdend.alpha = ClientPrefs.sustainNoteAlpha/5;
+					hold.alpha = sustainNoteAlpha/5;
+					holdend.alpha = sustainNoteAlpha/5;
 				    if(i == 4) {
-						note.alpha = ClientPrefs.hurtNoteAlpha/5;
-						hold.alpha *= ClientPrefs.hurtNoteAlpha;
-						holdend.alpha *= ClientPrefs.hurtNoteAlpha;
+						note.alpha = hurtNoteAlpha/5;
+						hold.alpha *= hurtNoteAlpha;
+						holdend.alpha *= hurtNoteAlpha;
 					}
 				}
 			}
@@ -970,17 +864,17 @@ class NoteColorState extends MusicBeatState
 			var holdend = grpQuantHoldEnds.members[i];
 			var animations:Array<String> = ['purple0', 'blue0', 'green0', 'red0', 'purple0', 'blue0', 'green0', 'red0', 'purple0'];
 
-			note.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/notes-'+newNoteSuffix);
+			note.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/notes-'+newNoteSuffix);
 			note.animation.addByPrefix('idle', animations[i]);
 			note.animation.play('idle');
 			note.antialiasing = ClientPrefs.globalAntialiasing;
 	
-			hold.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
+			hold.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
 			hold.animation.addByPrefix('idle', 'purple hold piece0');
 			hold.animation.play('idle');
 			hold.antialiasing = ClientPrefs.globalAntialiasing;
 	
-			holdend.frames = Paths.getSparrowAtlas('notes/'+ClientPrefs.notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
+			holdend.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
 			holdend.animation.addByPrefix('idle', 'purple hold end0');
 			holdend.animation.play('idle');
 			holdend.antialiasing = ClientPrefs.globalAntialiasing;
@@ -988,12 +882,12 @@ class NoteColorState extends MusicBeatState
 			if(!changingQuant) {
 				if(curQuantSelected == i) {
 					note.alpha = 1;
-					hold.alpha = ClientPrefs.sustainNoteAlpha;
-					holdend.alpha = ClientPrefs.sustainNoteAlpha;
+					hold.alpha = sustainNoteAlpha;
+					holdend.alpha = sustainNoteAlpha;
 				} else {
 					note.alpha = 0.6;
-					hold.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
-					holdend.alpha = ClientPrefs.sustainNoteAlpha * (3/5);
+					hold.alpha = sustainNoteAlpha * (3/5);
+					holdend.alpha = sustainNoteAlpha * (3/5);
 				}
 			} else {
 				if(curQuantSelected == i) {
@@ -1002,8 +896,8 @@ class NoteColorState extends MusicBeatState
 					holdend.alpha = 1;
 				} else {
 					note.alpha = 0.2;
-					hold.alpha = ClientPrefs.sustainNoteAlpha/5;
-					holdend.alpha = ClientPrefs.sustainNoteAlpha/5;
+					hold.alpha = sustainNoteAlpha/5;
+					holdend.alpha = sustainNoteAlpha/5;
 				}
 			}
 		}
@@ -1017,40 +911,28 @@ class NoteColorState extends MusicBeatState
 			item = grpNotes.members[curNoteSelected];
 			if(curNoteSelected != 4) {
 				noteSplash.setPosition(item.x - Note.swagWidth * 0.8, item.y - Note.swagWidth * 0.85);
-				noteSplash.frames = Paths.getSparrowAtlas('splashes/splashes-'+ClientPrefs.noteSplashSkin.toLowerCase());
+				noteSplash.frames = Paths.getSparrowAtlas('splashes/splashes-'+noteSplashSkin.toLowerCase());
 				noteSplash.animation.addByPrefix("1", "note splash purple 1", 24, false);
 				noteSplash.animation.addByPrefix("2", "note splash purple 2", 24, false);
-	
-				var splashShader:ColorSwap = new ColorSwap();
-				noteSplash.shader = splashShader.shader;
-				splashShader.hue = shaderNoteArray[curNoteSelected].hue;
-				splashShader.saturation = shaderNoteArray[curNoteSelected].saturation;
-				splashShader.brightness = shaderNoteArray[curNoteSelected].brightness;
 		
 				var animNum:Int = FlxG.random.int(1, 2);
 				noteSplash.animation.play(Std.string(animNum), forceAnim);
-				noteSplash.alpha = ClientPrefs.noteSplashAlpha;
+				noteSplash.alpha = noteSplashAlpha;
 			} else {
 				hurtSplash.setPosition(item.x - Note.swagWidth * 0.8, item.y - Note.swagWidth * 0.85);
 				hurtSplash.frames = Paths.getSparrowAtlas('splashes/hurt/splashes-hurt');
 				hurtSplash.animation.addByPrefix("1", "note splash purple 1", 24, false);
 				hurtSplash.animation.addByPrefix("2", "note splash purple 2", 24, false);
-	
-				var splashShader:ColorSwap = new ColorSwap();
-				hurtSplash.shader = splashShader.shader;
-				splashShader.hue = shaderNoteArray[curNoteSelected].hue;
-				splashShader.saturation = shaderNoteArray[curNoteSelected].saturation;
-				splashShader.brightness = shaderNoteArray[curNoteSelected].brightness;
 		
 				var animNum:Int = FlxG.random.int(1, 2);
 				hurtSplash.animation.play(Std.string(animNum), forceAnim);
-				hurtSplash.alpha = ClientPrefs.noteSplashAlpha;
+				hurtSplash.alpha = noteSplashAlpha;
 			}
 		} else {
 			item = grpQuantNotes.members[curQuantSelected];
 
 			quantSplash.setPosition(item.x - Note.swagWidth * 0.8, item.y - Note.swagWidth * 0.85);
-			quantSplash.frames = Paths.getSparrowAtlas('splashes/splashes-'+ClientPrefs.noteSplashSkin.toLowerCase());
+			quantSplash.frames = Paths.getSparrowAtlas('splashes/splashes-'+noteSplashSkin.toLowerCase());
 			quantSplash.animation.addByPrefix("1", "note splash purple 1", 24, false);
 			quantSplash.animation.addByPrefix("2", "note splash purple 2", 24, false);
 
@@ -1062,12 +944,11 @@ class NoteColorState extends MusicBeatState
 	
 			var animNum:Int = FlxG.random.int(1, 2);
 			quantSplash.animation.play(Std.string(animNum), forceAnim);
-			quantSplash.alpha = ClientPrefs.noteSplashAlpha;
+			quantSplash.alpha = noteSplashAlpha;
 		}
 	}
 
 	function reloadSplash() {
-		if(ClientPrefs.noteSplashes) {
 			if(onColorMenu) {
 				noteSplash.alpha = 0;
 				hurtSplash.alpha = 0;
@@ -1075,7 +956,6 @@ class NoteColorState extends MusicBeatState
 				quantSplash.alpha = 0;
 			}
 			spawnSplash(true);
-		}
 	}
 
 
@@ -1085,7 +965,7 @@ class NoteColorState extends MusicBeatState
 		super.stepHit();
 
 		if(curStep == lastStepHit) return;
-		if(curStep % 4 == 2) if(ClientPrefs.noteSplashes) spawnSplash(false);
+		if(curStep % 4 == 2) spawnSplash(false);
 		
 		lastStepHit = curStep;
 	}
@@ -1099,7 +979,7 @@ class NoteColorState extends MusicBeatState
 		if(curBeat % 2 == 0) {
 			if(onColorMenu) {
 				var item = grpNotes.members[4];
-				if(ClientPrefs.hurtNoteSkin == 'Note') {
+				if(ClientPrefs.notesSkin[1] == 'Note') {
 					switch(item.angle) {
 						case 0: item.angle = -90;
 						case -90: item.angle = 90;
