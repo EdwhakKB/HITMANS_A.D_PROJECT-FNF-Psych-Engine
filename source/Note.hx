@@ -998,6 +998,8 @@ class Note extends FlxImprovedSprite
 		// pos_modified.x -= spriteGraphic.offset.x;
 		// pos_modified.y -= spriteGraphic.offset.y;
 
+		var whatWasTheZBefore:Float = pos_modified.z;
+
 		var rotateModPivotPoint:Vector2 = new Vector2(w / 2, h / 2);
 		rotateModPivotPoint.x += pivotOffsetX;
 		rotateModPivotPoint.y += pivotOffsetY;
@@ -1019,12 +1021,16 @@ class Note extends FlxImprovedSprite
 		pos_modified.z = thing.x;
 		pos_modified.y = thing.y;
 
-		// Apply offset here before it gets affected by z projection!
-		// point3D.x -= offset.x;
-		// point3D.y -= offset.y;
+		//Calculate the difference of the rotation and use this as input for the applyPerspective function (idk it just works) 
+		//Feel free to move this calculation around if you wanna account for other facts like offsetZ (if added) or moveZ, idk what you're doing exactly with this code lol
+		// -Hazard24
+		var zDifference:Float = pos_modified.z - whatWasTheZBefore;
 
+		// Apply offset here before it gets affected by z projection!
 		pos_modified.x -= offset.x;
 		pos_modified.y -= offset.y;
+		pos_modified.x += offsetX; //Moved offsetX here so it's with the other Offsets -Hazard24
+		
 
 		pos_modified.x += moveX;
 		pos_modified.y += moveY;
@@ -1032,8 +1038,10 @@ class Note extends FlxImprovedSprite
 
 		if (projectionEnabled)
 		{
-			pos_modified.x += this.x + (width/2);
-			pos_modified.y += this.y + (height/2);
+			pos_modified.x += this.x;
+			pos_modified.y += this.y;
+			//pos_modified.x += (width/2);
+			//pos_modified.y += (height/2);
 			pos_modified.z += this.z; // ?????
 
 			pos_modified.x += fovOffsetX;
@@ -1046,15 +1054,11 @@ class Note extends FlxImprovedSprite
 			// var noteWidth:Float = w * 0;
 			// var noteHeight:Float = h * 0;
 
-			// var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, (noteWidth * 0.5), (noteHeight * 0.5));
-
-			//quick notes -Ed
-			// so the one that uses MT method (new Vector3D etc etc) fixes the z calculation, that being good ig, but the problem comes when you use 3D mods
-			// when used, notes won't get the right 3D position. (only apply for Note.hx not strums (until centered2 its added))
-			// the fix for note perspective to properly work its down and its the one used, but that breaks Z mod, there must be a way to fix both at the same time.
-
-			// var thisNotePos = perspectiveMath_OLD(new Vector3D(pos_modified.x+(width/2)+offsetX, pos_modified.y+(height/2), pos_modified.z*0.001), -(width/2), -(height/2));
-			var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, -(width/2), -(height/2));
+			//var thisNotePos = perspectiveMath(new Vector3D(pos_modified.x+(width/2), pos_modified.y+(height/2), zDifference * 0.001), -(width/2), -(height/2));
+			pos_modified.z = zDifference * 0.001;
+			var thisNotePos:Vector3D = perspectiveMath(pos_modified, 0, 0);
+			//No need for any offsets since the offsets are already a part of pos_modified for each Vert. Plus if you look at the +height/2 part, you'll realise it's just cancelling each other out lmfao
+			// -Hazard24
 
 			thisNotePos.x -= this.x;
 			thisNotePos.y -= this.y;
@@ -1074,7 +1078,7 @@ class Note extends FlxImprovedSprite
 	public var zFar:Float = 100.0;
 
 	// https://github.com/TheZoroForce240/FNF-Modcharting-Tools/blob/main/source/modcharting/ModchartUtil.hx
-	public function perspectiveMath_OLD(pos:Vector3D, offsetX:Float = 0, offsetY:Float = 0):Vector3D
+	public function perspectiveMath(pos:Vector3D, offsetX:Float = 0, offsetY:Float = 0):Vector3D
 	{
 		try
 		{
