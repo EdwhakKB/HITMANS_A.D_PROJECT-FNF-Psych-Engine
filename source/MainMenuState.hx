@@ -374,7 +374,7 @@ class MainMenuState extends MusicBeatState
 				if (FlxG.mouse.justPressed) {
 					new FlxTimer().start(1, function(tmrSe:FlxTimer)
 						{
-							openSubState(new options.FunkinArrowSubState());
+							MusicBeatState.switchState(new options.NoteColorState());
 						});
 					inFolder = true;
 					notes.animation.play('selected');
