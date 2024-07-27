@@ -472,11 +472,11 @@ class StrumNote extends FlxImprovedSprite
       // var noteHeight:Float = h * 0;
 
       // var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, (noteWidth * 0.5), (noteHeight * 0.5));
-      var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, 0, 0);
+      var thisNotePos = perspectiveMath_OLD(new Vector3D(pos_modified.x+(width/2), pos_modified.y+(height/2), pos_modified.z*0.001), -(width/2), -(height/2));
 
       thisNotePos.x -= this.x;
       thisNotePos.y -= this.y;
-      thisNotePos.z -= this.z * 0.001; // ?????
+      thisNotePos.z -= this.z; // ?????
 
       thisNotePos.x -= fovOffsetX;
       thisNotePos.y -= fovOffsetY;

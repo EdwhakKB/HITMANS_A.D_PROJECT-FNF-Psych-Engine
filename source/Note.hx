@@ -50,78 +50,78 @@ class Note extends FlxImprovedSprite
 {
 
 	// Modcharting Stuff ---->
-  // Galxay stuff
-  private static var alphas:Map<String, Map<String, Map<Int, Array<Float>>>> = new Map();
-  private static var indexes:Map<String, Map<String, Map<Int, Array<Int>>>> = new Map();
-  private static var glist:Array<FlxGraphic> = [];
+	// Galaxy stuff
+	private static var alphas:Map<String, Map<String, Map<Int, Array<Float>>>> = new Map();
+	private static var indexes:Map<String, Map<String, Map<Int, Array<Int>>>> = new Map();
+	private static var glist:Array<FlxGraphic> = [];
 
-  public var gpix:FlxGraphic = null;
-  public var oalp:Float = 1;
-  public var oanim:String = "";
+	public var gpix:FlxGraphic = null;
+	public var oalp:Float = 1;
+	public var oanim:String = "";
 
-  // If set, will reference this sprites graphic! Very useful for animations!
-  public var initialized:Bool = false; //if this is false it won't use most of functions
-  public var projectionEnabled:Bool = true;
+	// If set, will reference this sprites graphic! Very useful for animations!
+	public var initialized:Bool = false; //if this is false it won't use most of functions
+	public var projectionEnabled:Bool = true;
 
-  public var angleX:Float = 0;
-  public var angleY:Float = 0;
-  public var angleZ:Float = 0;
+	public var angleX:Float = 0;
+	public var angleY:Float = 0;
+	public var angleZ:Float = 0;
 
-  public var scaleX:Float = 1;
-  public var scaleY:Float = 1;
-  public var scaleZ:Float = 1;
+	public var scaleX:Float = 1;
+	public var scaleY:Float = 1;
+	public var scaleZ:Float = 1;
 
-  public var skewX:Float = 0;
-  public var skewY:Float = 0;
-  public var skewZ:Float = 0;
+	public var skewX:Float = 0;
+	public var skewY:Float = 0;
+	public var skewZ:Float = 0;
 
-  // in %
-  public var skewX_offset:Float = 0.5;
-  public var skewY_offset:Float = 0.5;
-  public var skewZ_offset:Float = 0.5;
+	// in %
+	public var skewX_offset:Float = 0.5;
+	public var skewY_offset:Float = 0.5;
+	public var skewZ_offset:Float = 0.5;
 
-  public var moveX:Float = 0;
-  public var moveY:Float = 0;
-  public var moveZ:Float = 0;
+	public var moveX:Float = 0;
+	public var moveY:Float = 0;
+	public var moveZ:Float = 0;
 
-  public var fovOffsetX:Float = 0;
-  public var fovOffsetY:Float = 0;
-  // public var fovOffsetZ:Float = 0;
-  public var pivotOffsetX:Float = 0;
-  public var pivotOffsetY:Float = 0;
-  public var pivotOffsetZ:Float = 0;
+	public var fovOffsetX:Float = 0;
+	public var fovOffsetY:Float = 0;
+	// public var fovOffsetZ:Float = 0;
+	public var pivotOffsetX:Float = 0;
+	public var pivotOffsetY:Float = 0;
+	public var pivotOffsetZ:Float = 0;
 
-  // public var topleft:Vector3D = new Vector3D(-1, -1, 0);
-  // public var topright:Vector3D = new Vector3D(1, -1, 0);
-  // public var bottomleft:Vector3D = new Vector3D(-1, 1, 0);
-  // public var bottomright:Vector3D = new Vector3D(1, 1, 0);
-  // public var middlePoint:Vector3D = new Vector3D(0.5, 0.5, 0);
-  public var fov:Float = 90;
+	// public var topleft:Vector3D = new Vector3D(-1, -1, 0);
+	// public var topright:Vector3D = new Vector3D(1, -1, 0);
+	// public var bottomleft:Vector3D = new Vector3D(-1, 1, 0);
+	// public var bottomright:Vector3D = new Vector3D(1, 1, 0);
+	// public var middlePoint:Vector3D = new Vector3D(0.5, 0.5, 0);
+	public var fov:Float = 90;
 
-  /**
-   * A `Vector` of floats where each pair of numbers is treated as a coordinate location (an x, y pair).
-   */
-  public var vertices:DrawData<Float> = new DrawData<Float>();
+	/**
+	* A `Vector` of floats where each pair of numbers is treated as a coordinate location (an x, y pair).
+	*/
+	public var vertices:DrawData<Float> = new DrawData<Float>();
 
-  /**
-   * A `Vector` of integers or indexes, where every three indexes define a triangle.
-   */
-  public var indices:DrawData<Int> = new DrawData<Int>();
+	/**
+	* A `Vector` of integers or indexes, where every three indexes define a triangle.
+	*/
+	public var indices:DrawData<Int> = new DrawData<Int>();
 
-  /**
-   * A `Vector` of normalized coordinates used to apply texture mapping.
-   */
-  public var uvtData:DrawData<Float> = new DrawData<Float>();
+	/**
+	* A `Vector` of normalized coordinates used to apply texture mapping.
+	*/
+	public var uvtData:DrawData<Float> = new DrawData<Float>();
 
-  public var subdivisions:Int = 5;
+	public var subdivisions:Int = 5;
 
-  static final TRIANGLE_VERTEX_INDICES:Array<Int> = [
-    0, 5, 1, 5, 1, 6, 1, 6, 2, 6, 2, 7, 2, 7, 3, 7, 3, 8, 3, 8, 4, 8, 4, 9, 5, 10, 6, 10, 6, 11, 6, 11, 7, 11, 7, 12, 7, 12, 8, 12, 8, 13, 8, 13, 9, 13, 9,
-    14, 10, 15, 11, 15, 11, 16, 11, 16, 12, 16, 12, 17, 12, 17, 13, 17, 13, 18, 13, 18, 14, 18, 14, 19, 15, 20, 16, 20, 16, 21, 16, 21, 17, 21, 17, 22, 17,
-    22, 18, 22, 18, 23, 18, 23, 19, 23, 19, 24
-  ];
+	static final TRIANGLE_VERTEX_INDICES:Array<Int> = [
+		0, 5, 1, 5, 1, 6, 1, 6, 2, 6, 2, 7, 2, 7, 3, 7, 3, 8, 3, 8, 4, 8, 4, 9, 5, 10, 6, 10, 6, 11, 6, 11, 7, 11, 7, 12, 7, 12, 8, 12, 8, 13, 8, 13, 9, 13, 9,
+		14, 10, 15, 11, 15, 11, 16, 11, 16, 12, 16, 12, 17, 12, 17, 13, 17, 13, 18, 13, 18, 14, 18, 14, 19, 15, 20, 16, 20, 16, 21, 16, 21, 17, 21, 17, 22, 17,
+		22, 18, 22, 18, 23, 18, 23, 19, 23, 19, 24
+	];
 
-  // <----
+	// <----
 	public var mesh:modcharting.SustainStrip = null; 
 	public var z:Float = 0;
 	public var extraData:Map<String,Dynamic> = [];
@@ -957,7 +957,7 @@ class Note extends FlxImprovedSprite
 		{
 			if (alpha <= 0 || vertices == null || indices == null || uvtData == null || _point == null || offset == null)
 			{
-			return;
+				return;
 			}
 
 			for (camera in cameras)
@@ -1047,11 +1047,11 @@ class Note extends FlxImprovedSprite
 			// var noteHeight:Float = h * 0;
 
 			// var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, (noteWidth * 0.5), (noteHeight * 0.5));
-			var thisNotePos:Vector3D = perspectiveMath_OLD(pos_modified, 0, 0);
+			var thisNotePos = perspectiveMath_OLD(new Vector3D(pos_modified.x+(width/2)+offsetX, pos_modified.y+(height/2), pos_modified.z*0.001), -(width/2), -(height/2));
 
 			thisNotePos.x -= this.x;
 			thisNotePos.y -= this.y;
-			thisNotePos.z -= this.z * 0.001; // ?????
+			thisNotePos.z -= this.z; // ?????
 
 			thisNotePos.x -= fovOffsetX;
 			thisNotePos.y -= fovOffsetY;
@@ -1138,60 +1138,60 @@ class Note extends FlxImprovedSprite
 	{
 		if (gpix == null || alpha != oalp || !animation.curAnim.finished || oanim != animation.curAnim.name)
 		{
-		if (!alphas.exists(noteType))
-		{
-			alphas.set(noteType, new Map());
-			indexes.set(noteType, new Map());
-		}
-		if (!alphas.get(noteType).exists(animation.curAnim.name))
-		{
-			alphas.get(noteType).set(animation.curAnim.name, new Map());
-			indexes.get(noteType).set(animation.curAnim.name, new Map());
-		}
-		if (!alphas.get(noteType)
-			.get(animation.curAnim.name)
-			.exists(animation.curAnim.curFrame))
-		{
-			alphas.get(noteType)
-			.get(animation.curAnim.name)
-			.set(animation.curAnim.curFrame, []);
-			indexes.get(noteType)
-			.get(animation.curAnim.name)
-			.set(animation.curAnim.curFrame, []);
-		}
-		if (!alphas.get(noteType)
-			.get(animation.curAnim.name)
-			.get(animation.curAnim.curFrame)
-			.contains(alpha))
-		{
-			var pix:FlxGraphic = FlxGraphic.fromFrame(frame, true);
-			var nalp:Array<Float> = alphas.get(noteType)
-			.get(animation.curAnim.name)
-			.get(animation.curAnim.curFrame);
-			var nindex:Array<Int> = indexes.get(noteType)
-			.get(animation.curAnim.name)
-			.get(animation.curAnim.curFrame);
-			pix.bitmap.colorTransform(pix.bitmap.rect, colorTransform);
-			glist.push(pix);
-			nalp.push(alpha);
-			nindex.push(glist.length - 1);
-			alphas.get(noteType)
-			.get(animation.curAnim.name)
-			.set(animation.curAnim.curFrame, nalp);
-			indexes.get(noteType)
-			.get(animation.curAnim.name)
-			.set(animation.curAnim.curFrame, nindex);
-		}
-		var dex = alphas.get(noteType)
-			.get(animation.curAnim.name)
-			.get(animation.curAnim.curFrame)
-			.indexOf(alpha);
-		gpix = glist[
-			indexes.get(noteType)
-			.get(animation.curAnim.name)
-			.get(animation.curAnim.curFrame)[dex]];
-		oalp = alpha;
-		oanim = animation.curAnim.name;
+			if (!alphas.exists(noteType))
+			{
+				alphas.set(noteType, new Map());
+				indexes.set(noteType, new Map());
+			}
+			if (!alphas.get(noteType).exists(animation.curAnim.name))
+			{
+				alphas.get(noteType).set(animation.curAnim.name, new Map());
+				indexes.get(noteType).set(animation.curAnim.name, new Map());
+			}
+			if (!alphas.get(noteType)
+				.get(animation.curAnim.name)
+				.exists(animation.curAnim.curFrame))
+			{
+				alphas.get(noteType)
+				.get(animation.curAnim.name)
+				.set(animation.curAnim.curFrame, []);
+				indexes.get(noteType)
+				.get(animation.curAnim.name)
+				.set(animation.curAnim.curFrame, []);
+			}
+			if (!alphas.get(noteType)
+				.get(animation.curAnim.name)
+				.get(animation.curAnim.curFrame)
+				.contains(alpha))
+			{
+				var pix:FlxGraphic = FlxGraphic.fromFrame(frame, true);
+				var nalp:Array<Float> = alphas.get(noteType)
+				.get(animation.curAnim.name)
+				.get(animation.curAnim.curFrame);
+				var nindex:Array<Int> = indexes.get(noteType)
+				.get(animation.curAnim.name)
+				.get(animation.curAnim.curFrame);
+				pix.bitmap.colorTransform(pix.bitmap.rect, colorTransform);
+				glist.push(pix);
+				nalp.push(alpha);
+				nindex.push(glist.length - 1);
+				alphas.get(noteType)
+				.get(animation.curAnim.name)
+				.set(animation.curAnim.curFrame, nalp);
+				indexes.get(noteType)
+				.get(animation.curAnim.name)
+				.set(animation.curAnim.curFrame, nindex);
+			}
+			var dex = alphas.get(noteType)
+				.get(animation.curAnim.name)
+				.get(animation.curAnim.curFrame)
+				.indexOf(alpha);
+			gpix = glist[
+				indexes.get(noteType)
+				.get(animation.curAnim.name)
+				.get(animation.curAnim.curFrame)[dex]];
+			oalp = alpha;
+			oanim = animation.curAnim.name;
 		}
 		return gpix;
 	}

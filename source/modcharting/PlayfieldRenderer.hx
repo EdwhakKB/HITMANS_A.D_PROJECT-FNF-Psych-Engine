@@ -237,7 +237,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
     {
         daNote.x = noteData.x;
         daNote.y = noteData.y;
-        //daNote.z = noteData.z;
+        daNote.z = noteData.z;
         daNote.angle = noteData.angle;
         daNote.alpha = noteData.alpha;
         daNote.scale.x = noteData.scaleX;
@@ -450,23 +450,28 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         // strumNote.y = noteData.y;
         // strumNote.z = noteData.z;
 
-        strumNote.scaleX = noteData.scaleX;
-        strumNote.scaleY = noteData.scaleY;
-        strumNote.scaleZ = noteData.scaleZ;
+        if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0) strumNote.drawManual = true;
+        else strumNote.drawManual = false;
 
-        strumNote.skewX = noteData.skewX;
-        strumNote.skewY = noteData.skewY;
-        strumNote.skewZ = noteData.skewZ;
+        if (strumNote.drawManual){
+            strumNote.scaleX = noteData.scaleX;
+            strumNote.scaleY = noteData.scaleY;
+            strumNote.scaleZ = noteData.scaleZ;
 
-        strumNote.angleX = noteData.angleX;
-        strumNote.angleY = noteData.angleY;
-        strumNote.angleZ = noteData.angle;
+            strumNote.skewX = noteData.skewX;
+            strumNote.skewY = noteData.skewY;
+            strumNote.skewZ = noteData.skewZ;
 
-        strumNote.offset = strumNote.offset;
+            strumNote.angleX = noteData.angleX;
+            strumNote.angleY = noteData.angleY;
+            strumNote.angleZ = noteData.angle;
+
+            strumNote.offset = strumNote.offset;
+        }
 
         addDataToStrum(noteData, strumGroup.members[noteData.index]); //set position and stuff before drawing
         strumGroup.members[noteData.index].cameras = this.cameras;
-        strumGroup.members[noteData.index].updateTris();
+        if (strumNote.drawManual) strumGroup.members[noteData.index].updateTris();
         strumGroup.members[noteData.index].draw();
     }
     private function drawNote(noteData:NotePositionData)
@@ -499,19 +504,24 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         // daNote.y = noteData.y;
         // daNote.z = noteData.z;
 
-        daNote.scaleX = noteData.scaleX;
-        daNote.scaleY = noteData.scaleY;
-        daNote.scaleZ = noteData.scaleZ;
+        if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0) daNote.drawManual = true;
+        else daNote.drawManual = false;
 
-        daNote.skewX = noteData.skewX;
-        daNote.skewY = noteData.skewY;
-        daNote.skewZ = noteData.skewZ;
+        if (daNote.drawManual){
+            daNote.scaleX = noteData.scaleX;
+            daNote.scaleY = noteData.scaleY;
+            daNote.scaleZ = noteData.scaleZ;
 
-        daNote.angleX = noteData.angleX;
-        daNote.angleY = noteData.angleY;
-        daNote.angleZ = noteData.angle;
+            daNote.skewX = noteData.skewX;
+            daNote.skewY = noteData.skewY;
+            daNote.skewZ = noteData.skewZ;
 
-        daNote.offset = daNote.offset;
+            daNote.angleX = noteData.angleX;
+            daNote.angleY = noteData.angleY;
+            daNote.angleZ = noteData.angle;
+
+            daNote.offset = daNote.offset;
+        }
 
         // noteData.skewX = skewX + noteData.skewX;
         // noteData.skewY = skewY + noteData.skewY;
@@ -519,7 +529,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         addDataToNote(noteData, notes.members[noteData.index]); 
         //make sure it draws on the correct camera
         notes.members[noteData.index].cameras = this.cameras;
-        notes.members[noteData.index].updateTris();
+        if (daNote.drawManual) notes.members[noteData.index].updateTris();
         //draw it
         notes.members[noteData.index].draw();
     }
