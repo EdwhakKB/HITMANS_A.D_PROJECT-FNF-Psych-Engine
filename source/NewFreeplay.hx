@@ -121,7 +121,7 @@ class NewFreeplay extends MusicBeatState
 			box.loadGraphic(Paths.image('freeplay/EmptyBox'));
 			// box.x=FlxG.width / 2 -(box.width/16);
 			box.x = -80;
-			box.y = FlxG.height / 2 - (box.height / 2) + (i * 415) - 250;
+			box.y = FlxG.height / 2 - (box.height / 2) + (i * 415);
 			box.antialiasing = ClientPrefs.globalAntialiasing;
 			box.ID = i;
 			box.visible = true;
@@ -146,7 +146,7 @@ class NewFreeplay extends MusicBeatState
 
 			// imagen.x=FlxG.width / 2 -(imagen.width/16);
 			imagen.x = -80;
-			imagen.y = FlxG.height / 2 - (imagen.height / 2) + (i * 415) - 250;
+			imagen.y = FlxG.height / 2 - (imagen.height / 2) + (i * 415);
 			imagen.antialiasing = ClientPrefs.globalAntialiasing;
 			imagen.ID = i;
 			imagen.visible = true;
