@@ -91,11 +91,6 @@ class Note extends FlxImprovedSprite
 	public var pivotOffsetY:Float = 0;
 	public var pivotOffsetZ:Float = 0;
 
-	// public var topleft:Vector3D = new Vector3D(-1, -1, 0);
-	// public var topright:Vector3D = new Vector3D(1, -1, 0);
-	// public var bottomleft:Vector3D = new Vector3D(-1, 1, 0);
-	// public var bottomright:Vector3D = new Vector3D(1, 1, 0);
-	// public var middlePoint:Vector3D = new Vector3D(0.5, 0.5, 0);
 	public var fov:Float = 90;
 
 	/**
@@ -113,13 +108,17 @@ class Note extends FlxImprovedSprite
 	*/
 	public var uvtData:DrawData<Float> = new DrawData<Float>();
 
-	public var subdivisions:Int = 5;
+	
+	// custom setter to prevent values below 0, cuz otherwise we'll devide by 0!
+	public var subdivisions(default, set):Int = 2;
 
-	static final TRIANGLE_VERTEX_INDICES:Array<Int> = [
-		0, 5, 1, 5, 1, 6, 1, 6, 2, 6, 2, 7, 2, 7, 3, 7, 3, 8, 3, 8, 4, 8, 4, 9, 5, 10, 6, 10, 6, 11, 6, 11, 7, 11, 7, 12, 7, 12, 8, 12, 8, 13, 8, 13, 9, 13, 9,
-		14, 10, 15, 11, 15, 11, 16, 11, 16, 12, 16, 12, 17, 12, 17, 13, 17, 13, 18, 13, 18, 14, 18, 14, 19, 15, 20, 16, 20, 16, 21, 16, 21, 17, 21, 17, 22, 17,
-		22, 18, 22, 18, 23, 18, 23, 19, 23, 19, 24
-	];
+	function set_subdivisions(value:Int):Int
+	{
+		if (value < 0) value = 0;
+		subdivisions = value;
+		return subdivisions;
+	}
+
 
 	// <----
 	public var mesh:modcharting.SustainStrip = null; 
@@ -853,42 +852,40 @@ class Note extends FlxImprovedSprite
 
 		this.active = true; // This NEEDS to be true for the note to be drawn!
 		updateColorTransform();
+		var nextRow:Int = (subdivisions + 1 + 1);
 		var noteIndices:Array<Int> = [];
-		for (x in 0...subdivisions - 1)
+		for (x in 0...subdivisions + 1)
 		{
-			for (y in 0...subdivisions - 1)
+			for (y in 0...subdivisions + 1)
 			{
-				var funny2:Int = x * (subdivisions);
-				var funny:Int = y + funny2;
+				// indices are created from top to bottom, going along the x axis each cycle.
+				var funny:Int = y + (x * nextRow);
 				noteIndices.push(0 + funny);
-				noteIndices.push(5 + funny);
+				noteIndices.push(nextRow + funny);
 				noteIndices.push(1 + funny);
 
-				noteIndices.push(5 + funny);
+				noteIndices.push(nextRow + funny);
 				noteIndices.push(1 + funny);
-				noteIndices.push(6 + funny);
+				noteIndices.push(nextRow + 1 + funny);
 			}
 		}
-
-		// trace("\nindices: \n" + noteIndices);
-
-		// indices = new DrawData<Int>(12, true, TRIANGLE_VERTEX_INDICES);
 		indices = new DrawData<Int>(noteIndices.length, true, noteIndices);
 
 		// UV coordinates are normalized, so they range from 0 to 1.
 		var i:Int = 0;
-		for (x in 0...subdivisions) // x
+		for (x in 0...subdivisions + 2) // x
 		{
-			for (y in 0...subdivisions) // y
-			{
-				uvtData[i * 2] = (1 / (subdivisions - 1)) * x;
-				uvtData[i * 2 + 1] = (1 / (subdivisions - 1)) * y;
-				i++;
-			}
+		  for (y in 0...subdivisions + 2) // y
+		  {
+			var xPercent:Float = x / (subdivisions + 1);
+			var yPercent:Float = y / (subdivisions + 1);
+			uvtData[i * 2] = xPercent;
+			uvtData[i * 2 + 1] = yPercent;
+			i++;
+		  }
 		}
-
-		// trace("\nuv: \n" + uvtData);
 		updateTris();
+
 	}
 
 	public function updateTris(debugTrace:Bool = false):Void
@@ -897,46 +894,39 @@ class Note extends FlxImprovedSprite
 		var h:Float = frameHeight;
 
 		var i:Int = 0;
-		for (x in 0...subdivisions) // x
+		for (x in 0...subdivisions+2) // x
 		{
-			for (y in 0...subdivisions) // y
+			for (y in 0...subdivisions+2) // y
 			{
 			var point2D:Vector2;
 			var point3D:Vector3D = new Vector3D(0, 0, 0);
-			point3D.x = (w / (subdivisions - 1)) * x;
-			point3D.y = (h / (subdivisions - 1)) * y;
+			point3D.x = (w / (subdivisions + 1)) * x;
+			point3D.y = (h / (subdivisions + 1)) * y;
 
-			if (true)
-			{
-				// skew funny
-				var xPercent:Float = x / (subdivisions - 1);
-				var yPercent:Float = y / (subdivisions - 1);
-				var xPercent_SkewOffset:Float = xPercent - skewY_offset;
-				var yPercent_SkewOffset:Float = yPercent - skewX_offset;
-				// Keep math the same as skewedsprite for parity reasons.
-				point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
-				point3D.y += xPercent_SkewOffset * Math.tan(skewY * FlxAngle.TO_RAD) * w;
-				point3D.z += yPercent_SkewOffset * Math.tan(skewZ * FlxAngle.TO_RAD) * h;
+			// skew funny
+			var xPercent:Float = x / (subdivisions + 1);
+			var yPercent:Float = y / (subdivisions + 1);
+			var xPercent_SkewOffset:Float = xPercent - skewY_offset;
+			var yPercent_SkewOffset:Float = yPercent - skewX_offset;
+			// Keep math the same as skewedsprite for parity reasons.
+			point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
+			point3D.y += xPercent_SkewOffset * Math.tan(skewY * FlxAngle.TO_RAD) * w;
+			point3D.z += yPercent_SkewOffset * Math.tan(skewZ * FlxAngle.TO_RAD) * h;
 
-				// scale
-				var newWidth:Float = (scaleX - 1) * (xPercent - 0.5);
-				point3D.x += (newWidth) * w;
-				newWidth = (scaleY - 1) * (yPercent - 0.5);
-				point3D.y += (newWidth) * h;
+			// scale
+			var newWidth:Float = (scaleX - 1) * (xPercent - 0.5);
+			point3D.x += (newWidth) * w;
+			newWidth = (scaleY - 1) * (yPercent - 0.5);
+			point3D.y += (newWidth) * h;
 
-				// _skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
-				// _skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
+			// _skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
+			// _skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
 
-				point2D = applyPerspective(point3D, xPercent, yPercent);
+			point2D = applyPerspective(point3D, xPercent, yPercent);
 
-				point2D.x += (frameWidth - frameWidth) / 2;
-          		point2D.y += (frameHeight - frameHeight) / 2;
-			}
-			else
-			{
-				// point2D = new Vector2(point3D.x, point3D.y);
-				point2D = applyPerspective(point3D);
-			}
+			point2D.x += (frameWidth - frameWidth) / 2;
+			point2D.y += (frameHeight - frameHeight) / 2;
+			
 			vertices[i * 2] = point2D.x;
 			vertices[i * 2 + 1] = point2D.y;
 			i++;
@@ -988,15 +978,10 @@ class Note extends FlxImprovedSprite
 
 	public function applyPerspective(pos:Vector3D, xPercent:Float = 0, yPercent:Float = 0):Vector2
 	{
-		// return new Vector2(pos.x, pos.y);
-
 		var w:Float = frameWidth;
 		var h:Float = frameHeight;
 
 		var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
-
-		// pos_modified.x -= spriteGraphic.offset.x;
-		// pos_modified.y -= spriteGraphic.offset.y;
 
 		var whatWasTheZBefore:Float = pos_modified.z;
 
@@ -1047,12 +1032,6 @@ class Note extends FlxImprovedSprite
 			pos_modified.x += fovOffsetX;
 			pos_modified.y += fovOffsetY;
 			pos_modified.z *= 0.001;
-
-			// var noteWidth:Float = w * xPercent;
-			// var noteHeight:Float = h * yPercent;
-
-			// var noteWidth:Float = w * 0;
-			// var noteHeight:Float = h * 0;
 
 			//var thisNotePos = perspectiveMath(new Vector3D(pos_modified.x+(width/2), pos_modified.y+(height/2), zDifference * 0.001), -(width/2), -(height/2));
 			pos_modified.z = zDifference * 0.001;
