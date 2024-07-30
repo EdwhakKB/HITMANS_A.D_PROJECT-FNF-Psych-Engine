@@ -1395,6 +1395,7 @@ class FunkinLua {
 
 		//New tweens lol
 		Lua_helper.add_callback(lua, "tweenEventX", function(tag:String, vars:String, value:Dynamic, duration:Float, ease:String, beat:Float){
+			var playbackRate:Float = PlayState.instance.playbackRate;
 			var penisExam:Dynamic = tweenShit(tag, vars);
 			if(penisExam != null) 
 			{
