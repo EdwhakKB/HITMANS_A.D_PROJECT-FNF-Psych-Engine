@@ -526,6 +526,13 @@ class EditorPlayState extends MusicBeatState
 		tween.manager = tweenManager;
 		return tween;
 	}
+	
+	public function createTweenColor(Object:Dynamic, Duration:Float, FromColor:FlxColor, ToColor:FlxColor, ?Options:TweenOptions):FlxTween
+	{
+		var tween:FlxTween = tweenManager.color(Object, Duration, FromColor, ToColor, Options);
+		tween.manager = tweenManager;
+		return tween;
+	}
 
 	public function createTimer(Time:Float = 1, ?OnComplete:FlxTimer->Void, Loops:Int = 1):FlxTimer
 	{
@@ -555,6 +562,7 @@ class EditorPlayState extends MusicBeatState
 
 	public var startCallback:Void->Void;
 	public var endCallback:Void->Void;
+	public var tweenEventManager:LuaTweenManager = null;
 
 	override public function create()
 	{
@@ -564,6 +572,7 @@ class EditorPlayState extends MusicBeatState
 
 		tweenManager = new FlxTweenManager();
 		timerManager = new FlxTimerManager();
+		tweenEventManager = new LuaTweenManager();
 
 		Paths.clearStoredMemory();
 

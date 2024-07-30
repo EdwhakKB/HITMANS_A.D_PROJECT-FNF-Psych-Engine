@@ -1398,12 +1398,14 @@ class FunkinLua {
 			var playbackRate:Float = PlayState.instance.playbackRate;
 			var penisExam:Dynamic = tweenShit(tag, vars);
 			var time:Float = !mode ? duration : duration*Conductor.crochet*0.001;
+			time /= playbackRate;
+			if (type == null || type == '') type = 'ease';
 			if(penisExam != null) 
 			{
 				PlayState.instance.tweenEventManager.addTweenEvent(beat, function(){
 					if (Conductor.songPosition >= getTimeFromBeat(beat)+(time*1000)) //cancel if should have ended
 					{
-						switch (subVars) {
+						switch (subVars.toLowerCase()) {
 							case 'x':
 								if (type == 'ease') penisExam.x = value;
 								else if (type == 'add') penisExam.x += value;
@@ -1512,28 +1514,28 @@ class FunkinLua {
 					var tween = null;
 					if (type == 'ease')
 					{
-						switch (subVars)
+						switch (subVars.toLowerCase())
 						{
 							case "x":
-								tween = PlayState.instance.createTween(penisExam, {x: value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {x: value}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
 									}});
 							case "y":
-								tween = PlayState.instance.createTween(penisExam, {y: value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {y: value}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
 									}});
 							case "angle":
-								tween = PlayState.instance.createTween(penisExam, {angle: value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {angle: value}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
 									}});
 							case "alpha":
-								tween = PlayState.instance.createTween(penisExam, {alpha: value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {alpha: value}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
@@ -1541,7 +1543,7 @@ class FunkinLua {
 							case "zoom":
 								if (Std.isOfType(penisExam, FlxCamera))
 								{
-									tween = PlayState.instance.createTween(penisExam, {zoom: value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {zoom: value}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1552,7 +1554,7 @@ class FunkinLua {
 							case "skewX":
 								if (Std.isOfType(penisExam, FlxSkewedSprite))
 								{
-									tween = PlayState.instance.createTween(penisExam, {"skew.x": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"skew.x": value}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1564,7 +1566,7 @@ class FunkinLua {
 							case "skewY":
 								if (Std.isOfType(penisExam, FlxSkewedSprite))
 								{
-									tween = PlayState.instance.createTween(penisExam, {"skew.y": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"skew.y": value}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1576,7 +1578,7 @@ class FunkinLua {
 							case "skew":
 								if (Std.isOfType(penisExam, FlxSkewedSprite))
 								{
-									tween = PlayState.instance.createTween(penisExam, {"skew.x": value, "skew.y": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"skew.x": value, "skew.y": value}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1589,7 +1591,7 @@ class FunkinLua {
 								if (Std.isOfType(penisExam, FlxCamera)){
 									if (penisExam.flashSprite != null) 
 									{
-										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": value}, time, {ease: getFlxEaseByString(ease),
 											onComplete: function(twn:FlxTween) {
 												PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 												PlayState.instance.modchartTweens.remove(tag);
@@ -1599,7 +1601,7 @@ class FunkinLua {
 								}
 								else
 								{
-									tween = PlayState.instance.createTween(penisExam, {"scale.x": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"scale.x": value}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1609,7 +1611,7 @@ class FunkinLua {
 								if (Std.isOfType(penisExam, FlxCamera)){
 									if (penisExam.flashSprite != null) 
 									{
-										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleY": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleY": value}, time, {ease: getFlxEaseByString(ease),
 											onComplete: function(twn:FlxTween) {
 												PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 												PlayState.instance.modchartTweens.remove(tag);
@@ -1619,7 +1621,7 @@ class FunkinLua {
 								}
 								else
 								{
-									tween = PlayState.instance.createTween(penisExam, {"scale.y": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"scale.y": value}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1629,7 +1631,7 @@ class FunkinLua {
 								if (Std.isOfType(penisExam, FlxCamera)){
 									if (penisExam.flashSprite != null) 
 									{
-										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": value, "flashSprite.scaleY": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": value, "flashSprite.scaleY": value}, time, {ease: getFlxEaseByString(ease),
 											onComplete: function(twn:FlxTween) {
 												PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 												PlayState.instance.modchartTweens.remove(tag);
@@ -1639,7 +1641,7 @@ class FunkinLua {
 								}
 								else
 								{
-									tween = PlayState.instance.createTween(penisExam, {"scale.x": value, "scale.y": value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"scale.x": value, "scale.y": value}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1654,7 +1656,7 @@ class FunkinLua {
 								else if (Std.isOfType(value, Int)) color = value;
 								var curColor:FlxColor = penisExam.color;
 								curColor.alphaFloat = penisExam.alpha;
-								tween = PlayState.instance.createTweenColor(penisExam, duration/playbackRate, curColor, color, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTweenColor(penisExam, time, curColor, color, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
@@ -1663,32 +1665,32 @@ class FunkinLua {
 					}
 					else if (type == 'add')
 					{
-						switch (subVars)
+						switch (subVars.toLowerCase())
 						{
 							case "x":
 								var finalValue:Float = penisExam.x + value;
-								tween = PlayState.instance.createTween(penisExam, {x: finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {x: finalValue}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
 									}});
 							case "y":
 								var finalValue:Float = penisExam.y + value;
-								tween = PlayState.instance.createTween(penisExam, {y: finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {y: finalValue}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
 									}});
 							case "angle":
 								var finalValue:Float = penisExam.angle + value;
-								tween = PlayState.instance.createTween(penisExam, {angle: finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {angle: finalValue}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
 									}});
 							case "alpha":
 								var finalValue:Float = penisExam.alpha + value;
-								tween = PlayState.instance.createTween(penisExam, {alpha: finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTween(penisExam, {alpha: finalValue}, time, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
@@ -1697,7 +1699,7 @@ class FunkinLua {
 								if (Std.isOfType(penisExam, FlxCamera))
 								{
 									var finalValue:Float = penisExam.zoom + value;
-									tween = PlayState.instance.createTween(penisExam, {zoom: finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {zoom: finalValue}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1709,7 +1711,7 @@ class FunkinLua {
 								if (Std.isOfType(penisExam, FlxSkewedSprite))
 								{
 									var finalValue:Float = penisExam.skew.x + value;
-									tween = PlayState.instance.createTween(penisExam, {"skew.x": finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"skew.x": finalValue}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1722,7 +1724,7 @@ class FunkinLua {
 								if (Std.isOfType(penisExam, FlxSkewedSprite))
 								{
 									var finalValue:Float = penisExam.skew.y + value;
-									tween = PlayState.instance.createTween(penisExam, {"skew.y": finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"skew.y": finalValue}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1736,7 +1738,7 @@ class FunkinLua {
 								{
 									var finalValue:Float = penisExam.skew.x + value;
 									var finalValue2:Float = penisExam.skew.y + value;
-									tween = PlayState.instance.createTween(penisExam, {"skew.x": finalValue, "skew.y": finalValue2}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"skew.x": finalValue, "skew.y": finalValue2}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1750,7 +1752,7 @@ class FunkinLua {
 									if (penisExam.flashSprite != null) 
 									{
 										var finalValue:Float = penisExam.flashSprite.scaleX + value;
-										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": finalValue}, time, {ease: getFlxEaseByString(ease),
 											onComplete: function(twn:FlxTween) {
 												PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 												PlayState.instance.modchartTweens.remove(tag);
@@ -1761,7 +1763,7 @@ class FunkinLua {
 								else
 								{
 									var finalValue:Float = penisExam.scale.x + value;
-									tween = PlayState.instance.createTween(penisExam, {"scale.x": finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"scale.x": finalValue}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1772,7 +1774,7 @@ class FunkinLua {
 									if (penisExam.flashSprite != null) 
 									{
 										var finalValue:Float = penisExam.flashSprite.scaleY + value;
-										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleY": finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleY": finalValue}, time, {ease: getFlxEaseByString(ease),
 											onComplete: function(twn:FlxTween) {
 												PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 												PlayState.instance.modchartTweens.remove(tag);
@@ -1783,7 +1785,7 @@ class FunkinLua {
 								else
 								{
 									var finalValue:Float = penisExam.scale.y + value;
-									tween = PlayState.instance.createTween(penisExam, {"scale.y": finalValue}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"scale.y": finalValue}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1795,7 +1797,7 @@ class FunkinLua {
 									{
 										var finalValue:Float = penisExam.flashSprite.scaleX + value;
 										var finalValue2:Float = penisExam.flashSprite.scaleY + value;
-										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": finalValue, "flashSprite.scaleY": finalValue2}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+										tween = PlayState.instance.createTween(penisExam, {"flashSprite.scaleX": finalValue, "flashSprite.scaleY": finalValue2}, time, {ease: getFlxEaseByString(ease),
 											onComplete: function(twn:FlxTween) {
 												PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 												PlayState.instance.modchartTweens.remove(tag);
@@ -1807,7 +1809,7 @@ class FunkinLua {
 								{
 									var finalValue:Float = penisExam.scale.x + value;
 									var finalValue2:Float = penisExam.scale.y + value;
-									tween = PlayState.instance.createTween(penisExam, {"scale.x": finalValue, "scale.y": finalValue2}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+									tween = PlayState.instance.createTween(penisExam, {"scale.x": finalValue, "scale.y": finalValue2}, time, {ease: getFlxEaseByString(ease),
 										onComplete: function(twn:FlxTween) {
 											PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 											PlayState.instance.modchartTweens.remove(tag);
@@ -1824,7 +1826,7 @@ class FunkinLua {
 								curColor.alphaFloat = penisExam.alpha;
 
 								var finalColor:FlxColor = curColor + color; //Add on
-								tween = PlayState.instance.createTweenColor(penisExam, duration/playbackRate, curColor, finalColor, {ease: getFlxEaseByString(ease),
+								tween = PlayState.instance.createTweenColor(penisExam, time, curColor, finalColor, {ease: getFlxEaseByString(ease),
 									onComplete: function(twn:FlxTween) {
 										PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
 										PlayState.instance.modchartTweens.remove(tag);
