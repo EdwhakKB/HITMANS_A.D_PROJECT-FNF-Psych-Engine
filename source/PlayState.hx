@@ -540,7 +540,7 @@ class PlayState extends MusicBeatState
 		return tween;
 	}
 
-	public function createTweenColor(Object:Dynamic, Duration:Float, FormColor:FlxColor, ToColor:FlxColor, ?Options:TweenOptions):FlxTween
+	public function createTweenColor(Object:Dynamic, Duration:Float, FromColor:FlxColor, ToColor:FlxColor, ?Options:TweenOptions):FlxTween
 	{
 		var tween:FlxTween = tweenManager.color(Object, Duration, FromColor, ToColor, Options);
 		tween.manager = tweenManager;
