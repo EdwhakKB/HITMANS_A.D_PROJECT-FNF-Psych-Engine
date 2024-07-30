@@ -17,6 +17,8 @@ class LuaTweenEvent
 
 class LuaTweenManager
 {
+  public function new(){}
+  
   public var events:Array<LuaTweenEvent> = [];
 
   public function update(elapsed:Float)

@@ -1394,15 +1394,63 @@ class FunkinLua {
 		});
 
 		//New tweens lol
-		Lua_helper.add_callback(lua, "tweenEventX", function(tag:String, vars:String, value:Dynamic, duration:Float, ease:String, beat:Float){
+		Lua_helper.add_callback(lua, "tweenObj", function(type:String, beat:Float, tag:String, vars:String, subVars:String, value:Dynamic, duration:Float, ease:String, mode:Bool = false){
 			var playbackRate:Float = PlayState.instance.playbackRate;
 			var penisExam:Dynamic = tweenShit(tag, vars);
+			var time:Float = duration;
 			if(penisExam != null) 
 			{
 				PlayState.instance.tweenEventManager.addTweenEvent(beat, function(){
-					if (Conductor.songPosition >= ModchartUtil.getTimeFromBeat(beat)+(time*1000)) //cancel if should have ended
+					if (Conductor.songPosition >= getTimeFromBeat(beat)+(time*1000)) //cancel if should have ended
 					{
-						penisExam.x = value;
+						switch (subVars) {
+							case 'x':
+								if (type == 'ease') penisExam.x = value;
+								else if (type == 'add') penisExam.x += value;
+							case 'y':
+								penisExam.y = value;
+							case 'angle':
+								penisExam.angle = value;
+							case 'alpha':
+								penisExam.alpha = value;
+							case 'zoom':
+								if (Std.isOfType(penisExam, FlxCamera)) penisExam.zoom = value;
+								else luaTrace('Tried to tween zoom on an object that is not a Camera', false, false, FlxColor.RED);
+							case 'skewX':
+								if (Std.isOfType(penisExam, FlxSkewedSprite)) penisExam.skew.x = value;
+								else luaTrace('Tried to tween skewX on an object that is not a SkewedSprite', false, false, FlxColor.RED);
+							case 'skewY':
+								if (Std.isOfType(penisExam, FlxSkewedSprite)) penisExam.skew.y = value;
+								else luaTrace('Tried to tween skewY on an object that is not a SkewedSprite', false, false, FlxColor.RED);
+							case 'scaleX':
+								if (Std.isOfType(penisExam, FlxCamera)){
+									if (penisExam.flashSprite != null) penisExam.flashSprite.scaleX = value;
+									else luaTrace('Tried to tween scaleX a null camera flashSprite', false, false, FlxColor.RED);
+								}else{
+									penisExam.scale.x = value;
+								}
+							case 'scaleY':
+								if (Std.isOfType(penisExam, FlxCamera)){
+									if (penisExam.flashSprite != null) penisExam.flashSprite.scaleY = value;
+									else luaTrace('Tried to tween scaleY a null camera flashSprite', false, false, FlxColor.RED);
+								}else{
+									penisExam.scale.y = value;
+								}
+							case 'scale':
+								if (Std.isOfType(penisExam, FlxCamera)){
+									if (penisExam.flashSprite != null){ 
+										penisExam.flashSprite.scaleX = value;
+										penisExam.flashSprite.scaleY = value;
+									}else{
+										luaTrace('Tried to tween scale a null camera flashSprite', false, false, FlxColor.RED);
+									}
+								}else{
+									penisExam.scale.x = value;
+									penisExam.scale.y = value;
+								}
+							case 'color':
+								penisExam.color = value;
+						}
 						return;
 					}
 					var tween = PlayState.instance.createTween(penisExam, {x: value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
@@ -1411,10 +1459,10 @@ class FunkinLua {
 							PlayState.instance.modchartTweens.remove(tag);
 						}});
 	
-					if (Conductor.songPosition > ModchartUtil.getTimeFromBeat(beat)) //skip to where it should be i guess??
+					if (Conductor.songPosition > getTimeFromBeat(beat)) //skip to where it should be i guess??
 					{
 						@:privateAccess
-						tween._secondsSinceStart += ((Conductor.songPosition-ModchartUtil.getTimeFromBeat(beat))*0.001);
+						tween._secondsSinceStart += ((Conductor.songPosition-getTimeFromBeat(beat))*0.001);
 						@:privateAccess
 						tween.update(0);
 					}
@@ -4216,6 +4264,31 @@ class FunkinLua {
 	public static inline function getInstance()
 	{
 		return PlayState.instance.isDead ? GameOverSubstate.instance : PlayState.instance;
+	}
+
+	public function getTimeFromBeat(beat:Float)
+	{
+		var totalTime:Float = 0;
+		var curBpm = Conductor.bpm;
+		if (PlayState.SONG != null)
+			curBpm = PlayState.SONG.bpm;
+		for (i in 0...Math.floor(beat))
+		{
+			if (Conductor.bpmChangeMap.length > 0)
+			{
+				for (j in 0...Conductor.bpmChangeMap.length)
+				{
+					if (totalTime >= Conductor.bpmChangeMap[j].songTime)
+						curBpm = Conductor.bpmChangeMap[j].bpm;
+				}
+			}
+			totalTime += (60/curBpm)*1000;
+		}
+
+		var leftOverBeat = beat - Math.floor(beat);
+		totalTime += (60/curBpm)*1000*leftOverBeat;
+
+		return totalTime;
 	}
 }
 
