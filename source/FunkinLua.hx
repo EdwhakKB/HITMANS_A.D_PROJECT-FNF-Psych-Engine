@@ -1649,7 +1649,7 @@ class FunkinLua {
 								var color:Int = 0;
 								if (Std.isOfType(value, String)) 
 								{
-									color = !value.startsWith('0x') ? Std.parseInt(!value.startsWith('0x') ? '0xff' + value : value);
+									color = Std.parseInt(!value.startsWith('0x') ? '0xff' + value : value);
 								}
 								else if (Std.isOfType(value, Int)) color = value;
 								var curColor:FlxColor = penisExam.color;
@@ -1817,7 +1817,7 @@ class FunkinLua {
 								var color:Int = 0;
 								if (Std.isOfType(value, String)) 
 								{
-									color = !value.startsWith('0x') ? Std.parseInt(!value.startsWith('0x') ? '0xff' + value : value);
+									color = Std.parseInt(!value.startsWith('0x') ? '0xff' + value : value);
 								}
 								else if (Std.isOfType(value, Int)) color = value;
 								var curColor:FlxColor = penisExam.color;
