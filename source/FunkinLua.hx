@@ -1392,6 +1392,42 @@ class FunkinLua {
 				}));
 			}
 		});
+
+		//New tweens lol
+		Lua_helper.add_callback(lua, "tweenEventX", function(tag:String, vars:String, value:Dynamic, duration:Float, ease:Stirng){
+			var penisExam:Dynamic = tweenShit(tag, vars);
+			if(penisExam != null) 
+			{
+				PlayState.instance.tweenEventManager.addTweenEvent(beat, function(){
+					if (Conductor.songPosition >= ModchartUtil.getTimeFromBeat(beat)+(time*1000)) //cancel if should have ended
+					{
+						penisExam.x = value;
+						return;
+					}
+					var tween = PlayState.instance.createTween(penisExam, {x: value}, duration/playbackRate, {ease: getFlxEaseByString(ease),
+						onComplete: function(twn:FlxTween) {
+							PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+							PlayState.instance.modchartTweens.remove(tag);
+						}});
+	
+					if (Conductor.songPosition > ModchartUtil.getTimeFromBeat(beat)) //skip to where it should be i guess??
+					{
+						@:privateAccess
+						tween._secondsSinceStart += ((Conductor.songPosition-ModchartUtil.getTimeFromBeat(beat))*0.001);
+						@:privateAccess
+						tween.update(0);
+					}
+					if (PlayState.instance.paused)
+						tween.active = false;
+					PlayState.instance.modchartTweens.set(tag, tween);
+				});
+			}
+			else
+			{
+				luaTrace('doTweenX: Couldnt find object: ' + vars, false, false, FlxColor.RED);
+			}
+		});
+
 		Lua_helper.add_callback(lua, "mouseClicked", function(button:String) {
 			var boobs = FlxG.mouse.justPressed;
 			switch(button){

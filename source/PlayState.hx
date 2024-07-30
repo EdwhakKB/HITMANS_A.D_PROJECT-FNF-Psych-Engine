@@ -575,6 +575,8 @@ class PlayState extends MusicBeatState
 
 	var passedCheckPoint:FlxText;
 
+	public var tweenEventManager:LuaTweenManager = null;
+
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
@@ -583,6 +585,7 @@ class PlayState extends MusicBeatState
 
 		tweenManager = new FlxTweenManager();
 		timerManager = new FlxTimerManager();
+		tweenEventManager = new LuaTweenManager();
 
 		Paths.clearStoredMemory();
 
@@ -3101,6 +3104,7 @@ class PlayState extends MusicBeatState
 		{
 			tweenManager.update(elapsed);
 			timerManager.update(elapsed);
+			tweenEventManager.update(elapsed);
 		}
 
 		super.update(elapsed);
