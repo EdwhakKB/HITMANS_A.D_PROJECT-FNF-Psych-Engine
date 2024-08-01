@@ -450,7 +450,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         // strumNote.y = noteData.y;
         // strumNote.z = noteData.z;
 
-        if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0) strumNote.drawManual = true;
+        if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0) strumNote.drawManual = true;
         else strumNote.drawManual = false;
 
         if (strumNote.drawManual){
@@ -461,12 +461,25 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             strumNote.skewX = noteData.skewX;
             strumNote.skewY = noteData.skewY;
             strumNote.skewZ = noteData.skewZ;
+            strumNote.skewX_offset = noteData.skewX_offset;
+            strumNote.skewY_offset = noteData.skewY_offset;
+            strumNote.skewZ_offset = noteData.skewZ_offset;
+
+            strumNote.fovOffsetX = noteData.fovOffsetX;
+            strumNote.fovOffsetY = noteData.fovOffsetY;
+
+            strumNote.pivotOffsetX = noteData.pivotOffsetX;
+            strumNote.pivotOffsetY = noteData.pivotOffsetY;
+            strumNote.pivotOffsetZ = noteData.pivotOffsetZ;
 
             strumNote.angleX = noteData.angleX;
             strumNote.angleY = noteData.angleY;
             strumNote.angleZ = noteData.angle;
 
             strumNote.offset = strumNote.offset;
+        }else{
+            strumNote.skew.x = noteData.skewX;
+            strumNote.skew.y = noteData.skewY;
         }
 
         addDataToStrum(noteData, strumGroup.members[noteData.index]); //set position and stuff before drawing
@@ -504,7 +517,7 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
         // daNote.y = noteData.y;
         // daNote.z = noteData.z;
 
-        if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0) daNote.drawManual = true;
+        if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0) daNote.drawManual = true;
         else daNote.drawManual = false;
 
         if (daNote.drawManual){
@@ -515,12 +528,25 @@ class PlayfieldRenderer extends FlxSprite //extending flxsprite just so i can ed
             daNote.skewX = noteData.skewX;
             daNote.skewY = noteData.skewY;
             daNote.skewZ = noteData.skewZ;
+            daNote.skewX_offset = noteData.skewX_offset;
+            daNote.skewY_offset = noteData.skewY_offset;
+            daNote.skewZ_offset = noteData.skewZ_offset;
+
+            daNote.fovOffsetX = noteData.fovOffsetX;
+            daNote.fovOffsetY = noteData.fovOffsetY;
+
+            daNote.pivotOffsetX = noteData.pivotOffsetX;
+            daNote.pivotOffsetY = noteData.pivotOffsetY;
+            daNote.pivotOffsetZ = noteData.pivotOffsetZ;
 
             daNote.angleX = noteData.angleX;
             daNote.angleY = noteData.angleY;
             daNote.angleZ = noteData.angle;
 
             daNote.offset = daNote.offset;
+        }else{
+            daNote.skew.x = noteData.skewX;
+            daNote.skew.y = noteData.skewY;
         }
 
         // noteData.skewX = skewX + noteData.skewX;

@@ -48,6 +48,17 @@ class NotePositionData implements IFlxDestroyable
     public var angleX:Float = 0;
     public var angleY:Float = 0;
     public var angleZ:Float = 0;
+
+    public var skewX_offset:Float = 0.5;
+    public var skewY_offset:Float = 0.5;
+    public var skewZ_offset:Float = 0.5;
+
+    public var fovOffsetX:Float = 0;
+    public var fovOffsetY:Float = 0;
+
+    public var pivotOffsetX:Float = 0;
+    public var pivotOffsetY:Float = 0;
+    public var pivotOffsetZ:Float = 0;
     // public var pathColor:StringTools.hex();
 
     // public var straightHold:Float;
@@ -97,6 +108,17 @@ class NotePositionData implements IFlxDestroyable
         this.angleX = 0;
         this.angleY = 0;
         this.angleZ = 0;
+
+        this.skewX_offset = 0.5;
+        this.skewY_offset = 0.5;
+        this.skewZ_offset = 0.5;
+
+        this.fovOffsetX = 0;
+        this.fovOffsetY = 0;
+
+        this.pivotOffsetX = 0;
+        this.pivotOffsetY = 0;
+        this.pivotOffsetZ = 0;
         // this.pathColor = "000000";
 
         // this.straightHold = 0; //why tf does a strum need a damn "straightHold" value XD?
@@ -141,6 +163,17 @@ class NotePositionData implements IFlxDestroyable
         this.angleX = 0;
         this.angleY = 0;
         this.angleZ = 0;
+
+        this.skewX_offset = 0.5;
+        this.skewY_offset = 0.5;
+        this.skewZ_offset = 0.5;
+
+        this.fovOffsetX = 0;
+        this.fovOffsetY = 0;
+
+        this.pivotOffsetX = 0;
+        this.pivotOffsetY = 0;
+        this.pivotOffsetZ = 0;
         // this.pathColor = "000000";
 
         // this.straightHold = 0; //different to up this doesn't break shit LOL

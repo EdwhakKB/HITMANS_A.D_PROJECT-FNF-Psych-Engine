@@ -2581,7 +2581,7 @@ class EditorPlayState extends MusicBeatState
 		
 		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
 
-		if (PlayState.SONG.notITG){
+		if (PlayState.SONG.notITG && notITGMod){
 			var leText = "Active Modifiers: \n";
 			for (modName => mod in playfieldRenderer.modifierTable.modifiers)
 			{
@@ -4314,6 +4314,9 @@ class EditorPlayState extends MusicBeatState
 
 		if (!note.isSustainNote)
 		{
+			opponentStrums.members[note.noteData].playAnim("static", true);
+			opponentStrums.members[note.noteData].playAnim("confirm");
+
 			if (ClientPrefs.splashSkin != 'disabled'){
 				createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))], false);
 			}
@@ -4322,6 +4325,7 @@ class EditorPlayState extends MusicBeatState
 			note.destroy();
 		}
 		if (note.isSustainNote){
+			opponentStrums.members[note.noteData].animation.curAnim.curFrame = 3;
 			if (ClientPrefs.splashSkin != 'disabled'){
 				createNoteEffect(note, opponentStrums.members[Math.round(Math.abs(note.noteData))], true);
 			}
@@ -4520,6 +4524,9 @@ class EditorPlayState extends MusicBeatState
 			var ratingDetect = note.rating;
 			if (!note.isSustainNote)
 			{
+				playerStrums.members[leData].playAnim("static", true);
+				playerStrums.members[leData].playAnim("confirm");
+
 				if (ClientPrefs.splashSkin != 'disabled'){
 					if (ratingDetect == "marvelous") {
 						createNoteEffect(note, playerStrums.members[leData], false);
@@ -4530,6 +4537,7 @@ class EditorPlayState extends MusicBeatState
 				note.destroy();
 			}
 			if (note.isSustainNote){
+				playerStrums.members[leData].animation.curAnim.curFrame = 3; //huh
 				if (ClientPrefs.splashSkin != 'disabled'){
 					createNoteEffect(note, playerStrums.members[leData], true);
 				}

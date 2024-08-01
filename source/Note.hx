@@ -787,7 +787,7 @@ class Note extends modcharting.ModchartArrow
 
 				getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
 				var newGraphic:FlxGraphic = cast mapData();
-				camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, colorTransform, shader);
+				camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, shader);
 				// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
 				// trace("we do be drawin... something?\n verts: \n" + vertices);
 			}

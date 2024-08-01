@@ -83,9 +83,9 @@ class ModchartEditorState extends MusicBeatState
      */
     public static var modifierList:Array<Class<Modifier>> = [
         //Basic Modifiers with no curpos math
-        XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier,
+        XModifier, YModifier, YDModifier, ZModifier, ConfusionModifier, ConfusionXModifier, ConfusionYModifier,
         ScaleModifier, ScaleXModifier, ScaleYModifier, 
-        SkewModifier, SkewXModifier, SkewYModifier,
+        SkewModifier, SkewXModifier, SkewYModifier, SkewXOffsetModifier, SkewYOffsetModifier, SkewZOffsetModifier,
         MiniModifier,
         //Modifiers with curpos math!!!
         //Drunk Modifiers
@@ -177,11 +177,13 @@ class ModchartEditorState extends MusicBeatState
         AttenuateModifier, AttenuateYModifier, AttenuateZModifier, AttenuateAngleModifier, 
         AttenuateScaleModifier, AttenuateScaleXModifier, AttenuateScaleYModifier,
         AttenuateSkewModifier, AttenuateSkewXModifier, AttenuateSkewYModifier,
+        //Pivot Modifiers,
+        PivotXOffsetModifier, PivotYOffsetModifier, PivotZOffsetModifier,
+        //Fov Modifiers
+        FovXOffsetModifier, FovYOffsetModifier,
         //misc
         ShakyNotesModifier, ParalysisModifier, SpiralHoldsModifier,
-        ArrowPath,
-        //Angle Modifiers,
-        AngleXModifier, AngleYModifier, AngleZModifier
+        ArrowPath
     ];
     public static var easeList:Array<String> = [
         "backIn",

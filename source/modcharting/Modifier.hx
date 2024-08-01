@@ -1086,6 +1086,7 @@ class ZModifier extends Modifier
         noteData.z += currentValue;
     }
 }
+
 class ConfusionModifier extends Modifier //note angle
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
@@ -1095,6 +1096,28 @@ class ConfusionModifier extends Modifier //note angle
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
         noteData.angle += currentValue;
+    }
+}
+class ConfusionXModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.angleX += currentValue;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.angleX += currentValue;
+    }
+}
+class ConfusionYModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.angleY += currentValue;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.angleY += currentValue;
     }
 }
 
@@ -3132,7 +3155,8 @@ class TwirlModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
+        //noteData.scaleX *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
+        noteData.angleY += currentValue*((curPos*0.001)*subValues.get('speed').value);
     }
 }
 class RollModifier extends Modifier
@@ -3143,7 +3167,8 @@ class RollModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleY *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
+        //noteData.scaleY *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
+        noteData.angleX += currentValue*((curPos*0.001)*subValues.get('speed').value);
     }
 }
 
@@ -4522,42 +4547,67 @@ class AttenuateSkewYModifier extends Modifier
     }
 }
 
-
-class AngleXModifier extends Modifier
+class PivotXOffsetModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angleX += currentValue;
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteData.angleX += currentValue;
+        noteData.pivotOffsetX += currentValue;
     }
 }
-
-class AngleYModifier extends Modifier
+class PivotYOffsetModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angleY += currentValue;
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteData.angleY += currentValue;
+        noteData.pivotOffsetY += currentValue;
     }
 }
-
-class AngleZModifier extends Modifier
+class PivotZOffsetModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angleZ += currentValue;
-    }
-    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    {
-        noteData.angleZ += currentValue;
+        noteData.pivotOffsetZ += currentValue;
     }
 }
+
+class SkewXOffsetModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.skewX_offset += currentValue;
+    }
+}
+class SkewYOffsetModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.skewY_offset += currentValue;
+    }
+}
+class SkewZOffsetModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.skewZ_offset += currentValue;
+    }
+}
+
+class FovXOffsetModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.fovOffsetX += currentValue;
+    }
+}
+class FovYOffsetModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.fovOffsetY += currentValue;
+    }
+}
+
+
+
 // class StraightHoldsModifier extends Modifier //unused
 // {
 //     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
