@@ -825,6 +825,45 @@ class StrumLineRotateModifier extends Modifier
         currentValue = 1.0;
     }
 }
+class Rotate3DModifier extends Modifier 
+{
+    override function setupSubValues()
+    {
+        subValues.set('x', new ModifierSubValue(0.0));
+        subValues.set('y', new ModifierSubValue(0.0));
+
+        subValues.set('rotatePointX', new ModifierSubValue((FlxG.width/2)-(NoteMovement.arrowSize/2)));
+        subValues.set('rotatePointY', new ModifierSubValue((FlxG.height/2)-(NoteMovement.arrowSize/2)));
+        currentValue = 1.0;
+    }
+
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var xPos = NoteMovement.defaultStrumX[lane];
+        var yPos = NoteMovement.defaultStrumY[lane];
+        var rotX = ModchartUtil.getCartesianCoords3D(-subValues.get('x').value, 90, xPos-subValues.get('rotatePointX').value);
+        noteData.x += rotX.x+subValues.get('rotatePointX').value-xPos;
+        var rotY = ModchartUtil.getCartesianCoords3D(90, subValues.get('y').value, yPos-subValues.get('rotatePointY').value);
+        noteData.y += rotY.y+subValues.get('rotatePointY').value-yPos;
+        noteData.z += rotX.z + rotY.z;
+
+        noteData.angleY += subValues.get('x').value;
+        noteData.angleX += subValues.get('y').value;
+    }
+    override function incomingAngleMath(lane:Int, curPos:Float, pf:Int)
+    {
+        return [90, subValues.get('y').value]; //ik this might cause problems at some point with some modifiers but eh, there is nothing i could do about it-
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
+    }
+    override function reset()
+    {
+        super.reset();
+        currentValue = 1.0;
+    }
+}
 
 class BumpyXModifier extends Modifier 
 {
@@ -3156,7 +3195,7 @@ class TwirlModifier extends Modifier
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         //noteData.scaleX *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
-        noteData.angleY += currentValue*((curPos*0.45)*subValues.get('speed').value);
+        noteData.angleY += currentValue*((curPos*0.25)*subValues.get('speed').value);
     }
 }
 class RollModifier extends Modifier
@@ -3168,7 +3207,7 @@ class RollModifier extends Modifier
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         //noteData.scaleY *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
-        noteData.angleX += currentValue*((curPos*0.45)*subValues.get('speed').value);
+        noteData.angleX += currentValue*((curPos*0.25)*subValues.get('speed').value);
     }
 }
 
