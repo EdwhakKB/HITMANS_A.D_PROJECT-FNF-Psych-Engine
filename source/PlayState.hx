@@ -109,12 +109,12 @@ import HazardAFT_Capture as AFT_capture;
 class ThreadBeatList 
 {
 	public var beat:Float = 0;
-	public var func:Void->Dynamic;
+	public var func:Void->Void;
 
-	public function new(newBeat:Float, newFunc:Dynamic)
+	public function new(newBeat:Float, newFunc:Void->Void)
 	{
 		this.beat = newBeat;
-		this.func = () -> {newFunc;}
+		this.func = newFunc;
 	}
 }
 
@@ -123,15 +123,15 @@ class ThreadUpdateList
 {
 	public var startbeat:Float;
 	public var endbeat:Float;
-	public var func:Void->Dynamic;
-	public var oncompletefunc:Void->Dynamic;
+	public var func:Void->Void;
+	public var oncompletefunc:Void->Void;
 
-	public function new(startBeat:Float, endBeat:Float, newFunc:Dynamic, onCompleteFunc:Dynamic)
+	public function new(startBeat:Float, endBeat:Float, newFunc:Void->Void, onCompleteFunc:Void->Void)
 	{
 		this.startbeat = startBeat;
 		this.endbeat = endBeat;
-		this.func = () -> {newFunc;}
-		this.oncompletefunc = () -> {onCompleteFunc;}
+		this.func = newFunc;
+		this.oncompletefunc = onCompleteFunc;
 	}
 }
 
@@ -1063,7 +1063,7 @@ class PlayState extends MusicBeatState
 		opponentStrums = new FlxTypedGroup<StrumNote>();
 		playerStrums = new FlxTypedGroup<StrumNote>();
 
-		// startCountdown();
+		// startCountdown()
 
 		generateSong(SONG.song);
 
