@@ -3156,7 +3156,7 @@ class TwirlModifier extends Modifier
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         //noteData.scaleX *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
-        noteData.angleY += currentValue*((curPos*0.001)*subValues.get('speed').value);
+        noteData.angleY += currentValue*((curPos*0.45)*subValues.get('speed').value);
     }
 }
 class RollModifier extends Modifier
@@ -3168,7 +3168,7 @@ class RollModifier extends Modifier
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         //noteData.scaleY *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
-        noteData.angleX += currentValue*((curPos*0.001)*subValues.get('speed').value);
+        noteData.angleX += currentValue*((curPos*0.45)*subValues.get('speed').value);
     }
 }
 
@@ -4553,6 +4553,10 @@ class PivotXOffsetModifier extends Modifier
     {
         noteData.pivotOffsetX += currentValue;
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
+    }
 }
 class PivotYOffsetModifier extends Modifier
 {
@@ -4560,12 +4564,20 @@ class PivotYOffsetModifier extends Modifier
     {
         noteData.pivotOffsetY += currentValue;
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
+    }
 }
 class PivotZOffsetModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         noteData.pivotOffsetZ += currentValue;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
     }
 }
 
@@ -4575,6 +4587,10 @@ class SkewXOffsetModifier extends Modifier
     {
         noteData.skewX_offset += currentValue;
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
+    }
 }
 class SkewYOffsetModifier extends Modifier
 {
@@ -4582,12 +4598,20 @@ class SkewYOffsetModifier extends Modifier
     {
         noteData.skewY_offset += currentValue;
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
+    }
 }
 class SkewZOffsetModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         noteData.skewZ_offset += currentValue;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
     }
 }
 
@@ -4597,12 +4621,20 @@ class FovXOffsetModifier extends Modifier
     {
         noteData.fovOffsetX += currentValue;
     }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
+    }
 }
 class FovYOffsetModifier extends Modifier
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         noteData.fovOffsetY += currentValue;
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
     }
 }
 
