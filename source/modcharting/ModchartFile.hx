@@ -223,8 +223,7 @@ class ModchartFile
         var json:ModchartJson = null;
         if (rawJson != null)
         {
-            for (i in 0...difficulty.length)
-                json = cast Json.parse(rawJson); //idk why but if i remove this it don't works
+            json = cast Json.parse(rawJson); //idk why but if i remove this it don't works
             //trace('loaded json');
             trace(folderShit);
             #if sys

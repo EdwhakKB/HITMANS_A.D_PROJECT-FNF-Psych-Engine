@@ -1402,115 +1402,116 @@ class FunkinLua {
 			if (type == null || type == '') type = 'ease';
 			if(penisExam != null) 
 			{
-				PlayState.instance.tweenEventManager.addTweenEvent(beat, function(){
-					if (Conductor.songPosition >= getTimeFromBeat(beat)+(time*1000)) //cancel if should have ended
-					{
-						switch (subVars.toLowerCase()) {
-							case 'x':
-								if (type == 'ease') penisExam.x = value;
-								else if (type == 'add') penisExam.x += value;
-							case 'y':
-								if (type == 'ease') penisExam.y = value;
-								else if (type == 'add') penisExam.y += value;
-							case 'angle':
-								if (type == 'ease') penisExam.angle = value;
-								else if (type == 'add') penisExam.angle += value;
-							case 'alpha':
-								if (type == 'ease') penisExam.alpha = value;
-								else if (type == 'add') penisExam.alpha += value;
-							case 'zoom':
-								if (Std.isOfType(penisExam, FlxCamera))
-								{
-									if (type == 'ease') penisExam.zoom = value;
-									else if (type == 'add') penisExam.zoom += value;
-								}
-								else luaTrace('tweenObj: Tried to tween zoom on an object that is not a Camera', false, false, FlxColor.RED);
-							case 'skewX':
-								if (Std.isOfType(penisExam, FlxSkewedSprite)) 
-								{
-									if (type == 'ease') penisExam.skew.x = value;
-									else if (type == 'add') penisExam.skew.x += value;
-								}
-								else luaTrace('tweenObj: Tried to tween skewX on an object that is not a SkewedSprite', false, false, FlxColor.RED);
-							case 'skewY':
-								if (Std.isOfType(penisExam, FlxSkewedSprite)) 
-								{
-									if (type == 'ease') penisExam.skew.y = value;
-									else if (type == 'add') penisExam.skew.y += value;
-								}
-								else luaTrace('tweenObj: Tried to tween skewY on an object that is not a SkewedSprite', false, false, FlxColor.RED);
-							case 'skew':
-								if (Std.isOfType(penisExam, FlxSkewedSprite)) 
-								{
-									if (type == 'ease') 
-									{
-										penisExam.skew.x = value;
-										penisExam.skew.y = value;
-									}
-									else if (type == 'add') 
-									{
-										penisExam.skew.x += value;
-										penisExam.skew.y += value;
-									}
-								}
-								else luaTrace('tweenObj: Tried to tween skew on an object that is not a SkewedSprite', false, false, FlxColor.RED);
-							case 'scaleX':
-								if (Std.isOfType(penisExam, FlxCamera)){
-									if (penisExam.flashSprite != null) 
-									{
-										if (type == 'ease') penisExam.flashSprite.scaleX = value;
-										else if (type == 'add') penisExam.flashSprite.scaleX += value;
-									}
-									else luaTrace('tweenObj: Tried to tween scaleX a camera\'s null flashSprite', false, false, FlxColor.RED);
-								}else{
-									if (type == 'ease') penisExam.scale.x = value;
-									else if (type == 'add') penisExam.scale.x += value;
-								}
-							case 'scaleY':
-								if (Std.isOfType(penisExam, FlxCamera)){
-									if (penisExam.flashSprite != null) 
-									{
-										if (type == 'ease') penisExam.flashSprite.scaleY = value;
-										else if (type == 'add') penisExam.flashSprite.scaleY += value;
-									}
-									else luaTrace('tweenObj: Tried to tween scaleY a camera\'s null flashSprite', false, false, FlxColor.RED);
-								}else{
-									if (type == 'ease') penisExam.scale.y = value;
-									else if (type == 'add') penisExam.scale.y += value;
-								}
-							case 'scale':
-								if (Std.isOfType(penisExam, FlxCamera)){
-									if (penisExam.flashSprite != null){ 
-										if (type == 'ease')
-										{
-											penisExam.flashSprite.scaleX = value;
-											penisExam.flashSprite.scaleY = value;
-										}
-										else if (type == 'add')
-										{
-											penisExam.flashSprite.scaleX += value;
-											penisExam.flashSprite.scaleY += value;
-										}
-									}else{
-										luaTrace('tweenObj: Tried to tween scale a camera\'s null flashSprite', false, false, FlxColor.RED);
-									}
-								}else{
-									if (type == 'ease') 
-									{
-										penisExam.scale.x = value;
-										penisExam.scale.y = value;
-									}
-									else if (type == 'add') 
-									{
-										penisExam.scale.x += value;
-										penisExam.scale.y += value;
-									}
-								}
-							case 'color':
-								penisExam.color = value;
-						}
-						return;
-					}
+				var tweenFunc = function()
+				{
+					// if (Conductor.songPosition >= getTimeFromBeat(beat)+(time*1000)) //cancel if should have ended
+					// {
+					// 	switch (subVars.toLowerCase()) {
+					// 		case 'x':
+					// 			if (type == 'ease') penisExam.x = value;
+					// 			else if (type == 'add') penisExam.x += value;
+					// 		case 'y':
+					// 			if (type == 'ease') penisExam.y = value;
+					// 			else if (type == 'add') penisExam.y += value;
+					// 		case 'angle':
+					// 			if (type == 'ease') penisExam.angle = value;
+					// 			else if (type == 'add') penisExam.angle += value;
+					// 		case 'alpha':
+					// 			if (type == 'ease') penisExam.alpha = value;
+					// 			else if (type == 'add') penisExam.alpha += value;
+					// 		case 'zoom':
+					// 			if (Std.isOfType(penisExam, FlxCamera))
+					// 			{
+					// 				if (type == 'ease') penisExam.zoom = value;
+					// 				else if (type == 'add') penisExam.zoom += value;
+					// 			}
+					// 			else luaTrace('tweenObj: Tried to tween zoom on an object that is not a Camera', false, false, FlxColor.RED);
+					// 		case 'skewX':
+					// 			if (Std.isOfType(penisExam, FlxSkewedSprite)) 
+					// 			{
+					// 				if (type == 'ease') penisExam.skew.x = value;
+					// 				else if (type == 'add') penisExam.skew.x += value;
+					// 			}
+					// 			else luaTrace('tweenObj: Tried to tween skewX on an object that is not a SkewedSprite', false, false, FlxColor.RED);
+					// 		case 'skewY':
+					// 			if (Std.isOfType(penisExam, FlxSkewedSprite)) 
+					// 			{
+					// 				if (type == 'ease') penisExam.skew.y = value;
+					// 				else if (type == 'add') penisExam.skew.y += value;
+					// 			}
+					// 			else luaTrace('tweenObj: Tried to tween skewY on an object that is not a SkewedSprite', false, false, FlxColor.RED);
+					// 		case 'skew':
+					// 			if (Std.isOfType(penisExam, FlxSkewedSprite)) 
+					// 			{
+					// 				if (type == 'ease') 
+					// 				{
+					// 					penisExam.skew.x = value;
+					// 					penisExam.skew.y = value;
+					// 				}
+					// 				else if (type == 'add') 
+					// 				{
+					// 					penisExam.skew.x += value;
+					// 					penisExam.skew.y += value;
+					// 				}
+					// 			}
+					// 			else luaTrace('tweenObj: Tried to tween skew on an object that is not a SkewedSprite', false, false, FlxColor.RED);
+					// 		case 'scaleX':
+					// 			if (Std.isOfType(penisExam, FlxCamera)){
+					// 				if (penisExam.flashSprite != null) 
+					// 				{
+					// 					if (type == 'ease') penisExam.flashSprite.scaleX = value;
+					// 					else if (type == 'add') penisExam.flashSprite.scaleX += value;
+					// 				}
+					// 				else luaTrace('tweenObj: Tried to tween scaleX a camera\'s null flashSprite', false, false, FlxColor.RED);
+					// 			}else{
+					// 				if (type == 'ease') penisExam.scale.x = value;
+					// 				else if (type == 'add') penisExam.scale.x += value;
+					// 			}
+					// 		case 'scaleY':
+					// 			if (Std.isOfType(penisExam, FlxCamera)){
+					// 				if (penisExam.flashSprite != null) 
+					// 				{
+					// 					if (type == 'ease') penisExam.flashSprite.scaleY = value;
+					// 					else if (type == 'add') penisExam.flashSprite.scaleY += value;
+					// 				}
+					// 				else luaTrace('tweenObj: Tried to tween scaleY a camera\'s null flashSprite', false, false, FlxColor.RED);
+					// 			}else{
+					// 				if (type == 'ease') penisExam.scale.y = value;
+					// 				else if (type == 'add') penisExam.scale.y += value;
+					// 			}
+					// 		case 'scale':
+					// 			if (Std.isOfType(penisExam, FlxCamera)){
+					// 				if (penisExam.flashSprite != null){ 
+					// 					if (type == 'ease')
+					// 					{
+					// 						penisExam.flashSprite.scaleX = value;
+					// 						penisExam.flashSprite.scaleY = value;
+					// 					}
+					// 					else if (type == 'add')
+					// 					{
+					// 						penisExam.flashSprite.scaleX += value;
+					// 						penisExam.flashSprite.scaleY += value;
+					// 					}
+					// 				}else{
+					// 					luaTrace('tweenObj: Tried to tween scale a camera\'s null flashSprite', false, false, FlxColor.RED);
+					// 				}
+					// 			}else{
+					// 				if (type == 'ease') 
+					// 				{
+					// 					penisExam.scale.x = value;
+					// 					penisExam.scale.y = value;
+					// 				}
+					// 				else if (type == 'add') 
+					// 				{
+					// 					penisExam.scale.x += value;
+					// 					penisExam.scale.y += value;
+					// 				}
+					// 			}
+					// 		case 'color':
+					// 			penisExam.color = value;
+					// 	}
+					// 	return;
+					// }
 					var tween = null;
 					if (type == 'ease')
 					{
@@ -1836,22 +1837,23 @@ class FunkinLua {
 	
 					if (tween != null)
 					{
-						if (Conductor.songPosition > getTimeFromBeat(beat)) //skip to where it should be i guess??
-						{
-							@:privateAccess
-							tween._secondsSinceStart += ((Conductor.songPosition-getTimeFromBeat(beat))*0.001);
-							@:privateAccess
-							tween.update(0);
-						}
-						if (PlayState.instance.paused)
-							tween.active = false;
+						// if (Conductor.songPosition > getTimeFromBeat(beat)) //skip to where it should be i guess??
+						// {
+						// 	@:privateAccess
+						// 	tween._secondsSinceStart += ((Conductor.songPosition-getTimeFromBeat(beat))*0.001);
+						// 	@:privateAccess
+						// 	tween.update(0);
+						// }
+						// if (PlayState.instance.paused)
+						// 	tween.active = false;
 						PlayState.instance.modchartTweens.set(tag, tween);
 					}
 					else
 					{
 						luaTrace('tweenObj: Tween is null!', false, false, FlxColor.RED);	
 					}
-				});
+				};
+				PlayState.threadBeat(beat, tweenFunc);
 			}
 			else
 			{
