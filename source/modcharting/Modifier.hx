@@ -852,7 +852,9 @@ class Rotate3DModifier extends Modifier
     }
     override function incomingAngleMath(lane:Int, curPos:Float, pf:Int)
     {
-        return [90, subValues.get('y').value]; //ik this might cause problems at some point with some modifiers but eh, there is nothing i could do about it-
+        var multiply:Bool = subValues.get('y').value%180 != 0; //so it calculates the stuff ONLY if angle its not 180/360 base
+        var valueToUse:Float = multiply ? 90 : 0;
+        return [valueToUse, subValues.get('y').value]; //ik this might cause problems at some point with some modifiers but eh, there is nothing i could do about it- (i can LMAO)
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -1128,9 +1130,19 @@ class ZModifier extends Modifier
 
 class ConfusionModifier extends Modifier //note angle
 {
+    override function setupSubValues()
+    {
+        subValues.set('force', new ModifierSubValue(1.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angle += currentValue;
+        var scrollSwitch = -1;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                scrollSwitch *= -1;
+
+        if (subValues.get('force').value >= 0.5) noteData.angle += currentValue;
+        else noteData.angle += currentValue * scrollSwitch; //forced as default now to fix upscroll and downscroll modcharts that uses angle (no need for z and x, just angle and y)
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -2666,9 +2678,14 @@ class SkewYModifier extends Modifier
 
 class DizzyModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        subValues.set('forced', new ModifierSubValue(0.0));
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angle += currentValue*curPos;
+        if (subValues.get('forced').value >= 0.5) noteData.angle += currentValue*(Conductor.songPosition*0.001);
+        else noteData.angle += currentValue*curPos;
     }
 }
 
@@ -3190,24 +3207,26 @@ class TwirlModifier extends Modifier
 {
     override function setupSubValues()
     {
-        subValues.set('speed', new ModifierSubValue(1.0));
+        subValues.set('forced', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         //noteData.scaleX *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
-        noteData.angleY += currentValue*((curPos*0.25)*subValues.get('speed').value);
+        if (subValues.get('forced').value >= 0.5) noteData.angleX += (Conductor.songPosition*0.001) * currentValue;
+        else noteData.angleY += (curPos / 2.0) * currentValue;
     }
 }
 class RollModifier extends Modifier
 {
     override function setupSubValues()
     {
-        subValues.set('speed', new ModifierSubValue(1.0));
+        subValues.set('forced', new ModifierSubValue(0.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         //noteData.scaleY *=(0+(currentValue*FlxMath.fastCos(((curPos*0.001)*(5*subValues.get('speed').value)))));
-        noteData.angleX += currentValue*((curPos*0.25)*subValues.get('speed').value);
+        if (subValues.get('forced').value >= 0.5) noteData.angleY += (Conductor.songPosition*0.001) * currentValue;
+        else noteData.angleX += (curPos / 2.0) * currentValue;
     }
 }
 

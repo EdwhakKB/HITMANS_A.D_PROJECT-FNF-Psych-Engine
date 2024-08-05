@@ -161,7 +161,7 @@ class ModchartEditorState extends MusicBeatState
         SquareScaleModifier, SquareScaleXModifier, SquareScaleYModifier,
         SquareSkewModifier, SquareSkewXModifier, SquareSkewYModifier,
         //Target Modifiers
-        RotateModifier, StrumLineRotateModifier, JumpTargetModifier,
+        RotateModifier, StrumLineRotateModifier, Rotate3DModifier, JumpTargetModifier,
         LanesModifier,
         //Notes Modifiers
         TimeStopModifier, JumpNotesModifier,

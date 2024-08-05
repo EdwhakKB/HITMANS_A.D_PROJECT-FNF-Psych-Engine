@@ -77,7 +77,7 @@ class Arrowpath
 
   //hazard told me this function its useless but i'll leave it here ig?
     
-  /*function setNotePos(note:ZSprite, strumTime:Float, lane:Int):Void
+  /*function setNotePos(noteData:NotePositionData, strumTime:Float, lane:Int):Void
   {
     // note.strumTime = Conductor.instance?.songPosition ?? 0;
     // note.strumTime -= arrowpathBackwardsLength[note.noteDirection % KEY_COUNT] ?? 0;
