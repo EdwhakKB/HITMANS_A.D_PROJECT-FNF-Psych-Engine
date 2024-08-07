@@ -3445,8 +3445,8 @@ class EditorPlayState extends MusicBeatState
 								Note.canDamagePlayer = false;
 								Note.edwhakIsPlayer = true;
 							default:
-								Note.canDamagePlayer = false;
-								Note.edwhakIsPlayer = true;
+								Note.canDamagePlayer = true;
+								Note.edwhakIsPlayer = false;
 						}
 					
 				}
