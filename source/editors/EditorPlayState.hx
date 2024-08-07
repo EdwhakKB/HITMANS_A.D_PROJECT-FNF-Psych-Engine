@@ -4091,11 +4091,11 @@ class EditorPlayState extends MusicBeatState
 				hitmansHUD.ratingsBumpScaleOP();
 				hitmansHUD.ratingsOP.animation.play("miss");
 			}
-			songMisses++;
+			if (daNote.noteType.toLowerCase() != 'instakill note') songMisses++;
 		}
 		vocals.volume = 0;
 		// if(!practiceMode) 
-		songScore -= 10;
+		if (daNote.noteType.toLowerCase() != 'instakill note') songScore -= 10;
 
 		totalPlayed++;
 		RecalculateRating(true);
@@ -4346,6 +4346,15 @@ class EditorPlayState extends MusicBeatState
 							FlxG.sound.play(Paths.sound('Edwhak/Mine'));
 							deathVariableTXT = 'Mine';
 						}
+						case 'Instakill Note': //Hurt note
+						if (!gameOver)
+						{
+							if(boyfriend.animation.getByName('hurt') != null) {
+								boyfriend.playAnim('hurt', true);
+								boyfriend.specialAnim = true;
+							}
+							deathVariableTXT = 'Instakill';
+						}
 					}
 				}
 
@@ -4360,11 +4369,6 @@ class EditorPlayState extends MusicBeatState
 			}
 			if (!note.hitCausesMiss){
 				switch(note.noteType) {
-					case 'Instakill Note': //Hurt note
-					if (!gameOver)
-					{
-						deathVariableTXT = 'Instakill';
-					}
 					case 'Love Note': //agressive hurts that cause more damage
 					if (!gameOver)
 					{
