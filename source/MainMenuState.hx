@@ -37,6 +37,8 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 	private var camGame:FlxCamera;
 	private var camAchievement:FlxCamera;
+	private var camPC:FlxCamera;
+	private var camInsidePC:FlxCamera;
 
 	public var pcTime:FlxText;
 
@@ -68,6 +70,8 @@ class MainMenuState extends MusicBeatState
 	var settings:FlxSprite;
 	var notes:FlxSprite;
 	public var folder:FlxSprite;
+	public var pcThing:FlxSprite;
+	public var pcInside:FlxSprite;
 
 	var versionShit1:FlxText;
 
@@ -91,9 +95,22 @@ class MainMenuState extends MusicBeatState
 		persistentUpdate = persistentDraw = true;
 		FlxG.mouse.visible = true;
 
+		// camGame = new FlxCamera();
+		// camAchievement = new FlxCamera();
+		camPC = new FlxCamera();
+		camPC.bgColor.alpha = 0;
+		camInsidePC = new FlxCamera();
+		camInsidePC.bgColor.alpha = 0;
+
+		FlxG.cameras.add(camInsidePC, false);
+		FlxG.cameras.add(camPC, false);
+
+		camInsidePC.setScale(0.6,0.6);
+
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('MenuShit/wallPaper'));
 		bg.updateHitbox();
 		bg.screenCenter();
+		//bg.cameras = [camInsidePC];
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
 
@@ -104,6 +121,7 @@ class MainMenuState extends MusicBeatState
 		storyMode.scale.x = 0.7;
 		storyMode.scale.y = 0.7;
 		storyMode.updateHitbox();
+		//storyMode.cameras = [camInsidePC];
 		// storyMode.alpha = 0.4;
 		storyMode.antialiasing = ClientPrefs.globalAntialiasing;
 		add(storyMode);
@@ -115,6 +133,8 @@ class MainMenuState extends MusicBeatState
 		freeplay.scale.x = 0.7;
 		freeplay.scale.y = 0.7;
 		freeplay.updateHitbox();
+		// freeplay.alpha = 0.4;
+		//freeplay.cameras = [camInsidePC];
 		freeplay.antialiasing = ClientPrefs.globalAntialiasing;
 		add(freeplay);
 
@@ -126,6 +146,7 @@ class MainMenuState extends MusicBeatState
 		mods.scale.y = 0.7;
 		mods.updateHitbox();
 		// mods.alpha = 0.4;
+		//mods.cameras = [camInsidePC];
 		mods.antialiasing = ClientPrefs.globalAntialiasing;
 		add(mods);
 
@@ -136,6 +157,7 @@ class MainMenuState extends MusicBeatState
 		credits.scale.x = 0.7;
 		credits.scale.y = 0.7;
 		credits.updateHitbox();
+		//credits.cameras = [camInsidePC];
 		credits.antialiasing = ClientPrefs.globalAntialiasing;
 		add(credits);
 
@@ -146,6 +168,7 @@ class MainMenuState extends MusicBeatState
 		settings.scale.x = 0.7;
 		settings.scale.y = 0.7;
 		settings.updateHitbox();
+		// settings.cameras = [camInsidePC];
 		settings.antialiasing = ClientPrefs.globalAntialiasing;
 		add(settings);
 
@@ -157,25 +180,46 @@ class MainMenuState extends MusicBeatState
 		notes.scale.y = 0.7;
 		notes.updateHitbox();
 		// storyMode.alpha = 0.4;
+		// notes.cameras = [camInsidePC];
 		notes.antialiasing = ClientPrefs.globalAntialiasing;
 		add(notes);
 
 		folder = new FlxSprite(200, 40).loadGraphic(Paths.image('MenuShit/folder'));
 		folder.updateHitbox();
 		folder.alpha = 0;
+		// folder.cameras = [camInsidePC];
 		folder.antialiasing = ClientPrefs.globalAntialiasing;
 		add(folder);
 
 		var pcInterfas:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('MenuShit/PCInterfas'));
 		pcInterfas.updateHitbox();
 		pcInterfas.screenCenter();
+		// pcInterfas.cameras = [camInsidePC];
 		pcInterfas.antialiasing = ClientPrefs.globalAntialiasing;
 		add(pcInterfas);
 
 		pcTime = new FlxText(970, 670, Std.int(FlxG.width * 0.6), "0:00", 25);
         pcTime.setFormat(Paths.font("vcr.ttf"), 25, 0xffffffff);
 		pcTime.alpha = 1;
+		pcTime.antialiasing = ClientPrefs.globalAntialiasing;
+		pcTime.updateHitbox();
+		// pcTime.cameras = [camInsidePC];
 		add(pcTime);
+
+		pcInside = new FlxSprite(0).loadGraphic(Paths.image('MenuShit/TVinside'));
+		pcInside.setGraphicSize(1300, 937);
+		pcInside.updateHitbox();
+		pcInside.antialiasing = ClientPrefs.globalAntialiasing;
+		//pcInside.screenCenter();
+		//add(pcInside);
+
+		pcThing = new FlxSprite(0).loadGraphic(Paths.image('MenuShit/HitmansTV'));
+		pcThing.setGraphicSize(1300, 937);
+		pcThing.updateHitbox();
+		// pcThing.cameras = [camPC];
+		pcThing.antialiasing = ClientPrefs.globalAntialiasing;
+		//pcThing.screenCenter();
+		//add(pcThing);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollowPos = new FlxObject(0, 0, 1, 1);
@@ -212,6 +256,13 @@ class MainMenuState extends MusicBeatState
 			menuItem.alpha = 0;
 		}
 
+		//FlxG.camera.setScrollBoundsRect(0, 0, pcThing.width, pcThing.height, true);
+		//FlxG.camera.follow(camFollowPos, FlxCameraFollowStyle.TOPDOWN_TIGHT);
+		// camPC.setScrollBoundsRect(0, 0, pcThing.width, pcThing.height, true);
+		// camPC.follow(camFollowPos, FlxCameraFollowStyle.TOPDOWN_TIGHT);
+
+		// camInsidePC.setScrollBoundsRect(0, 0, pcThing.width, pcThing.height, true);
+		// camInsidePC.follow(camFollowPos, FlxCameraFollowStyle.TOPDOWN_TIGHT);
 		// FlxG.camera.follow(camFollowPos, null, 1);
 
 		versionShit1 = new FlxText(72, FlxG.height - 50, 0, "HITMANS " + psychEngineVersion, 16);
@@ -255,7 +306,7 @@ class MainMenuState extends MusicBeatState
 		}
 
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
-		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
+		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, FlxG.mouse.x, lerpVal), FlxMath.lerp(camFollowPos.y, FlxG.mouse.y, lerpVal));
 
 		dateThings = DateTools.format(Date.now(), "%Y-%m-%d | %H:%M");
 
@@ -376,7 +427,7 @@ class MainMenuState extends MusicBeatState
 					// 	{
 					// 		MusicBeatState.switchState(new options.NoteColorState());
 					// 	});
-					inFolder = true;
+					//inFolder = true;
 					notes.animation.play('selected');
 					settings.animation.play('normal');
 					storyMode.animation.play('normal');

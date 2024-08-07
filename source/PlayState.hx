@@ -263,8 +263,7 @@ class PlayState extends MusicBeatState
 	public var gameOver:Bool = false; //simple shit to allow or disable death screen variables when a special note was hit/miss
 	public var drain:Bool = false;
 	public var gain:Bool = false;
-
-	public var tgain:Bool = false;
+	public var sustainDivider:Float = 5; //simple shit to change how much sustains gives life lol
 
 	public var aftBitmap:AFT_capture; //hazzy stuff :3
 
@@ -3073,21 +3072,6 @@ class PlayState extends MusicBeatState
 				});
 			}
 		}
-		if (tgain){
-			if (!ClientPrefs.casualMode){
-				health += 0.004;
-				new FlxTimer().start(3, function(subtmr3:FlxTimer)
-					{
-					tgain = false;
-				});
-			}else if (ClientPrefs.casualMode){
-				health += 0.006;
-				new FlxTimer().start(3, function(subtmr3:FlxTimer)
-					{
-					tgain = false;
-				});
-			}
-		}
 
 		if (health <= 0)
 			health = 0;
@@ -4120,6 +4104,8 @@ class PlayState extends MusicBeatState
 				}
 			case "Set CheckPoint":
 				onCheckPoint(strumTime, (value1.toLowerCase() == "hide"));
+			case "Sustain Divider":
+				sustainDivider = Std.parseFloat(value1);
 		}
 		callOnScripts('onEvent', [eventName, value1, value2]);
 	}
@@ -4624,34 +4610,12 @@ class PlayState extends MusicBeatState
 		}
 
 		combo = 0;
-		if (!ClientPrefs.casualMode){
-			if (!Note.edwhakIsPlayer){
-				if (daNote.isSustainNote){
-					health -= daNote.missHealth * healthLoss;
-				}else if(!daNote.isSustainNote){
-					health -= daNote.missHealth * healthLoss;
-				}
-			}else if(Note.edwhakIsPlayer){
-				if (daNote.isSustainNote){
-					health -= daNote.missHealth * healthLoss;
-				}else if(!daNote.isSustainNote){
-					health -= daNote.missHealth * healthLoss;
-				}
-			}
-		}else if(ClientPrefs.casualMode){
-			if (!Note.edwhakIsPlayer){
-				if (daNote.isSustainNote){
-					health -= (daNote.missHealth-0.0825) * healthLoss;
-				}else if(!daNote.isSustainNote){
-					health -= (daNote.missHealth-0.0525) * healthLoss;
-				}
-			}else if(Note.edwhakIsPlayer){
-				if (daNote.isSustainNote){
-					health -= (daNote.missHealth-0.05) * healthLoss;
-				}else if(!daNote.isSustainNote){
-					health -= (daNote.missHealth-0.03) * healthLoss;
-				}
-			}
+
+		switch(ClientPrefs.casualMode){
+			case true:
+				health -= ((daNote.missHealth-0.15) * healthLoss)/(daNote.isSustainNote ? sustainDivider : 1); //now sustains gets 10 times less gain but still drain
+			case false:
+				health -= ((daNote.missHealth) * healthLoss)/(daNote.isSustainNote ? sustainDivider : 1); //now sustains gets 10 times less gain but still drain
 		}
 		
 		if(instakillOnMiss)
@@ -4767,23 +4731,21 @@ class PlayState extends MusicBeatState
 				allowEnemyDrain = true;
 			}
 		}
-		var sustainDivider:Float = 5;
+		var noteStyle = note.noteType.toLowerCase();
 		if (allowEnemyDrain){
 			switch (!ClientPrefs.casualMode){
 				case true:
 					if (edwhakIsEnemy){
 						if(health - edwhakDrain - 0.17 > maxHealth){
-							if (Note.instakill){
+							if (noteStyle == 'instakill note'){
 								health -= ((edwhakDrain+0.02) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //idfk if this even works LMAO
-							}else if (Note.tlove){
-								health -= ((edwhakDrain+0.03) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Same as up
 							}else{
 								health -= ((edwhakDrain+0.005) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Added both because if i added only one it don't do shit idk why lmao
 							}
 						}
 					}else{
 						if(health - note.hitHealth - 0.05 > maxHealth){
-							if (!Note.instakill){
+							if (noteStyle != 'instakill note'){
 								health -= (note.hitHealth * healthGain) / (note.isSustainNote ? sustainDivider : 1);			
 							}
 						}
@@ -4791,17 +4753,15 @@ class PlayState extends MusicBeatState
 				case false:
 					if (edwhakIsEnemy){
 						if(health - edwhakDrain - 0.17 > maxHealth){
-							if (Note.instakill){
+							if (noteStyle == 'instakill note'){
 								health -= ((edwhakDrain+0.01) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Same as up
-							}else if (Note.tlove){
-								health -= ((edwhakDrain+0.02) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Same as up
 							}else{
 								health -= ((edwhakDrain+0.005) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Added both because if i added only one it don't do shit idk why lmao
 							}
 						}
 					}else{
 						if(health - note.hitHealth - 0.05 > maxHealth){
-							if (!Note.instakill){
+							if (noteStyle != 'instakill note'){
 								health -= (note.hitHealth * healthGain) / (note.isSustainNote ? sustainDivider : 1);
 							}
 						}
@@ -4921,6 +4881,16 @@ class PlayState extends MusicBeatState
 							}
 							deathVariableTXT = 'Mimics';
 						}
+						case 'Mine Note': //similar to agressive but way more lethal
+						if (!gameOver)
+							{
+							if(boyfriend.animation.getByName('hurt') != null) {
+								boyfriend.playAnim('hurt', true);
+								boyfriend.specialAnim = true;
+							}
+							FlxG.sound.play(Paths.sound('Edwhak/Mine'));
+							deathVariableTXT = 'Mine';
+						}
 					}
 				}
 
@@ -4940,24 +4910,6 @@ class PlayState extends MusicBeatState
 					{
 						deathVariableTXT = 'Instakill';
 					}
-					case 'Mine Note': //what you can't see but it still damage you lmao
-					if (!gameOver)
-					{
-						deathVariableTXT = 'Mine';
-						FlxG.sound.play(Paths.sound('Edwhak/Mine'));
-						hitmansHUD.ratingsBumpScale();
-						if (!edwhakIsEnemy && !SONG.bossFight){
-							hitmansHUD.ratingsBumpScaleOP();
-							hitmansHUD.ratingsOP.animation.play("miss");
-						}
-						hitmansHUD.ratings.animation.play("miss");
-						songMisses++;
-						vocals.volume = 0;
-						// if(!practiceMode) 
-						songScore -= 10;
-						combo = 0;
-						health = health-0.8;
-					}
 					case 'Love Note': //agressive hurts that cause more damage
 					if (!gameOver)
 					{
@@ -4976,14 +4928,6 @@ class PlayState extends MusicBeatState
 						}
 						gain = Note.edwhakIsPlayer ? false : true;
 					}
-					case 'True Love Note': //agressive hurts that cause more damage
-					if (!gameOver)
-					{
-						if (Note.edwhakIsPlayer){
-							tgain = true;
-							deathVariableTXT = 'Tlove';
-						}
-					}
 				}
 			}
 			//IT WILL WORK FINALLY!?
@@ -5000,8 +4944,6 @@ class PlayState extends MusicBeatState
 				if (combo > maxCombo) maxCombo = combo;
 				popUpScore(note);
 			}
-
-			var sustainDivider:Float = 5;
 
 			switch(ClientPrefs.casualMode){
 				case false:

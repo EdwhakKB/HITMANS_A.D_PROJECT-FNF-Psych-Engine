@@ -71,11 +71,8 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		'HD Note',
 		'Love Note',
 		'Fire Note',
-		'True Love Note',
 		'GF Sing',
-		'No Animation',
-		'RollNote',
-		'EndHit'
+		'No Animation'
 	];
 	public var ignoreWarnings = false;
 	var curNoteTypes:Array<String> = [];
@@ -102,7 +99,8 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		['ModchartEffects', "Value 1: Modchart variable\n0 = no effects\n1 = side to side movement\n2 = camera angle rotate\n3 = left to right simple move\n4 = copy note spin shit from qt mod (secret shit for her song lmao)\n8 = disable cam rotate effects lol"],
 		['AllowHealthDrain', "Value 1: \ntrue to enable\nfalse to disable\nONLY WORKS FOR NON EDWHAK SONGS! (since Ed drains auto lmao)"],
 		['Controls Player 2', "Value1: if enable Enables Player 2 shits lmao\ndisable to disable"],
-		['Set CheckPoint', "Value 1: (Optional) hide checkpoint"]
+		['Set CheckPoint', "Value 1: (Optional) hide checkpoint"],
+		['Sustain Divider', "Value1: Value to divide\n(this event will make sustains give more or less health, have in mind this apply for player and opponent if they have drain enabled)\nDefault value = 5"],
 	];
 
 	var _file:FileReference;
@@ -2211,7 +2209,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 					if(!playedSound[data]) {
 						if((playSoundBf.checked && note.mustPress) || (playSoundDad.checked && !note.mustPress))
 						{
-							var soundToPlay = "";
+							var soundToPlay = "hitsound";
 							if(_song.player1 == 'gf') //Easter egg
 								soundToPlay = 'GF_' + Std.string(data + 1);
 

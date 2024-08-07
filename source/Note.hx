@@ -320,13 +320,13 @@ class Note extends modcharting.ModchartArrow
 					rgbShader.enabled = false;
 					// texture = 'MINENOTE_assets';
 					lowPriority = true;
-	
 					if(isSustainNote) {
-						hitHealth = 0;
+						missHealth = 0.16;
 					} else {
-						hitHealth = 0;
+						missHealth = 0.8;
 					}
 					mine = true;
+					hitCausesMiss = true;
 					//not used since in Lua you can load that variables too lmao
 					//maybe in a future i'll port it to Haxe lmao -Ed
 				case 'HD Note':
@@ -335,7 +335,7 @@ class Note extends modcharting.ModchartArrow
 					rgbShader.enabled = false;
 					// texture = 'HDNOTE_assets';
 					if(isSustainNote) {
-						missHealth = 1;
+						missHealth = 0.2;
 					} else {
 						missHealth = 1;
 					}
@@ -383,27 +383,6 @@ class Note extends modcharting.ModchartArrow
 							hitHealth = -0.7;
 						}
 						fire = true;
-					}
-				case 'True Love Note':
-					usedDifferentWidth = true;
-					ignoreNote = mustPress;
-					reloadNote('', 'Skins/Notes/TLOVENOTE_assets');
-					rgbShader.enabled = false;
-					// texture = 'TLOVENOTE_assets';
-					if (!edwhakIsPlayer){
-						if(isSustainNote) {
-							hitHealth = -0.25;
-						} else {
-							hitHealth = -0.50;
-						}
-					}
-					if (edwhakIsPlayer){
-						tlove = true;
-						if(isSustainNote) {
-							hitHealth = 0;
-						} else {
-							hitHealth = 0;
-						}
 					}
 				/*case 'Ice Note':
 					ignoreNote = mustPress;
@@ -634,10 +613,10 @@ class Note extends modcharting.ModchartArrow
 		var skin:String = texture;
 		if(texture.length < 1) {
 			skin = PlayState.SONG != null ? PlayState.SONG.arrowSkin : null;
-			updateHolds = false;
+			//updateHolds = false;
 			if(skin == null || skin.length < 1) {
 				skin = 'Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets';
-				updateHolds = true;
+				//updateHolds = true;
 			}
 		}
 
@@ -706,12 +685,12 @@ class Note extends modcharting.ModchartArrow
 
 		if (isSustainNote)
 		{
-			if(updateHolds){ //doing this check because of custom notes with own holds???
-				if (ClientPrefs.notesSkin[2] != 'NONE') //if its none it will just use notesSkin[0] sustain instead?
-					frames = Paths.getSparrowAtlas('Skins/Holds/'+ClientPrefs.notesSkin[2]+'/SUSTAIN_assets');
+			// if(updateHolds){ //doing this check because of custom notes with own holds???
+				// if (ClientPrefs.notesSkin[2] != 'NONE') //if its none it will just use notesSkin[0] sustain instead?
+					// frames = Paths.getSparrowAtlas('Skins/Holds/'+ClientPrefs.notesSkin[2]+'/SUSTAIN_assets');
 				// else
 				// 	frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets'); //avoid a crash
-			}
+			// }
 			animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
 			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end');
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece');
