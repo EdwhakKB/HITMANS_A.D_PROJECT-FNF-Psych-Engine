@@ -297,22 +297,16 @@ class Note extends modcharting.ModchartArrow
 					ignoreNote = mustPress;
 					reloadNote('', 'Skins/Notes/INSTAKILLNOTE_assets');
 					rgbShader.enabled = false;
+					hitCausesMiss = !edwhakIsPlayer;
+					instakill = !edwhakIsPlayer;
 					// texture = 'INSTAKILLNOTE_assets';
 					lowPriority = true;
-					if (canDamagePlayer) {
-						if(isSustainNote) {
-							hitHealth = -2;
-						} else {
-							hitHealth = -2;
-						}
-						instakill = true;
-				    } else {
-						if(isSustainNote) {
-							hitHealth = 0.35;
-						} else {
-							hitHealth = 0.2;
-						}
-						instakill = false;
+					if(isSustainNote) {
+						missHealth = !hitCausesMiss ? 0 : 4; //doesn't kill ed
+						hitHealth = 0.35; //player doesn't get anything more than death
+					} else {
+						missHealth = !hitCausesMiss ? 0 : 4; //doesn't kill ed
+						hitHealth = 0.2; //player doesn't get anything more than death
 					}
 				case 'Mine Note':
 					ignoreNote = mustPress;

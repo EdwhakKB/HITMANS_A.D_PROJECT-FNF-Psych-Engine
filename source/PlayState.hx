@@ -4635,11 +4635,11 @@ class PlayState extends MusicBeatState
 				hitmansHUD.ratingsBumpScaleOP();
 				hitmansHUD.ratingsOP.animation.play("miss");
 			}
-			songMisses++;
+			if (daNote.noteType.toLowerCase() != 'instakill note') songMisses++;
 		}
 		vocals.volume = 0;
 		// if(!practiceMode) 
-		songScore -= 10;
+		if (daNote.noteType.toLowerCase() != 'instakill note') songScore -= 10;
 
 		totalPlayed++;
 		RecalculateRating(true);
@@ -4733,8 +4733,8 @@ class PlayState extends MusicBeatState
 		}
 		var noteStyle = note.noteType.toLowerCase();
 		if (allowEnemyDrain){
-			switch (!ClientPrefs.casualMode){
-				case true:
+			switch (ClientPrefs.casualMode){
+				case false:
 					if (edwhakIsEnemy){
 						if(health - edwhakDrain - 0.17 > maxHealth){
 							if (noteStyle == 'instakill note'){
@@ -4750,13 +4750,13 @@ class PlayState extends MusicBeatState
 							}
 						}
 					}
-				case false:
+				case true:
 					if (edwhakIsEnemy){
 						if(health - edwhakDrain - 0.17 > maxHealth){
 							if (noteStyle == 'instakill note'){
 								health -= ((edwhakDrain+0.01) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Same as up
 							}else{
-								health -= ((edwhakDrain+0.005) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Added both because if i added only one it don't do shit idk why lmao
+								health -= ((edwhakDrain+0.003) * healthGain) / (note.isSustainNote ? sustainDivider : 1); //Added both because if i added only one it don't do shit idk why lmao
 							}
 						}
 					}else{
@@ -4891,6 +4891,15 @@ class PlayState extends MusicBeatState
 							FlxG.sound.play(Paths.sound('Edwhak/Mine'));
 							deathVariableTXT = 'Mine';
 						}
+						case 'Instakill Note': //ANNIHILATE.
+						if (!gameOver)
+						{
+							if(boyfriend.animation.getByName('hurt') != null) {
+								boyfriend.playAnim('hurt', true);
+								boyfriend.specialAnim = true;
+							}
+							deathVariableTXT = 'Instakill';
+						}
 					}
 				}
 
@@ -4905,11 +4914,6 @@ class PlayState extends MusicBeatState
 			}
 			if (!note.hitCausesMiss){
 				switch(note.noteType) {
-					case 'Instakill Note': //Hurt note
-					if (!gameOver)
-					{
-						deathVariableTXT = 'Instakill';
-					}
 					case 'Love Note': //agressive hurts that cause more damage
 					if (!gameOver)
 					{
