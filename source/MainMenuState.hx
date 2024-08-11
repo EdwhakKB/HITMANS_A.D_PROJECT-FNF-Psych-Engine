@@ -423,10 +423,10 @@ class MainMenuState extends MusicBeatState
 			}
 			if (FlxG.mouse.overlaps(notes)) {
 				if (FlxG.mouse.justPressed) {
-					// new FlxTimer().start(1, function(tmrSe:FlxTimer)
-					// 	{
-					// 		MusicBeatState.switchState(new options.NoteColorState());
-					// 	});
+					new FlxTimer().start(1, function(tmrSe:FlxTimer)
+						{
+							MusicBeatState.switchState(new options.NoteColorState());
+						});
 					//inFolder = true;
 					notes.animation.play('selected');
 					settings.animation.play('normal');
