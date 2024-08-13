@@ -671,6 +671,7 @@ class Note extends modcharting.ModchartArrow
 			setGraphicSize(ChartingState.GRID_SIZE, ChartingState.GRID_SIZE);
 			updateHitbox();
 		}
+		updateHitbox();
 	}
 	
 	function loadNoteAnims() 
