@@ -124,6 +124,8 @@ class NoteColorState extends MusicBeatState
 		noteBar.alpha = 0.4;
 		noteBar.cameras = [camNoteColor];
 		noteBar.screenCenter();
+		noteBar.x -= 750;
+		noteBar.y -= 400;
 		add(noteBar);
 
 		grpHolds = new FlxTypedGroup<FlxSprite>();
@@ -140,14 +142,15 @@ class NoteColorState extends MusicBeatState
 		noteHSVText.borderSize = 2.4;
 		noteHSVText.cameras = [camNoteColor];
 		noteHSVText.screenCenter();
-		noteHSVText.x += 125;
+		noteHSVText.x -= 750;
+		noteHSVText.y -= 400;
 		add(noteHSVText);
 
 		for(i in 0...4) {
-			var yPos:Float = (125 * i) + 125;
+			var yPos:Float = (105 * i) - 155;
 
 			var note:Note = new Note(0, i, false, true); //new FlxSprite(230, yPos - 40);
-			note.x = 230;
+			note.x = -550;
 			note.y = yPos - 40;
 			var hold:Note = new Note(0, i, true, true);
 			hold.x = note.x;//+215;
@@ -155,8 +158,8 @@ class NoteColorState extends MusicBeatState
 			var holdend:Note = new Note(0, i, true, true);
 			holdend.x = hold.x;
 			holdend.y = hold.y;
-			holdend.isHoldEnd = true;
-			var animations:Array<String> = ['purple0', 'blue0', 'green0', 'red0'];
+
+			var animations:Array<String> = ['purple', 'blue', 'green', 'red'];
 			if(i < 4) {
 				note.antialiasing = ClientPrefs.globalAntialiasing;
 				note.cameras = [camNoteColor];
@@ -164,13 +167,16 @@ class NoteColorState extends MusicBeatState
 				hold.antialiasing = ClientPrefs.globalAntialiasing;
 				hold.cameras = [camNoteColor];
 				hold.angle = 90;
-				hold.setGraphicSize(Std.int(hold.width), Std.int(FlxG.height/3));
-				hold.x += 335;
+				hold.setGraphicSize(Std.int(hold.width*2), Std.int(FlxG.height/1.005));
+				hold.x += 340 + (note.width/2);
+				hold.y = note.y + (note.height/2)-(hold.width/4);
 
 				holdend.antialiasing = ClientPrefs.globalAntialiasing;
 				holdend.cameras = [camNoteColor];
-				holdend.angle = -90;
-				holdend.x += hold.height+400;
+				holdend.angle = 90;
+				holdend.x = hold.x + hold.height+380;
+				holdend.animation.play(animations[i]+'holdend', true);
+				holdend.y = hold.y;
 
 				hold.alpha = 1;
 				holdend.alpha = 1;
@@ -178,23 +184,29 @@ class NoteColorState extends MusicBeatState
 				grpHolds.add(hold);
 				grpHoldEnds.add(holdend);
 				grpNotes.add(note);
-			} else if(i == 4) {
+			} else {
+				note.noteData = 0;
 				note.noteType = 'Hurt Note';
 				note.antialiasing = ClientPrefs.globalAntialiasing;
 				note.cameras = [camNoteColor];
 
+				hold.noteData = 0;
 				hold.noteType = 'Hurt Note';
 				hold.antialiasing = ClientPrefs.globalAntialiasing;
 				hold.cameras = [camNoteColor];
 				hold.angle = 90;
-				hold.scale.y = 15;
-				hold.x += 335;
+				hold.setGraphicSize(Std.int(hold.width*2), Std.int(FlxG.height/1.005));
+				hold.x += 340 + (note.width/2);
+				hold.y = note.y + (note.height/2)-(hold.width/4);
 
+				holdend.noteData = 0;
 				holdend.noteType = 'Hurt Note';
 				holdend.antialiasing = ClientPrefs.globalAntialiasing;
 				holdend.cameras = [camNoteColor];
-				holdend.angle = -90;
-				holdend.x += hold.height+400;
+				holdend.angle = 90;
+				holdend.x = hold.x + hold.height+380;
+				holdend.animation.play(animations[i]+'holdend', true);
+				holdend.y = hold.y;
 
 				note.alpha = 1;
 				hold.alpha = 1;
@@ -266,7 +278,7 @@ class NoteColorState extends MusicBeatState
 		Conductor.songPosition = FlxG.sound.music.time;
 
 		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
-		camNoteFollowPos.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), FlxMath.lerp(camNoteFollowPos.y, camNoteFollow.y, lerpVal));
+		//camNoteFollowPos.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), FlxMath.lerp(camNoteFollowPos.y, camNoteFollow.y, lerpVal));
 
 		if(FlxG.keys.justPressed.SPACE && noteDescBox.alpha == 0) {
 			FlxTween.tween(noteDescBox, {alpha: 0.6}, 0.25, {ease: FlxEase.circOut});
@@ -389,47 +401,41 @@ class NoteColorState extends MusicBeatState
 			item.alpha = 0.6;
 			if((curNoteSelected * 3) + noteTypeSelected == i) {
 				item.alpha = 1;
-				camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
+				// camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
 			}
 		}
 
 		for(i in 0...grpNotes.length) {
 			var item = grpNotes.members[i];
-			if(i == 4) item.alpha = hurtNoteAlpha * (3/5);
-			else item.alpha = 0.6;
+			item.alpha = 0.6;
 			item.scale.set(0.5, 0.5);
 			if(curNoteSelected == i) {
-				if(i == 4) item.alpha = hurtNoteAlpha;
-				else item.alpha = 1;
+				item.alpha = 1;
 				item.scale.set(0.75, 0.75);
 				noteHSVText.y = item.y;
 				noteBar.y = item.y;
-				camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
+				// camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
 			}
 		}
 
 		for(i in 0...grpHolds.length) {
 			var item = grpHolds.members[i];
 			item.alpha = sustainNoteAlpha * (3/5);
-			if(i == 4) item.alpha *= hurtNoteAlpha;
-			item.scale.set(0.5, 15.43);
+			item.setGraphicSize(Std.int(item.width*2), Std.int(FlxG.height/1.005));
 			if(curNoteSelected == i) {
 				item.alpha = sustainNoteAlpha;
-				if(i == 4) item.alpha *= hurtNoteAlpha;
-				item.scale.set(0.75, 15.18);
+				item.setGraphicSize(Std.int(item.width*2.95), Std.int(FlxG.height/1.005));
 			}
 		}
 
 		for(i in 0...grpHoldEnds.length) {
 			var item = grpHoldEnds.members[i];
 			item.alpha = sustainNoteAlpha * (3/5);
-			if(i == 4) item.alpha *= hurtNoteAlpha;
 			item.scale.set(0.5, 0.5);
 			if(curNoteSelected == i) {
 				item.alpha = sustainNoteAlpha;
-				if(i == 4) item.alpha *= hurtNoteAlpha;
 				item.scale.set(0.75, 0.75);
-				item.x = grpHolds.members[i].x + grpHolds.members[i].height + 400;
+				item.x = grpHolds.members[i].x + grpHolds.members[i].height + 380;
 			}
 		}
 
@@ -452,14 +458,13 @@ class NoteColorState extends MusicBeatState
 				item.alpha = 0.6;
 				if((curNoteSelected * 3) + noteTypeSelected == i) {
 					item.alpha = 1;
-					camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
+					// camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
 				}
 			}
 
 			for(i in 0...grpNotes.length) {
 				var item = grpNotes.members[i];
-				if(i == 4) item.alpha = hurtNoteAlpha * (3/5);
-				else item.alpha = 0.6;
+				item.alpha = 0.6;
 				item.scale.set(0.5, 0.5);
 				if(curNoteSelected == i) {
 					if(i == 4) item.alpha = hurtNoteAlpha;
@@ -467,32 +472,28 @@ class NoteColorState extends MusicBeatState
 					item.scale.set(0.75, 0.75);
 					noteHSVText.y = item.y;
 					noteBar.y = item.y;
-					camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
+					// camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
 				}
 			}
 
 			for(i in 0...grpHolds.length) {
 				var item = grpHolds.members[i];
 				item.alpha = sustainNoteAlpha * (3/5);
-				if(i == 4) item.alpha *= hurtNoteAlpha;
-				item.scale.set(0.5, 15.43);
+				item.setGraphicSize(Std.int(item.width*2), Std.int(FlxG.height/1.005));
 				if(curNoteSelected == i) {
 					item.alpha = sustainNoteAlpha;
-					if(i == 4) item.alpha *= hurtNoteAlpha;
-					item.scale.set(0.75, 15.18);
+					item.setGraphicSize(Std.int(item.width*2.95), Std.int(FlxG.height/1.005));
 				}
 			}
 
 			for(i in 0...grpHoldEnds.length) {
 				var item = grpHoldEnds.members[i];
 				item.alpha = sustainNoteAlpha * (3/5);
-				if(i == 4) item.alpha *= hurtNoteAlpha;
 				item.scale.set(0.5, 0.5);
 				if(curNoteSelected == i) {
 					item.alpha = sustainNoteAlpha;
-					if(i == 4) item.alpha *= hurtNoteAlpha;
 					item.scale.set(0.75, 0.75);
-					item.x = grpHolds.members[i].x + grpHolds.members[i].height + 400;
+					item.x = grpHolds.members[i].x + grpHolds.members[i].height + 380;
 				}
 			}
 		} else {
