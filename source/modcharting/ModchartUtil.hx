@@ -57,7 +57,9 @@ class ModchartUtil
         if (instance == null)
             return PlayState.SONG.speed;
 
-        #if (PSYCH || ANDROMEDA) 
+        #if PSYCH
+        return PlayState.SONG.speed;
+        #elseif ANDROMEDA
         return instance.songSpeed;
         #elseif LEATHER
         @:privateAccess

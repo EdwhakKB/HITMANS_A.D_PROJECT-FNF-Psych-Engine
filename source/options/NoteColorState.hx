@@ -548,13 +548,14 @@ class NoteColorState extends MusicBeatState
 				hold.setGraphicSize(Std.int(hold.width*2), Std.int(FlxG.height/1.005));
 				hold.x += 340 + (note.width/2);
 				hold.y = note.y + (note.height/2)-(hold.width/2);
+				hold.animation.play(animations[i]+'hold', true);
 
 				holdend.antialiasing = ClientPrefs.globalAntialiasing;
 				holdend.cameras = [camNoteColor];
 				holdend.angle = 90;
 				holdend.x = hold.x + hold.height+380;
-				holdend.animation.play(animations[i]+'holdend', true);
 				holdend.y = hold.y;
+				holdend.animation.play(animations[i]+'holdend', true);
 
 				hold.alpha = 1;
 				holdend.alpha = 1;
@@ -588,13 +589,14 @@ class NoteColorState extends MusicBeatState
 		hold2.setGraphicSize(Std.int(hold2.width*2), Std.int(FlxG.height/1.005));
 		hold2.x += 340 + (note2.width/2);
 		hold2.y = note2.y + (note2.height/2)-(hold2.width/2);
+		hold2.animation.play('purplehold', true);
 
 		holdend2.antialiasing = ClientPrefs.globalAntialiasing;
 		holdend2.cameras = [camNoteColor];
 		holdend2.angle = 90;
 		holdend2.x = hold2.x + hold2.height+380;
-		holdend2.animation.play('purpleholdend', true);
 		holdend2.y = hold2.y;
+		holdend2.animation.play('purpleholdend', true);
 
 		hold2.alpha = 1;
 		holdend2.alpha = 1;
