@@ -105,34 +105,16 @@ import codenameengine.scripting.Script as HScriptCode;
 import HazardAFT_Capture as AFT_capture;
 
 
-@:structInit
-class ThreadBeatList 
-{
-	public var beat:Float = 0;
-	public var func:Void->Void;
-
-	public function new(newBeat:Float, newFunc:Void->Void)
-	{
-		this.beat = newBeat;
-		this.func = newFunc;
-	}
+typedef ThreadBeatList = {
+	var beat:Float;
+	var func:Void->Void;
 }
 
-@:structInit
-class ThreadUpdateList 
-{
-	public var startbeat:Float;
-	public var endbeat:Float;
-	public var func:Void->Void;
-	public var oncompletefunc:Void->Void;
-
-	public function new(startBeat:Float, endBeat:Float, newFunc:Void->Void, onCompleteFunc:Void->Void)
-	{
-		this.startbeat = startBeat;
-		this.endbeat = endBeat;
-		this.func = newFunc;
-		this.oncompletefunc = onCompleteFunc;
-	}
+typedef ThreadUpdateList = {
+	var startbeat:Float;
+	var endbeat:Float;
+	var func:Void->Void;
+	var oncompletefunc:Void->Void;
 }
 
 class CheckpointData{ //this shit should work ig??
@@ -1284,18 +1266,18 @@ class PlayState extends MusicBeatState
 
 		// camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
 
-		// threadBeat(10, () -> {
-		// 	trace('Working Thread #10 (beat 10)');
-		// });
-		// threadBeat(20, () -> {
-		// 	trace('Working Thread #20 (beat 20)');
-		// });
-		// threadBeat(30, () -> {
-		// 	trace('Working Thread #30 (beat 30)');
-		// });
-		// threadBeat(40, () -> {
-		// 	trace('Working Thread #40 (beat 40)');
-		// });
+		threadBeat(10, () -> {
+			trace('Working Thread #10 (beat 10)');
+		});
+		threadBeat(20, () -> {
+			trace('Working Thread #20 (beat 20)');
+		});
+		threadBeat(30, () -> {
+			trace('Working Thread #30 (beat 30)');
+		});
+		threadBeat(40, () -> {
+			trace('Working Thread #40 (beat 40)');
+		});
 
 
 		if (ClientPrefs.quantization)
@@ -2351,19 +2333,23 @@ class PlayState extends MusicBeatState
 	}
 
 	public static var threadbeat:Array<ThreadBeatList> = [];
-
-	public static function threadBeat(beat:Float, func:Dynamic)
+	public static function threadBeat(setbeat:Float, complete:Void->Void)
 	{
-		trace('beat, $beat, func, $func');
-		threadbeat.push(new ThreadBeatList(beat, func));
+		threadbeat.push({
+			beat: setbeat,
+			func: complete,
+		});
 	}
 
 	public static var threadupdate:Array<ThreadUpdateList> = [];
-
-	public static function threadUpdate(startBeat:Float, endBeat:Float, func:Dynamic, onCompleteFunc:Dynamic)
+	public static function threadUpdate(startBeat:Float, endBeat:Float, funcAfter:Void->Void, onCompleteFunc:Void->Void)
 	{
-		trace('startingbeat, $startBeat, endingBeat, $endBeat, func, $func, onComplete, $onCompleteFunc');
-		threadupdate.push(new ThreadUpdateList(startBeat, endBeat, func, onCompleteFunc));
+		threadupdate.push({
+			startbeat: startBeat,
+			endbeat: endBeat,
+			func: funcAfter,
+			oncompletefunc: onCompleteFunc
+		});
 	}
 
 	var debugNum:Int = 0;

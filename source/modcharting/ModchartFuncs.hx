@@ -267,7 +267,7 @@ class ModchartFuncs
         parent.set('setAdd', function(beat:Float, argsAsString:String){
             setAdd(beat, argsAsString);
         });
-        parent.set('add', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
+        parent.set('easeAdd', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
             add(beat, time, easeStr, argsAsString);
         });
         parent.set('getMod', function(name:String, base:Bool = false){

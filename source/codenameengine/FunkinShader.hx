@@ -1,11 +1,10 @@
 package codenameengine;
 
-import hscript.IHScriptCustomBehaviour;
 import haxe.Exception;
 import flixel.graphics.tile.FlxGraphicsShader;
 import openfl.display3D.Program3D;
 import flixel.system.FlxAssets.FlxShader;
-import hscript.IHScriptCustomBehaviour;
+import _hscript.IHScriptCustomBehaviour;
 import openfl.display.BitmapData;
 import openfl.display.ShaderParameter;
 import openfl.display.ShaderParameterType;
