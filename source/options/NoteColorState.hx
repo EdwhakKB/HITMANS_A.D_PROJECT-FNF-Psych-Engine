@@ -47,9 +47,9 @@ class NoteColorState extends MusicBeatState
 	var nextAccept:Int = 5;
 
 	private var grpNumbers:FlxTypedGroup<Alphabet>;
-	private var grpNotes:FlxTypedGroup<FlxSprite>;
-	private var grpHolds:FlxTypedGroup<FlxSprite>;
-	private var grpHoldEnds:FlxTypedGroup<FlxSprite>;
+	private var grpNotes:FlxTypedGroup<Note>;
+	private var grpHolds:FlxTypedGroup<Note>;
+	private var grpHoldEnds:FlxTypedGroup<Note>;
 	private var shaderNoteArray:Array<ColorSwap> = [];
 
 	private static var presetSelected:Int = 0;
@@ -60,12 +60,15 @@ class NoteColorState extends MusicBeatState
 	public var curHSVPreset = [[-85, -20, 0], [-125, -35, 0], [180, -50, 0], [-125, -75, 0], [-95, 0, 0]];
 	public var noteSplash:FlxSprite;
 	public var hurtSplash:FlxSprite;
+	var skins:Array<String> = ['HITMANS', 'INHUMAN', 'FNF', 'ITHIT', 'MANIAHIT', 'FUTURE', 'CIRCLE', 'STEPMANIA', 'NOTITG']; //There must be a better way but for now with this im okay -Ed
+	private static var curNum:Int = 0;
 
 	var noteBar:FlxSprite;
 	var noteHSVText:FlxText;
 
 	public var titleText:FlxText;
 	public var descText:FlxText;
+	public var optionsText:FlxText;
 	private var noteDescBox:FlxSprite;
 	private var noteDescText:FlxText;
 	public var noteTypeStuff:Array<String> = ['Left Note', 'Down Note', 'Up Note', 'Right Note', 'Hurt Note'];
@@ -108,7 +111,7 @@ class NoteColorState extends MusicBeatState
 		add(bg);
 
 		var optbg:FlxSprite = new FlxSprite(0, 0).makeGraphic(Std.int(FlxG.width/1.5), FlxG.height, FlxColor.BLACK);
-		optbg.alpha = 0.6;
+		optbg.alpha = 0;
 		optbg.screenCenter();
 		optbg.cameras = [camGame];
 		add(optbg);
@@ -120,103 +123,24 @@ class NoteColorState extends MusicBeatState
 		
 		// usual color setting
 
-		noteBar = new FlxSprite(0).makeGraphic(900, 140, FlxColor.BLACK);
-		noteBar.alpha = 0.4;
+		noteBar = new FlxSprite(0).makeGraphic(FlxG.width, 140, FlxColor.BLACK);
+		noteBar.alpha = 0.6;
 		noteBar.cameras = [camNoteColor];
 		noteBar.screenCenter();
-		noteBar.x -= 750;
+		noteBar.x -= FlxG.width/2;
 		noteBar.y -= 400;
 		add(noteBar);
 
-		grpHolds = new FlxTypedGroup<FlxSprite>();
+		grpHolds = new FlxTypedGroup<Note>();
 		add(grpHolds);
-		grpHoldEnds = new FlxTypedGroup<FlxSprite>();
+		grpHoldEnds = new FlxTypedGroup<Note>();
 		add(grpHoldEnds);
-		grpNotes = new FlxTypedGroup<FlxSprite>();
+		grpNotes = new FlxTypedGroup<Note>();
 		add(grpNotes);
 		grpNumbers = new FlxTypedGroup<Alphabet>();
 		add(grpNumbers);
 
-		noteHSVText = new FlxText(0, 0, 0, "Hue      Saturation Brightness", 32);
-		noteHSVText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		noteHSVText.borderSize = 2.4;
-		noteHSVText.cameras = [camNoteColor];
-		noteHSVText.screenCenter();
-		noteHSVText.x -= 750;
-		noteHSVText.y -= 400;
-		add(noteHSVText);
-
-		for(i in 0...4) {
-			var yPos:Float = (105 * i) - 155;
-
-			var note:Note = new Note(0, i, false, true); //new FlxSprite(230, yPos - 40);
-			note.x = -550;
-			note.y = yPos - 40;
-			var hold:Note = new Note(0, i, true, true);
-			hold.x = note.x;//+215;
-			hold.y = note.y;//+50;
-			var holdend:Note = new Note(0, i, true, true);
-			holdend.x = hold.x;
-			holdend.y = hold.y;
-
-			var animations:Array<String> = ['purple', 'blue', 'green', 'red'];
-			if(i < 4) {
-				note.antialiasing = ClientPrefs.globalAntialiasing;
-				note.cameras = [camNoteColor];
-
-				hold.antialiasing = ClientPrefs.globalAntialiasing;
-				hold.cameras = [camNoteColor];
-				hold.angle = 90;
-				hold.setGraphicSize(Std.int(hold.width*2), Std.int(FlxG.height/1.005));
-				hold.x += 340 + (note.width/2);
-				hold.y = note.y + (note.height/2)-(hold.width/4);
-
-				holdend.antialiasing = ClientPrefs.globalAntialiasing;
-				holdend.cameras = [camNoteColor];
-				holdend.angle = 90;
-				holdend.x = hold.x + hold.height+380;
-				holdend.animation.play(animations[i]+'holdend', true);
-				holdend.y = hold.y;
-
-				hold.alpha = 1;
-				holdend.alpha = 1;
-
-				grpHolds.add(hold);
-				grpHoldEnds.add(holdend);
-				grpNotes.add(note);
-			} else {
-				note.noteData = 0;
-				note.noteType = 'Hurt Note';
-				note.antialiasing = ClientPrefs.globalAntialiasing;
-				note.cameras = [camNoteColor];
-
-				hold.noteData = 0;
-				hold.noteType = 'Hurt Note';
-				hold.antialiasing = ClientPrefs.globalAntialiasing;
-				hold.cameras = [camNoteColor];
-				hold.angle = 90;
-				hold.setGraphicSize(Std.int(hold.width*2), Std.int(FlxG.height/1.005));
-				hold.x += 340 + (note.width/2);
-				hold.y = note.y + (note.height/2)-(hold.width/4);
-
-				holdend.noteData = 0;
-				holdend.noteType = 'Hurt Note';
-				holdend.antialiasing = ClientPrefs.globalAntialiasing;
-				holdend.cameras = [camNoteColor];
-				holdend.angle = 90;
-				holdend.x = hold.x + hold.height+380;
-				holdend.animation.play(animations[i]+'holdend', true);
-				holdend.y = hold.y;
-
-				note.alpha = 1;
-				hold.alpha = 1;
-				holdend.alpha = 1;
-
-				grpHolds.add(hold);
-				grpHoldEnds.add(holdend);
-				grpNotes.add(note);
-			}
-		}
+		updateNotes();
 
 		// visuals
 
@@ -224,7 +148,7 @@ class NoteColorState extends MusicBeatState
 		camNoteColor.visible = true;
 
 		var titleBG:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, 90, FlxColor.BLACK);
-		titleText = new FlxText(25, 16, FlxG.width, '< Note Colors >', 48);
+		titleText = new FlxText(25, 16, FlxG.width, '< Note Options >', 48);
 		titleText.setFormat(Paths.font("vcr.ttf"), 56, FlxColor.WHITE, CENTER);
 		titleText.scrollFactor.set();
 		titleText.screenCenter(X);
@@ -241,6 +165,15 @@ class NoteColorState extends MusicBeatState
 		descBG.cameras = [camHUD];
 		add(descBG);
 		add(descText);
+		
+		optionsText = new FlxText(0, 0, FlxG.width, "Options", 48);
+		optionsText.setFormat(Paths.font("vcr.ttf"), 48, FlxColor.WHITE, CENTER);
+		optionsText.screenCenter();
+		optionsText.x += 450;
+		optionsText.y -= 300;
+		optionsText.scrollFactor.set();
+		optionsText.cameras = [camHUD];
+		add(optionsText);
 
 		var swapButton:FlxSprite = new FlxSprite(0, 95).loadGraphic(Paths.image('menuStuff/menuSwap'));
 		swapButton.frames = Paths.getSparrowAtlas('menuStuff/menuSwap');
@@ -309,6 +242,9 @@ class NoteColorState extends MusicBeatState
 		}
 
 		if(controls.UI_LEFT_P || controls.UI_RIGHT_P) {
+			onChangeSkin(controls.UI_LEFT_P ? -1 : 1);
+			updateNotes();
+			changeSelection();
 			ClientPrefs.saveSettings();
 
 			titleText.text = '< "'+ '' +'" Preset >';
@@ -412,8 +348,7 @@ class NoteColorState extends MusicBeatState
 			if(curNoteSelected == i) {
 				item.alpha = 1;
 				item.scale.set(0.75, 0.75);
-				noteHSVText.y = item.y;
-				noteBar.y = item.y;
+				noteBar.y = item.y-50;
 				// camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
 			}
 		}
@@ -470,8 +405,7 @@ class NoteColorState extends MusicBeatState
 					if(i == 4) item.alpha = hurtNoteAlpha;
 					else item.alpha = 1;
 					item.scale.set(0.75, 0.75);
-					noteHSVText.y = item.y;
-					noteBar.y = item.y;
+					noteBar.y = item.y-50;
 					// camNoteFollow.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), item.getGraphicMidpoint().y - 25);
 				}
 			}
@@ -586,86 +520,88 @@ class NoteColorState extends MusicBeatState
 	}
 
 	function updateNotes() {
-		var newNoteSuffix:String = ClientPrefs.notesSkin[0].toLowerCase();
-		var newHurtNoteSuffix:String = ClientPrefs.notesSkin[1].toLowerCase();
-		var newHoldSuffix:String = ClientPrefs.notesSkin[2].toLowerCase();
-		if(ClientPrefs.notesSkin[1] == 'Note') newHurtNoteSuffix = newNoteSuffix;
-	
-		for(i in 0...grpNotes.length) {
-			var note = grpNotes.members[i];
-			var hold = grpHolds.members[i];
-			var holdend = grpHoldEnds.members[i];
-			var animations:Array<String> = ['purple0', 'blue0', 'green0', 'red0'];
-			if(i < 4) {
-				note.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/notes-'+newNoteSuffix);
-				note.animation.addByPrefix('idle', animations[i]);
-				note.animation.play('idle');
-				note.antialiasing = ClientPrefs.globalAntialiasing;
-	
-				hold.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
-				hold.animation.addByPrefix('idle', 'purple hold piece0');
-				hold.animation.play('idle');
-				hold.antialiasing = ClientPrefs.globalAntialiasing;
-	
-				holdend.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/holds-'+newHoldSuffix);
-				holdend.animation.addByPrefix('idle', 'purple hold end0');
-				holdend.animation.play('idle');
-				holdend.antialiasing = ClientPrefs.globalAntialiasing;
-			} else if(i == 4) {
-				note.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/hurt/hurts-'+newHurtNoteSuffix);
-				note.animation.addByPrefix('idle', 'purple0');
-				note.animation.play('idle');
-				note.antialiasing = ClientPrefs.globalAntialiasing;
-				note.angle = 0;
-	
-				hold.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/hurt/hurtholds-'+newHoldSuffix);
-				hold.animation.addByPrefix('idle', 'purple hold piece0');
-				hold.animation.play('idle');
-				hold.antialiasing = ClientPrefs.globalAntialiasing;
-	
-				holdend.frames = Paths.getSparrowAtlas('notes/'+notePack.toLowerCase()+'/holds/hurt/hurtholds-'+newHoldSuffix);
-				holdend.animation.addByPrefix('idle', 'purple hold end0');
-				holdend.animation.play('idle');
-				holdend.antialiasing = ClientPrefs.globalAntialiasing;
-			}
+		grpNotes.clear();
+		grpHolds.clear();
+		grpHoldEnds.clear();
 
-			if(!changingNote) {
-				if(curNoteSelected == i) {
-					note.alpha = 1;
-					hold.alpha = sustainNoteAlpha;
-					holdend.alpha = sustainNoteAlpha;
-					if(i == 4) {
-						note.alpha = hurtNoteAlpha;
-						hold.alpha *= hurtNoteAlpha;
-						holdend.alpha *= hurtNoteAlpha;
-					}
-				} else {
-					note.alpha = 0.6;
-					hold.alpha = sustainNoteAlpha * (3/5);
-					holdend.alpha = sustainNoteAlpha * (3/5);
-				    if(i == 4) {
-						note.alpha = hurtNoteAlpha * (3/5);
-						hold.alpha *= hurtNoteAlpha;
-						holdend.alpha *= hurtNoteAlpha;
-					}
-				}
-			} else {
-				if(curNoteSelected == i) {
-					note.alpha = 1;
-					hold.alpha = 1;
-					holdend.alpha = 1;
-				} else {
-					note.alpha = 0.2;
-					hold.alpha = sustainNoteAlpha/5;
-					holdend.alpha = sustainNoteAlpha/5;
-				    if(i == 4) {
-						note.alpha = hurtNoteAlpha/5;
-						hold.alpha *= hurtNoteAlpha;
-						holdend.alpha *= hurtNoteAlpha;
-					}
-				}
+		for(i in 0...4) {
+			var yPos:Float = (105 * i) - 155;
+
+			var note:Note = new Note(0, i, false, true); //new FlxSprite(230, yPos - 40);
+			note.x = -550;
+			note.y = yPos - 40;
+			var hold:Note = new Note(0, i, true, true);
+			hold.x = note.x;//+215;
+			hold.y = note.y;//+50;
+			var holdend:Note = new Note(0, i, true, true);
+			holdend.x = hold.x;
+			holdend.y = hold.y;
+
+			var animations:Array<String> = ['purple', 'blue', 'green', 'red'];
+			if(i < 4) {
+				note.antialiasing = ClientPrefs.globalAntialiasing;
+				note.cameras = [camNoteColor];
+
+				hold.antialiasing = ClientPrefs.globalAntialiasing;
+				hold.cameras = [camNoteColor];
+				hold.angle = 90;
+				hold.setGraphicSize(Std.int(hold.width*2), Std.int(FlxG.height/1.005));
+				hold.x += 340 + (note.width/2);
+				hold.y = note.y + (note.height/2)-(hold.width/2);
+
+				holdend.antialiasing = ClientPrefs.globalAntialiasing;
+				holdend.cameras = [camNoteColor];
+				holdend.angle = 90;
+				holdend.x = hold.x + hold.height+380;
+				holdend.animation.play(animations[i]+'holdend', true);
+				holdend.y = hold.y;
+
+				hold.alpha = 1;
+				holdend.alpha = 1;
+
+				grpHolds.add(hold);
+				grpHoldEnds.add(holdend);
+				grpNotes.add(note);
 			}
 		}
+		var yPos2:Float = (105 * 4) - 155;
+
+		var note2:Note = new Note(0, 0, false, true); //new FlxSprite(230, yPos - 40);
+		note2.noteType = 'Hurt Note';
+		note2.x = -550;
+		note2.y = yPos2 - 40;
+		var hold2:Note = new Note(0, 0, true, true);
+		hold2.noteType = 'Hurt Note';
+		hold2.x = note2.x;//+215;
+		hold2.y = note2.y;//+50;
+		var holdend2:Note = new Note(0, 0, true, true);
+		holdend2.noteType = 'Hurt Note';
+		holdend2.x = hold2.x;
+		holdend2.y = hold2.y;
+
+		note2.antialiasing = ClientPrefs.globalAntialiasing;
+		note2.cameras = [camNoteColor];
+
+		hold2.antialiasing = ClientPrefs.globalAntialiasing;
+		hold2.cameras = [camNoteColor];
+		hold2.angle = 90;
+		hold2.setGraphicSize(Std.int(hold2.width*2), Std.int(FlxG.height/1.005));
+		hold2.x += 340 + (note2.width/2);
+		hold2.y = note2.y + (note2.height/2)-(hold2.width/2);
+
+		holdend2.antialiasing = ClientPrefs.globalAntialiasing;
+		holdend2.cameras = [camNoteColor];
+		holdend2.angle = 90;
+		holdend2.x = hold2.x + hold2.height+380;
+		holdend2.animation.play('purpleholdend', true);
+		holdend2.y = hold2.y;
+
+		hold2.alpha = 1;
+		holdend2.alpha = 1;
+
+		grpHolds.add(hold2);
+		grpHoldEnds.add(holdend2);
+		grpNotes.add(note2);
 		
 		needToUpdate = false;
 	}
@@ -707,6 +643,17 @@ class NoteColorState extends MusicBeatState
 			// spawnSplash(true);
 	}
 
+	function onChangeSkin(?val:Int = 0){
+		curNum += val; //So it does a "change" lmao, i still need get some variables such as grab the current skin and load a number -Ed
+
+		if (curNum < 0)
+			curNum = skins.length - 1;
+		if (curNum >= skins.length)
+			curNum = 0;
+
+		ClientPrefs.notesSkin[0] = skins[curNum];
+		// skinIndicator.text = skins[curNum];
+	}
 
 	var lastStepHit:Int = -1;
 	override function stepHit()
@@ -720,23 +667,27 @@ class NoteColorState extends MusicBeatState
 	}
 
 	var lastBeatHit:Int = -1;
+	var noteThing:Int = 0;
 	override public function beatHit()
 	{
 		super.beatHit();
 
 		if(lastBeatHit == curBeat) return;
 		if(curBeat % 2 == 0) {
-			if(onColorMenu) {
-				var item = grpNotes.members[4];
-				// if(ClientPrefs.notesSkin[1] == 'Note') {
-				// 	switch(item.angle) {
-				// 		case 0: item.angle = -90;
-				// 		case -90: item.angle = 90;
-				// 		case 90: item.angle = -180;
-				// 		case -180: item.angle = 0;
-				// 	}
-				// }
+			var item = grpNotes.members[0];
+			item.noteData = noteThing;
+			noteThing ++;
+			if (noteThing > 3) {
+				noteThing = 0; //reset
 			}
+			// if(ClientPrefs.notesSkin[1] == 'Note') {
+			// 	switch(item.angle) {
+			// 		case 0: item.angle = -90;
+			// 		case -90: item.angle = 90;
+			// 		case 90: item.angle = -180;
+			// 		case -180: item.angle = 0;
+			// 	}
+			// }
 		}
 
 		lastBeatHit = curBeat;
