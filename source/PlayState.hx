@@ -1266,18 +1266,18 @@ class PlayState extends MusicBeatState
 
 		// camHUD.height = 1300; //some modcharts compatibility (need fix some stuff such as Y poss for camera but oh well)
 
-		threadBeat(10, () -> {
-			trace('Working Thread #10 (beat 10)');
-		});
-		threadBeat(20, () -> {
-			trace('Working Thread #20 (beat 20)');
-		});
-		threadBeat(30, () -> {
-			trace('Working Thread #30 (beat 30)');
-		});
-		threadBeat(40, () -> {
-			trace('Working Thread #40 (beat 40)');
-		});
+		// threadBeat(10, () -> {
+		// 	trace('Working Thread #10 (beat 10)');
+		// });
+		// threadBeat(20, () -> {
+		// 	trace('Working Thread #20 (beat 20)');
+		// });
+		// threadBeat(30, () -> {
+		// 	trace('Working Thread #30 (beat 30)');
+		// });
+		// threadBeat(40, () -> {
+		// 	trace('Working Thread #40 (beat 40)');
+		// });
 
 
 		if (ClientPrefs.quantization)
