@@ -170,6 +170,97 @@ class Modifier
     }
 }
 
+class ModifierMath
+{
+    //drunk
+    public static function drunkMath(lane:Int, curPos:Float, speed:Float):Float{
+        return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
+    };
+    //tanDrunk
+    public static function tanDrunkMath(lane:Int, curPos:Float, speed:Float):Float{
+        return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
+    };
+
+
+    //tipsy
+    public static function tipsyMath(lane:Int, speed:Float):Float{
+        return (FlxMath.fastCos( (Conductor.songPosition*0.001 *(1.2) + 
+        (lane%NoteMovement.keyCount)*(2.0)) * (5) * speed*0.2 ) * Note.swagWidth*0.4);
+    }
+    //tanTipsy
+    public static function tanTipsyMath(lane:Int, speed:Float):Float{
+        return (FlxMath.fastCos( (Conductor.songPosition*0.001 *(1.2) + 
+        (lane%NoteMovement.keyCount)*(2.0)) * (5) * speed*0.2 ) * Note.swagWidth*0.4);
+    };
+
+
+    //bumpy
+    public static function bumpyMath(curPos:Float, speed:Float):Float{
+        return 40 * FlxMath.fastSin(curPos*0.01*speed);
+    }
+    //tanBumpy
+    public static function tanBumpyMath(curPos:Float, speed:Float):Float{
+        return 40 * FlxMath.fastSin(curPos*0.01*speed);
+    };
+
+
+    //beat
+    public static function beatMath(curPos:Float, speed:Float, mult:Float):Float
+    {
+        var fAccelTime = 0.2;
+        var fTotalTime = 0.5;
+    
+        /* If the song is really fast, slow down the rate, but speed up the
+        * acceleration to compensate or it'll look weird. */
+        //var fBPM = Conductor.bpm * 60;
+        //var fDiv = Math.max(1.0, Math.floor( fBPM / 150.0 ));
+        //fAccelTime /= fDiv;
+        //fTotalTime /= fDiv;
+
+        var time = Modifier.beat * speed;
+        var posMult = mult;
+        /* offset by VisualDelayEffect seconds */
+        var fBeat = time + fAccelTime;
+        //fBeat /= fDiv;
+
+        var bEvenBeat = ( Math.floor(fBeat) % 2 ) != 0;
+
+        /* -100.2 -> -0.2 -> 0.2 */
+        if( fBeat < 0 )
+            return 0;
+
+        fBeat -= Math.floor( fBeat );
+        fBeat += 1;
+        fBeat -= Math.floor( fBeat );
+
+        if( fBeat >= fTotalTime )
+            return 0;
+
+        var fAmount:Float;
+        if( fBeat < fAccelTime )
+        {
+            fAmount = FlxMath.remapToRange( fBeat, 0.0, fAccelTime, 0.0, 1.0);
+            fAmount *= fAmount;
+        } else /* fBeat < fTotalTime */ {
+            fAmount = FlxMath.remapToRange( fBeat, fAccelTime, fTotalTime, 1.0, 0.0);
+            fAmount = 1 - (1-fAmount) * (1-fAmount);
+        }
+
+        if( bEvenBeat )
+            fAmount *= -1;
+
+        var fShift = 20.0*fAmount*FlxMath.fastSin( (curPos * 0.01 * posMult) + (Math.PI/2.0) );
+        return fShift;
+    }
+
+
+    //bounce
+    public static function bounceMath(lane:Int, curPos:Float, speed:Float):Float{
+        return NoteMovement.arrowSizes[lane] * Math.abs(FlxMath.fastSin(curPos*0.005*speed));
+    }
+}
 //adding drunk and tipsy for all axis because i can
 
 class DrunkXModifier extends Modifier 
@@ -2050,30 +2141,39 @@ class InvertSineModifier extends Modifier
 
 class BoostModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        subValues.set('offset', new ModifierSubValue(1.0));
+    }
     override function curPosMath(lane:Int, curPos:Float, pf:Int)
     {
         var yOffset:Float = 0;
 
-        var speed = renderer.getCorrectScrollSpeed();
+        var speed = renderer.getCorrectScrollSpeed() * subValues.get('offset').value;
 
         var fYOffset = -curPos / speed;
-		var fEffectHeight = FlxG.height;
-		var fNewYOffset = fYOffset * 1.5 / ((fYOffset+fEffectHeight/1.2)/fEffectHeight);
-		var fBrakeYAdjust = currentValue * (fNewYOffset - fYOffset);
-		fBrakeYAdjust = FlxMath.bound( fBrakeYAdjust, -400, 400 ); //clamp
+        var fEffectHeight = FlxG.height;
+        var fNewYOffset = fYOffset * 1.5 / ((fYOffset+fEffectHeight/1.2)/fEffectHeight);
+        var fBrakeYAdjust = (currentValue) * (fNewYOffset - fYOffset);
+        fBrakeYAdjust = FlxMath.bound(fBrakeYAdjust, -400, 400 ); //clamp
         
-		yOffset -= fBrakeYAdjust*speed;
+        yOffset -= fBrakeYAdjust*speed;
 
         return curPos+yOffset;
     }
 }
+
 class BrakeModifier extends Modifier
 {
+    override function setupSubValues()
+    {
+        subValues.set('offset', new ModifierSubValue(1.0));
+    }
     override function curPosMath(lane:Int, curPos:Float, pf:Int)
     {
         var yOffset:Float = 0;
 
-        var speed = renderer.getCorrectScrollSpeed();
+        var speed = renderer.getCorrectScrollSpeed() * subValues.get('offset').value;
 
         var fYOffset = -curPos / speed;
 		var fEffectHeight = FlxG.height;
@@ -2181,7 +2281,7 @@ class DrivenModifier extends Modifier
                 scrollSwitch = -1;
 
         
-        noteData.y += 0.45 *scrollSpeed * scrollSwitch * currentValue;
+        noteData.y += 0.45 * scrollSpeed * scrollSwitch * currentValue;
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
