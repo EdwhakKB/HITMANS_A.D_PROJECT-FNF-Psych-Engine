@@ -3011,10 +3011,10 @@ class FunkinLua {
 
 
 		// LUA TEXTS
-		Lua_helper.add_callback(lua, "makeLuaText", function(tag:String, text:String, width:Int, x:Float, y:Float) {
+		Lua_helper.add_callback(lua, "makeLuaText", function(tag:String, text:String, width:Int, x:Float, y:Float, ?camera:String = "game") {
 			tag = tag.replace('.', '');
 			resetTextTag(tag);
-			var leText:ModchartText = new ModchartText(x, y, text, width);
+			var leText:ModchartText = new ModchartText(x, y, text, width, camera);
 			PlayState.instance.modchartTexts.set(tag, leText);
 		});
 
@@ -4260,7 +4260,7 @@ class FunkinLua {
 		lua_Cameras.set(name, {cam: camera, shaders: [], shaderNames: []});
 	}
 
-	public function cameraFromString(cam:String):FlxCamera {
+	public static function cameraFromString(cam:String):FlxCamera {
 		var camera:LuaCamera = getCameraByName(cam);
 		if (camera == null)
 		{
@@ -4693,11 +4693,11 @@ class ModchartSprite extends FlxSprite
 class ModchartText extends FlxText
 {
 	public var wasAdded:Bool = false;
-	public function new(x:Float, y:Float, text:String, width:Float)
+	public function new(x:Float, y:Float, text:String, width:Float, ?camera:String = "game")
 	{
 		super(x, y, width, text, 16);
 		setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		//cameras = [PlayState.instance.camHUD];
+		camera = FunkinLua.cameraFromString(camera);
 		scrollFactor.set();
 		borderSize = 2;
 	}
