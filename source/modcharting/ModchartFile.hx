@@ -385,6 +385,7 @@ class CustomModifierScript
         interp.variables.set('Modifier', Modifier);
         interp.variables.set('ModifierSubValue', Modifier.ModifierSubValue);
         interp.variables.set('BeatXModifier', Modifier.BeatXModifier);
+        interp.variables.set('ModifierMath', Modifier.ModifierMath);
         interp.variables.set('NoteMovement', NoteMovement);
         interp.variables.set('NotePositionData', NotePositionData);
         interp.variables.set('ModchartFile', ModchartFile);
