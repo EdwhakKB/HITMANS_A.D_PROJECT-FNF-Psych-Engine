@@ -52,6 +52,87 @@ class ShaderEffectNew
     public dynamic function setupSubValues() {}
 }
 
+class RepeatEffect extends ShaderEffectNew
+{
+    public var shader(default, null):RepeatShader = new RepeatShader();
+    public var zoom:Float = 1.0;
+
+    var iTime:Float = 0.0;
+
+    public var angle:Float = 0.0;
+
+    public var x:Float = 0.0;
+    public var y:Float = 0.0;
+
+    public function new():Void
+    {
+        shader.zoom.value = [zoom];
+        shader.angle.value = [angle];
+        shader.iTime.value = [0.0];
+        shader.x.value = [x];
+        shader.y.value = [y];
+    }
+
+    override public function update(elapsed:Float):Void
+    {
+        shader.zoom.value = [zoom];
+        shader.angle.value = [angle];
+        iTime += elapsed;
+        shader.iTime.value = [iTime];
+        shader.x.value = [x];
+        shader.y.value = [y];
+    }
+}
+
+// MirrorRepeatEffect, but without mirror part
+class RepeatShader extends FlxShader
+{
+    @:glFragmentSource('
+        #pragma header
+        uniform float zoom;
+        uniform float angle;
+        uniform float iTime;
+        uniform float x;
+        uniform float y;
+
+        vec4 render(vec2 uv)
+        {
+            uv.x += x;
+            uv.y += y;
+
+            // Sin efecto espejo
+            return flixel_texture2D(bitmap, vec2(mod(uv.x, 1.0), mod(uv.y, 1.0)));
+        }
+
+        void main()
+        {
+            vec2 iResolution = vec2(1280, 720);
+
+            vec2 center = vec2(0.5, 0.5);
+            vec2 uv = openfl_TextureCoordv.xy;
+            mat2 scaling = mat2(zoom, 0.0, 0.0, zoom);
+
+            float angInRad = radians(angle);
+            mat2 rotation = mat2(cos(angInRad), -sin(angInRad), sin(angInRad), cos(angInRad));
+
+            // Ajuste de aspecto
+            mat2 aspectRatioShit = mat2(0.5625, 0.0, 0.0, 1.0);
+            vec2 fragCoordShit = iResolution * openfl_TextureCoordv.xy;
+            
+            uv = (fragCoordShit - 0.5 * iResolution.xy) / iResolution.y;
+            uv = uv * scaling;
+            uv = (aspectRatioShit) * (rotation * uv);
+            uv = uv.xy + center;
+
+            gl_FragColor = render(uv);
+        }
+    ')
+    public function new()
+    {
+        super();
+    }
+}
+
 // Quick plane raymarcher thingy by 4mbr0s3 2 (partially)
 class PlaneRaymarcher extends ShaderEffectNew
 {

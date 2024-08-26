@@ -260,6 +260,24 @@ class ModifierMath
     public static function bounceMath(lane:Int, curPos:Float, speed:Float):Float{
         return NoteMovement.arrowSizes[lane] * Math.abs(FlxMath.fastSin(curPos*0.005*speed));
     }
+
+    // TanTornadoModifier
+    public static function tanTornadoMath(lane:Int, curPos:Float, speed:Float) {
+        var playerColumn = lane % NoteMovement.keyCount;
+        var columnPhaseShift = playerColumn * Math.PI / 3;
+        var phaseShift = (curPos / 135 ) * speed * 0.2;
+        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
+        var offsetX = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
+
+        return offsetX;
+    }
+
+    // CosecantXModifier
+    public static function CosecantXMath(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float) {
+        return (1 / Math.sin((((Conductor.songPosition*(0.001*period)) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*(0.225*offset))*((spacing*10)/FlxG.height)) * 
+        (speed*0.2)) * Note.swagWidth*(0.5*size)));
+    }
 }
 //adding drunk and tipsy for all axis because i can
 

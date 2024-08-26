@@ -4697,7 +4697,7 @@ class ModchartText extends FlxText
 	{
 		super(x, y, width, text, 16);
 		setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		camera = FunkinLua.cameraFromString(camera);
+		cameras = [FunkinLua.cameraFromString(camera)];
 		scrollFactor.set();
 		borderSize = 2;
 	}
