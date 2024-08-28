@@ -63,13 +63,6 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	public var playfields:Array<Playfield> = []; // adding an extra playfield will add 1 for each player
 	public var proxiefields:Array<Proxiefield> = [];
 
-	//Hazard's shitty arrowpath bitmap method! x.x
-	private var doArrowPaths_bitmapStyle:Bool = false; //default to false for now. Set to true for arrowpath rendering.
-	public var arrowPaths_bitmapStyle:ArrowPathBitmap;
-	private var notitgPathSprite:FlxSprite;
-
-
-
 	public var eventManager:ModchartEventManager;
 	public var modifierTable:ModTable;
 	public var tweenManager:FlxTweenManager = null;
@@ -119,12 +112,6 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		addNewPlayfield(0, 0, 0);
 		addNewProxiefield(new Proxy());
 		modchart = new ModchartFile(this);
-
-		if(doArrowPaths_bitmapStyle){
-			arrowPaths_bitmapStyle = new ArrowPathBitmap(this);
-			notitgPathSprite = new FlxSprite(0,0);
-			notitgPathSprite.loadGraphic(arrowPaths_bitmapStyle.bitmap);
-		}
 	}
 
 	public function addNewPlayfield(?x:Float = 0, ?y:Float = 0, ?z:Float = 0, ?alpha:Float = 1)
@@ -323,6 +310,13 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		playfields[playfieldIndex].applyOffsets(noteData);
 		return noteData;
 	}
+
+	// private function addDataToPath(noteData:NotePositionData, arrowPath:ArrowPathBitmap)
+	// {
+		// arrowPath.x = noteData.x;
+		// arrowPath.y = noteData.y;
+		// arrowPath.z = noteData.z;
+	// }
 
 	private function getNoteCurPos(noteIndex:Int, strumTimeOffset:Float = 0, ?daDistance:Float = 0)
 	{
@@ -680,17 +674,40 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		daNote.mesh.draw();
 	}
 
+	private function drawArrowPath(noteData:NotePositionData){
+		if (noteData.arrowPathAlpha <= 0)
+			return;
+
+		// var strumNote = strumGroup.members[noteData.index];
+		//as same as "sustainStripMesh" we are creating this path here so, once it draws, the path draws with it, instead of having it stored in PF renderer as an extra
+		//+ allows "noteData" to properly modify its variables
+
+		//Hazard's shitty arrowpath bitmap method! x.x -- with some of Edwhak's "optimization mindset"
+		var doArrowPaths_bitmapStyle:Bool = true; //default to false for now. Set to true for arrowpath rendering.
+		var arrowPaths_bitmapStyle:ArrowPathBitmap; //this is the path itself
+		var notitgPathSprite:FlxSprite; //this is the sprite that catch the path
+
+		// if(doArrowPaths_bitmapStyle){ //make sure this just skip if we don't want to draw it
+			arrowPaths_bitmapStyle = new ArrowPathBitmap(this);
+			notitgPathSprite = new FlxSprite(0,0); //sprite that exist ig? (grabs path info)
+			notitgPathSprite.loadGraphic(arrowPaths_bitmapStyle.bitmap);
+		// }
+
+		// noteData.x += strumNote.width/2;
+    	// noteData.y += strumNote.height/2;
+
+		// addDataToPath(noteData, arrowPaths_bitmapStyle);
+
+		notitgPathSprite.cameras = this.cameras; //ensure it's on the correct camera!
+
+		arrowPaths_bitmapStyle.updateAFT();//Update the arrowpaths!
+		notitgPathSprite.draw();//Draw it!
+	}
+
 	private function drawStuff(notePositions:Array<NotePositionData>)
 	{
-		//draw arrowpath first so it's beneath everything (in theory?)
-		if(arrowPaths_bitmapStyle!=null && notitgPathSprite!=null){
-			//check to see if it's visible first before we do any of the arrowpath logic
-			if(notitgPathSprite.visible || notitgPathSprite.alpha > 0){
-				notitgPathSprite.cameras = this.cameras; //ensure it's on the correct camera!
-				arrowPaths_bitmapStyle.updateAFT(); 	//Update the arrowpaths!
-				notitgPathSprite.draw();	//Draw it!
-			}
-		}
+		//separated due this being arrowPath lol
+		drawArrowPath(notePositions[0]);
 
 		for (noteData in notePositions)
 		{

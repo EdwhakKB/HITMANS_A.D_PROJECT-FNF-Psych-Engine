@@ -4816,13 +4816,13 @@ class FovYOffsetModifier extends Modifier
 
 
 
-// class StraightHoldsModifier extends Modifier //unused
-// {
-//     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-//     {
-//         noteData.straightHold += currentValue;
-//     }
-// }
+class ArrowPathAlphaModifier extends Modifier //unused
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.arrowPathAlpha *= 1-currentValue;
+    }
+}
 
 // class LongHoldsModifier extends Modifier //unused
 // {
