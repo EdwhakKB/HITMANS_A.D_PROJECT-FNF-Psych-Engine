@@ -31,6 +31,8 @@ import Note;
 import HazardAFT_Capture.HazardAFT_CaptureMultiCam as MultiCamCapture;
 import modcharting.Proxiefield.Proxie as Proxy;
 
+import modcharting.ArrowPathBitmap;
+
 using StringTools;
 
 // a few todos im gonna leave here:
@@ -60,6 +62,13 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	public var editorPlayStateInstance:editors.EditorPlayState;
 	public var playfields:Array<Playfield> = []; // adding an extra playfield will add 1 for each player
 	public var proxiefields:Array<Proxiefield> = [];
+
+	//Hazard's shitty arrowpath bitmap method! x.x
+	private var doArrowPaths_bitmapStyle:Bool = false; //default to false for now. Set to true for arrowpath rendering.
+	public var arrowPaths_bitmapStyle:ArrowPathBitmap;
+	private var notitgPathSprite:FlxSprite;
+
+
 
 	public var eventManager:ModchartEventManager;
 	public var modifierTable:ModTable;
@@ -110,6 +119,12 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		addNewPlayfield(0, 0, 0);
 		addNewProxiefield(new Proxy());
 		modchart = new ModchartFile(this);
+
+		if(doArrowPaths_bitmapStyle){
+			arrowPaths_bitmapStyle = new ArrowPathBitmap(this);
+			notitgPathSprite = new FlxSprite(0,0);
+			notitgPathSprite.loadGraphic(arrowPaths_bitmapStyle.bitmap);
+		}
 	}
 
 	public function addNewPlayfield(?x:Float = 0, ?y:Float = 0, ?z:Float = 0, ?alpha:Float = 1)
@@ -162,6 +177,12 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		strumGroup.cameras = this.cameras;
 		notes.cameras = this.cameras;
 
+
+		if(disableTryCatchDraw){
+			drawStuff(getNotePositions());
+			return;
+		}
+
 		try
 		{
 			drawStuff(getNotePositions());
@@ -172,6 +193,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		}
 		// draw notes to screen
 	}
+	private var disableTryCatchDraw:Bool = true; //to make tracing errors easier instead of a vague "null object reference"
 
 	private function addDataToStrum(strumData:NotePositionData, strum:StrumNote)
 	{
@@ -347,7 +369,8 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		return (notes.members[noteIndex].mustPress ? notes.members[noteIndex].noteData + NoteMovement.keyCount : notes.members[noteIndex].noteData);
 	}
 
-	private function getNoteDist(noteIndex:Int)
+	//lol XD
+	public function getNoteDist(noteIndex:Int)
 	{
 		var noteDist = -0.55;
 		if (ModchartUtil.getDownscroll(instance))
@@ -659,6 +682,16 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 	private function drawStuff(notePositions:Array<NotePositionData>)
 	{
+		//draw arrowpath first so it's beneath everything (in theory?)
+		if(arrowPaths_bitmapStyle!=null && notitgPathSprite!=null){
+			//check to see if it's visible first before we do any of the arrowpath logic
+			if(notitgPathSprite.visible || notitgPathSprite.alpha > 0){
+				notitgPathSprite.cameras = this.cameras; //ensure it's on the correct camera!
+				arrowPaths_bitmapStyle.updateAFT(); 	//Update the arrowpaths!
+				notitgPathSprite.draw();	//Draw it!
+			}
+		}
+
 		for (noteData in notePositions)
 		{
 			if (noteData.isStrum) // draw strum

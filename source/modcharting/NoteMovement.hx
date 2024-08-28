@@ -119,6 +119,22 @@ class NoteMovement
         daNote.skew.y = defaultSkewY[lane];
     }
 
+    //for arrowpath or getting notePath stuff without needing a Note
+    public static function setNotePath_positionData(daNote:NotePositionData, lane:Int, scrollSpeed:Float, curPos:Float, noteDist:Float, incomingAngleX:Float, incomingAngleY:Float)
+    {
+        daNote.x = defaultStrumX[lane];
+        daNote.y = defaultStrumY[lane];
+        daNote.z = 0;
+
+        var pos = ModchartUtil.getCartesianCoords3D(incomingAngleX,incomingAngleY, curPos*noteDist);
+        daNote.y += pos.y;
+        daNote.x += pos.x;
+        daNote.z += pos.z;
+
+        daNote.skewX = defaultSkewX[lane];
+        daNote.skewY = defaultSkewY[lane];
+    }
+
     public static function getLaneDiffFromCenter(lane:Int)
     {
         var col:Float = lane%4;
