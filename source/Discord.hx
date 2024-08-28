@@ -48,17 +48,12 @@ class DiscordClient
 	
 	public static function check()
 		{
-			if(!ClientPrefs.discordRPC)
-			{
-				if(isInitialized) shutdown();
-				isInitialized = false;
-			}
-			else start();
+			start();
 		}
 		
 	public static function start()
 		{
-			if (!isInitialized && ClientPrefs.discordRPC) {
+			if (!isInitialized) {
 				initialize();
 				Application.current.window.onClose.add(function() {
 					shutdown();

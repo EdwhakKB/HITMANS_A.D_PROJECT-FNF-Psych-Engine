@@ -653,8 +653,8 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// render that shit
 		daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
 
-		daNote.cameras = this.cameras;
-		daNote.draw();
+		daNote.mesh.cameras = this.cameras;
+		daNote.mesh.draw();
 	}
 
 	private function drawStuff(notePositions:Array<NotePositionData>)
