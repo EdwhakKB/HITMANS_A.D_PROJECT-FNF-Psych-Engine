@@ -4816,7 +4816,7 @@ class FovYOffsetModifier extends Modifier
 
 
 
-class ArrowPathAlphaModifier extends Modifier //unused
+class ArrowPathAlphaModifier extends Modifier //used but unstable (as old way)
 {
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {

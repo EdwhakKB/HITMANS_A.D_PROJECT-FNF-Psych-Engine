@@ -20,6 +20,14 @@ import openfl.display.TriangleCulling;
 import openfl.geom.Vector3D;
 import modcharting.FlxFilteredSkewedSprite as FlxImprovedSprite;
 
+//A few TODOS im gona leave here:
+/*
+	- Make this optimized (gives lags spikes at some songs which means its not perfect)
+	- Make SKEW poss correct as if it was a normal skew (similation of skew adds a few more numbers which means skew for this draw its a bit bigger than it should be)
+	- Find a way to make sure we don't need extend this class on notes to make 3D (so people won't get confused once installing the 3D update)
+	- Make sure the class extend of skew sprite but don't use it (only when draw manual it's false)
+	- And finally, find at some point once we get 3D basics, how to make this class have the main balance (meaning it draws 3D stuff and 2D, while notes won't need anymore extend class)
+*/
 class ModchartArrow extends FlxImprovedSprite
 {
   public var z:Float = 0.0;

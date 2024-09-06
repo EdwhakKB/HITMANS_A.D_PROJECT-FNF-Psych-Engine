@@ -31,7 +31,7 @@ import Note;
 import HazardAFT_Capture.HazardAFT_CaptureMultiCam as MultiCamCapture;
 import modcharting.Proxiefield.Proxie as Proxy;
 
-import modcharting.ArrowPathBitmap;
+// import modcharting.ArrowPathBitmap;
 
 using StringTools;
 
@@ -479,7 +479,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// strumNote.y = noteData.y;
 		// strumNote.z = noteData.z;
 
-		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0)
+		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 /*|| noteData.skewX != 0 || noteData.skewY != 0*/)
 			strumNote.drawManual = true;
 		else
 			strumNote.drawManual = false;
@@ -558,7 +558,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// daNote.y = noteData.y;
 		// daNote.z = noteData.z;
 
-		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0)
+		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 /*|| noteData.skewX != 0 || noteData.skewY != 0*/)
 			daNote.drawManual = true;
 		else
 			daNote.drawManual = false;
@@ -674,40 +674,121 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		daNote.mesh.draw();
 	}
 
-	private function drawArrowPath(noteData:NotePositionData){
+	private function drawArrowPathNew(noteData:NotePositionData){
 		if (noteData.arrowPathAlpha <= 0)
 			return;
 
-		// var strumNote = strumGroup.members[noteData.index];
-		//as same as "sustainStripMesh" we are creating this path here so, once it draws, the path draws with it, instead of having it stored in PF renderer as an extra
-		//+ allows "noteData" to properly modify its variables
+		//TODO:
+		/*
+			- make this draw similar to VSLICE sustain draw (so i can make sustain mesh correctly, maybe just copy paste sustain code and change info to MT?)
+			- make sure this shit doesn't lag the engine out unlike the old one
+			- make sure that if no graphic exist, we create one (such as a FlxGraphic with the size the strip needs and stuff like that)
+			- optimize the code to make it easier to understand
+		*/
 
-		//Hazard's shitty arrowpath bitmap method! x.x -- with some of Edwhak's "optimization mindset"
-		var doArrowPaths_bitmapStyle:Bool = true; //default to false for now. Set to true for arrowpath rendering.
-		var arrowPaths_bitmapStyle:ArrowPathBitmap; //this is the path itself
-		var notitgPathSprite:FlxSprite; //this is the sprite that catch the path
+		//TODO: make sure this thing don't get note (sustainStrip) so i can grab any graphic and do a strip with it
+		var daNote = notes.members[noteData.index];
+		if (daNote.mesh == null)
+			daNote.mesh = new SustainStrip(daNote);
 
-		// if(doArrowPaths_bitmapStyle){ //make sure this just skip if we don't want to draw it
-			arrowPaths_bitmapStyle = new ArrowPathBitmap(this);
-			notitgPathSprite = new FlxSprite(0,0); //sprite that exist ig? (grabs path info)
-			notitgPathSprite.loadGraphic(arrowPaths_bitmapStyle.bitmap);
-		// }
+		// daNote.scrollFactor.x = daNote.scrollFactor.x;
+		// daNote.scrollFactor.y = daNote.scrollFactor.y;
 
-		// noteData.x += strumNote.width/2;
-    	// noteData.y += strumNote.height/2;
+		//TODO: change this to read arrowPath stuff instead
+		daNote.alpha = noteData.alpha;
+		daNote.mesh.alpha = daNote.alpha;
 
-		// addDataToPath(noteData, arrowPaths_bitmapStyle);
+		daNote.mesh.shader = daNote.rgbShader.parent.shader; // idfk if this works. 
+		//Warning: This is EXCLUSIVE for psych 0.7 and up (rgb shader) so any engine with HSV shouldn't call this
 
-		notitgPathSprite.cameras = this.cameras; //ensure it's on the correct camera!
+		daNote.mesh.spiralHolds = (noteData.spiralHold >= 1); // if noteData its 1 spiral holds mod should be enabled? //make holds go spiral ig? (probably would break for now)
 
-		arrowPaths_bitmapStyle.updateAFT();//Update the arrowpaths!
-		notitgPathSprite.draw();//Draw it!
+		// daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
+		// daNote.rgbShader.stealthGlowRed = noteData.glowRed;
+		// daNote.rgbShader.stealthGlowGreen = noteData.glowGreen;
+		// daNote.rgbShader.stealthGlowBlue = noteData.glowBlue;
+
+		var songSpeed = getCorrectScrollSpeed();
+		var lane = noteData.lane;
+
+		// makes the sustain match the center of the parent note when at weird angles
+		var yOffsetThingy = (NoteMovement.arrowSizes[lane] / 2);
+
+		var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x
+			+ (daNote.width / 2)
+			+ ModchartUtil.getNoteOffsetX(daNote, instance),
+			noteData.y
+			+ (NoteMovement.arrowSizes[noteData.lane] / 2), noteData.z * 0.001),
+			ModchartUtil.defaultFOV * (Math.PI / 180),
+			-(daNote.width / 2), yOffsetThingy
+			- (NoteMovement.arrowSizes[noteData.lane] / 2));
+
+		var timeToNextSustain = ModchartUtil.getFakeCrochet() / 4;
+		if (noteData.noteDist < 0)
+			timeToNextSustain *= -1; // weird shit that fixes upscroll lol
+		// timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
+
+		var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain / 2);
+		var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
+
+		var flipGraphic = false;
+
+		// mod/bound to 360, add 360 for negative angles, mod again just in case
+		var fixedAngY = ((noteData.incomingAngleY % 360) + 360) % 360;
+
+		var reverseClip = (fixedAngY > 90 && fixedAngY < 270);
+
+		if (noteData.noteDist > 0) // downscroll
+		{
+			if (!ModchartUtil.getDownscroll(instance)) // fix reverse
+				flipGraphic = true;
+		}
+		else
+		{
+			if (ModchartUtil.getDownscroll(instance))
+				flipGraphic = true;
+		}
+		// render that shit
+		daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
+
+		daNote.mesh.cameras = this.cameras;
+		daNote.mesh.draw();
 	}
+
+	// private function drawArrowPath(noteData:NotePositionData){
+	// 	if (noteData.arrowPathAlpha <= 0)
+	// 		return;
+
+	// 	// var strumNote = strumGroup.members[noteData.index];
+	// 	//as same as "sustainStripMesh" we are creating this path here so, once it draws, the path draws with it, instead of having it stored in PF renderer as an extra
+	// 	//+ allows "noteData" to properly modify its variables
+
+	// 	//Hazard's shitty arrowpath bitmap method! x.x -- with some of Edwhak's "optimization mindset"
+	// 	var doArrowPaths_bitmapStyle:Bool = true; //default to false for now. Set to true for arrowpath rendering.
+	// 	var arrowPaths_bitmapStyle:ArrowPathBitmap; //this is the path itself
+	// 	var notitgPathSprite:FlxSprite; //this is the sprite that catch the path
+
+	// 	// if(doArrowPaths_bitmapStyle){ //make sure this just skip if we don't want to draw it
+	// 		arrowPaths_bitmapStyle = new ArrowPathBitmap(this);
+	// 		notitgPathSprite = new FlxSprite(0,0); //sprite that exist ig? (grabs path info)
+	// 		notitgPathSprite.loadGraphic(arrowPaths_bitmapStyle.bitmap);
+	// 	// }
+
+	// 	// noteData.x += strumNote.width/2;
+    // 	// noteData.y += strumNote.height/2;
+
+	// 	// addDataToPath(noteData, arrowPaths_bitmapStyle);
+
+	// 	notitgPathSprite.cameras = this.cameras; //ensure it's on the correct camera!
+
+	// 	arrowPaths_bitmapStyle.updateAFT();//Update the arrowpaths!
+	// 	notitgPathSprite.draw();//Draw it!
+	// }
 
 	private function drawStuff(notePositions:Array<NotePositionData>)
 	{
 		//separated due this being arrowPath lol
-		drawArrowPath(notePositions[0]);
+		//drawArrowPath(notePositions[0]);
 
 		for (noteData in notePositions)
 		{
