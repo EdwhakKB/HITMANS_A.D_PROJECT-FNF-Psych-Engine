@@ -8,6 +8,8 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import sys.FileSystem;
 import modcharting.*;
+import openfl.geom.Vector3D;
+import flixel.util.FlxColor;
 
 /**
  * This is based heavily on the `FlxStrip` class. It uses `drawTriangles()` to clip a sustain note
@@ -185,7 +187,7 @@ class SustainTrail extends FlxSprite
           else
           {
             var noteSkinNonRGB:Bool = (PlayState.SONG != null && PlayState.SONG.disableNoteRGB);
-            endingStyle = noteSkinNonRGB ? 'pixelUI/NOTE_assetsENDS' : 'pixelUI/noteSkins/NOTE_assetsENDS' + Note.getNoteSkinPostfix();
+            endingStyle = noteSkinNonRGB ? 'pixelUI/NOTE_assetsENDS' : 'pixelUI/noteSkins/NOTE_assetsENDS';
           }
         }
         else
