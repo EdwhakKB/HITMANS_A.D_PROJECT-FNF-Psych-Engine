@@ -54,6 +54,8 @@ class Note extends FlxSkewedSprite
 	public var z:Float = 0;
 	public var extraData:Map<String,Dynamic> = [];
 
+	public var arrowPath:SustainTrail = null;
+
 	public var strumTime:Float = 0;
 	public var mustPress:Bool = false;
 	public var noteData:Int = 0;

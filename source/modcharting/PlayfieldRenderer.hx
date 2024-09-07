@@ -701,20 +701,17 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		//TODO: make sure this thing don't get note (sustainStrip) so i can grab any graphic and do a strip with it
 		var daNote = notes.members[noteData.index];
-		if (daNote.mesh == null)
-			daNote.mesh = new SustainStrip(daNote);
+		if (daNote.arrowPath == null)
+			daNote.arrowPath = new SustainTrail(daNote.noteData, daNote.arrowPathLength, "");
 
-		// daNote.scrollFactor.x = daNote.scrollFactor.x;
-		// daNote.scrollFactor.y = daNote.scrollFactor.y;
+		daNote.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
 
 		//TODO: change this to read arrowPath stuff instead
 		daNote.alpha = noteData.alpha;
-		daNote.mesh.alpha = daNote.alpha;
+		daNote.arrowPath.alpha = daNote.alpha;
 
-		daNote.mesh.shader = daNote.rgbShader.parent.shader; // idfk if this works. 
+		daNote.arrowPath.shader = daNote.rgbShader.parent.shader; // idfk if this works. 
 		//Warning: This is EXCLUSIVE for psych 0.7 and up (rgb shader) so any engine with HSV shouldn't call this
-
-		daNote.mesh.spiralHolds = (noteData.spiralHold >= 1); // if noteData its 1 spiral holds mod should be enabled? //make holds go spiral ig? (probably would break for now)
 
 		// daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
 		// daNote.rgbShader.stealthGlowRed = noteData.glowRed;
@@ -761,11 +758,11 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			if (ModchartUtil.getDownscroll(instance))
 				flipGraphic = true;
 		}
-		// render that shit
-		daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
+		// // render that shit
+		// daNote.arrowPath.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
 
-		daNote.mesh.cameras = this.cameras;
-		daNote.mesh.draw();
+		daNote.arrowPath.cameras = this.cameras;
+		daNote.arrowPath.draw();
 	}
 
 	// private function drawArrowPath(noteData:NotePositionData){
@@ -805,6 +802,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		for (noteData in notePositions)
 		{
+			drawArrowPath(noteData); //draw path
 			if (noteData.isStrum) // draw strum
 				drawStrum(noteData);
 			else if (!notes.members[noteData.index].isSustainNote) // draw note
