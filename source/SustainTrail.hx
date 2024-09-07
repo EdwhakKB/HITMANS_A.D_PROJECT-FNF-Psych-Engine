@@ -203,7 +203,7 @@ class SustainTrail extends FlxSprite
           else
           {
             var noteSkinNonRGB:Bool = (PlayState.SONG != null && PlayState.SONG.disableNoteRGB);
-            endingStyle = noteSkinNonRGB ? "NOTE_hold_assets" : "noteSkins/NOTE_hold_assets";
+            endingStyle = "NOTE_hold_assets";
           }
         }
     }
