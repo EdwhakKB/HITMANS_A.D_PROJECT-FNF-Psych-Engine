@@ -3,7 +3,7 @@ package;
 import flixel.graphics.FlxGraphic;
 import flixel.math.FlxMath;
 import flixel.graphics.tile.FlxDrawTrianglesItem;
-import shaders.RGBPalette.RGBShaderReference;
+import RGBPalette.RGBShaderReference;
 import flixel.FlxSprite;
 
 /**

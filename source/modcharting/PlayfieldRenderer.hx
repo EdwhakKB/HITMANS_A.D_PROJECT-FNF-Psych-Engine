@@ -704,7 +704,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		if (daNote.arrowPath == null)
 			daNote.arrowPath = new SustainTrail(daNote.noteData, daNote.arrowPathLength, "");
 
-		daNote.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
+		daNote.arrowPath.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
 
 		//TODO: change this to read arrowPath stuff instead
 		daNote.alpha = noteData.alpha;
