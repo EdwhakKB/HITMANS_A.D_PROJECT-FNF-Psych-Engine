@@ -196,49 +196,6 @@ class ArrowPathBitmap
     bitmap.unlock();
   }
 
-  // public function updatePathData(noteData:NotePositionData, strumTime:Float, lane:Int, pf:Int, songSpeed:Float, noteDist:Float, curPos:Float){
-  //   //Sample the current mod math!
-
-  //   var songSpeed:Float = songSpeed;
-
-  //   var noteDist:Float = noteDist; //?????
-
-  //   var curPos = curPos;
-
-  //   curPos = pfr.modifierTable.applyCurPosMods(lane, curPos, pf);
-
-  //   var incomingAngle:Array<Float> = pfr.modifierTable.applyIncomingAngleMods(lane, curPos, pf);
-  //   if (noteDist < 0)
-  //     incomingAngle[0] += 180; // make it match for both scrolls
-
-  //   // get the general note path
-  //   NoteMovement.setNotePath_positionData(noteData, lane, songSpeed, curPos, noteDist, incomingAngle[0], incomingAngle[1]);
-
-  //   //move the x and y to properly be in the center of the strum graphic
-  //   var strumNote = pfr.strumGroup.members[lane]; //first we need to know what the strum is though lol
-  //   noteData.x += strumNote.width/2;
-  //   noteData.y += strumNote.height/2;
-
-  //   // add offsets to data with modifiers
-  //   pfr.modifierTable.applyNoteMods(noteData, lane, curPos, pf);
-
-  //   // add position data to list //idk what this does so I just commented it out lol cuz we just constantly reuse 1 notePosition data.
-  //   //notePositions.push(noteData);
-
-
-  //   //Apply z-axis projection! 
-  //   var pointWidth:Float = defaultLineSize;
-  //   var pointHeight:Float = 1;
-
-  //   var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x + (pointWidth / 2), noteData.y + (pointHeight / 2), noteData.z * 0.001),
-  //     ModchartUtil.defaultFOV * (Math.PI / 180), -(pointWidth / 2), -(pointHeight / 2));
-
-  //   noteData.x = thisNotePos.x;
-  //   noteData.y = thisNotePos.y;
-  //   noteData.scaleX *= (1 / -thisNotePos.z);
-  //   noteData.scaleY *= (1 / -thisNotePos.z);
-  // }
-
   // clear out the old bitmap data
   public function clearAFT():Void
   {

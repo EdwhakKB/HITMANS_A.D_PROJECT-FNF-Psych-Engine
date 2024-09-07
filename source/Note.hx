@@ -58,6 +58,7 @@ class Note extends modcharting.ModchartArrow
 	public var oanim:String = "";
 
 	public var mesh:modcharting.SustainStrip = null; 
+	public var arrowMesh:modcharting.NewModchartArrow;
 	// public var z:Float = 0;
 	public var extraData:Map<String,Dynamic> = [];
 
@@ -165,6 +166,19 @@ class Note extends modcharting.ModchartArrow
 	public var hitsoundDisabled:Bool = false;
 
 	public var quantizedNotes:Bool = false;
+
+	// Call this to create a mesh
+	public function setupMesh():Void
+	{
+		if (arrowMesh == null)
+		{
+			arrowMesh = new modcharting.NewModchartArrow();
+			arrowMesh.spriteGraphic = this;
+			arrowMesh.doDraw = false;
+			arrowMesh.copySpriteGraphic = false;
+		}
+		arrowMesh.setUp();
+	}
 
 	private function set_multSpeed(value:Float):Float {
 		resizeByRatio(value / multSpeed);

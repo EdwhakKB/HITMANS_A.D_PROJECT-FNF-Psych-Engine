@@ -1,6 +1,5 @@
 package modcharting;
 
-import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -19,7 +18,7 @@ import lime.math.Vector2;
 import openfl.geom.Matrix;
 import openfl.display.TriangleCulling;
 import openfl.geom.Vector3D;
-import modcharting.FlxFilteredSkewedSprite as FlxImprovedSprite;
+import flixel.util.FlxColor;
 
 //A few TODOS im gona leave here:
 /*
@@ -29,13 +28,23 @@ import modcharting.FlxFilteredSkewedSprite as FlxImprovedSprite;
 	- Make sure the class extend of skew sprite but don't use it (only when draw manual it's false)
 	- And finally, find at some point once we get 3D basics, how to make this class have the main balance (meaning it draws 3D stuff and 2D, while notes won't need anymore extend class)
 */
-class ModchartArrow extends FlxSkewedSprite
+class NewModchartArrow extends FlxSprite
 {
   	public var z:Float = 0.0;
 
 	// If set, will reference this sprites graphic! Very useful for animations!
-	public var initialized:Bool = false; //if this is false it won't use most of functions
+	public var spriteGraphic(default, set):FlxSprite;
+
+	function set_spriteGraphic(value:FlxSprite):FlxSprite
+	{
+	  spriteGraphic = value;
+	  return spriteGraphic;
+	}
+  
 	public var projectionEnabled:Bool = true;
+	public var autoOffset:Bool = false;
+
+	public var originalWidthHeight:Vector2;
 
 	public var angleX:Float = 0;
 	public var angleY:Float = 0;
@@ -81,7 +90,6 @@ class ModchartArrow extends FlxSkewedSprite
 	* A `Vector` of normalized coordinates used to apply texture mapping.
 	*/
 	public var uvtData:DrawData<Float> = new DrawData<Float>();
-
 	
 	// custom setter to prevent values below 0, cuz otherwise we'll devide by 0!
 	public var subdivisions(default, set):Int = 2;
@@ -93,34 +101,28 @@ class ModchartArrow extends FlxSkewedSprite
 		return subdivisions;
 	}
 
-  public var daOffsetX:Float = 0;
-  public var typeOffsetX:Float = 0;
-	public var typeOffsetY:Float = 0;
-
-	// <----
-
-  public var drawManual:Bool = false;
-	public var hasSetupRender:Bool = false;
-  
-	public function setUpThreeDRender():Void
+	public function new(?x:Float = 0, ?y:Float = 0, ?simpleGraphic:FlxGraphicAsset)
 	{
-	  if (!hasSetupRender)
-	  {
-		drawManual = true;
-		setUp();
-		hasSetupRender = true;
-	  }
+		super(x, y, simpleGraphic);
+		if (simpleGraphic != null) setUp();
 	}
 
-	public function setUp():Void
+	public function setUp(moveSprGraph:Bool = true):Void
 	{
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
+	
+		if (spriteGraphic != null && moveSprGraph)
+		{
+			spriteGraphic.x = 0;
+			spriteGraphic.y = 0;
+		}
+
+		var nextRow:Int = (subdivisions + 1 + 1);
 
 		this.active = true; // This NEEDS to be true for the note to be drawn!
 		updateColorTransform();
-		var nextRow:Int = (subdivisions + 1 + 1);
 		var noteIndices:Array<Int> = [];
 		for (x in 0...subdivisions + 1)
 		{
@@ -153,18 +155,20 @@ class ModchartArrow extends FlxSkewedSprite
 		  }
 		}
 		updateTris();
-
 	}
 
 	public function updateTris(debugTrace:Bool = false):Void
 	{
-		var w:Float = frameWidth;
-		var h:Float = frameHeight;
+		var wasAlreadyFlipped_X:Bool = flipX;
+    	var wasAlreadyFlipped_Y:Bool = flipY;
+
+		var w:Float = spriteGraphic.frameWidth != null ? spriteGraphic.frameWidth : frameWidth;
+		var h:Float = spriteGraphic.frameHeight != null ? spriteGraphic.frameHeight : frameHeight;
 
 		var i:Int = 0;
-		for (x in 0...subdivisions+2) // x
+		for (x in 0...subdivisions + 2) // x
 		{
-			for (y in 0...subdivisions+2) // y
+			for (y in 0...subdivisions + 2) // y
 			{
 			var point2D:Vector2;
 			var point3D:Vector3D = new Vector3D(0, 0, 0);
@@ -174,8 +178,9 @@ class ModchartArrow extends FlxSkewedSprite
 			// skew funny
 			var xPercent:Float = x / (subdivisions + 1);
 			var yPercent:Float = y / (subdivisions + 1);
-			var xPercent_SkewOffset:Float = xPercent - skewY_offset;
-			var yPercent_SkewOffset:Float = yPercent - skewX_offset;
+			// For some reason, we need a 0.5 offset for this???????????????????
+			var xPercent_SkewOffset:Float = xPercent - skewY_offset - 0.5;
+			var yPercent_SkewOffset:Float = yPercent - skewX_offset - 0.5;
 			// Keep math the same as skewedsprite for parity reasons.
 			if (skewX != 0) // Small performance boost from this if check to avoid the tan math lol?
 				point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
@@ -190,13 +195,13 @@ class ModchartArrow extends FlxSkewedSprite
 			newWidth = (scaleY - 1) * (yPercent - 0.5);
 			point3D.y += (newWidth) * h;
 
-			// _skewMatrix.b = Math.tan(skew.y * FlxAngle.TO_RAD);
-			// _skewMatrix.c = Math.tan(skew.x * FlxAngle.TO_RAD);
-
 			point2D = applyPerspective(point3D, xPercent, yPercent);
 
-			point2D.x += (frameWidth - frameWidth) / 2;
-			point2D.y += (frameHeight - frameHeight) / 2;
+			if (originalWidthHeight != null && autoOffset)
+			{
+				point2D.x += (originalWidthHeight.x - spriteGraphic.frameWidth) / 2;
+				point2D.y += (originalWidthHeight.y - spriteGraphic.frameHeight) / 2;
+			}
 			
 			vertices[i * 2] = point2D.x;
 			vertices[i * 2 + 1] = point2D.y;
@@ -204,21 +209,187 @@ class ModchartArrow extends FlxSkewedSprite
 			}
 		}
 
-		if (debugTrace) trace("\nverts: \n" + vertices + "\n");
+		// if (debugTrace) trace("\nverts: \n" + vertices + "\n");
 
 		// temp fix for now I guess lol?
 		flipX = false;
 		flipY = false;
 	}
+	// Default to true for when players create their own ZProjectSprites!
+	public var doDraw:Bool = true;
+	public var copySpriteGraphic:Bool = true;
 
 	@:access(flixel.FlxCamera)
+	override public function draw():Void
+	{
+		if (doDraw)
+		{
+			if (spriteGraphic == null)
+			{
+				doDraw = false;
+				trace("no sprite graphic! PERRO");
+				return;
+			}
+			else
+			{
+				if (copySpriteGraphic)
+				{
+					this.x = spriteGraphic.x;
+					this.y = spriteGraphic.y;
+					// this.z = spriteGraphic.z;
+			
+					this.scaleX = spriteGraphic.scale.x;
+					this.scaleY = spriteGraphic.scale.y;
+			
+					this.angleZ = spriteGraphic.angle;
+			
+					this.offset = spriteGraphic.offset;
+					this.cameras = spriteGraphic.cameras;
+				}
+				updateTris();
+				drawManual(spriteGraphic.graphic != null ? spriteGraphic.graphic : null);
+			}
+		}
+		else
+		{
+			return; // do nothing lmfao, moved to drawManual just to be safe cuz idk if it will double draw or not (I doubt but, you never know with Flixel)
+		}
+	}
+
+	public var debugTesting:Bool = false;
+
+	// public var graphicAnimMap:Map<String, FlxGraphic> = new Map<String, FlxGraphic>();
+	public static var graphicCache3D:Map<String, FlxGraphic> = new Map<String, FlxGraphic>();
+
+	public function drawManual(graphicToUse:FlxGraphic = null, noteStyleName:String = ""):Void
+	{
+		if (alpha < 0 || vertices == null || indices == null || graphicToUse == null || uvtData == null || _point == null || offset == null)
+		{
+			return;
+		}
+
+		if (spriteGraphic != null)
+		{
+			this.antialiasing = spriteGraphic.antialiasing;
+
+			// var animFrameName:String = "ligma";
+
+			// var animFrameName:String = spriteGraphic.animation.frameName + " - " + noteStyleName + (spriteGraphic.flipX ? " - flipX" : "")
+			//  + (spriteGraphic.flipY ? " - flipY" : "");
+
+			var animFrameName:String = spriteGraphic.animation.frameName + " - " + noteStyleName;
+
+			// check to see if we have this frame of animation saved
+			if (NewModchartArrow.graphicCache3D.exists(animFrameName))
+			{
+				graphicToUse = NewModchartArrow.graphicCache3D.get(animFrameName);
+				// if (debugTesting) trace("got: " + animFrameName);
+			}
+			else
+			{
+				// TODO: MAKE IT SO IT AUTOMATICALLY PRECACHES ALL THE ANIMATION FRAMES BEFORE THE SONG STARTS TO AVOID MID-SONG LAGSPIKES AS IT CACHES NEW ANIMATIONS!
+
+				var prevAlpha:Float = spriteGraphic.alpha;
+				var prevCol:FlxColor = spriteGraphic.color;
+				// var prevSkewX:Float = spriteGraphic.skewY;
+				// var prevSkewY:Float = spriteGraphic.skewX;
+				var prevAngle:Float = spriteGraphic.angle;
+
+				spriteGraphic.alpha = 1; // Make sure the graphic alpha is 1!
+				spriteGraphic.color = 0xFFFFFFFF;
+				spriteGraphic.angle = 0;
+
+				// if (debugTesting)
+				trace("New frame for: " + animFrameName);
+				// if not, we create it and add it to the map.
+				spriteGraphic.updateFramePixels();
+				graphicToUse = FlxGraphic.fromBitmapData(spriteGraphic.framePixels, true, animFrameName);
+				// graphicToUse.bitmap.colorTransform(graphicToUse.bitmap.rect, colorTransform);
+
+				NewModchartArrow.graphicCache3D.set(animFrameName, graphicToUse);
+				spriteGraphic.alpha = prevAlpha;
+				spriteGraphic.angle = prevAngle;
+				spriteGraphic.color = prevCol;
+			}
+			// graphicToUse.bitmap.colorTransform(graphicToUse.bitmap.rect, colorTransform);
+			// graphicToUse.bitmap.colorTransform(graphicToUse.bitmap.rect, spriteGraphic.colorTransform);
+
+			//  var cTransform:ColorTransform = new ColorTransform(1, 1, 1, 1, 0, 0, 0, 0 - alphaMod);
+
+			// if (debugTesting)
+			// trace("map: " + graphicCache3D);
+		}
+		else
+		{
+			return; // fuck
+		}
+
+		if (alpha < 0 || graphicToUse == null || _point == null || offset == null)
+		{
+			return;
+		}
+
+		for (camera in cameras)
+		{
+			if (!camera.visible || !camera.exists) continue;
+			// if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
+
+			// memory leak with drawTriangles :c
+
+			// getScreenPosition(_point, camera).subtractPoint(offset);
+			getScreenPosition(_point, camera);
+			camera.drawTriangles(graphicToUse, vertices, indices, uvtData, null, _point, blend, true, antialiasing, spriteGraphic.colorTransform != null ? spriteGraphic.colorTransform : colorTransform,
+				spriteGraphic.shader != null ? spriteGraphic.shader : null);
+		}
+
+		#if FLX_DEBUG
+		if (FlxG.debugger.drawDebug) drawDebug();
+		#end
+	}
+
+	public static function clearOutCache():Void
+	{
+		NewModchartArrow.graphicCache3D = new Map<String, FlxGraphic>();
+		trace("3D animation graphics cache cleared!");
+	}
+
+	override public function destroy():Void
+	{
+		vertices = null;
+		indices = null;
+		uvtData = null;
+		spriteGraphic = null;
+		super.destroy();
+	}
+
+	// since updateColorTransform isn't public lol?
+	public function updateCol():Void
+	{
+		updateColorTransform();
+	}
+
+	// Call this when updating the animation! This is because different animations can have different sprite sizes!
+	override function updateColorTransform():Void
+	{
+		super.updateColorTransform();
+
+		if (originalWidthHeight == null && spriteGraphic != null)
+		{
+		originalWidthHeight = new Vector2(spriteGraphic.frameWidth, spriteGraphic.frameHeight);
+		}
+	}
+
+	public var offsetBeforeRotation:FlxPoint = new FlxPoint(0, 0);
 
 	public function applyPerspective(pos:Vector3D, xPercent:Float = 0, yPercent:Float = 0):Vector2
 	{
-		var w:Float = frameWidth;
-		var h:Float = frameHeight;
+		var w:Float = spriteGraphic.frameWidth != null ? spriteGraphic.frameWidth : frameWidth;
+		var h:Float = spriteGraphic.frameHeight != null ? spriteGraphic.frameHeight : frameHeight;
 
 		var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
+
+		pos_modified.x -= offsetBeforeRotation.x;
+    	pos_modified.y -= offsetBeforeRotation.y;
 
 		var whatWasTheZBefore:Float = pos_modified.z;
 
@@ -229,17 +400,19 @@ class ModchartArrow extends FlxSkewedSprite
 		pos_modified.x = thing.x;
 		pos_modified.y = thing.y;
 
-		var rotateModPivotPoint:Vector2 = new Vector2(w / 2, 0);
+		rotateModPivotPoint = new Vector2(w / 2, 0);
 		rotateModPivotPoint.x += pivotOffsetX;
 		rotateModPivotPoint.y += pivotOffsetZ;
-		var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.x, pos_modified.z), -angleY);
+		var angleY_withFlip:Float = angleY + (flipX ? 180 : 0);
+		thing = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.x, pos_modified.z), -angleY_withFlip);
 		pos_modified.x = thing.x;
 		pos_modified.z = thing.y;
 
-		var rotateModPivotPoint:Vector2 = new Vector2(0, h / 2);
+		rotateModPivotPoint = new Vector2(0, h / 2);
 		rotateModPivotPoint.x += pivotOffsetZ;
 		rotateModPivotPoint.y += pivotOffsetY;
-		var thing:Vector2 = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.z, pos_modified.y), -angleX);
+		var angleX_withFlip:Float = angleX + (flipY ? 180 : 0);
+		thing = ModchartUtil.rotateAround(rotateModPivotPoint, new Vector2(pos_modified.z, pos_modified.y), -angleX_withFlip);
 		pos_modified.z = thing.x;
 		pos_modified.y = thing.y;
 
@@ -251,8 +424,7 @@ class ModchartArrow extends FlxSkewedSprite
 		// Apply offset here before it gets affected by z projection!
 		pos_modified.x -= offset.x;
 		pos_modified.y -= offset.y;
-		pos_modified.x += daOffsetX; //Moved offsetX here so it's with the other Offsets -Hazard24
-		
+		// pos_modified.x += daOffsetX; //Moved offsetX here so it's with the other Offsets -Hazard24
 
 		pos_modified.x += moveX;
 		pos_modified.y += moveY;
@@ -262,8 +434,6 @@ class ModchartArrow extends FlxSkewedSprite
 		{
 			pos_modified.x += this.x;
 			pos_modified.y += this.y;
-			//pos_modified.x += (width/2);
-			//pos_modified.y += (height/2);
 			pos_modified.z += this.z; // ?????
 
 			pos_modified.x += fovOffsetX;
@@ -272,17 +442,17 @@ class ModchartArrow extends FlxSkewedSprite
 
 			//var thisNotePos = perspectiveMath(new Vector3D(pos_modified.x+(width/2), pos_modified.y+(height/2), zDifference * 0.001), -(width/2), -(height/2));
 			pos_modified.z = zDifference * 0.001;
-			var thisNotePos:Vector3D = perspectiveMath(pos_modified, 0, 0);
+			pos_modified = perspectiveMath(pos_modified, 0, 0);
 			//No need for any offsets since the offsets are already a part of pos_modified for each Vert. Plus if you look at the +height/2 part, you'll realise it's just cancelling each other out lmfao
 			// -Hazard24
 
-			thisNotePos.x -= this.x;
-			thisNotePos.y -= this.y;
-			thisNotePos.z -= this.z; // ?????
+			pos_modified.x -= this.x;
+			pos_modified.y -= this.y;
+			pos_modified.z -= this.z; // ?????
 
-			thisNotePos.x -= fovOffsetX;
-			thisNotePos.y -= fovOffsetY;
-			return new Vector2(thisNotePos.x, thisNotePos.y);
+			pos_modified.x -= fovOffsetX;
+			pos_modified.y -= fovOffsetY;
+			return new Vector2(pos_modified.x, pos_modified.y);
 		}
 		else
 		{

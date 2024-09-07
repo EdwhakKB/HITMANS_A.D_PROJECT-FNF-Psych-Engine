@@ -479,7 +479,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// strumNote.y = noteData.y;
 		// strumNote.z = noteData.z;
 
-		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 /*|| noteData.skewX != 0 || noteData.skewY != 0*/)
+		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0)
 			strumNote.drawManual = true;
 		else
 			strumNote.drawManual = false;
@@ -558,7 +558,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// daNote.y = noteData.y;
 		// daNote.z = noteData.z;
 
-		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 /*|| noteData.skewX != 0 || noteData.skewY != 0*/)
+		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0)
 			daNote.drawManual = true;
 		else
 			daNote.drawManual = false;
