@@ -5,6 +5,9 @@ import flixel.math.FlxMath;
 import flixel.graphics.tile.FlxDrawTrianglesItem;
 import RGBPalette.RGBShaderReference;
 import flixel.FlxSprite;
+import flixel.FlxG;
+import sys.FileSystem;
+import modcharting.*;
 
 /**
  * This is based heavily on the `FlxStrip` class. It uses `drawTriangles()` to clip a sustain note
@@ -154,7 +157,7 @@ class SustainTrail extends FlxSprite
     graphicWidth = graphic.width / 8 * zoom; // amount of notes * 2
     graphicHeight = sustainHeight(sustainLength, 1.0);
     // instead of scrollSpeed, PlayState.SONG.speed
-    flipY = ClientPrefs.data.downScroll;
+    flipY = ClientPrefs.downScroll;
     // calls updateColorTransform(), which initializes processedGraphic!
     updateColorTransform();
 
@@ -439,6 +442,9 @@ class SustainTrail extends FlxSprite
     noteData.y = thisNotePos.y;
     noteData.scaleX *= (1 / -thisNotePos.z);
     noteData.scaleY *= (1 / -thisNotePos.z);
+
+    this.x = noteData.x;
+    this.y = noteData.y;
   }
 
   public override function kill():Void
