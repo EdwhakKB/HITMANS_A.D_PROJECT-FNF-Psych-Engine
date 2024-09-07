@@ -162,8 +162,8 @@ class NewModchartArrow extends FlxSprite
 		var wasAlreadyFlipped_X:Bool = flipX;
     	var wasAlreadyFlipped_Y:Bool = flipY;
 
-		var w:Float = spriteGraphic.frameWidth != null ? spriteGraphic.frameWidth : frameWidth;
-		var h:Float = spriteGraphic.frameHeight != null ? spriteGraphic.frameHeight : frameHeight;
+		var w:Float = spriteGraphic != null ? spriteGraphic.frameWidth : frameWidth;
+		var h:Float = spriteGraphic != null ? spriteGraphic.frameHeight : frameHeight;
 
 		var i:Int = 0;
 		for (x in 0...subdivisions + 2) // x
@@ -178,9 +178,9 @@ class NewModchartArrow extends FlxSprite
 			// skew funny
 			var xPercent:Float = x / (subdivisions + 1);
 			var yPercent:Float = y / (subdivisions + 1);
-			// For some reason, we need a 0.5 offset for this???????????????????
-			var xPercent_SkewOffset:Float = xPercent - skewY_offset - 0.5;
-			var yPercent_SkewOffset:Float = yPercent - skewX_offset - 0.5;
+			// For some reason, we need a 0.5 offset for this??????????????????? //fuck you 0.5
+			var xPercent_SkewOffset:Float = xPercent - skewY_offset;
+			var yPercent_SkewOffset:Float = yPercent - skewX_offset;
 			// Keep math the same as skewedsprite for parity reasons.
 			if (skewX != 0) // Small performance boost from this if check to avoid the tan math lol?
 				point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
@@ -383,8 +383,8 @@ class NewModchartArrow extends FlxSprite
 
 	public function applyPerspective(pos:Vector3D, xPercent:Float = 0, yPercent:Float = 0):Vector2
 	{
-		var w:Float = spriteGraphic.frameWidth != null ? spriteGraphic.frameWidth : frameWidth;
-		var h:Float = spriteGraphic.frameHeight != null ? spriteGraphic.frameHeight : frameHeight;
+		var w:Float = spriteGraphic != null ? spriteGraphic.frameWidth : frameWidth;
+		var h:Float = spriteGraphic != null ? spriteGraphic.frameHeight : frameHeight;
 
 		var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
 

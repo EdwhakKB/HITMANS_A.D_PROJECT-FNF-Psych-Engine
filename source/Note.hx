@@ -30,7 +30,7 @@ import openfl.display.TriangleCulling;
 
 import editors.ChartingState;
 
-// import flixel.addons.effects.FlxSkewedSprite;
+import flixel.addons.effects.FlxSkewedSprite;
 
 import modcharting.FlxFilteredSkewedSprite as FlxImprovedSprite;
 import modcharting.ModchartUtil;
@@ -47,19 +47,11 @@ typedef EventNote = {
 	value2:String
 }
 
-class Note extends modcharting.ModchartArrow
+class Note extends FlxSkewedSprite
 {
-	private static var alphas:Map<String, Map<String, Map<Int, Array<Float>>>> = new Map();
-	private static var indexes:Map<String, Map<String, Map<Int, Array<Int>>>> = new Map();
-	private static var glist:Array<FlxGraphic> = [];
-
-	public var gpix:FlxGraphic = null;
-	public var oalp:Float = 1;
-	public var oanim:String = "";
-
 	public var mesh:modcharting.SustainStrip = null; 
 	public var arrowMesh:modcharting.NewModchartArrow;
-	// public var z:Float = 0;
+	public var z:Float = 0;
 	public var extraData:Map<String,Dynamic> = [];
 
 	public var strumTime:Float = 0;
@@ -92,8 +84,6 @@ class Note extends modcharting.ModchartArrow
 	public var eventVal2:String = '';
 
 	// public var colorSwap:ColorSwap;
-	// public var stealth:modcharting.ModchartShaders.StealthEffect;
-	// var filtahs:Array<BitmapFilter> = [];
 
 	public var rgbShader:RGBShaderReference;
 	public static var globalRgbShaders:Array<RGBPalette> = [];
@@ -420,7 +410,6 @@ class Note extends modcharting.ModchartArrow
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false)
 	{
 		super();
-		// scaleDefault = FlxPoint.get();
 
 		if (prevNote == null)
 			prevNote = this;
@@ -447,12 +436,6 @@ class Note extends modcharting.ModchartArrow
 			texture = '';
 			if (quantizedNotes) rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalQuantRBShader(noteData) : initializeGlobalHurtRGBShader(noteData));
 			else rgbShader = new RGBShaderReference(this, !hurtNote ? initializeGlobalRGBShader(noteData, false) : initializeGlobalHurtRGBShader(noteData));
-			// shader = rgbShader.shader;
-			// if(!sustainRGB && isSustainNote && !hurtNote){
-			// 	rgbShader.enabled = false;
-			// }else if(sustainRGB && isSustainNote){
-			// 	rgbShader.enabled = true; //no need force ig?
-			// }
 			if(PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
 
 			x += swagWidth * (noteData);
@@ -462,11 +445,6 @@ class Note extends modcharting.ModchartArrow
 				animation.play(animToPlay + 'Scroll');
 			}
 		}
-
-		// stealth = new modcharting.ModchartShaders.StealthEffect();
-		// filters = [new ShaderFilter(stealth.shader)]; //TODO: fix this shit
-		
-		// trace(prevNote);
 
 		if(prevNote!=null)
 			prevNote.nextNote = this;
@@ -521,7 +499,6 @@ class Note extends modcharting.ModchartArrow
 				}
 
 				prevNote.updateHitbox();
-				// prevNote.setGraphicSize();
 			}
 
 			if(PlayState.isPixelStage) {
@@ -621,10 +598,8 @@ class Note extends modcharting.ModchartArrow
 		var skin:String = texture;
 		if(texture.length < 1) {
 			skin = PlayState.SONG != null ? PlayState.SONG.arrowSkin : null;
-			//updateHolds = false;
 			if(skin == null || skin.length < 1) {
 				skin = 'Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets';
-				//updateHolds = true;
 			}
 		}
 
@@ -660,13 +635,6 @@ class Note extends modcharting.ModchartArrow
 				offsetX += lastNoteOffsetXForPixelAutoAdjusting;
 				lastNoteOffsetXForPixelAutoAdjusting = (width - 7) * (PlayState.daPixelZoom / 2);
 				offsetX -= lastNoteOffsetXForPixelAutoAdjusting;
-
-				/*if(animName != null && !animName.endsWith('end'))
-				{
-					lastScaleY /= lastNoteScaleToo;
-					lastNoteScaleToo = (6 / height);
-					lastScaleY *= lastNoteScaleToo;
-				}*/
 			}
 		} else {
 			frames = Paths.getSparrowAtlas(blahblah);
@@ -686,6 +654,7 @@ class Note extends modcharting.ModchartArrow
 			updateHitbox();
 		}
 		updateHitbox();
+		if (arrowMesh != null) arrowMesh.updateCol();
 	}
 	
 	function loadNoteAnims() 
@@ -694,12 +663,6 @@ class Note extends modcharting.ModchartArrow
 
 		if (isSustainNote)
 		{
-			// if(updateHolds){ //doing this check because of custom notes with own holds???
-				// if (ClientPrefs.notesSkin[2] != 'NONE') //if its none it will just use notesSkin[0] sustain instead?
-					// frames = Paths.getSparrowAtlas('Skins/Holds/'+ClientPrefs.notesSkin[2]+'/SUSTAIN_assets');
-				// else
-				// 	frames = Paths.getSparrowAtlas('Skins/Notes/'+ClientPrefs.notesSkin[0]+'/NOTE_assets'); //avoid a crash
-			// }
 			animation.addByPrefix('purpleholdend', 'pruple end hold'); // ?????
 			animation.addByPrefix(colArray[noteData] + 'holdend', colArray[noteData] + ' hold end');
 			animation.addByPrefix(colArray[noteData] + 'hold', colArray[noteData] + ' hold piece');
@@ -723,7 +686,6 @@ class Note extends modcharting.ModchartArrow
 		super.update(elapsed);
 
 		// stealth.update(elapsed);
-		daOffsetX = offsetX; //adjust modchart notes offset
 
 		if (mustPress)
 		{
@@ -756,118 +718,6 @@ class Note extends modcharting.ModchartArrow
 
 	}
 
-	@:access(flixel.FlxCamera)
-	override public function draw():Void
-	{
-		if (drawManual)
-		{
-			if (alpha <= 0 || vertices == null || indices == null || uvtData == null || _point == null || offset == null)
-			{
-				return;
-			}
-
-			for (camera in cameras)
-			{
-				if (!camera.visible || !camera.exists) continue;
-				//if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
-
-				// memory leak with drawTriangles :c
-
-				getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
-				var newGraphic:FlxGraphic = cast mapData();
-				camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, shader);
-				// camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
-				// trace("we do be drawin... something?\n verts: \n" + vertices);
-			}
-
-			// trace("we do be drawin tho");
-
-			#if FLX_DEBUG
-			if (FlxG.debugger.drawDebug) drawDebug();
-			#end
-		}
-		else
-		{
-			super.draw();
-		}
-	}
-
-	public function updateObjectPosition(obj:Note):Void
-	{
-		// obj.updateHitbox();
-
-		// var note:Note = cast obj;
-		if (isSustainNote)
-		{
-			obj.centerOrigin();
-			obj.centerOffsets();
-		}
-		// note.offset.x += note.typeOffsetX;
-		// note.offset.y += note.typeOffsetY;
-	}
-
-	function mapData():FlxGraphic
-	{
-		if (gpix == null || alpha != oalp || !animation.curAnim.finished || oanim != animation.curAnim.name)
-		{
-			if (!alphas.exists(noteType))
-			{
-				alphas.set(noteType, new Map());
-				indexes.set(noteType, new Map());
-			}
-			if (!alphas.get(noteType).exists(animation.curAnim.name))
-			{
-				alphas.get(noteType).set(animation.curAnim.name, new Map());
-				indexes.get(noteType).set(animation.curAnim.name, new Map());
-			}
-			if (!alphas.get(noteType)
-				.get(animation.curAnim.name)
-				.exists(animation.curAnim.curFrame))
-			{
-				alphas.get(noteType)
-				.get(animation.curAnim.name)
-				.set(animation.curAnim.curFrame, []);
-				indexes.get(noteType)
-				.get(animation.curAnim.name)
-				.set(animation.curAnim.curFrame, []);
-			}
-			if (!alphas.get(noteType)
-				.get(animation.curAnim.name)
-				.get(animation.curAnim.curFrame)
-				.contains(alpha))
-			{
-				var pix:FlxGraphic = FlxGraphic.fromFrame(frame, true);
-				var nalp:Array<Float> = alphas.get(noteType)
-				.get(animation.curAnim.name)
-				.get(animation.curAnim.curFrame);
-				var nindex:Array<Int> = indexes.get(noteType)
-				.get(animation.curAnim.name)
-				.get(animation.curAnim.curFrame);
-				pix.bitmap.colorTransform(pix.bitmap.rect, colorTransform);
-				glist.push(pix);
-				nalp.push(alpha);
-				nindex.push(glist.length - 1);
-				alphas.get(noteType)
-				.get(animation.curAnim.name)
-				.set(animation.curAnim.curFrame, nalp);
-				indexes.get(noteType)
-				.get(animation.curAnim.name)
-				.set(animation.curAnim.curFrame, nindex);
-			}
-			var dex = alphas.get(noteType)
-				.get(animation.curAnim.name)
-				.get(animation.curAnim.curFrame)
-				.indexOf(alpha);
-			gpix = glist[
-				indexes.get(noteType)
-				.get(animation.curAnim.name)
-				.get(animation.curAnim.curFrame)[dex]];
-			oalp = alpha;
-			oanim = animation.curAnim.name;
-		}
-		return gpix;
-	}
-
 	@:noCompletion
 	override function set_clipRect(rect:FlxRect):FlxRect
 	{
@@ -887,20 +737,12 @@ class Note extends modcharting.ModchartArrow
 	public override function revive():Void
 	{
 		super.revive();
+
+		if (arrowMesh != null) arrowMesh.updateCol();
 	}
 	
 	override public function destroy():Void
 	{
-		vertices = null;
-		indices = null;
-		uvtData = null;
-		for (i in glist)
-			i.destroy();
-		alphas = new Map();
-		indexes = new Map();
-		glist = [];
-		drawManual = false;
-		hasSetupRender = false;
 		super.destroy();
 	}
 }

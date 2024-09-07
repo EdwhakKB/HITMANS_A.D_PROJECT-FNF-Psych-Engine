@@ -20,25 +20,18 @@ import openfl.geom.ColorTransform;
 import openfl.display.TriangleCulling;
 import RGBPalette;
 import RGBPalette.RGBShaderReference;
-// import flixel.addons.effects.FlxSkewedSprite;
+import flixel.addons.effects.FlxSkewedSprite;
 
 import modcharting.FlxFilteredSkewedSprite as FlxImprovedSprite;
 import modcharting.ModchartUtil;
 using StringTools;
 
-class StrumNote extends modcharting.ModchartArrow
+class StrumNote extends FlxSkewedSprite
 {
-  private static var alphas:Map<String, Map<Int, Map<String, Map<Int, Array<Float>>>>> = new Map();
-  private static var indexes:Map<String, Map<Int, Map<String, Map<Int, Array<Int>>>>> = new Map();
-  private static var glist:Array<FlxGraphic> = [];
-
-	public var gpix:FlxGraphic = null;
-	public var oalp:Float = 1;
-	public var oanim:String = "";
-
-  // public var z:Float = 200 / 0.7;
+  public var arrowMesh:modcharting.NewModchartArrow;
+  public var z:Float = 0;
 	public var rgbShader:RGBShaderReference;
-	private var colorSwap:ColorSwap;
+	//private var colorSwap:ColorSwap;
 	public var resetAnim:Float = 0;
 	public var noteData:Int = 0;
 	public var direction:Float = 90;//plan on doing scroll directions soon -bb
@@ -69,6 +62,19 @@ class StrumNote extends modcharting.ModchartArrow
 	  }
 	  return value;
 	}
+
+  // Call this to create a mesh
+  public function setupMesh():Void
+    {
+      if (arrowMesh == null)
+      {
+        arrowMesh = new modcharting.NewModchartArrow();
+        arrowMesh.spriteGraphic = this;
+        arrowMesh.doDraw = false;
+        arrowMesh.copySpriteGraphic = false;
+      }
+      arrowMesh.setUp();
+    }
 
 	public var useRGBShader:Bool = true;
 	var rgb9:Bool = false;
@@ -106,8 +112,6 @@ class StrumNote extends modcharting.ModchartArrow
 		if (daTexture != null) texture = daTexture else texture = skin;
 
 		scrollFactor.set();
-
-		//setUp();
 	}
 
 	public function reloadNote()
@@ -163,6 +167,7 @@ class StrumNote extends modcharting.ModchartArrow
 		{
 			playAnim(lastAnim, true);
 		}
+    if (arrowMesh != null) arrowMesh.updateCol();
 	}
 
 	public function postAddedToGroup() {
@@ -194,125 +199,6 @@ class StrumNote extends modcharting.ModchartArrow
 		if(loadShader && useRGBShader) rgbShader.enabled = (animation.curAnim != null && animation.curAnim.name != 'static');
 	}
 
-  @:access(flixel.FlxCamera)
-  override public function draw():Void
-  {
-    if (drawManual)
-    {
-      if (alpha <= 0 || vertices == null || indices == null || uvtData == null || _point == null || offset == null)
-      {
-        return;
-      }
-
-      for (camera in cameras)
-      {
-        if (!camera.visible || !camera.exists) continue;
-        //if (!isOnScreen(camera)) continue; // TODO: Update this code to make it work properly.
-
-        // memory leak with drawTriangles :c
-
-        getScreenPosition(_point, camera) /*.subtractPoint(offset)*/;
-        var newGraphic:FlxGraphic = cast mapData();
-        camera.drawTriangles(newGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing, shader);
-        // camera.drawTriangles(processedGraphic, vertices, indices, uvtData, null, _point, blend, true, antialiasing);
-        // trace("we do be drawin... something?\n verts: \n" + vertices);
-      }
-
-      // trace("we do be drawin tho");
-
-      #if FLX_DEBUG
-      if (FlxG.debugger.drawDebug) drawDebug();
-      #end
-    }
-    else
-    {
-      super.draw();
-    }
-  }
-
-  public function updateObjectPosition(obj:StrumNote):Void
-  {
-    obj.centerOrigin();
-    obj.centerOffsets();
-  }
-
-  function mapData():FlxGraphic
-  {
-    if (gpix == null || alpha != oalp || !animation.curAnim.finished || oanim != animation.curAnim.name)
-    {
-      if (!alphas.exists(strumType))
-      {
-        alphas.set(strumType, new Map());
-        indexes.set(strumType, new Map());
-      }
-      if (!alphas.get(strumType).exists(ID))
-      {
-        alphas.get(strumType).set(ID, new Map());
-        indexes.get(strumType).set(ID, new Map());
-      }
-      if (!alphas.get(strumType).get(ID).exists(animation.curAnim.name))
-      {
-        alphas.get(strumType).get(ID).set(animation.curAnim.name, new Map());
-        indexes.get(strumType).get(ID).set(animation.curAnim.name, new Map());
-      }
-      if (!alphas.get(strumType)
-        .get(ID)
-        .get(animation.curAnim.name)
-        .exists(animation.curAnim.curFrame))
-      {
-        alphas.get(strumType)
-          .get(ID)
-          .get(animation.curAnim.name)
-          .set(animation.curAnim.curFrame, []);
-        indexes.get(strumType)
-          .get(ID)
-          .get(animation.curAnim.name)
-          .set(animation.curAnim.curFrame, []);
-      }
-      if (!alphas.get(strumType)
-        .get(ID)
-        .get(animation.curAnim.name)
-        .get(animation.curAnim.curFrame)
-        .contains(alpha))
-      {
-        var pix:FlxGraphic = FlxGraphic.fromFrame(frame, true);
-        var nalp:Array<Float> = alphas.get(strumType)
-          .get(ID)
-          .get(animation.curAnim.name)
-          .get(animation.curAnim.curFrame);
-        var nindex:Array<Int> = indexes.get(strumType)
-          .get(ID)
-          .get(animation.curAnim.name)
-          .get(animation.curAnim.curFrame);
-        pix.bitmap.colorTransform(pix.bitmap.rect, colorTransform);
-        glist.push(pix);
-        nalp.push(alpha);
-        nindex.push(glist.length - 1);
-        alphas.get(strumType)
-          .get(ID)
-          .get(animation.curAnim.name)
-          .set(animation.curAnim.curFrame, nalp);
-        indexes.get(strumType)
-          .get(ID)
-          .get(animation.curAnim.name)
-          .set(animation.curAnim.curFrame, nindex);
-      }
-      var dex = alphas.get(strumType)
-        .get(ID)
-        .get(animation.curAnim.name)
-        .get(animation.curAnim.curFrame)
-        .indexOf(alpha);
-      gpix = glist[
-        indexes.get(strumType)
-          .get(ID)
-          .get(animation.curAnim.name)
-          .get(animation.curAnim.curFrame)[dex]];
-      oalp = alpha;
-      oanim = animation.curAnim.name;
-    }
-    return gpix;
-  }
-
   public override function kill():Void
   {
     super.kill();
@@ -321,20 +207,11 @@ class StrumNote extends modcharting.ModchartArrow
   public override function revive():Void
   {
     super.revive();
+    if (arrowMesh != null) arrowMesh.updateCol();
   }
 
   override public function destroy():Void
   {
-    vertices = null;
-    indices = null;
-    uvtData = null;
-    for (i in glist)
-      i.destroy();
-    alphas = new Map();
-    indexes = new Map();
-    glist = [];
-    drawManual = false;
-    hasSetupRender = false;
     super.destroy();
   }
 }
