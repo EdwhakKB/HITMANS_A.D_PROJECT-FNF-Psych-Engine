@@ -702,7 +702,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		//TODO: make sure this thing don't get note (sustainStrip) so i can grab any graphic and do a strip with it
 		var daNote = notes.members[noteData.index];
 		if (daNote.arrowPath == null)
-			daNote.arrowPath = new SustainTrail(daNote.noteData, daNote.arrowPathLength, "");
+			daNote.arrowPath = new SustainTrail(daNote.noteData, noteData.arrowPathLength, "");
 
 		daNote.arrowPath.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
 
