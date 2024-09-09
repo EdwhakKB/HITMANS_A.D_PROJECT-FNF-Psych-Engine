@@ -75,6 +75,8 @@ class NoteColorState extends MusicBeatState
 		DiscordClient.changePresence('Options','Note Colors', null);
 		#end
 
+		for(i in 0...skins.length) if(skins[i] == skinIndicator) curNum = i;
+
 		camGame = new FlxCamera();
 		camNoteColor = new FlxCamera();
 		camNoteColor.bgColor.alpha = 0;
