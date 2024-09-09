@@ -143,7 +143,7 @@
 	<haxelib name="hscript" />
 	<haxelib name="flxanimate" />
 
-	<haxelib name="SScript" version="4.0.1" if="HSCRIPT_ALLOWED"/>
+	<haxelib name="SScript" if="HSCRIPT_ALLOWED"/>
 
 	<!-- Comment this out to prevent unused classes from being compiled.
 		 Reduces compilation time at the cost of limited HScript flexibility. !-->
