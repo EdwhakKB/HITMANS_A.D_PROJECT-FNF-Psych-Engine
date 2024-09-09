@@ -58,7 +58,7 @@ class NotesSubState extends MusicBeatSubstate
 
 	//skins stuff lol
 	public var skinIndicator:FlxText;
-	var skins:Array<String> = ['HITMANS', 'INHUMAN', 'FNF', 'ITHIT', 'MANIAHIT', 'FUTURE', 'CIRCLE', 'STEPMANIA', 'NOTITG']; //There must be a better way but for now with this im okay -Ed
+	var skins:Array<String> = ['HITMANS', 'INHUMAN', 'FNF', 'ITHIT', 'MANIAHIT', 'FUTURE', 'CIRCLE', 'STEPMANIA', 'NOTITG', 'GROOVIN']; //There must be a better way but for now with this im okay -Ed
 	private static var curNum:Int = 0;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;

@@ -300,7 +300,7 @@ class NewModchartArrow extends FlxSprite
 				spriteGraphic.angle = 0;
 
 				// if (debugTesting)
-				trace("New frame for: " + animFrameName);
+				// trace("New frame for: " + animFrameName);
 				// if not, we create it and add it to the map.
 				spriteGraphic.updateFramePixels();
 				graphicToUse = FlxGraphic.fromBitmapData(spriteGraphic.framePixels, true, animFrameName);
