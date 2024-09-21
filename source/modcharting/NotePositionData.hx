@@ -59,6 +59,8 @@ class NotePositionData implements IFlxDestroyable
     public var pivotOffsetX:Float = 0;
     public var pivotOffsetY:Float = 0;
     public var pivotOffsetZ:Float = 0;
+
+    public var cullMode:String = "none";
     // public var pathColor:StringTools.hex();
 
     // public var straightHold:Float;
@@ -119,6 +121,8 @@ class NotePositionData implements IFlxDestroyable
         this.pivotOffsetX = 0;
         this.pivotOffsetY = 0;
         this.pivotOffsetZ = 0;
+
+        this.cullMode = "none";
         // this.pathColor = "000000";
 
         // this.straightHold = 0; //why tf does a strum need a damn "straightHold" value XD?
@@ -174,6 +178,8 @@ class NotePositionData implements IFlxDestroyable
         this.pivotOffsetX = 0;
         this.pivotOffsetY = 0;
         this.pivotOffsetZ = 0;
+
+        this.cullMode = "none";
         // this.pathColor = "000000";
 
         // this.straightHold = 0; //different to up this doesn't break shit LOL

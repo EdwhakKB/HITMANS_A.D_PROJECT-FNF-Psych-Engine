@@ -498,6 +498,8 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			strumNote.arrowMesh.pivotOffsetY = noteData.pivotOffsetY;
 			strumNote.arrowMesh.pivotOffsetZ = noteData.pivotOffsetZ;
 
+			strumNote.arrowMesh.cullMode = noteData.cullMode;
+
 			strumNote.arrowMesh.angleX = noteData.angleX;
 			strumNote.arrowMesh.angleY = noteData.angleY;
 			strumNote.arrowMesh.angleZ = noteData.angle;
@@ -583,6 +585,8 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			daNote.arrowMesh.pivotOffsetX = noteData.pivotOffsetX;
 			daNote.arrowMesh.pivotOffsetY = noteData.pivotOffsetY;
 			daNote.arrowMesh.pivotOffsetZ = noteData.pivotOffsetZ;
+
+			daNote.arrowMesh.cullMode = noteData.cullMode;
 
 			daNote.arrowMesh.angleX = noteData.angleX;
 			daNote.arrowMesh.angleY = noteData.angleY;

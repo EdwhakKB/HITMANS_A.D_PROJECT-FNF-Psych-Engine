@@ -41,6 +41,8 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 
 	var bounds:FlxRect = FlxRect.get();
 
+	public var cullMode = TriangleCulling.NONE;
+
 	public function new()
 	{
 		super();
@@ -83,9 +85,9 @@ class FlxDrawTrianglesItem extends FlxDrawBaseItem<FlxDrawTrianglesItem>
 		#end
 
 		#if !openfl_legacy
-		camera.canvas.graphics.drawTriangles(vertices, indices, uvtData, TriangleCulling.NONE);
+		camera.canvas.graphics.drawTriangles(vertices, indices, uvtData, cullMode);
 		#else
-		camera.canvas.graphics.drawTriangles(vertices, indices, uvtData, TriangleCulling.NONE, (colored) ? colors : null, blending);
+		camera.canvas.graphics.drawTriangles(vertices, indices, uvtData, cullMode, (colored) ? colors : null, blending);
 		#end
 		camera.canvas.graphics.endFill();
 		#if FLX_DEBUG

@@ -4814,6 +4814,64 @@ class FovYOffsetModifier extends Modifier
     }
 }
 
+class CullNTModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        if (currentValue == 0){
+            noteData.cullMode = "none";
+        }else if (currentValue > 0){
+            noteData.cullMode = "positive";
+        }else if (currentValue < 0){
+            noteData.cullMode = "negative";
+        }else if (currentValue >= 2){
+            noteData.cullMode = "always_positive";
+        }else if (currentValue <= -2){
+            noteData.cullMode = "always_negative";
+        }
+    }
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteMath(noteData, lane, 0, pf);
+    }
+}
+
+class CullNotesModifier extends Modifier
+{
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        if (currentValue == 0){
+            noteData.cullMode = "none";
+        }else if (currentValue > 0){
+            noteData.cullMode = "positive";
+        }else if (currentValue < 0){
+            noteData.cullMode = "negative";
+        }else if (currentValue >= 2){
+            noteData.cullMode = "always_positive";
+        }else if (currentValue <= -2){
+            noteData.cullMode = "always_negative";
+        }
+    }
+}
+
+class CullTargetsModifier extends Modifier
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        if (currentValue == 0){
+            noteData.cullMode = "none";
+        }else if (currentValue > 0){
+            noteData.cullMode = "positive";
+        }else if (currentValue < 0){
+            noteData.cullMode = "negative";
+        }else if (currentValue >= 2){
+            noteData.cullMode = "always_positive";
+        }else if (currentValue <= -2){
+            noteData.cullMode = "always_negative";
+        }
+    }
+}
+
 
 
 class ArrowPathAlphaModifier extends Modifier //used but unstable (as old way)

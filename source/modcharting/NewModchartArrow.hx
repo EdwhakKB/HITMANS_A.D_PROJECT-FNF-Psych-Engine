@@ -135,8 +135,8 @@ class NewModchartArrow extends FlxSprite
 				noteIndices.push(1 + funny);
 
 				noteIndices.push(nextRow + funny);
-				noteIndices.push(1 + funny);
 				noteIndices.push(nextRow + 1 + funny);
+				noteIndices.push(1 + funny);
 			}
 		}
 		indices = new DrawData<Int>(noteIndices.length, true, noteIndices);
@@ -170,51 +170,116 @@ class NewModchartArrow extends FlxSprite
 		{
 			for (y in 0...subdivisions + 2) // y
 			{
-			var point2D:Vector2;
-			var point3D:Vector3D = new Vector3D(0, 0, 0);
-			point3D.x = (w / (subdivisions + 1)) * x;
-			point3D.y = (h / (subdivisions + 1)) * y;
+				var point2D:Vector2;
+				var point3D:Vector3D = new Vector3D(0, 0, 0);
+				point3D.x = (w / (subdivisions + 1)) * x;
+				point3D.y = (h / (subdivisions + 1)) * y;
 
-			// skew funny
-			var xPercent:Float = x / (subdivisions + 1);
-			var yPercent:Float = y / (subdivisions + 1);
-			// For some reason, we need a 0.5 offset for this??????????????????? //fuck you 0.5
-			var xPercent_SkewOffset:Float = xPercent - skewY_offset;
-			var yPercent_SkewOffset:Float = yPercent - skewX_offset;
-			// Keep math the same as skewedsprite for parity reasons.
-			if (skewX != 0) // Small performance boost from this if check to avoid the tan math lol?
-				point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
-			if (skewY != 0) //
-				point3D.y += xPercent_SkewOffset * Math.tan(skewY * FlxAngle.TO_RAD) * w;
-			if (skewZ != 0) //
-				point3D.z += yPercent_SkewOffset * Math.tan(skewZ * FlxAngle.TO_RAD) * h;
+				// skew funny
+				var xPercent:Float = x / (subdivisions + 1);
+				var yPercent:Float = y / (subdivisions + 1);
+				// For some reason, we need a 0.5 offset for this??????????????????? //fuck you 0.5
+				var xPercent_SkewOffset:Float = xPercent - skewY_offset;
+				var yPercent_SkewOffset:Float = yPercent - skewX_offset;
+				// Keep math the same as skewedsprite for parity reasons.
+				if (skewX != 0) // Small performance boost from this if check to avoid the tan math lol?
+					point3D.x += yPercent_SkewOffset * Math.tan(skewX * FlxAngle.TO_RAD) * h;
+				if (skewY != 0) //
+					point3D.y += xPercent_SkewOffset * Math.tan(skewY * FlxAngle.TO_RAD) * w;
+				if (skewZ != 0) //
+					point3D.z += yPercent_SkewOffset * Math.tan(skewZ * FlxAngle.TO_RAD) * h;
 
-			// scale
-			var newWidth:Float = (scaleX - 1) * (xPercent - 0.5);
-			point3D.x += (newWidth) * w;
-			newWidth = (scaleY - 1) * (yPercent - 0.5);
-			point3D.y += (newWidth) * h;
+				// scale
+				var newWidth:Float = (scaleX - 1) * (xPercent - 0.5);
+				point3D.x += (newWidth) * w;
+				newWidth = (scaleY - 1) * (yPercent - 0.5);
+				point3D.y += (newWidth) * h;
 
-			point2D = applyPerspective(point3D, xPercent, yPercent);
+				point2D = applyPerspective(point3D, xPercent, yPercent);
 
-			if (originalWidthHeight != null && autoOffset)
-			{
-				point2D.x += (originalWidthHeight.x - spriteGraphic.frameWidth) / 2;
-				point2D.y += (originalWidthHeight.y - spriteGraphic.frameHeight) / 2;
-			}
-			
-			vertices[i * 2] = point2D.x;
-			vertices[i * 2 + 1] = point2D.y;
-			i++;
+				if (originalWidthHeight != null && autoOffset)
+				{
+					point2D.x += (originalWidthHeight.x - spriteGraphic.frameWidth) / 2;
+					point2D.y += (originalWidthHeight.y - spriteGraphic.frameHeight) / 2;
+				}
+				
+				vertices[i * 2] = point2D.x;
+				vertices[i * 2 + 1] = point2D.y;
+				i++;
 			}
 		}
 
 		// if (debugTrace) trace("\nverts: \n" + vertices + "\n");
 
 		// temp fix for now I guess lol?
+		// return; // TEMP TEMP TEMP TEMP TEMP TEMP OVER HER DUMBASS GET RID OF ME RID OF ME YOU HEAR ME?!!!!
+
+		culled = false;
+
+		// temp fix for now I guess lol?
+		// if (spriteGraphic != null)
+		// {
+		//  spriteGraphic.flipX = false;
+		//  spriteGraphic.flipY = false;
+		// }
+
+		// flipX = wasAlreadyFlipped_X;
+		// flipY = wasAlreadyFlipped_Y;
 		flipX = false;
 		flipY = false;
+
+		// TODO -> culMode this so that it instead just breaks out of the function if it detects a difference between two points as being negative!
+		switch (cullMode)
+		{
+			case "always_positive" | "always_negative":
+			flipX = cullMode == "always_positive" ? true : false;
+			flipY = cullMode == "always_positive" ? true : false;
+	
+			var xFlipCheck_vertTopLeftX = vertices[0];
+			var xFlipCheck_vertBottomRightX = vertices[vertices.length - 1 - 1];
+			if (!wasAlreadyFlipped_X)
+			{
+				if (xFlipCheck_vertTopLeftX >= xFlipCheck_vertBottomRightX)
+				{
+					flipX = !flipX;
+				}
+			}
+			else
+			{
+				if (xFlipCheck_vertTopLeftX < xFlipCheck_vertBottomRightX)
+				{
+					flipX = !flipX;
+				}
+			}
+			// y check
+			if (!wasAlreadyFlipped_Y)
+			{
+				xFlipCheck_vertTopLeftX = vertices[1];
+				xFlipCheck_vertBottomRightX = vertices[vertices.length - 1];
+				if (xFlipCheck_vertTopLeftX >= xFlipCheck_vertBottomRightX)
+				{
+					flipY = !flipY;
+				}
+			}
+			else
+			{
+				xFlipCheck_vertTopLeftX = vertices[1];
+				xFlipCheck_vertBottomRightX = vertices[vertices.length - 1];
+				if (xFlipCheck_vertTopLeftX < xFlipCheck_vertBottomRightX)
+				{
+					flipY = !flipY;
+				}
+			}
+			default:
+				culled = false;
+		}
 	}
+	
+	
+	public var cullMode:String = "none";
+	
+	var culled:Bool = false;
+
 	// Default to true for when players create their own ZProjectSprites!
 	public var doDraw:Bool = true;
 	public var copySpriteGraphic:Bool = true;
@@ -263,7 +328,17 @@ class NewModchartArrow extends FlxSprite
 
 	public function drawManual(graphicToUse:FlxGraphic = null, noteStyleName:String = ""):Void
 	{
-		if (alpha < 0 || vertices == null || indices == null || graphicToUse == null || uvtData == null || _point == null || offset == null)
+		var c = TriangleCulling.NONE;
+		switch (cullMode)
+		{
+		case "positive" | "front":
+			c = TriangleCulling.POSITIVE;
+		case "negative" | "back":
+			c = TriangleCulling.NEGATIVE;
+		case "always":
+			culled = true;
+		}
+		if (culled ||alpha < 0 || vertices == null || indices == null || graphicToUse == null || uvtData == null || _point == null || offset == null)
 		{
 			return;
 		}
@@ -339,7 +414,7 @@ class NewModchartArrow extends FlxSprite
 			// getScreenPosition(_point, camera).subtractPoint(offset);
 			getScreenPosition(_point, camera);
 			camera.drawTriangles(graphicToUse, vertices, indices, uvtData, null, _point, blend, true, antialiasing, spriteGraphic.colorTransform != null ? spriteGraphic.colorTransform : colorTransform,
-				spriteGraphic.shader != null ? spriteGraphic.shader : null);
+				spriteGraphic.shader != null ? spriteGraphic.shader : null, c);
 		}
 
 		#if FLX_DEBUG
