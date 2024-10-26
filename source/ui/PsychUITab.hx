@@ -85,7 +85,6 @@ class PsychUITab extends FlxSprite
 	{
 		text.cameras = v;
 		menu.cameras = v;
-		trace('cameras: $cameras, is null? ${cameras == null}');
 		return super.set_cameras(v);
 	}
 
@@ -93,7 +92,6 @@ class PsychUITab extends FlxSprite
 	{
 		text.camera = v;
 		menu.camera = v;
-		trace('camera: $camera, is null? ${camera == null}');
 		return super.set_camera(v);
 	}
 }
