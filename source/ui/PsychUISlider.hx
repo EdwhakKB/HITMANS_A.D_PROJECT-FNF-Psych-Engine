@@ -118,7 +118,7 @@ class PsychUISlider extends FlxSpriteGroup
 		minText.text = Std.string(FlxMath.roundDecimal(min, decimals));
 		maxText.text = Std.string(FlxMath.roundDecimal(max, decimals));
 		valueText.text = Std.string(FlxMath.roundDecimal(value, decimals));
-		if(this.onChange != null) this.onChange(FlxMath.roundDecimal(v, decimals));
+		if(this.onChange != null) this.onChange(FlxMath.roundDecimal(value, decimals));
 		_updatePositions();
 		return decimals;
 	}
@@ -144,7 +144,7 @@ class PsychUISlider extends FlxSpriteGroup
 	function set_value(v:Float)
 	{
 		value = Math.max(min, Math.min(max, v));
-		valueText.text = Std.string(FlxMath.roundDecimal(v, decimals));
+		valueText.text = Std.string(FlxMath.roundDecimal(value, decimals));
 		_updateHandleX();
 		return value;
 	}

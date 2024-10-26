@@ -7,7 +7,7 @@ import _hscript.IHScriptCustomConstructor;
 import flixel.util.FlxStringUtil;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import editors.EditorPlayState;
+import editors.content.EditorPlayState;
 
 @:allow(codenameengine.scripting.ScriptPack)
 /**
@@ -57,7 +57,7 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			"FlxColor"		  => CoolUtil.getMacroAbstractClass("flixel.util.FlxColor"),
 			"Mods"		  => Mods,
 			"PlayState"		 => PlayState,
-			"EditorPlayState" => editors.EditorPlayState,
+			"EditorPlayState" => editors.content.EditorPlayState,
 			"GameOverSubstate"  => GameOverSubstate,
 			"HealthIcon"		=> HealthIcon,
 			"Note"			  => Note,

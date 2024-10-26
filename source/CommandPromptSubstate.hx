@@ -436,7 +436,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 			case 'love':
 				new FlxTimer().start(1, function(tmr:FlxTimer) {
 					persistentUpdate = false;
-					PlayState.SONG = Song.loadFromJson('mylove', 'mylove');
+					Song.loadFromJson('mylove', 'mylove');
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = 1;
 
@@ -451,7 +451,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 			case 'mercyless':
 				new FlxTimer().start(1, function(tmr:FlxTimer) {
 					persistentUpdate = false;
-					PlayState.SONG = Song.loadFromJson('c18h27no3-demo', 'c18h27no3-demo');
+					Song.loadFromJson('c18h27no3-demo', 'c18h27no3-demo');
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = 1;
 
@@ -473,7 +473,7 @@ class CommandPromptSubstate extends MusicBeatSubstate
 			case 'test':
 				new FlxTimer().start(1, function(tmr:FlxTimer) {
 					persistentUpdate = false;
-					PlayState.SONG = Song.loadFromJson('test', 'test');
+					Song.loadFromJson('test', 'test');
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = 1;
 

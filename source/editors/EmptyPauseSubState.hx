@@ -14,7 +14,7 @@ class EmptyPauseSubState extends MusicBeatSubstate
         pd.screenCenter(flixel.util.FlxAxes.XY);
         add(pd);
 
-        cameras = [FlxG.cameras.list[FlxG.cameras.list.indexOf(EditorPlayState.instance.camOther)]];
+        cameras = [FlxG.cameras.list[FlxG.cameras.list.indexOf(editors.content.EditorPlayState.instance.camOther)]];
     }
 
     override public function update(elapsed:Float)

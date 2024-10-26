@@ -1,10 +1,10 @@
 package flixel;
 
-import flash.display.BitmapData;
-import flash.display.BlendMode;
-import flash.geom.ColorTransform;
-import flash.geom.Point;
-import flash.geom.Rectangle;
+import openfl.display.BitmapData;
+import openfl.display.BlendMode;
+import openfl.geom.ColorTransform;
+import openfl.geom.Point;
+import openfl.geom.Rectangle;
 import flixel.FlxBasic.IFlxBasic;
 import flixel.animation.FlxAnimationController;
 import flixel.graphics.FlxGraphic;
@@ -749,16 +749,6 @@ class FlxSprite extends FlxObject
 	{
 		super.update(elapsed);
 		updateAnimation(elapsed);
-
-		if (z != 0)
-		{
-			var spritePoss = getMath(x, y, z, width, height);
-
-			x = spritePoss.x;
-			y = spritePoss.y;
-			scale.x *= (1/-spritePoss.z);
-			scale.y *= (1/-spritePoss.z);
-		}
 	}
 
 	/**

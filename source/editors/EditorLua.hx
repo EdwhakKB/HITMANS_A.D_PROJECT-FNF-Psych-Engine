@@ -37,6 +37,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.system.FlxAssets.FlxShader;
 import flixel.group.FlxSpriteGroup;
 import flixel.addons.effects.FlxSkewedSprite;
+import editors.content.EditorPlayState;
 
 #if (!flash && sys)
 import flixel.addons.display.FlxRuntimeShader;
@@ -1069,7 +1070,7 @@ class EditorLua {
 				difficultyNum = PlayState.storyDifficulty;
 
 			var poop = Highscore.formatSong(name, difficultyNum);
-			PlayState.SONG = Song.loadFromJson(poop, name);
+			Song.loadFromJson(poop, name);
 			PlayState.storyDifficulty = difficultyNum;
 			EditorPlayState.instance.persistentUpdate = false;
 			LoadingState.loadAndSwitchState(new PlayState());
@@ -4425,7 +4426,7 @@ class EditorLua {
 			if(deprecated && !getBool('luaDeprecatedWarnings')) {
 				return;
 			}
-			EditorPlayState.instance.addTextToDebug(text, color);
+			editors.content.EditorPlayState.instance.addTextToDebug(text, color);
 			trace(text);
 		}
 		#end

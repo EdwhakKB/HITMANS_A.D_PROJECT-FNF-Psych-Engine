@@ -404,7 +404,7 @@ class NewFreeplay extends MusicBeatState
 				FlxG.sound.music.volume = 0;
 				Mods.currentModDirectory = songs[curSelected].folder;
 				var poop:String = Highscore.formatSong(songs[curSelected].songName[curSong].toLowerCase(), curDifficulty);
-				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName[curSong].toLowerCase());
+				Song.loadFromJson(poop, songs[curSelected].songName[curSong].toLowerCase());
 				if (PlayState.SONG.needsVoices)
 					vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
 				else
@@ -440,7 +440,7 @@ class NewFreeplay extends MusicBeatState
 				
 				try
 				{
-					PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+					Song.loadFromJson(poop, songLowercase);
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = curDifficulty;
 	

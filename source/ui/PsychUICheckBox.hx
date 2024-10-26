@@ -60,8 +60,9 @@ class PsychUICheckBox extends FlxSpriteGroup
 		}
 	}
 
-	function set_checked(v:Bool)
+	function set_checked(v:Null<Bool>)
 	{
+		var v:Bool = (v != null && v != false);
 		box.animation.play(Std.string(v));
 		return (checked = v);
 	}

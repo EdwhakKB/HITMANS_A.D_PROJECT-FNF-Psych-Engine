@@ -39,7 +39,7 @@ import flixel.addons.ui.FlxUITabMenu;
 import flixel.util.FlxDestroyUtil;
 import flixel.addons.transition.FlxTransitionableState;
 
-import Section.SwagSection;
+import Song.SwagSection;
 import Song;
 import MusicBeatSubstate;
 

@@ -13,6 +13,8 @@ import Mods;
 import flxanimate.*;
 #end
 
+import ui.*;
+
 import SSHScript;
 
 #if HSCRIPT_ALLOWED

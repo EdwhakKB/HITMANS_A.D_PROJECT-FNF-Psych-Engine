@@ -868,14 +868,10 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 		if(PsychUIInputText.focusOn != null)
 		{
-			FlxG.sound.muteKeys = [];
-			FlxG.sound.volumeDownKeys = [];
-			FlxG.sound.volumeUpKeys = [];
+			ClientPrefs.toggleVolumeKeys(false);
 			return;
 		}
-		FlxG.sound.muteKeys = TitleState.muteKeys;
-		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
-		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
+		ClientPrefs.toggleVolumeKeys(true);
 
 		var shiftMult:Float = 1;
 		var ctrlMult:Float = 1;

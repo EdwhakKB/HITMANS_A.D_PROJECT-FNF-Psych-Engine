@@ -154,7 +154,7 @@ class NoteMovement
         return col;
     }
 
-    public static function getDefaultStrumPosFromEditor(game:editors.EditorPlayState)
+    public static function getDefaultStrumPosFromEditor(game:editors.content.EditorPlayState)
     {
         defaultStrumX = []; //reset
         defaultStrumY = []; 

@@ -443,10 +443,7 @@ class ResultScreen extends MusicBeatSubstate
 							if(!ClientPrefs.getGameplaySetting('practice', true) && !ClientPrefs.getGameplaySetting('botplay', true)  && !ClientPrefs.getGameplaySetting('modchart', false)) {
 								StoryMenuState.weekCompleted.set(WeekData.weeksList[PlayState.storyWeek], true);
 
-								if (PlayState.SONG.validScore)
-								{
-									Highscore.saveWeekScore(WeekData.getWeekFileName(), PlayState.campaignScore, PlayState.storyDifficulty);
-								}
+								Highscore.saveWeekScore(WeekData.getWeekFileName(), PlayState.campaignScore, PlayState.storyDifficulty);
 
 								FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
 								FlxG.save.flush();
@@ -467,7 +464,7 @@ class ResultScreen extends MusicBeatSubstate
 							PlayState.prevCamFollow = PlayState.instance.camFollow;
 							PlayState.prevCamFollowPos = PlayState.instance.camFollowPos;
 
-							PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
+							Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
 							FlxG.sound.music.stop();
 
 							PlayState.cancelMusicFadeTween();

@@ -204,9 +204,7 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 	override function update(elapsed:Float) {
 		if(PsychUIInputText.focusOn == null)
 		{
-			FlxG.sound.muteKeys = TitleState.muteKeys;
-			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
-			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
+			ClientPrefs.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.ESCAPE) {
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
@@ -238,9 +236,7 @@ class MenuCharacterEditorState extends MusicBeatState implements PsychUIEventHan
 		}
 		else
 		{
-			FlxG.sound.muteKeys = [];
-			FlxG.sound.volumeDownKeys = [];
-			FlxG.sound.volumeUpKeys = [];
+			ClientPrefs.toggleVolumeKeys(false);
 		}
 
 		var char:MenuCharacter = grpWeekCharacters.members[1];

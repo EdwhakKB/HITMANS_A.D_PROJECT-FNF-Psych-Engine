@@ -9,6 +9,7 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
 import flixel.system.FlxSound;
+import editors.content.EditorPlayState;
 
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -201,7 +202,7 @@ class EditorPauseSubState extends MusicBeatSubstate
 
 							var name:String = PlayState.SONG.song;
 							var poop = Highscore.formatSong(name, curSelected);
-							PlayState.SONG = Song.loadFromJson(poop, name);
+							Song.loadFromJson(poop, name);
 							PlayState.storyDifficulty = curSelected;
 							MusicBeatState.resetState();
 							FlxG.sound.music.volume = 0;

@@ -43,9 +43,6 @@ import StrumNote;
 using StringTools;
 class WindowsState extends MusicBeatState
 {
-	public static var muteKeys:Array<FlxKey> = [FlxKey.ZERO];
-	public static var volumeDownKeys:Array<FlxKey> = [FlxKey.NUMPADMINUS, FlxKey.MINUS];
-	public static var volumeUpKeys:Array<FlxKey> = [FlxKey.NUMPADPLUS, FlxKey.PLUS];
 	public static var testing:Bool = false; //just to test this shit ig
 
 	public static var initialized:Bool = false;
@@ -130,9 +127,7 @@ class WindowsState extends MusicBeatState
 		#end*/
 
 		FlxG.game.focusLostFramerate = 60;
-		FlxG.sound.muteKeys = muteKeys;
-		FlxG.sound.volumeDownKeys = volumeDownKeys;
-		FlxG.sound.volumeUpKeys = volumeUpKeys;
+		ClientPrefs.toggleVolumeKeys(true);
 		FlxG.keys.preventDefaultKeys = [TAB];
 
 		PlayerSettings.init();

@@ -26,7 +26,7 @@ import modcharting.ModchartUtil;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import editors.EditorLua;
-import editors.EditorPlayState;
+import editors.content.EditorPlayState;
 
 using StringTools;
 
@@ -286,7 +286,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
@@ -340,7 +340,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -356,7 +356,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -375,7 +375,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -387,7 +387,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -399,7 +399,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -410,7 +410,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -422,7 +422,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -434,7 +434,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -446,7 +446,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -466,7 +466,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
@@ -507,7 +507,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
@@ -561,7 +561,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
@@ -601,7 +601,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
@@ -642,7 +642,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }
@@ -659,7 +659,7 @@ class ModchartFuncs
         if (instance == null)
         {
             if (editor)
-                instance = editors.EditorPlayState.instance;
+                instance = EditorPlayState.instance;
             else
                 instance = PlayState.instance;
         }

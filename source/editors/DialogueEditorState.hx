@@ -385,9 +385,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 
 		if(PsychUIInputText.focusOn == null)
 		{
-			FlxG.sound.muteKeys = TitleState.muteKeys;
-			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
-			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
+			ClientPrefs.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.SPACE) {
 				reloadText(false);
 			}
@@ -443,9 +441,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 		}
 		else
 		{
-			FlxG.sound.muteKeys = [];
-			FlxG.sound.volumeDownKeys = [];
-			FlxG.sound.volumeUpKeys = [];
+			ClientPrefs.toggleVolumeKeys(false);
 		}
 		super.update(elapsed);
 	}

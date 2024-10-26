@@ -121,9 +121,7 @@ class TitleState extends MusicBeatState
 		FlxG.camera = camOther;
 
 		FlxG.game.focusLostFramerate = 60;
-		FlxG.sound.muteKeys = muteKeys;
-		FlxG.sound.volumeDownKeys = volumeDownKeys;
-		FlxG.sound.volumeUpKeys = volumeUpKeys;
+		ClientPrefs.toggleVolumeKeys(true);
 		FlxG.keys.preventDefaultKeys = [TAB];
 
 		FlxG.autoPause = false;

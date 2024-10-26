@@ -470,9 +470,7 @@ class DialogueCharacterEditorState extends MusicBeatState implements PsychUIEven
 
 		if(PsychUIInputText.focusOn == null)
 		{
-			FlxG.sound.muteKeys = TitleState.muteKeys;
-			FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
-			FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
+			ClientPrefs.toggleVolumeKeys(true);
 			if(FlxG.keys.justPressed.SPACE && UI_mainbox.selectedName == 'Character') {
 				character.playAnim(character.jsonFile.animations[curAnim].anim);
 				daText.resetDialogue();
@@ -629,9 +627,7 @@ class DialogueCharacterEditorState extends MusicBeatState implements PsychUIEven
 		}
 		else 
 		{
-			FlxG.sound.muteKeys = [];
-			FlxG.sound.volumeDownKeys = [];
-			FlxG.sound.volumeUpKeys = [];
+			ClientPrefs.toggleVolumeKeys(false);
 		}
 		super.update(elapsed);
 	}

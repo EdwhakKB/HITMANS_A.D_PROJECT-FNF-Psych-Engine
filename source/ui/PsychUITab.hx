@@ -8,6 +8,9 @@ import flixel.group.FlxSpriteGroup;
 import flixel.FlxCamera;
 import flixel.util.FlxColor;
 
+import flixel.util.FlxDestroyUtil;
+import flixel.math.FlxPoint;
+
 class PsychUITab extends FlxSprite
 {
 	public var name(default, set):String;
@@ -82,6 +85,7 @@ class PsychUITab extends FlxSprite
 	{
 		text.cameras = v;
 		menu.cameras = v;
+		trace('cameras: $cameras, is null? ${cameras == null}');
 		return super.set_cameras(v);
 	}
 
@@ -89,6 +93,7 @@ class PsychUITab extends FlxSprite
 	{
 		text.camera = v;
 		menu.camera = v;
+		trace('camera: $camera, is null? ${camera == null}');
 		return super.set_camera(v);
 	}
 }

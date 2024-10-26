@@ -202,7 +202,7 @@ class PsychUINumericStepper extends PsychUIInputText
 		if(broadcastStepperEvent) PsychUIEventHandler.event(CHANGE_EVENT, this);
 	}
 
-	override function setGraphicSize(width:Int = 0, height:Int = 0)
+	override function setGraphicSize(width:Float = 0, height:Float = 0)
 	{
 		super.setGraphicSize(width, height);
 		behindText.setGraphicSize(width - 32, height - 2);
