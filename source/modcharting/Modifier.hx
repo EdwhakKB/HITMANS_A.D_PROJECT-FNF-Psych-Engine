@@ -309,13 +309,13 @@ class ModifierMath
     }
 
     //Invert math
-    public static function Invert(noteData:NotePositionData, lane:Int)
+    public static function Invert(lane:Int)
     {
         return NoteMovement.arrowSizes[lane] * (lane % 2 == 0 ? 1 : -1);
     }
 
     //Flip math
-    public static function Flip(noteData:NotePositionData, lane:Int)
+    public static function Flip(lane:Int)
     {
         var nd = lane % NoteMovement.keyCount;
         var newPos = FlxMath.remapToRange(nd, 0, NoteMovement.keyCount, NoteMovement.keyCount, -NoteMovement.keyCount);
@@ -329,11 +329,42 @@ class ModifierMath
     }
 
     //InvertSine math
-    public static function InvertSine(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int, currentValue:Float) //first mod mad that uses currentVal damn...
+    public static function InvertSine(lane:Int, curPos:Float, pf:Int, currentValue:Float) //first mod mad that uses currentVal damn...
     {
         return FlxMath.fastSin(0 + (curPos*0.004))*(NoteMovement.arrowSizes[lane] * (lane % 2 == 0 ? 1 : -1) * currentValue * 0.5);
     }
-    
+
+    //Wave math
+    public static function Wave(lane:Int, speed:Float)
+    {
+        return FlxMath.fastSin(((Conductor.songPosition) * (speed)*0.0008)+(lane/4))*0.2; //the 260 used in wave its just for it to look big, idk if you really need it in custom mods tho.
+    }
+    //TanWave math
+    public static function TanWave(lane:Int, speed:Float)
+    {
+        return Math.tan(((Conductor.songPosition) * (speed)*0.0008)+(lane/4))*0.2; //the 260 used in wave its just for it to look big, idk if you really need it in custom mods tho.
+    }
+
+    //Ease math
+    public static function Ease(lane:Int, speed:Float)
+    {
+        return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) 
+        *(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
+    }
+
+    //Tornado math
+    public static function Tornado(lane:Int, curPos:Float, speed:Float)
+    {
+
+        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
+        var playerColumn = lane % NoteMovement.keyCount;
+        var columnPhaseShift = playerColumn * Math.PI / 3;
+        var phaseShift = (curPos / 135 ) * speed * 0.2;
+        var returnReceptorToZeroOffsetX = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
+        var offsetX = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetX;
+        
+        return offsetX;
+    }
     //TanTornado math
     public static function TanTornado(lane:Int, curPos:Float, speed:Float)
     {
@@ -346,6 +377,39 @@ class ModifierMath
         return offsetX;
     }
 
+    //ZigZag math
+    public static function ZigZag(lane:Int, curPos:Float, mult:Float)
+    {
+        var mult:Float = NoteMovement.arrowSizes[lane] * mult;
+        var mm:Float = mult * 2;
+        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
+        var funny:Float = (ppp + mult) % mm;
+        var result:Float = funny - mult;
+
+        if (ppp % mm * 2 >= mm) result *= -1;
+        result -= mult/2;
+
+        return result;
+    }
+
+    //Sawtooth math
+    public static function Sawtooth(lane:Int, curPos:Float, multVal:Float)
+    {
+        var mult:Float = NoteMovement.arrowSizes[lane] * multVal;
+        return ((curPos*0.45) % mult/2);
+    }
+
+    //Square math
+    public static function squareMath(lane:Int, curPos:Float, mult:Float, timeOffset:Float, xOffset:Float):Float
+    {
+        var mult:Float = mult / (NoteMovement.arrowSizes[lane]);
+        var timeOffset:Float = timeOffset;
+        var xOffset:Float = xOffset;
+        var xVal:Float = FlxMath.fastSin(((curPos*0.45) + timeOffset) * Math.PI * mult);
+        xVal = Math.floor(xVal) + 0.5 + xOffset;
+
+        return xVal * NoteMovement.arrowSizes[lane];
+    }
     //Cosecant math
     public static function Cosecant(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float)
     {
