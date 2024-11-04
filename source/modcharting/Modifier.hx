@@ -172,42 +172,95 @@ class Modifier
 
 class ModifierMath
 {
-    //drunk
-    public static function drunkMath(lane:Int, curPos:Float, speed:Float):Float{
+    //Dunk math
+    public static function Drunk(lane:Int, curPos:Float, speed:Float):Float{
         return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
         (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
     };
-    //tanDrunk
-    public static function tanDrunkMath(lane:Int, curPos:Float, speed:Float):Float{
+    //TanDrunk math
+    public static function TanDrunk(lane:Int, curPos:Float, speed:Float):Float{
         return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
         (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
     };
 
 
-    //tipsy
-    public static function tipsyMath(lane:Int, speed:Float):Float{
+    //Tipsy math
+    public static function Tipsy(lane:Int, speed:Float):Float{
         return (FlxMath.fastCos( (Conductor.songPosition*0.001 *(1.2) + 
         (lane%NoteMovement.keyCount)*(2.0)) * (5) * speed*0.2 ) * Note.swagWidth*0.4);
     }
-    //tanTipsy
-    public static function tanTipsyMath(lane:Int, speed:Float):Float{
+    //TanTipsy math
+    public static function TanTipsy(lane:Int, speed:Float):Float{
         return (FlxMath.fastCos( (Conductor.songPosition*0.001 *(1.2) + 
         (lane%NoteMovement.keyCount)*(2.0)) * (5) * speed*0.2 ) * Note.swagWidth*0.4);
     };
 
+    //Reverse Math
+    public static function Reverse(noteData:NotePositionData, lane:Int) //no clue how would this be useful but ok??
+    {  
+        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        var differenceBetween:Float = noteData.y - screenCenter;
+        return differenceBetween * -1;
+    }
 
-    //bumpy
-    public static function bumpyMath(curPos:Float, speed:Float):Float{
+    /*public static function Rotate(noteData:NotePositionData, lane:Int) --until i figure it out
+    {
+        var xPos = NoteMovement.defaultStrumX[lane];
+        var yPos = NoteMovement.defaultStrumY[lane];
+        var rotX = ModchartUtil.getCartesianCoords3D(subValues.get('x').value, 90, xPos-subValues.get('rotatePointX').value);
+        noteData.x += rotX.x+subValues.get('rotatePointX').value-xPos;
+        var rotY = ModchartUtil.getCartesianCoords3D(90, subValues.get('y').value, yPos-subValues.get('rotatePointY').value);
+        noteData.y += rotY.y+subValues.get('rotatePointY').value-yPos;
+        noteData.z += rotX.z + rotY.z;
+
+        var notePos = ModchartUtil.getCartesianCoords3D(rotX.x, rotY.x, rotX.y);
+        return 
+    }*/
+
+    /*public static function StrumLineRotate(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        var laneShit = lane%NoteMovement.keyCount;
+        var offsetThing = 0.5;
+        var halfKeyCount = NoteMovement.keyCount/2;
+        if (lane < halfKeyCount)
+        {
+            offsetThing = -0.5;
+            laneShit = lane+1;
+        }
+        var distFromCenter = ((laneShit)-halfKeyCount)+offsetThing; //theres probably an easier way of doing this
+        //basically
+        //0 = 1.5
+        //1 = 0.5
+        //2 = -0.5
+        //3 = -1.5
+        //so if you then multiply by the arrow size, all notes should be in the same place
+        noteData.x += -distFromCenter*NoteMovement.arrowSize;
+
+        var upscroll = true;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                upscroll = false;
+
+        //var rot = ModchartUtil.getCartesianCoords3D(subValues.get('x').value, subValues.get('y').value, distFromCenter*NoteMovement.arrowSize);
+        var q = SimpleQuaternion.fromEuler(subValues.get('z').value, subValues.get('x').value, (upscroll ? -subValues.get('y').value : subValues.get('y').value)); //i think this is the right order???
+        //q = SimpleQuaternion.normalize(q); //dont think its too nessessary???
+        noteData.x += q.x * distFromCenter*NoteMovement.arrowSize;
+        noteData.y += q.y * distFromCenter*NoteMovement.arrowSize;
+        noteData.z += q.z * distFromCenter*NoteMovement.arrowSize;
+    }*/
+
+    
+    //Bumpy math
+    public static function Bumpy(curPos:Float, speed:Float):Float{
         return 40 * FlxMath.fastSin(curPos*0.01*speed);
     }
-    //tanBumpy
-    public static function tanBumpyMath(curPos:Float, speed:Float):Float{
+    //TanBumpy math
+    public static function TanBumpy(curPos:Float, speed:Float):Float{
         return 40 * FlxMath.fastSin(curPos*0.01*speed);
     };
 
-
-    //beat
-    public static function beatMath(curPos:Float, speed:Float, mult:Float):Float
+    //Beat math
+    public static function Beat(curPos:Float, speed:Float, mult:Float):Float
     {
         var fAccelTime = 0.2;
         var fTotalTime = 0.5;
@@ -255,14 +308,35 @@ class ModifierMath
         return fShift;
     }
 
+    //Invert math
+    public static function Invert(noteData:NotePositionData, lane:Int)
+    {
+        return NoteMovement.arrowSizes[lane] * (lane % 2 == 0 ? 1 : -1);
+    }
 
-    //bounce
-    public static function bounceMath(lane:Int, curPos:Float, speed:Float):Float{
+    //Flip math
+    public static function Flip(noteData:NotePositionData, lane:Int)
+    {
+        var nd = lane % NoteMovement.keyCount;
+        var newPos = FlxMath.remapToRange(nd, 0, NoteMovement.keyCount, NoteMovement.keyCount, -NoteMovement.keyCount);
+       return newPos;
+    }
+
+    //Bounce math
+    public static function Bounce(lane:Int, curPos:Float, speed:Float):Float
+    {
         return NoteMovement.arrowSizes[lane] * Math.abs(FlxMath.fastSin(curPos*0.005*speed));
     }
 
-    // TanTornadoModifier
-    public static function tanTornadoMath(lane:Int, curPos:Float, speed:Float) {
+    //InvertSine math
+    public static function InvertSine(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int, currentValue:Float) //first mod mad that uses currentVal damn...
+    {
+        return FlxMath.fastSin(0 + (curPos*0.004))*(NoteMovement.arrowSizes[lane] * (lane % 2 == 0 ? 1 : -1) * currentValue * 0.5);
+    }
+    
+    //TanTornado math
+    public static function TanTornado(lane:Int, curPos:Float, speed:Float)
+    {
         var playerColumn = lane % NoteMovement.keyCount;
         var columnPhaseShift = playerColumn * Math.PI / 3;
         var phaseShift = (curPos / 135 ) * speed * 0.2;
@@ -272,8 +346,9 @@ class ModifierMath
         return offsetX;
     }
 
-    // CosecantXModifier
-    public static function CosecantXMath(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float) {
+    //Cosecant math
+    public static function Cosecant(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float)
+    {
         return (1 / Math.sin((((Conductor.songPosition*(0.001*period)) + ((lane%NoteMovement.keyCount)*0.2) + 
         (curPos*(0.225*offset))*((spacing*10)/FlxG.height)) * 
         (speed*0.2)) * Note.swagWidth*(0.5*size)));
@@ -4901,7 +4976,8 @@ class ArrowPathAlphaModifier extends Modifier //used but unstable (as old way)
 // }
 
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
-class ArrowPath extends Modifier {
+class ArrowPath extends Modifier
+{
     public var _path:List<TimeVector> = null;
     public var _pathDistance:Float = 0;
 

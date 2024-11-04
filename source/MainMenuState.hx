@@ -319,7 +319,7 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
-			if (controls.UI_UP_P && !inCMD)
+			/*if (controls.UI_UP_P && !inCMD)
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(-1);
@@ -329,7 +329,7 @@ class MainMenuState extends MusicBeatState
 			{
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(1);
-			}
+			}*/
 
 			if (controls.BACK && !inCMD)
 			{

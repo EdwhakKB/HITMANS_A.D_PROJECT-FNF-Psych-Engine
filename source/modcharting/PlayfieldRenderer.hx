@@ -339,16 +339,22 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 					if (noteDist > 0)
 					{
 						strumTimeOffset -= Std.int(Conductor.stepCrochet);
-						strumTimeOffset += Std.int(Conductor.stepCrochet / getCorrectScrollSpeed());
+						//strumTimeOffset += Std.int(Conductor.stepCrochet / getCorrectScrollSpeed());
+						//strumTimeOffset -= Std.int(Conductor.stepCrochet / getCorrectScrollSpeed());
 					}
 					else
 					{
-						strumTimeOffset += Std.int(Conductor.stepCrochet / getCorrectScrollSpeed());
+						//strumTimeOffset += Std.int(Conductor.stepCrochet / getCorrectScrollSpeed());
+						//strumTimeOffset -= Std.int(Conductor.stepCrochet / getCorrectScrollSpeed());
 					}
 				case false:
 					if (noteDist > 0)
 					{
 						strumTimeOffset -= Std.int(Conductor.stepCrochet);
+					}
+					else
+					{
+						strumTimeOffset -= Std.int(Conductor.stepCrochet / getCorrectScrollSpeed());
 					}
 			}
 			// FINALLY OMG I HATE THIS FUCKING MATH LMAO

@@ -574,7 +574,7 @@ class OptionsMenu extends MusicBeatSubstate
 			{
 				if (right)
 				{
-					FlxG.sound.play(Paths.sound('scrollMenu'));
+					FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
 					selectedCatIndex++;
 
 					if (selectedCatIndex > options.length - 2)
@@ -586,7 +586,7 @@ class OptionsMenu extends MusicBeatSubstate
 				}
 				else if (left)
 				{
-					FlxG.sound.play(Paths.sound('scrollMenu'));
+					FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
 					selectedCatIndex--;
 
 					if (selectedCatIndex > options.length - 2)
@@ -600,7 +600,7 @@ class OptionsMenu extends MusicBeatSubstate
 
 			if (accept)
 			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+				FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
 				selectedOptionIndex = 0;
 				isInCat = false;
 				selectOption(selectedCat.options[0]);
@@ -714,7 +714,7 @@ class OptionsMenu extends MusicBeatSubstate
 			{
 				if (selectedOption.acceptType)
 					selectedOption.waitingType = false;
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+				FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
 				selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
 				selectedOptionIndex++;
 
@@ -743,7 +743,7 @@ class OptionsMenu extends MusicBeatSubstate
 			{
 				if (selectedOption.acceptType)
 					selectedOption.waitingType = false;
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+				FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
 				selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
 				selectedOptionIndex--;
 
@@ -793,7 +793,7 @@ class OptionsMenu extends MusicBeatSubstate
 
 			if (escape)
 			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+				FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
 
 				//ClientPrefs.loadKeyBinds();
 
