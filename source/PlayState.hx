@@ -2386,7 +2386,6 @@ class PlayState extends MusicBeatState
 				}
 		}
 
-		var oldNote:Note = null;
 		var sectionsData:Array<SwagSection> = PlayState.SONG.notes;
 		var ghostNotesCaught:Int = 0;
 		var daBpm:Float = Conductor.bpm;
@@ -2420,6 +2419,12 @@ class PlayState extends MusicBeatState
 						}
 					}
 				}
+
+				var oldNote:Note;
+				if (unspawnNotes.length > 0)
+					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
+				else
+					oldNote = null;
 
 				var swagNote:Note = new Note(spawnTime, noteColumn, oldNote, this);
 				var isAlt: Bool = section.altAnim && !gottaHitNote;
@@ -2492,9 +2497,9 @@ class PlayState extends MusicBeatState
 					}
 				}
 				if(!noteTypeMap.exists(swagNote.noteType))
+				{
 					noteTypeMap.set(swagNote.noteType, true);
-
-				oldNote = swagNote;
+				}
 			}
 		}
 
