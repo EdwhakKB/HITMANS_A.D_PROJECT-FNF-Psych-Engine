@@ -173,24 +173,28 @@ class Modifier
 class ModifierMath
 {
     //Dunk math
-    public static function Drunk(lane:Int, curPos:Float, speed:Float):Float{
+    public static function Drunk(lane:Int, curPos:Float, speed:Float):Float
+    {
         return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
         (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
     };
     //TanDrunk math
-    public static function TanDrunk(lane:Int, curPos:Float, speed:Float):Float{
+    public static function TanDrunk(lane:Int, curPos:Float, speed:Float):Float
+    {
         return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
         (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
     };
 
 
     //Tipsy math
-    public static function Tipsy(lane:Int, speed:Float):Float{
+    public static function Tipsy(lane:Int, speed:Float):Float
+    {
         return (FlxMath.fastCos( (Conductor.songPosition*0.001 *(1.2) + 
         (lane%NoteMovement.keyCount)*(2.0)) * (5) * speed*0.2 ) * Note.swagWidth*0.4);
     }
     //TanTipsy math
-    public static function TanTipsy(lane:Int, speed:Float):Float{
+    public static function TanTipsy(lane:Int, speed:Float):Float
+    {
         return (FlxMath.fastCos( (Conductor.songPosition*0.001 *(1.2) + 
         (lane%NoteMovement.keyCount)*(2.0)) * (5) * speed*0.2 ) * Note.swagWidth*0.4);
     };
@@ -251,11 +255,13 @@ class ModifierMath
 
     
     //Bumpy math
-    public static function Bumpy(curPos:Float, speed:Float):Float{
+    public static function Bumpy(curPos:Float, speed:Float):Float
+    {
         return 40 * FlxMath.fastSin(curPos*0.01*speed);
     }
     //TanBumpy math
-    public static function TanBumpy(curPos:Float, speed:Float):Float{
+    public static function TanBumpy(curPos:Float, speed:Float):Float
+    {
         return 40 * FlxMath.fastSin(curPos*0.01*speed);
     };
 
@@ -410,6 +416,7 @@ class ModifierMath
 
         return xVal * NoteMovement.arrowSizes[lane];
     }
+    
     //Cosecant math
     public static function Cosecant(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float)
     {
@@ -428,8 +435,7 @@ class DrunkXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.x += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -444,8 +450,7 @@ class DrunkYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.y += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.y += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -460,8 +465,7 @@ class DrunkZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.z += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.z += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -476,8 +480,7 @@ class DrunkAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angle += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.angle += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -492,11 +495,9 @@ class DrunkScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+((currentValue*0.01) * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5)));
+        noteData.scaleX *= (1+((currentValue*0.01) * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value)));
 
-        noteData.scaleY *= (1+((currentValue*0.01) * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5)));
+        noteData.scaleY *= (1+((currentValue*0.01) * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value)));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -511,8 +512,7 @@ class DrunkScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+((currentValue*0.01) * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5)));
+        noteData.scaleX *= (1+((currentValue*0.01) * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value)));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -527,8 +527,7 @@ class DrunkScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleY *= (1+((currentValue*0.01) * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5)));
+        noteData.scaleY *= (1+((currentValue*0.01) * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value)));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -543,11 +542,9 @@ class DrunkSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.skewX += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
 
-        noteData.skewY += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.skewY += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -562,8 +559,7 @@ class DrunkSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.skewX += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -578,8 +574,7 @@ class DrunkSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewY += currentValue * (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (subValues.get('speed').value*0.2)) * Note.swagWidth*0.5);
+        noteData.skewY += currentValue * ModifierMath.Drunk(lane,curPos,subValues.get('speed').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
