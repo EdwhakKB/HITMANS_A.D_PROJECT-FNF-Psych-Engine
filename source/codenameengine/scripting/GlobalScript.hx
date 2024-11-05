@@ -37,7 +37,7 @@ class GlobalScript {
 		FlxG.signals.postUpdate.add(function() {
 			call("postUpdate", [FlxG.elapsed]);
 			if (FlxG.keys.justPressed.F12) {
-				if (scripts.scripts.length > 0) {
+				if (scripts != null && scripts.scripts.length > 0) {
 					trace('Reloading global script...');
 					scripts.reload();
 					trace('Global script successfully reloaded.');

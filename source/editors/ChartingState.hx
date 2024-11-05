@@ -645,6 +645,16 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		StageData.loadDirectory(PlayState.SONG);
 
 		// DATA TAB
+		gameOverCharDropDown.selectedLabel = Reflect.hasField(PlayState.SONG, 'gameOverChar') ? Reflect.field(PlayState.SONG, 'gameOverChar') : '';
+		rightScrollCheckBox.checked = PlayState.SONG.rightScroll;
+		middleScrollCheckBox.checked = PlayState.SONG.middleScroll;
+		notITGModchartCheckBox.checked = PlayState.SONG.notITG;
+		gameOverSndInputText.text = Reflect.hasField(PlayState.SONG, 'gameOverSound') ? Reflect.field(PlayState.SONG, 'gameOverSound') : '';
+		gameOverLoopInputText.text = Reflect.hasField(PlayState.SONG, 'gameOverLoop') ? Reflect.field(PlayState.SONG, 'gameOverLoop') : '';
+		gameOverRetryInputText.text = Reflect.hasField(PlayState.SONG, 'gameOverEnd') ? Reflect.field(PlayState.SONG, 'gameOverEnd') : '';
+		noteTextureInputText.text = PlayState.SONG.arrowSkin;
+		noRGBCheckBox.checked = PlayState.SONG.disableNoteRGB;
+
 	}
 	
 	var noteSelectionSine:Float = 0;
@@ -2367,6 +2377,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 	var gameOverLoopInputText:PsychUIInputText;
 	var gameOverRetryInputText:PsychUIInputText;
 	var noRGBCheckBox:PsychUICheckBox;
+	var rightScrollCheckBox:PsychUICheckBox;
+	var middleScrollCheckBox:PsychUICheckBox;
+	var notITGModchartCheckBox:PsychUICheckBox;
 	var noteTextureInputText:PsychUIInputText;
 	function addDataTab()
 	{
@@ -2404,6 +2417,18 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 		objY += 35;
 		noRGBCheckBox = new PsychUICheckBox(objX, objY, 'Disable Note RGB', 100, updateNotesRGB);
+
+		rightScrollCheckBox = new PsychUICheckBox(objX + 140, objY - 20, 'Force Right Scroll', 140, function(){
+			PlayState.SONG.rightScroll = rightScrollCheckBox.checked;
+		});
+
+		middleScrollCheckBox = new PsychUICheckBox(rightScrollCheckBox.x, rightScrollCheckBox.y + 20, 'Force Middle Scroll', 140, function(){
+			PlayState.SONG.middleScroll = middleScrollCheckBox.checked;
+		});
+
+		notITGModchartCheckBox = new PsychUICheckBox(middleScrollCheckBox.x, middleScrollCheckBox.y + 20, 'Is NotITG Modchart?', 140, function(){
+			PlayState.SONG.notITG = notITGModchartCheckBox.checked;
+		});
 		
 		objY += 40;
 		noteTextureInputText = new PsychUIInputText(objX, objY, 120, '');
@@ -2447,6 +2472,9 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		tab_group.add(gameOverLoopInputText);
 		tab_group.add(gameOverRetryInputText);
 		tab_group.add(noRGBCheckBox);
+		tab_group.add(rightScrollCheckBox);
+		tab_group.add(middleScrollCheckBox);
+		tab_group.add(notITGModchartCheckBox);
 
 		tab_group.add(new FlxText(noteTextureInputText.x, noteTextureInputText.y - 15, 100, 'Note Texture:'));
 		tab_group.add(noteTextureInputText);
