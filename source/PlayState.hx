@@ -2387,7 +2387,6 @@ class PlayState extends MusicBeatState
 		}
 
 		var sectionsData:Array<SwagSection> = PlayState.SONG.notes;
-		var ghostNotesCaught:Int = 0;
 		var daBpm:Float = Conductor.bpm;
 	
 		for (section in sectionsData)
@@ -2395,9 +2394,8 @@ class PlayState extends MusicBeatState
 			if (section.changeBPM != null && section.changeBPM && section.bpm != null && daBpm != section.bpm)
 				daBpm = section.bpm;
 
-			for (i in 0...section.sectionNotes.length)
+			for (songNotes in section.sectionNotes)
 			{
-				var songNotes: Array<Dynamic> = section.sectionNotes[i];
 				var spawnTime: Float = songNotes[0];
 				var noteColumn: Int = Std.int(songNotes[1] % 4);
 				var holdLength: Float = songNotes[2];
@@ -2406,19 +2404,6 @@ class PlayState extends MusicBeatState
 					holdLength = 0.0;
 
 				var gottaHitNote:Bool = (songNotes[1] < 4);
-
-				if (i != 0) {
-					// CLEAR ANY POSSIBLE GHOST NOTES
-					for (evilNote in unspawnNotes) {
-						var matches: Bool = (noteColumn == evilNote.noteData && gottaHitNote == evilNote.mustPress && evilNote.noteType == noteType);
-						if (matches && Math.abs(spawnTime - evilNote.strumTime) == 0.0) {
-							evilNote.destroy();
-							unspawnNotes.remove(evilNote);
-							ghostNotesCaught++;
-							//continue;
-						}
-					}
-				}
 
 				var oldNote:Note;
 				if (unspawnNotes.length > 0)
@@ -2496,10 +2481,7 @@ class PlayState extends MusicBeatState
 						swagNote.x += FlxG.width / 2 + 25;
 					}
 				}
-				if(!noteTypeMap.exists(swagNote.noteType))
-				{
-					noteTypeMap.set(swagNote.noteType, true);
-				}
+				if(!noteTypeMap.exists(swagNote.noteType)) noteTypeMap.set(swagNote.noteType, true);
 			}
 		}
 
