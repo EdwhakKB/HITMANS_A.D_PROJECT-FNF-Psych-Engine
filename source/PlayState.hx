@@ -2397,7 +2397,7 @@ class PlayState extends MusicBeatState
 
 			for (i in 0...section.sectionNotes.length)
 			{
-				final songNotes: Array<Dynamic> = section.sectionNotes[i];
+				var songNotes: Array<Dynamic> = section.sectionNotes[i];
 				var spawnTime: Float = songNotes[0];
 				var noteColumn: Int = Std.int(songNotes[1] % 4);
 				var holdLength: Float = songNotes[2];
