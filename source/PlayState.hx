@@ -2386,7 +2386,9 @@ class PlayState extends MusicBeatState
 				}
 		}
 
+		var oldNote:Note = null;
 		var sectionsData:Array<SwagSection> = PlayState.SONG.notes;
+		var ghostNotesCaught:Int = 0;
 		var daBpm:Float = Conductor.bpm;
 	
 		for (section in sectionsData)
@@ -2394,8 +2396,9 @@ class PlayState extends MusicBeatState
 			if (section.changeBPM != null && section.changeBPM && section.bpm != null && daBpm != section.bpm)
 				daBpm = section.bpm;
 
-			for (songNotes in section.sectionNotes)
+			for (i in 0...section.sectionNotes.length)
 			{
+				final songNotes: Array<Dynamic> = section.sectionNotes[i];
 				var spawnTime: Float = songNotes[0];
 				var noteColumn: Int = Std.int(songNotes[1] % 4);
 				var holdLength: Float = songNotes[2];
@@ -2405,11 +2408,18 @@ class PlayState extends MusicBeatState
 
 				var gottaHitNote:Bool = (songNotes[1] < 4);
 
-				var oldNote:Note;
-				if (unspawnNotes.length > 0)
-					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-				else
-					oldNote = null;
+				if (i != 0) {
+					// CLEAR ANY POSSIBLE GHOST NOTES
+					for (evilNote in unspawnNotes) {
+						var matches: Bool = (noteColumn == evilNote.noteData && gottaHitNote == evilNote.mustPress && evilNote.noteType == noteType);
+						if (matches && Math.abs(spawnTime - evilNote.strumTime) == 0.0) {
+							evilNote.destroy();
+							unspawnNotes.remove(evilNote);
+							ghostNotesCaught++;
+							//continue;
+						}
+					}
+				}
 
 				var swagNote:Note = new Note(spawnTime, noteColumn, oldNote, this);
 				var isAlt: Bool = section.altAnim && !gottaHitNote;
@@ -2417,7 +2427,7 @@ class PlayState extends MusicBeatState
 				swagNote.animSuffix = isAlt ? "-alt" : "";
 				swagNote.mustPress = gottaHitNote;
 				swagNote.sustainLength = holdLength;
-				swagNote.noteType = noteType;
+				swagNote.setNoteType(noteType);
 	
 				swagNote.scrollFactor.set();
 				unspawnNotes.push(swagNote);
@@ -2434,7 +2444,7 @@ class PlayState extends MusicBeatState
 						sustainNote.animSuffix = swagNote.animSuffix;
 						sustainNote.mustPress = swagNote.mustPress;
 						sustainNote.gfNote = swagNote.gfNote;
-						sustainNote.noteType = swagNote.noteType;
+						sustainNote.setNoteType(swagNote.noteType);
 						sustainNote.scrollFactor.set();
 						sustainNote.parent = swagNote;
 						unspawnNotes.push(sustainNote);
@@ -2481,7 +2491,10 @@ class PlayState extends MusicBeatState
 						swagNote.x += FlxG.width / 2 + 25;
 					}
 				}
-				if(!noteTypeMap.exists(swagNote.noteType)) noteTypeMap.set(swagNote.noteType, true);
+				if(!noteTypeMap.exists(swagNote.noteType))
+					noteTypeMap.set(swagNote.noteType, true);
+
+				oldNote = swagNote;
 			}
 		}
 

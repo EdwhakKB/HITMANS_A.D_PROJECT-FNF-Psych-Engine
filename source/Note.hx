@@ -56,6 +56,14 @@ class Note extends FlxSkewedSprite
 		'Alt Animation',
 		'Hey!',
 		'Hurt Note',
+		'HurtAgressive',
+		'Mimic Note',
+		'Invisible Hurt Note',
+		'Instakill Note',
+		'Mine Note',
+		'HD Note',
+		'Love Note',
+		'Fire Note',
 		'GF Sing',
 		'No Animation'
 	];
@@ -523,6 +531,11 @@ class Note extends FlxSkewedSprite
 			earlyHitMult = 1;
 		}
 		x += offsetX;
+	}
+
+	public function setNoteType(noteType:String)
+	{
+		this.noteType = noteType;
 	}
 	
 	function round(num: Float, numDecimalPlaces: Int = 0): Float {
