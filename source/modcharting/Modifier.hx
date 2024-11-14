@@ -742,9 +742,10 @@ class ReverseModifier extends Modifier
 {
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
-        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
-        var differenceBetween:Float = noteData.y - screenCenter;
-        noteData.y += (currentValue*2) * differenceBetween * -1;
+        noteData.y += (currentValue*2) * ModifierMath.Reverse(noteData, lane);
+        //var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
+        //var differenceBetween:Float = noteData.y - screenCenter;
+        //noteData.y += (currentValue*2) * differenceBetween * -1;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
@@ -778,15 +779,13 @@ class SplitModifier extends Modifier
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
-        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
-        var differenceBetween:Float = noteData.y - screenCenter;
         var laneThing = lane % NoteMovement.keyCount;
 
         if (laneThing > 1)
-            noteData.y += (subValues.get('VarA').value*2) * differenceBetween * -1;
+            noteData.y += (subValues.get('VarA').value*2) * ModifierMath.Reverse(noteData, lane);
 
         if (laneThing < 2)
-            noteData.y += (subValues.get('VarB').value*2) * differenceBetween * -1;
+            noteData.y += (subValues.get('VarB').value*2) * ModifierMath.Reverse(noteData, lane);
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
@@ -841,15 +840,13 @@ class CrossModifier extends Modifier
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
-        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
-        var differenceBetween:Float = noteData.y - screenCenter;
         var laneThing = lane % NoteMovement.keyCount;
 
         if (laneThing > 0 && laneThing < 3)
-            noteData.y += (subValues.get('VarA').value*2) * differenceBetween * -1;
+            noteData.y += (subValues.get('VarA').value*2) * ModifierMath.Reverse(noteData, lane);
 
         if (laneThing == 0 || laneThing == 3)
-            noteData.y += (subValues.get('VarB').value*2) * differenceBetween * -1;
+            noteData.y += (subValues.get('VarB').value*2) * ModifierMath.Reverse(noteData, lane);
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
@@ -904,15 +901,11 @@ class AlternateModifier extends Modifier
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
-        var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
-        var differenceBetween:Float = noteData.y - screenCenter;
-        var laneThing = lane % NoteMovement.keyCount;
-
         if (lane%2 == 1)
-            noteData.y += (subValues.get('VarA').value*2) * differenceBetween * -1;
+            noteData.y += (subValues.get('VarA').value*2) * ModifierMath.Reverse(noteData, lane);
 
         if (lane%2 == 0)
-            noteData.y += (subValues.get('VarB').value*2) * differenceBetween * -1;
+            noteData.y += (subValues.get('VarB').value*2) * ModifierMath.Reverse(noteData, lane);
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
