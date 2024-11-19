@@ -179,11 +179,12 @@ class ModifierMath
         (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
     };
     //TanDrunk math
-    public static function TanDrunk(lane:Int, curPos:Float, speed:Float):Float
+    public static function TanDrunk(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float)
     {
-        return (Math.tan( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
-    };
+        return (Math.tan((((Conductor.songPosition*(0.001*period)) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*(0.225*offset))*((spacing*10)/FlxG.height)) * 
+        (speed*0.2)) * Note.swagWidth*(0.5*size)));
+    }
 
 
     //Tipsy math
@@ -384,9 +385,9 @@ class ModifierMath
     }
 
     //ZigZag math
-    public static function ZigZag(lane:Int, curPos:Float, mult:Float)
+    public static function ZigZag(lane:Int, curPos:Float, multVal:Float)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * mult;
+        var mult:Float = NoteMovement.arrowSizes[lane] * multVal;
         var mm:Float = mult * 2;
         var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
         var funny:Float = (ppp + mult) % mm;
@@ -406,7 +407,7 @@ class ModifierMath
     }
 
     //Square math
-    public static function squareMath(lane:Int, curPos:Float, mult:Float, timeOffset:Float, xOffset:Float):Float
+    public static function SquareMath(lane:Int, curPos:Float, mult:Float, timeOffset:Float, xOffset:Float):Float
     {
         var mult:Float = mult / (NoteMovement.arrowSizes[lane]);
         var timeOffset:Float = timeOffset;
@@ -3009,9 +3010,10 @@ class TanDrunkXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.x += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3030,9 +3032,10 @@ class TanDrunkYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.y += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.y += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3051,9 +3054,10 @@ class TanDrunkZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.z += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.z += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3072,9 +3076,10 @@ class TanDrunkAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angle += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.angle += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3160,13 +3165,15 @@ class TanDrunkSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewX += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
 
-        noteData.skewY += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewY += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3185,9 +3192,10 @@ class TanDrunkSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewX += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3206,9 +3214,10 @@ class TanDrunkSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewY += currentValue * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewY += currentValue * ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3409,15 +3418,12 @@ class CosecantXModifier extends Modifier
         subValues.set('speed', new ModifierSubValue(1.0));
         subValues.set('size', new ModifierSubValue(1.0));
     }
-    public static function cosecant(angle:Null<Float>):Float
-    {
-        return 1 / Math.sin(angle);
-    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += currentValue * (cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.x += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3436,9 +3442,10 @@ class CosecantYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.y += currentValue * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.y += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3457,9 +3464,10 @@ class CosecantZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.z += currentValue * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.z += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3478,9 +3486,10 @@ class CosecantAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angle += currentValue * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.angle += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3499,13 +3508,15 @@ class CosecantScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+((currentValue*0.01) * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleX *= (1+((currentValue*0.01) * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value)));
 
-        noteData.scaleY *= (1+((currentValue*0.01) * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleY *= (1+((currentValue*0.01) * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value)));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3524,9 +3535,10 @@ class CosecantScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+((currentValue*0.01) * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleX *= (1+((currentValue*0.01) * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value)));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3545,9 +3557,10 @@ class CosecantScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleY *= (1+((currentValue*0.01) * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleY *= (1+((currentValue*0.01) * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value)));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3566,13 +3579,15 @@ class CosecantSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += currentValue * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewX += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
 
-        noteData.skewY += currentValue * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewY += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3591,9 +3606,10 @@ class CosecantSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += currentValue * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewX += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3612,9 +3628,10 @@ class CosecantSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewY += currentValue * (CosecantXModifier.cosecant( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value));
+        noteData.skewY += currentValue * ModifierMath.Cosecant(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value);
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3663,16 +3680,8 @@ class TornadoModifier extends Modifier
         subValues.set('speed', new ModifierSubValue(1.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetX = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetX = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetX;
-        
-        noteData.x += offsetX * currentValue;
+    {      
+        noteData.x += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TornadoYModifier extends Modifier
@@ -3682,16 +3691,8 @@ class TornadoYModifier extends Modifier
         subValues.set('speed', new ModifierSubValue(1.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetY = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetY = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetY;
-        
-        noteData.y += offsetY * currentValue;
+    {       
+        noteData.y += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TornadoZModifier extends Modifier
@@ -3701,16 +3702,8 @@ class TornadoZModifier extends Modifier
         subValues.set('speed', new ModifierSubValue(1.0));
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetZ = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-        
-        noteData.z += offsetZ * currentValue;
+    {       
+        noteData.z += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TornadoAngleModifier extends Modifier
@@ -3721,15 +3714,7 @@ class TornadoAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetAngle = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.angle += offsetAngle * currentValue;
+        noteData.angle += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TornadoScaleModifier extends Modifier
@@ -3740,16 +3725,8 @@ class TornadoScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetScale = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.scaleX *= (1+((currentValue*0.01)*offsetScale));
-        noteData.scaleY *= (1+((currentValue*0.01)*offsetScale));
+        noteData.scaleX *= (1+((currentValue*0.01)*ModifierMath.Tornado(lane, curPos, subValues.get('speed').value)));
+        noteData.scaleY *= (1+((currentValue*0.01)*ModifierMath.Tornado(lane, curPos, subValues.get('speed').value)));
     }
 }
 class TornadoScaleXModifier extends Modifier
@@ -3760,15 +3737,7 @@ class TornadoScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetScale = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.scaleX *= (1+((currentValue*0.01)*offsetScale));
+        noteData.scaleX *= (1+((currentValue*0.01)*ModifierMath.Tornado(lane, curPos, subValues.get('speed').value)));
     }
 }
 class TornadoScaleYModifier extends Modifier
@@ -3779,15 +3748,7 @@ class TornadoScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetScale = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.scaleY *= (1+((currentValue*0.01)*offsetScale));
+        noteData.scaleY *= (1+((currentValue*0.01)*ModifierMath.Tornado(lane, curPos, subValues.get('speed').value)));
     }
 }
 class TornadoSkewModifier extends Modifier
@@ -3798,16 +3759,8 @@ class TornadoSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetSkew = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.skewX += offsetSkew * currentValue;
-        noteData.skewY += offsetSkew * currentValue;
+        noteData.skewX += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
+        noteData.skewY += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TornadoSkewXModifier extends Modifier
@@ -3818,15 +3771,7 @@ class TornadoSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetSkew = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.skewX += offsetSkew * currentValue;
+        noteData.skewX += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TornadoSkewYModifier extends Modifier
@@ -3837,15 +3782,7 @@ class TornadoSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.cos(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetSkew = (-Math.cos((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.skewY += offsetSkew * currentValue;
+        noteData.skewY += ModifierMath.Tornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 
@@ -3857,15 +3794,7 @@ class TanTornadoModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetX = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.x += offsetX * currentValue;
+        noteData.x += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TanTornadoYModifier extends Modifier
@@ -3876,15 +3805,7 @@ class TanTornadoYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetY = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.y += offsetY * currentValue;
+        noteData.y += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TanTornadoZModifier extends Modifier
@@ -3895,15 +3816,7 @@ class TanTornadoZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetZ = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.z += offsetZ * currentValue;
+        noteData.z += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TanTornadoAngleModifier extends Modifier
@@ -3914,15 +3827,7 @@ class TanTornadoAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetAngle = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.angle += offsetAngle * currentValue;
+        noteData.angle += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TanTornadoScaleModifier extends Modifier
@@ -3933,16 +3838,8 @@ class TanTornadoScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetScale = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.scaleX *= (1+((currentValue*0.01)*offsetScale));
-        noteData.scaleY *= (1+((currentValue*0.01)*offsetScale));
+        noteData.scaleX *= (1+((currentValue*0.01)*ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value)));
+        noteData.scaleY *= (1+((currentValue*0.01)*ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value)));
     }
 }
 class TanTornadoScaleXModifier extends Modifier
@@ -3953,15 +3850,7 @@ class TanTornadoScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetScale = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.scaleX *= (1+((currentValue*0.01)*offsetScale));
+        noteData.scaleX *= (1+((currentValue*0.01)*ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value)));
     }
 }
 class TanTornadoScaleYModifier extends Modifier
@@ -3972,15 +3861,7 @@ class TanTornadoScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetScale = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.scaleY *= (1+((currentValue*0.01)*offsetScale));
+        noteData.scaleY *= (1+((currentValue*0.01)*ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value)));
     }
 }
 class TanTornadoSkewModifier extends Modifier
@@ -3991,16 +3872,8 @@ class TanTornadoSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetSkew = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.skewX += offsetSkew * currentValue;
-        noteData.skewY += offsetSkew * currentValue;
+        noteData.skewX += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
+        noteData.skewY += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TanTornadoSkewXModifier extends Modifier
@@ -4011,15 +3884,7 @@ class TanTornadoSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetSkew = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.skewX += offsetSkew * currentValue;
+        noteData.skewX += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 class TanTornadoSkewYModifier extends Modifier
@@ -4030,15 +3895,7 @@ class TanTornadoSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-
-        // thank you 4mbr0s3 & andromeda for the modifier lol -- LETS GOOOO FINALLY I FIGURED IT OUT
-        var playerColumn = lane % NoteMovement.keyCount;
-        var columnPhaseShift = playerColumn * Math.PI / 3;
-        var phaseShift = (curPos / 135 ) * subValues.get('speed').value * 0.2;
-        var returnReceptorToZeroOffsetZ = (-Math.tan(-columnPhaseShift) + 1) / 2 * Note.swagWidth * 3;
-        var offsetSkew = (-Math.tan((phaseShift - columnPhaseShift)) + 1) / 2 * Note.swagWidth * 3 - returnReceptorToZeroOffsetZ;
-
-        noteData.skewY += offsetSkew * currentValue;
+        noteData.skewY += ModifierMath.TanTornado(lane, curPos, subValues.get('speed').value) * currentValue;
     }
 }
 
@@ -4067,16 +3924,7 @@ class ZigZagXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.x += result*currentValue;
+        noteData.x += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
     }
 }
 class ZigZagYModifier extends Modifier
@@ -4087,16 +3935,7 @@ class ZigZagYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.y += result*currentValue;
+        noteData.y += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
     }
 }
 class ZigZagZModifier extends Modifier
@@ -4107,16 +3946,7 @@ class ZigZagZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.z += result*currentValue;
+        noteData.z += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
     }
 }
 class ZigZagAngleModifier extends Modifier
@@ -4127,16 +3957,7 @@ class ZigZagAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.angle += result*currentValue;
+        noteData.angle += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
     }
 }
 class ZigZagScaleModifier extends Modifier
@@ -4147,17 +3968,8 @@ class ZigZagScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.scaleX *= (1+(result*(currentValue*0.01)));
-        noteData.scaleY *= (1+(result*(currentValue*0.01)));
+        noteData.scaleX *= (1+(ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*(currentValue*0.01)));
+        noteData.scaleY *= (1+(ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*(currentValue*0.01)));
     }
 }
 class ZigZagScaleXModifier extends Modifier
@@ -4168,16 +3980,7 @@ class ZigZagScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.scaleX *= (1+(result*(currentValue*0.01)));
+        noteData.scaleX *= (1+(ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*(currentValue*0.01)));
     }
 }
 class ZigZagScaleYModifier extends Modifier
@@ -4188,16 +3991,7 @@ class ZigZagScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.scaleY *= (1+(result*(currentValue*0.01)));
+        noteData.scaleY *= (1+(ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*(currentValue*0.01)));
     }
 }
 class ZigZagSkewModifier extends Modifier
@@ -4208,17 +4002,8 @@ class ZigZagSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.skewX += result*currentValue;
-        noteData.skewY += result*currentValue;
+        noteData.skewX += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
+        noteData.skewY += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
     }
 }
 class ZigZagSkewXModifier extends Modifier
@@ -4229,16 +4014,7 @@ class ZigZagSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.skewX += result*currentValue;
+        noteData.skewX += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
     }
 }
 class ZigZagSkewYModifier extends Modifier
@@ -4249,16 +4025,7 @@ class ZigZagSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        var mm:Float = mult * 2;
-        var ppp:Float = Math.abs(curPos*0.45) + (mult/2);
-        var funny:Float = (ppp + mult) % mm;
-        var result:Float = funny - mult;
-
-        if (ppp % mm * 2 >= mm) result *= -1;
-        result -= mult/2;
-
-        noteData.skewY += result*currentValue;
+        noteData.skewY += ModifierMath.ZigZag(lane, curPos, subValues.get('mult').value)*currentValue;
     }
 }
 
@@ -4271,8 +4038,7 @@ class SawToothXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.x += ((curPos*0.45) % mult/2) * currentValue;
+        noteData.x += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
     }
 }
 class SawToothYModifier extends Modifier
@@ -4283,8 +4049,7 @@ class SawToothYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.y += ((curPos*0.45) % mult/2) * currentValue;
+        noteData.y += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
     }
 }
 class SawToothZModifier extends Modifier
@@ -4295,8 +4060,7 @@ class SawToothZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.z += ((curPos*0.45) % mult/2) * currentValue;
+        noteData.z += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
     }
 }
 class SawToothAngleModifier extends Modifier
@@ -4307,8 +4071,7 @@ class SawToothAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.angle += ((curPos*0.45) % mult/2) * currentValue;
+        noteData.angle += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
     }
 }
 class SawToothScaleModifier extends Modifier
@@ -4319,9 +4082,8 @@ class SawToothScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.scaleX *= (1+(((curPos*0.45) % mult/2) * (currentValue*0.01)));
-        noteData.scaleY *= (1+(((curPos*0.45) % mult/2) * (currentValue*0.01)));
+        noteData.scaleX *= (1+((ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value)) * (currentValue*0.01)));
+        noteData.scaleY *= (1+((ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value)) * (currentValue*0.01)));
     }
 }
 class SawToothScaleXModifier extends Modifier
@@ -4332,8 +4094,7 @@ class SawToothScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.scaleX *= (1+(((curPos*0.45) % mult/2) * (currentValue*0.01)));
+        noteData.scaleX *= (1+((ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value)) * (currentValue*0.01)));
     }
 }
 class SawToothScaleYModifier extends Modifier
@@ -4344,8 +4105,7 @@ class SawToothScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.scaleY *= (1+(((curPos*0.45) % mult/2) * (currentValue*0.01)));
+        noteData.scaleY *= (1+((ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value)) * (currentValue*0.01)));
     }
 }
 class SawToothSkewModifier extends Modifier
@@ -4356,9 +4116,8 @@ class SawToothSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.skewX += ((curPos*0.45) % mult/2) * currentValue;
-        noteData.skewY += ((curPos*0.45) % mult/2) * currentValue;
+        noteData.skewX += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
+        noteData.skewY += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
     }
 }
 class SawToothSkewXModifier extends Modifier
@@ -4369,8 +4128,7 @@ class SawToothSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.skewX += ((curPos*0.45) % mult/2) * currentValue;
+        noteData.skewX += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
     }
 }
 class SawToothSkewYModifier extends Modifier
@@ -4381,8 +4139,7 @@ class SawToothSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        var mult:Float = NoteMovement.arrowSizes[lane] * subValues.get('mult').value;
-        noteData.skewY += ((curPos*0.45) % mult/2) * currentValue;
+        noteData.skewY += ModifierMath.Sawtooth(lane, curPos, subValues.get('mult').value) * currentValue;
     }
 }
 
@@ -4397,17 +4154,7 @@ class SquareXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.x += squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
-    }
-    public static function squareMath(curPos:Float, mult:Float, timeOffset:Float, xOffset:Float, lane:Int):Float
-    {
-        var mult:Float = mult / (NoteMovement.arrowSizes[lane]);
-        var timeOffset:Float = timeOffset;
-        var xOffset:Float = xOffset;
-        var xVal:Float = FlxMath.fastSin(((curPos*0.45) + timeOffset) * Math.PI * mult);
-        xVal = Math.floor(xVal) + 0.5 + xOffset;
-
-        return xVal * NoteMovement.arrowSizes[lane];
+        noteData.x += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
     }
 }
 class SquareYModifier extends Modifier
@@ -4420,7 +4167,7 @@ class SquareYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.y += SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
+        noteData.y += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
     }
 }
 class SquareZModifier extends Modifier
@@ -4433,7 +4180,7 @@ class SquareZModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.z += SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
+        noteData.z += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
     }
 }
 class SquareAngleModifier extends Modifier
@@ -4446,7 +4193,7 @@ class SquareAngleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.angle += SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
+        noteData.angle += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
     }
 }
 class SquareScaleModifier extends Modifier
@@ -4459,8 +4206,8 @@ class SquareScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+(SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * (currentValue*0.01)));
-        noteData.scaleY *= (1+(SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * (currentValue*0.01)));
+        noteData.scaleX *= (1+(ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * (currentValue*0.01)));
+        noteData.scaleY *= (1+(ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * (currentValue*0.01)));
     }
 }
 class SquareScaleXModifier extends Modifier
@@ -4473,7 +4220,7 @@ class SquareScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+(SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * (currentValue*0.01)));
+        noteData.scaleX *= (1+(ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * (currentValue*0.01)));
     }
 }
 class SquareScaleYModifier extends Modifier
@@ -4486,7 +4233,7 @@ class SquareScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleY *= (1+(SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * (currentValue*0.01)));
+        noteData.scaleY *= (1+(ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * (currentValue*0.01)));
     }
 }
 class SquareSkewModifier extends Modifier
@@ -4499,8 +4246,8 @@ class SquareSkewModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
-        noteData.skewY += SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
+        noteData.skewX += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
+        noteData.skewY += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
     }
 }
 class SquareSkewXModifier extends Modifier
@@ -4513,7 +4260,7 @@ class SquareSkewXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewX += SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
+        noteData.skewX += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
     }
 }
 class SquareSkewYModifier extends Modifier
@@ -4526,7 +4273,7 @@ class SquareSkewYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.skewY += SquareXModifier.squareMath(curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value, lane) * currentValue;
+        noteData.skewY += ModifierMath.SquareMath(lane, curPos, subValues.get('mult').value, subValues.get('yoffset').value, subValues.get('xoffset').value) * currentValue;
     }
 }
 
