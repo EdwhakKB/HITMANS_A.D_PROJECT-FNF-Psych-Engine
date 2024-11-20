@@ -105,9 +105,56 @@ class SustainTrail extends FlxSprite
     this.fullSustainLength = sustainLength;
     this.noteDirection = noteDirection;
 
-    setupHoldNoteGraphic(noteStyle);
+    super(0, 0, Paths.image('NOTE_ArrowPath'));
+    //setupHoldNoteGraphic(noteStyle);
+
+    antialiasing = true;
+
+    this.isPixel = noteStyle.contains('pixel');
+    if (isPixel)
+    {
+      endOffset = bottomClip = 1;
+      antialiasing = false;
+    }
+    else
+    {
+      endOffset = 0.5;
+      bottomClip = 0.9;
+    }
+
+    zoom = 1.0;
+    zoom *= isPixel ? 8.0 : 1.55;
+    zoom *= 0.7;
+
+    var leData:Int = Std.int(Math.abs(noteDirection % 4));
+    rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
+    if (PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
+
+    var arr:Array<FlxColor> = ClientPrefs.arrowRGB[leData];
+
+    if (leData <= arr.length)
+    {
+      @:bypassAccessor
+      {
+        rgbShader.r = arr[0];
+        rgbShader.g = arr[1];
+        rgbShader.b = arr[2];
+      }
+    }
+
+    // CALCULATE SIZE
+    graphicWidth = graphic.width / 8 * zoom; // amount of notes * 2
+    graphicHeight = sustainHeight(sustainLength, 1.0);
+    // instead of scrollSpeed, PlayState.SONG.speed
+    flipY = ClientPrefs.downScroll;
 
     indices = new DrawData<Int>(12, true, TRIANGLE_VERTEX_INDICES);
+
+    alpha = 1.0;
+    // calls updateColorTransform(), which initializes processedGraphic!
+    updateColorTransform();
+
+    updateClipping();
 
     this.active = true; // This NEEDS to be true for the note to be drawn!
   }

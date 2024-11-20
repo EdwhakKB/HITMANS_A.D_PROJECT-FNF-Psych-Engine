@@ -37,6 +37,7 @@ import modcharting.ModchartUtil;
 
 import RGBPalette;
 import RGBPalette.RGBShaderReference;
+import SustainTrail;
 
 using StringTools;
 
@@ -74,6 +75,8 @@ class Note extends FlxSkewedSprite
 	public var extraData:Map<String,Dynamic> = [];
 
 	public var arrowPath:SustainTrail = null;
+	public var altArrowPath:modcharting.ArrowPathBitmap = null;
+	public var arrowPathSprite:FlxSprite;
 
 	public var strumTime:Float = 0;
 	public var mustPress:Bool = false;

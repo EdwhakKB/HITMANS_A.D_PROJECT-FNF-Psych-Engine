@@ -697,7 +697,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		daNote.mesh.draw();
 	}
 
-	private function drawArrowPathNew(noteData:NotePositionData){
+	private function drawArrowPathNew(noteData:NotePositionData){ //this one is unused since i have no clue what to do.
 		if (noteData.arrowPathAlpha <= 0)
 			return;
 
@@ -711,14 +711,12 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		//TODO: make sure this thing don't get note (sustainStrip) so i can grab any graphic and do a strip with it
 		var daNote = notes.members[noteData.index];
-		if (daNote.arrowPath == null)
-			daNote.arrowPath = new SustainTrail(daNote.noteData, noteData.arrowPathLength, "");
-
-		daNote.arrowPath.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
+		if (daNote.arrowPath == null) //im sure if i constantly draw it fucking dies.
+			daNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, "");
 
 		//TODO: change this to read arrowPath stuff instead
-		daNote.alpha = noteData.alpha;
-		daNote.arrowPath.alpha = daNote.alpha;
+		//daNote.alpha = noteData.alpha;
+		daNote.arrowPath.alpha = noteData.arrowPathAlpha;
 
 		daNote.arrowPath.shader = daNote.rgbShader.parent.shader; // idfk if this works. 
 		//Warning: This is EXCLUSIVE for psych 0.7 and up (rgb shader) so any engine with HSV shouldn't call this
@@ -771,48 +769,52 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// // render that shit
 		// daNote.arrowPath.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
 
+		daNote.arrowPath.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
+		
 		daNote.arrowPath.cameras = this.cameras;
 		daNote.arrowPath.draw();
 	}
 
-	// private function drawArrowPath(noteData:NotePositionData){
-	// 	if (noteData.arrowPathAlpha <= 0)
-	// 		return;
+	private function drawArrowPath(noteData:NotePositionData){
+		if (noteData.arrowPathAlpha <= 0)
+			return;
 
-	// 	// var strumNote = strumGroup.members[noteData.index];
-	// 	//as same as "sustainStripMesh" we are creating this path here so, once it draws, the path draws with it, instead of having it stored in PF renderer as an extra
-	// 	//+ allows "noteData" to properly modify its variables
+		// var strumNote = strumGroup.members[noteData.index];
+		//as same as "sustainStripMesh" we are creating this path here so, once it draws, the path draws with it, instead of having it stored in PF renderer as an extra
+		//+ allows "noteData" to properly modify its variables
 
-	// 	//Hazard's shitty arrowpath bitmap method! x.x -- with some of Edwhak's "optimization mindset"
-	// 	var doArrowPaths_bitmapStyle:Bool = true; //default to false for now. Set to true for arrowpath rendering.
-	// 	var arrowPaths_bitmapStyle:ArrowPathBitmap; //this is the path itself
-	// 	var notitgPathSprite:FlxSprite; //this is the sprite that catch the path
+		//Hazard's shitty arrowpath bitmap method! x.x -- with some of Edwhak's "optimization mindset"
+		var doArrowPaths_bitmapStyle:Bool = false; //default to false for now. Set to true for arrowpath rendering.
+		var arrowPaths_bitmapStyle:ArrowPathBitmap; //this is the path itself
+		var notitgPathSprite:FlxSprite; //this is the sprite that catch the path
 
-	// 	// if(doArrowPaths_bitmapStyle){ //make sure this just skip if we don't want to draw it
-	// 		arrowPaths_bitmapStyle = new ArrowPathBitmap(this);
-	// 		notitgPathSprite = new FlxSprite(0,0); //sprite that exist ig? (grabs path info)
-	// 		notitgPathSprite.loadGraphic(arrowPaths_bitmapStyle.bitmap);
-	// 	// }
+		//if(doArrowPaths_bitmapStyle == false){ //if its false we create the sprite but after that it doesn't get created
+			arrowPaths_bitmapStyle = new ArrowPathBitmap(this);
+			notitgPathSprite = new FlxSprite(0,0); //sprite that exist ig? (grabs path info)
+			notitgPathSprite.loadGraphic(arrowPaths_bitmapStyle.bitmap);
+		//	doArrowPaths_bitmapStyle = true;
+		//}
 
-	// 	// noteData.x += strumNote.width/2;
-    // 	// noteData.y += strumNote.height/2;
+		// noteData.x += strumNote.width/2;
+    	// noteData.y += strumNote.height/2;
 
-	// 	// addDataToPath(noteData, arrowPaths_bitmapStyle);
+		// addDataToPath(noteData, arrowPaths_bitmapStyle);
 
-	// 	notitgPathSprite.cameras = this.cameras; //ensure it's on the correct camera!
+		notitgPathSprite.cameras = this.cameras; //ensure it's on the correct camera!
 
-	// 	arrowPaths_bitmapStyle.updateAFT();//Update the arrowpaths!
-	// 	notitgPathSprite.draw();//Draw it!
-	// }
+		arrowPaths_bitmapStyle.updateAFT();//Update the arrowpaths!
+		//instead of updating for each note in here, we should update for each note in the array
+		notitgPathSprite.draw();//Draw it!
+	}
 
 	private function drawStuff(notePositions:Array<NotePositionData>)
 	{
 		//separated due this being arrowPath lol
-		//drawArrowPath(notePositions[0]);
+		drawArrowPath(notePositions[0]);
 
 		for (noteData in notePositions)
 		{
-			drawArrowPathNew(noteData); //draw path
+			//drawArrowPathNew(noteData); //draw path
 			if (noteData.isStrum) // draw strum
 				drawStrum(noteData);
 			else if (!notes.members[noteData.index].isSustainNote) // draw note

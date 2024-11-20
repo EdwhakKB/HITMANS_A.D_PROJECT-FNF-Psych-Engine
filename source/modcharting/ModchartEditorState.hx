@@ -183,6 +183,7 @@ class ModchartEditorState extends MusicBeatState
         FovXOffsetModifier, FovYOffsetModifier,
         //misc
         ShakyNotesModifier, ParalysisModifier, SpiralHoldsModifier,
+        ArrowPathAlphaModifier,
         ArrowPath
     ];
     public static var easeList:Array<String> = [

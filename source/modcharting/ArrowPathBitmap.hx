@@ -240,3 +240,78 @@ class ArrowPathBitmap
     colTransf = new ColorTransform();
   }
 }
+
+// function drawArrowPath(fields:Array<StrumLine>)
+// 	{
+// 		var data = new openfl.Vector<Float>();
+// 		var commands = new openfl.Vector<Int>();
+
+// 		var defaultPos = new Vector3D();
+
+// 		__pathPoints.splice(0, __pathPoints.length);
+// 		__pathCommands.splice(0, __pathCommands.length);
+// 		__pathShape.graphics.clear();
+
+// 		// so we draw every path of every receptor once
+// 		// cus if not, it crashs (cus stack overflow or something like that (i dont founded the error....))
+// 		for (f in fields) {
+// 			__pathSprite.cameras = f._cameras.copy();
+			
+// 			for (r in f) {
+// 				final l = r.extra.get('lane');
+// 				final fn = r.extra.get('field');
+
+// 				final alpha = getPercent('arrowPathAlpha', fn);
+// 				final thickness = 1 + Math.round(getPercent('arrowPathThickness', fn));
+
+// 				if ((alpha + thickness) <= 0)
+// 					continue;
+				
+// 				final divitions = Math.round(35 / Math.max(1, getPercent('arrowPathDivitions', fn)));
+// 				final limit = 1250 * (1 + getPercent('arrowPathLength', fn));
+// 				final invertal = limit / divitions;
+
+// 				var moved = false;
+
+// 				defaultPos.setTo(getReceptorX(l, fn), getReceptorY(l, fn), 0);
+// 				defaultPos.incrementBy(ModchartUtil.getHalfPos());
+
+// 				__pathShape.graphics.lineStyle(thickness, 0xFFFFFFFF, alpha);
+
+// 				for (sub in 0...divitions)
+// 				{
+// 					var time = invertal * sub;
+		
+// 					var position = modifiers.getPath(defaultPos.clone(), {
+// 						time: Conductor.songPosition + time,
+// 						hDiff: time,
+// 						receptor: l,
+// 						field: fn,
+// 						arrow: true
+// 					});
+
+// 					/**
+// 					 * So it seems that if the lines are too far from the screen
+// 					   causes HORRIBLE memory leaks (from 60mb to 3gb-5gb in 2 seconds WHAT THE FUCK)
+// 					 */
+// 					if ((position.x <= 0 - thickness) || (position.x >= __pathSprite.pixels.rect.width) ||
+// 						(position.y <= 0 - thickness) || (position.y >= __pathSprite.pixels.rect.height))
+// 						continue;
+		
+// 					__pathCommands.push(moved ? GraphicsPathCommand.LINE_TO : GraphicsPathCommand.MOVE_TO);
+// 					__pathPoints.push(position.x);
+// 					__pathPoints.push(position.y);
+		
+// 					moved = true;
+// 				}
+// 			}
+// 		}
+
+// 		__pathShape.graphics.drawPath(__pathCommands, __pathPoints);
+
+// 		// then drawing the path pixels into the sprite pixels
+// 		__pathSprite.pixels.fillRect(__pathSprite.pixels.rect, 0x00FFFFFF);
+// 		__pathSprite.pixels.draw(__pathShape);
+// 		// draw the sprite to the cam
+// 		__pathSprite.draw();
+// 	}
