@@ -176,14 +176,13 @@ class ModifierMath
     public static function Drunk(lane:Int, curPos:Float, speed:Float):Float
     {
         return (FlxMath.fastCos( ((Conductor.songPosition*0.001) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*0.45)*(10/FlxG.height)) * (speed*0.2)) * Note.swagWidth*0.5);
+        (curPos*0.45)*(10/FlxG.height)) * (speed*0.2) ) * Note.swagWidth*0.5);
     };
     //TanDrunk math
     public static function TanDrunk(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float)
     {
-        return (Math.tan((((Conductor.songPosition*(0.001*period)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*offset))*((spacing*10)/FlxG.height)) * 
-        (speed*0.2)) * Note.swagWidth*(0.5*size)));
+        return (Math.tan( ((Conductor.songPosition*(0.001*period)) + ((lane%NoteMovement.keyCount)*0.2) + 
+        (curPos*(0.225*offset))*((spacing*10)/FlxG.height)) * (speed*0.2) ) * Note.swagWidth*(0.5*size));
     }
 
 
@@ -419,11 +418,11 @@ class ModifierMath
     }
     
     //Cosecant math
-    public static function Cosecant(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float)
+    public static function Cosecant(lane:Int, curPos:Float, period:Float, offset:Float, spacing:Float, speed:Float, size:Float):Float
     {
-        return (1 / Math.sin((((Conductor.songPosition*(0.001*period)) + ((lane%NoteMovement.keyCount)*0.2) + 
+        return (1 / Math.sin(((Conductor.songPosition*(0.001*period)) + ((lane%NoteMovement.keyCount)*0.2) + 
         (curPos*(0.225*offset))*((spacing*10)/FlxG.height)) * 
-        (speed*0.2)) * Note.swagWidth*(0.5*size)));
+        (speed*0.2)) * Note.swagWidth*(0.5*size));
     }
 }
 //adding drunk and tipsy for all axis because i can
@@ -3098,13 +3097,15 @@ class TanDrunkScaleModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+((currentValue*0.01) * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleX *= (1+((currentValue*0.01) * (ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value))));
 
-        noteData.scaleY *= (1+((currentValue*0.01) * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleY *= (1+((currentValue*0.01) * (ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value))));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3123,9 +3124,10 @@ class TanDrunkScaleXModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleX *= (1+((currentValue*0.01) * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleX *= (1+((currentValue*0.01) * (ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value))));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
@@ -3144,9 +3146,10 @@ class TanDrunkScaleYModifier extends Modifier
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.scaleY *= (1+((currentValue*0.01) * (Math.tan( ((Conductor.songPosition*(0.001*subValues.get('period').value)) + ((lane%NoteMovement.keyCount)*0.2) + 
-        (curPos*(0.225*subValues.get('offset').value))*((subValues.get('spacing').value*10)/FlxG.height)) * 
-        (subValues.get('speed').value*0.2)) * Note.swagWidth*(0.5*subValues.get('size').value))));
+        noteData.scaleY *= (1+((currentValue*0.01) * (ModifierMath.TanDrunk(lane, curPos,
+            subValues.get('period').value, subValues.get('offset').value, 
+            subValues.get('spacing').value, subValues.get('speed').value, 
+            subValues.get('size').value))));
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
