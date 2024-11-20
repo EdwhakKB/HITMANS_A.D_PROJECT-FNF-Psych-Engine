@@ -784,7 +784,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		//+ allows "noteData" to properly modify its variables
 
 		//Hazard's shitty arrowpath bitmap method! x.x -- with some of Edwhak's "optimization mindset"
-		var doArrowPaths_bitmapStyle:Bool = false; //default to false for now. Set to true for arrowpath rendering.
+		//var doArrowPaths_bitmapStyle:Bool = false; //default to false for now. Set to true for arrowpath rendering.
 		var arrowPaths_bitmapStyle:ArrowPathBitmap; //this is the path itself
 		var notitgPathSprite:FlxSprite; //this is the sprite that catch the path
 
@@ -810,7 +810,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	private function drawStuff(notePositions:Array<NotePositionData>)
 	{
 		//separated due this being arrowPath lol
-		drawArrowPath(notePositions[0]);
+		//drawArrowPath(notePositions[0]);
 
 		for (noteData in notePositions)
 		{
