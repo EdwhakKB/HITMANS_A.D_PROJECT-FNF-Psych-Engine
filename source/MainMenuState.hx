@@ -405,36 +405,36 @@ class MainMenuState extends MusicBeatState
 						notes.animation.play('normal');
 					}
 				}
-			}
-			if (FlxG.mouse.overlaps(settings)) {
-				if (FlxG.mouse.justPressed) {
-					new FlxTimer().start(1, function(tmrSe:FlxTimer)
-						{
-							openSubState(new OptionsMenu());
-						});
-					inFolder = true;
-					settings.animation.play('selected');
-					storyMode.animation.play('normal');
-					freeplay.animation.play('normal');
-					mods.animation.play('normal');
-					credits.animation.play('normal');
-					notes.animation.play('normal');
+				if (FlxG.mouse.overlaps(settings)) {
+					if (FlxG.mouse.justPressed) {
+						new FlxTimer().start(1, function(tmrSe:FlxTimer)
+							{
+								openSubState(new OptionsMenu());
+							});
+						inFolder = true;
+						settings.animation.play('selected');
+						storyMode.animation.play('normal');
+						freeplay.animation.play('normal');
+						mods.animation.play('normal');
+						credits.animation.play('normal');
+						notes.animation.play('normal');
+					}
 				}
-			}
-			if (FlxG.mouse.overlaps(notes)) {
-				if (FlxG.mouse.justPressed) {
-					new FlxTimer().start(1, function(tmrSe:FlxTimer)
-						{
-							MusicBeatState.switchState(new options.NoteColorState());
-						});
-					//inFolder = true;
-					notes.animation.play('selected');
-					settings.animation.play('normal');
-					storyMode.animation.play('normal');
-					freeplay.animation.play('normal');
-					mods.animation.play('normal');
-					credits.animation.play('normal');
-				}
+				// if (FlxG.mouse.overlaps(notes)) {
+				// 	if (FlxG.mouse.justPressed) {
+				// 		new FlxTimer().start(1, function(tmrSe:FlxTimer)
+				// 			{
+				// 				MusicBeatState.switchState(new options.NoteColorState());
+				// 			});
+				// 		//inFolder = true;
+				// 		notes.animation.play('selected');
+				// 		settings.animation.play('normal');
+				// 		storyMode.animation.play('normal');
+				// 		freeplay.animation.play('normal');
+				// 		mods.animation.play('normal');
+				// 		credits.animation.play('normal');
+				// 	}
+				// }
 			}
 
 			// if (controls.ACCEPT && !inCMD && !inFolder)
