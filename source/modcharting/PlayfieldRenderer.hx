@@ -775,7 +775,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		daNote.arrowPath.draw();
 	}
 
-	private function drawArrowPath(noteData:NotePositionData){
+	/*private function drawArrowPath(noteData:NotePositionData){ //scrapped, i won't do this shit
 		if (noteData.arrowPathAlpha <= 0)
 			return;
 
@@ -805,7 +805,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		arrowPaths_bitmapStyle.updateAFT();//Update the arrowpaths!
 		//instead of updating for each note in here, we should update for each note in the array
 		notitgPathSprite.draw();//Draw it!
-	}
+	}*/
 
 	private function drawStuff(notePositions:Array<NotePositionData>)
 	{
