@@ -484,7 +484,9 @@ class Note extends FlxSkewedSprite
 			hitsoundDisabled = true;
 			if(ClientPrefs.downScroll) flipY = true;
 
-			offsetX += width / 2;
+			updateHitbox();
+
+			offsetX += frameWidth / 2;
 			copyAngle = false;
 
 			animation.play(colArray[noteData % 4] + 'holdend');
@@ -506,7 +508,7 @@ class Note extends FlxSkewedSprite
 
 			updateHitbox();
 
-			offsetX -= width / 2;
+			offsetX -= frameWidth / 2;
 
 			if (PlayState.isPixelStage)
 				offsetX += 30;
