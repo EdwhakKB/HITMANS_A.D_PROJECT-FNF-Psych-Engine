@@ -716,7 +716,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		//TODO: change this to read arrowPath stuff instead
 		//daNote.alpha = noteData.alpha;
-		daNote.arrowPath.alpha = noteData.arrowPathAlpha;
+		daNote.arrowPath.alpha = noteData.alpha;
 
 		daNote.arrowPath.shader = daNote.rgbShader.parent.shader; // idfk if this works. 
 		//Warning: This is EXCLUSIVE for psych 0.7 and up (rgb shader) so any engine with HSV shouldn't call this
