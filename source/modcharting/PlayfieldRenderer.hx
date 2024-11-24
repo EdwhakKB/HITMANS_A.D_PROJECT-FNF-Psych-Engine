@@ -376,8 +376,10 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		if (ModchartUtil.getDownscroll(instance))
 			noteDist *= -1;
 		return noteDist;
-	}
+    }
 
+
+	//Todo: Find how to create arrow paths using strum notes and notes using this function to make both work (I.E Create NoteDataPositions for ArrowPath)
 	private function getNotePositions()
 	{
 		var notePositions:Array<NotePositionData> = [];
