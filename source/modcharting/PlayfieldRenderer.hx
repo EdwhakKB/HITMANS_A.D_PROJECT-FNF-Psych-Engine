@@ -729,50 +729,47 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// daNote.rgbShader.stealthGlowGreen = noteData.glowGreen;
 		// daNote.rgbShader.stealthGlowBlue = noteData.glowBlue;
 
-		var songSpeed = getCorrectScrollSpeed();
-		var lane = noteData.lane;
+		//var songSpeed = getCorrectScrollSpeed();
+		//var lane = noteData.lane;
 
 		// makes the sustain match the center of the parent note when at weird angles
-		var yOffsetThingy = (NoteMovement.arrowSizes[lane] / 2);
+		//var yOffsetThingy = (NoteMovement.arrowSizes[lane] / 2);
 
-		var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x
-			+ (daNote.width / 2)
-			+ ModchartUtil.getNoteOffsetX(daNote, instance),
-			noteData.y
-			+ (NoteMovement.arrowSizes[noteData.lane] / 2), noteData.z * 0.001),
-			ModchartUtil.defaultFOV * (Math.PI / 180),
-			-(daNote.width / 2), yOffsetThingy
-			- (NoteMovement.arrowSizes[noteData.lane] / 2));
+		var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x + (strumNote.width / 2), noteData.y + (strumNote.height / 2),
+		noteData.z * 0.001),
+		ModchartUtil.defaultFOV * (Math.PI / 180),
+		-(strumNote.width / 2),
+		-(strumNote.height / 2));
 
-		var timeToNextSustain = ModchartUtil.getFakeCrochet() / 4;
-		if (noteData.noteDist < 0)
-			timeToNextSustain *= -1; // weird shit that fixes upscroll lol
-		// timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
+		// var timeToNextSustain = ModchartUtil.getFakeCrochet() / 4;
+		// if (noteData.noteDist < 0)
+		// 	timeToNextSustain *= -1; // weird shit that fixes upscroll lol
+		// // timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
 
-		var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain / 2);
-		var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
+		// var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain / 2);
+		// var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
 
-		var flipGraphic = false;
+		// var flipGraphic = false;
 
-		// mod/bound to 360, add 360 for negative angles, mod again just in case
-		var fixedAngY = ((noteData.incomingAngleY % 360) + 360) % 360;
+		// // mod/bound to 360, add 360 for negative angles, mod again just in case
+		// var fixedAngY = ((noteData.incomingAngleY % 360) + 360) % 360;
 
-		var reverseClip = (fixedAngY > 90 && fixedAngY < 270);
+		// var reverseClip = (fixedAngY > 90 && fixedAngY < 270);
 
-		if (noteData.noteDist > 0) // downscroll
-		{
-			if (!ModchartUtil.getDownscroll(instance)) // fix reverse
-				flipGraphic = true;
-		}
-		else
-		{
-			if (ModchartUtil.getDownscroll(instance))
-				flipGraphic = true;
-		}
+		// if (noteData.noteDist > 0) // downscroll
+		// {
+		// 	if (!ModchartUtil.getDownscroll(instance)) // fix reverse
+		// 		flipGraphic = true;
+		// }
+		// else
+		// {
+		// 	if (ModchartUtil.getDownscroll(instance))
+		// 		flipGraphic = true;
+		// }
 		// // render that shit
 		// daNote.arrowPath.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
 
-		strumNote.arrowPath.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
+		strumNote.arrowPath.setNotePos(this, noteData, daNote == null ?  0 : daNote.strumTime, noteData.lane, noteData.playfieldIndex);
 		trace("drawing arrowpath");
 		strumNote.arrowPath.cameras = this.cameras;
 		strumNote.arrowPath.draw();
