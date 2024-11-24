@@ -634,6 +634,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	{
 		if (noteData.alpha <= 0)
 			return;
+
 		var daNote = notes.members[noteData.index];
 		if (daNote.mesh == null)
 			daNote.mesh = new SustainStrip(daNote);
@@ -698,9 +699,10 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	}
 
 	private function drawArrowPathNew(noteData:NotePositionData){ //this one is unused since i have no clue what to do.
-		if (noteData.arrowPathAlpha <= 0)
+		if (noteData.alpha <= 0)
 			return;
 
+		//var notePath:SustainTrail;
 		//TODO:
 		/*
 			- make this draw similar to VSLICE sustain draw (so i can make sustain mesh correctly, maybe just copy paste sustain code and change info to MT?)
@@ -710,15 +712,16 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		*/
 
 		//TODO: make sure this thing don't get note (sustainStrip) so i can grab any graphic and do a strip with it
+		var strumNote = strumGroup.members[noteData.index];
 		var daNote = notes.members[noteData.index];
-		if (daNote.arrowPath == null) //im sure if i constantly draw it fucking dies.
-			daNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, "");
+		if (strumNote.arrowPath == null) //im sure if i constantly draw it fucking dies.
+			strumNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, "");
 
 		//TODO: change this to read arrowPath stuff instead
 		//daNote.alpha = noteData.alpha;
-		daNote.arrowPath.alpha = noteData.alpha;
+		strumNote.arrowPath.alpha = noteData.alpha;
 
-		daNote.arrowPath.shader = daNote.rgbShader.parent.shader; // idfk if this works. 
+		strumNote.arrowPath.shader = strumNote.rgbShader.parent.shader; // idfk if this works. 
 		//Warning: This is EXCLUSIVE for psych 0.7 and up (rgb shader) so any engine with HSV shouldn't call this
 
 		// daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
@@ -769,10 +772,10 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// // render that shit
 		// daNote.arrowPath.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
 
-		daNote.arrowPath.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
-		
-		daNote.arrowPath.cameras = this.cameras;
-		daNote.arrowPath.draw();
+		strumNote.arrowPath.setNotePos(this, noteData, daNote.strumTime, noteData.lane, noteData.playfieldIndex);
+		trace("drawing arrowpath");
+		strumNote.arrowPath.cameras = this.cameras;
+		strumNote.arrowPath.draw();
 	}
 
 	/*private function drawArrowPath(noteData:NotePositionData){ //scrapped, i won't do this shit
@@ -814,7 +817,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		for (noteData in notePositions)
 		{
-			//drawArrowPathNew(noteData); //draw path
+			drawArrowPathNew(noteData); //draw path
 			if (noteData.isStrum) // draw strum
 				drawStrum(noteData);
 			else if (!notes.members[noteData.index].isSustainNote) // draw note

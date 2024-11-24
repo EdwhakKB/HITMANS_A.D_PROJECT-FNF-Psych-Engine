@@ -74,7 +74,7 @@ class Note extends FlxSkewedSprite
 	public var z:Float = 0;
 	public var extraData:Map<String,Dynamic> = [];
 
-	public var arrowPath:SustainTrail = null;
+	public var arrowPath:SustainTrail;
 	public var altArrowPath:modcharting.ArrowPathBitmap = null;
 	public var arrowPathSprite:FlxSprite;
 

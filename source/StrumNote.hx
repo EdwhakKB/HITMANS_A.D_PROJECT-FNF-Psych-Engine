@@ -28,8 +28,9 @@ using StringTools;
 
 class StrumNote extends FlxSkewedSprite
 {
-  public var arrowMesh:modcharting.NewModchartArrow;
-  public var z:Float = 0;
+  	public var arrowMesh:modcharting.NewModchartArrow;
+  	public var z:Float = 0;
+	public var arrowPath:SustainTrail;
 	public var rgbShader:RGBShaderReference;
 	//private var colorSwap:ColorSwap;
 	public var resetAnim:Float = 0;

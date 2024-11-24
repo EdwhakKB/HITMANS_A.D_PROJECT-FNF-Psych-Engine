@@ -143,6 +143,8 @@ class PlayState extends MusicBeatState
 {
 	var hitmansSongs:Array<String> = ['c18h27no3-demo', 'forgotten', 'icebeat', 'hernameis', 'duality', 'hallucination', 'operating', 'sweet-dreams', 'mylove']; // Anti cheat system goes brrrrr
 
+	public var arrowPath:SustainTrail;
+
 	public var filters:Array<BitmapFilter> = [];
 	public var filterList:Array<BitmapFilter> = [];
 	public var camfilters:Array<BitmapFilter> = [];
@@ -1052,6 +1054,9 @@ class PlayState extends MusicBeatState
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
 			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1];
 			add(playfieldRenderer);
+			arrowPath = new SustainTrail(0, 1800, "");
+			arrowPath.cameras = [camHUD, noteCameras0, noteCameras1];
+			add(arrowPath);
 		}
 
 		camFollow = new FlxPoint();
