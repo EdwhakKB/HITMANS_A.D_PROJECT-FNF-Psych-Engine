@@ -4676,9 +4676,13 @@ class CullTargetsModifier extends Modifier
 
 class ArrowPathAlphaModifier extends Modifier //used but unstable (as old way)
 {
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.arrowPathAlpha += currentValue;
+    }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.arrowPathAlpha *= 1-currentValue;
+        noteData.arrowPathAlpha += currentValue;
     }
 }
 

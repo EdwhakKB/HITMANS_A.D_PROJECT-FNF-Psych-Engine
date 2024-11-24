@@ -30,7 +30,7 @@ class StrumNote extends FlxSkewedSprite
 {
   	public var arrowMesh:modcharting.NewModchartArrow;
   	public var z:Float = 0;
-	public var arrowPath:SustainTrail;
+	public var arrowPath:SustainTrail = null;
 	public var rgbShader:RGBShaderReference;
 	//private var colorSwap:ColorSwap;
 	public var resetAnim:Float = 0;

@@ -100,10 +100,10 @@ class NotePositionData implements IFlxDestroyable
         this.glowBlue = 1;
 
         this.arrowPathAlpha = 0;
-        // this.arrowPathLength = 1800;
-        // this.arrowPathBackwardsLength = 200;
+        this.arrowPathLength = 1800;
+        this.arrowPathBackwardsLength = 200;
 
-        // this.pathGrain = 50;
+        this.pathGrain = 50;
 
         this.spiralHold = 0;
 
@@ -158,7 +158,7 @@ class NotePositionData implements IFlxDestroyable
 
         this.arrowPathAlpha = 0;
         this.arrowPathLength = 1800;
-        this.arrowPathBackwardsLength = 0;
+        this.arrowPathBackwardsLength = 200;
 
         this.pathGrain = 50;
 

@@ -1054,9 +1054,9 @@ class PlayState extends MusicBeatState
 			playfieldRenderer = new PlayfieldRenderer(strumLineNotes, notes, this);
 			playfieldRenderer.cameras = [camHUD, noteCameras0, noteCameras1];
 			add(playfieldRenderer);
-			arrowPath = new SustainTrail(0, 1800, "");
-			arrowPath.cameras = [camHUD, noteCameras0, noteCameras1];
-			add(arrowPath);
+			//arrowPath = new SustainTrail(0, 1800, "");
+			//arrowPath.cameras = [camHUD, noteCameras0, noteCameras1];
+			//add(arrowPath);
 		}
 
 		camFollow = new FlxPoint();
