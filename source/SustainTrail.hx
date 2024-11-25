@@ -476,8 +476,8 @@ class SustainTrail extends FlxSprite
 
     //move the x and y to properly be in the center of the strum graphic
     var strumNote = pfr.strumGroup.members[lane]; //first we need to know what the strum is though lol
-    noteData.x += strumNote.width/2;
-    noteData.y += strumNote.height/2;
+    noteData.x += strumNote.width/2 - frameWidth/15;
+    noteData.y += strumNote.height/2 - frameHeight/15;
 
     // add offsets to data with modifiers
     pfr.modifierTable.applyNoteMods(noteData, lane, curPos, pf);
