@@ -436,15 +436,15 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			}
 		}
 		// sort by z before drawing
-		// notePositions.sort(function(a, b)
-		// {
-		// 	if (a.z < b.z)
-		// 		return -1;
-		// 	else if (a.z > b.z)
-		// 		return 1;
-		// 	else
-		// 		return 0;
-		// });
+		notePositions.sort(function(a, b)
+		{
+			if (a.z < b.z)
+				return -1;
+			else if (a.z > b.z)
+				return 1;
+			else
+				return 0;
+		});
 		return notePositions;
 	}
 
