@@ -714,7 +714,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		var strumNote = strumGroup.members[noteData.index];
 
-		if (strumNote.arrowPath == null) //im sure if i constantly draw it fucking dies.
+		if (strumNote.arrowPath == null)
 			strumNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, "");
 
 		strumNote.arrowPath.alpha = noteData.arrowPathAlpha; //this one goes inversed...
@@ -735,13 +735,14 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	{
 		for (noteData in notePositions)
 		{
-			drawArrowPathNew(noteData); //draw path
+			//drawArrowPathNew(noteData); //draw path
 			if (noteData.isStrum) // draw strum
 				drawStrum(noteData);
 			else if (!notes.members[noteData.index].isSustainNote) // draw note
 				drawNote(noteData);
 			else // draw Sustain
 				drawSustainNote(noteData);
+			drawArrowPathNew(noteData); //draw path
 		}
 	}
 
