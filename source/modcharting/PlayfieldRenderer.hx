@@ -436,15 +436,15 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			}
 		}
 		// sort by z before drawing
-		notePositions.sort(function(a, b)
-		{
-			if (a.z < b.z)
-				return -1;
-			else if (a.z > b.z)
-				return 1;
-			else
-				return 0;
-		});
+		// notePositions.sort(function(a, b)
+		// {
+		// 	if (a.z < b.z)
+		// 		return -1;
+		// 	else if (a.z > b.z)
+		// 		return 1;
+		// 	else
+		// 		return 0;
+		// });
 		return notePositions;
 	}
 
@@ -665,7 +665,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			noteData.y
 			+ (NoteMovement.arrowSizes[noteData.lane] / 2), noteData.z * 0.001),
 			ModchartUtil.defaultFOV * (Math.PI / 180),
-			-(daNote.width / 2), yOffsetThingy
+			- (daNote.width / 2), yOffsetThingy
 			- (NoteMovement.arrowSizes[noteData.lane] / 2));
 
 		var timeToNextSustain = ModchartUtil.getFakeCrochet() / 4;
@@ -715,7 +715,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		var strumNote = strumGroup.members[noteData.index];
 
 		if (strumNote.arrowPath == null)
-			strumNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, "");
+			strumNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, "", this);
 
 		strumNote.arrowPath.alpha = noteData.arrowPathAlpha; //this one goes inversed...
 
@@ -725,7 +725,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		pathTime += 250;
 		pathTime += noteData.arrowPathBackwardsLength;
 
-		strumNote.arrowPath.setNotePos(this, noteData, pathTime, noteData.lane, noteData.playfieldIndex);
+		strumNote.arrowPath.updatePath(pathTime,noteData.lane,noteData.playfieldIndex);
 
 		strumNote.arrowPath.cameras = this.cameras;
 		strumNote.arrowPath.draw();
@@ -735,14 +735,16 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	{
 		for (noteData in notePositions)
 		{
-			//drawArrowPathNew(noteData); //draw path
+			if(noteData.isStrum) //make sure we draw the path for each before we even draw each?
+				drawArrowPathNew(noteData);
+
 			if (noteData.isStrum) // draw strum
 				drawStrum(noteData);
 			else if (!notes.members[noteData.index].isSustainNote) // draw note
 				drawNote(noteData);
 			else // draw Sustain
 				drawSustainNote(noteData);
-			drawArrowPathNew(noteData); //draw path
+
 		}
 	}
 

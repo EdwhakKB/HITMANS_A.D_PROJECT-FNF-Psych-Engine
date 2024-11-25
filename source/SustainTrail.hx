@@ -88,15 +88,17 @@ class SustainTrail extends FlxSprite
   var graphicWidth:Float = 0;
   var graphicHeight:Float = 0;
 
+  var noteData:NotePositionData;
+  var pfr:PlayfieldRenderer;
   public var rgbShader:RGBShaderReference;
 
   /**
    * Normally you would take strumTime:Float, noteData:Int, sustainLength:Float, parentNote:Note (?)
-   * @param NoteData
+   * @param noteData
    * @param SustainLength Length in milliseconds.
    * @param NoteSkin
    */
-  public function new(noteDirection:Int, sustainLength:Float, noteStyle:String)
+  public function new(noteDirection:Int, sustainLength:Float, noteStyle:String, s:PlayfieldRenderer)
   {
     super(0, 0);
 
@@ -104,7 +106,7 @@ class SustainTrail extends FlxSprite
     this.sustainLength = sustainLength;
     this.fullSustainLength = sustainLength;
     this.noteDirection = noteDirection;
-
+    this.pfr = s;
     super(0, 0, Paths.image('NOTE_ArrowPath'));
     //setupHoldNoteGraphic(noteStyle);
 
@@ -126,6 +128,7 @@ class SustainTrail extends FlxSprite
     zoom *= isPixel ? 8.0 : 1.55;
     zoom *= 0.7;
 
+    noteData = new NotePositionData();
     var leData:Int = Std.int(Math.abs(noteDirection % 4));
     rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
     if (PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
@@ -317,6 +320,7 @@ class SustainTrail extends FlxSprite
    * If flipY is true, top and bottom bounds swap places.
    * @param songTime	The time to clip the note at, in milliseconds.
    */
+   
   public function updateClipping(songTime:Float = 0):Void
   {
     if (graphic == null)
@@ -446,15 +450,20 @@ class SustainTrail extends FlxSprite
     #end
   }
 
-  public function setNotePos(pfr:PlayfieldRenderer, noteData:NotePositionData, strumTime:Float, lane:Int, pf:Int):Void
+  public function updatePath(strumT:Float, lane:Int, pf:Int):Void
+  {
+    setNotePos(noteData, strumT, lane, pf);
+  }
+
+  public function setNotePos(noteData:NotePositionData, strumTim:Float, lane:Int, pf:Int):Void
   {
     //Sample the current mod math!
 
     var songSpeed:Float = pfr.getCorrectScrollSpeed();
 
-    var noteDist:Float = pfr.getNoteDist(0); //?????
+    var noteDist:Float = pfr.getNoteDist(noteData.index); //?????
 
-    var curPos = (Conductor.songPosition - strumTime) * songSpeed;
+    var curPos = (Conductor.songPosition - strumTim) * songSpeed;
 
     curPos = pfr.modifierTable.applyCurPosMods(lane, curPos, pf);
 
@@ -478,14 +487,13 @@ class SustainTrail extends FlxSprite
 
 
     //Apply z-axis projection! 
-    var pointWidth:Float = 2;
-    var pointHeight:Float = 1;
+    var pointWidth:Float = width;
+    var pointHeight:Float = height;
 
-    var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x + (pointWidth / 2),
-        noteData.y + (pointHeight / 2), noteData.z * 0.001),
-        ModchartUtil.defaultFOV * (Math.PI / 180),
-        -(pointWidth / 2),
-        -(pointHeight / 2));
+    var thisNotePos = ModchartUtil.calculatePerspective(
+      new Vector3D(noteData.x + (pointWidth / 2), noteData.y + (pointHeight / 2), noteData.z * 0.001),
+          ModchartUtil.defaultFOV * (Math.PI / 180), -(pointWidth / 2), -(pointHeight / 2)
+    );
 
     noteData.x = thisNotePos.x;
     noteData.y = thisNotePos.y;
@@ -494,6 +502,8 @@ class SustainTrail extends FlxSprite
 
     this.x = noteData.x;
     this.y = noteData.y;
+    this.scale.x = noteData.scaleX;
+    this.scale.y = noteData.scaleY;
   }
 
   public override function kill():Void
