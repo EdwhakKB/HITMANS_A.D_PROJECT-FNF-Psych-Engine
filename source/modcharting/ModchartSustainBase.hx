@@ -1,25 +1,15 @@
-package funkin.play.notes;
+package modcharting;
 
-import funkin.play.notes.notestyle.NoteStyle;
-import funkin.play.notes.NoteDirection;
-import funkin.data.song.SongData.SongNoteData;
-import flixel.util.FlxDirectionFlags;
-import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
-import flixel.graphics.tile.FlxDrawTrianglesItem;
 import flixel.math.FlxMath;
-import funkin.ui.options.PreferencesMenu;
-import funkin.play.modchartSystem.ModHandler;
-import funkin.play.modchartSystem.ModConstants;
-import funkin.graphics.FunkinSprite;
-import funkin.graphics.ZSprite;
-import lime.math.Vector2;
-import flixel.util.FlxColor;
-import funkin.graphics.shaders.HSVShader;
-import funkin.play.modchartSystem.NoteData;
-import funkin.play.notes.StrumlineNote;
-import openfl.display.TriangleCulling;
+import flixel.graphics.tile.FlxDrawTrianglesItem;
+import RGBPalette.RGBShaderReference;
+import flixel.FlxSprite;
+import flixel.FlxG;
+import sys.FileSystem;
+import modcharting.*;
 import openfl.geom.Vector3D;
+import flixel.util.FlxColor;
 
 /**
  * This is based heavily on the `FlxStrip` class. It uses `drawTriangles()` to clip a sustain note
@@ -39,31 +29,11 @@ class SustainTrail extends ZSprite
   static final TRIANGLE_VERTEX_INDICES:Array<Int> = [0, 1, 2, 1, 2, 3, 4, 5, 6, 5, 6, 7];
 
   public var strumTime:Float = 0; // millis
-  public var noteDirection:NoteDirection = 0;
+  public var noteDirection:Int = 0;
   public var sustainLength(default, set):Float = 0; // millis
   public var fullSustainLength:Float = 0;
-  public var noteData:Null<SongNoteData>;
-  public var parentStrumline:Strumline;
 
   // public var z:Float = 0;
-  public var cover:NoteHoldCover = null;
-
-  /**
-   * Set to `true` if the user hit the note and is currently holding the sustain.
-   * Should display associated effects.
-   */
-  public var hitNote:Bool = false;
-
-  /**
-   * Set to `true` if the user missed the note or released the sustain.
-   * Should make the trail transparent.
-   */
-  public var missedNote:Bool = false;
-
-  /**
-   * Set to `true` after handling additional logic for missing notes.
-   */
-  public var handledMiss:Bool = false;
 
   // maybe BlendMode.MULTIPLY if missed somehow, drawTriangles does not support!
 
@@ -111,8 +81,6 @@ class SustainTrail extends ZSprite
 
   public var isArrowPath:Bool = false;
 
-  // for identifying what noteStyle this notesprite is using in hxScript or even lua
-  public var noteStyleName:String = "funkin";
 
   /**
    * Normally you would take strumTime:Float, noteData:Int, sustainLength:Float, parentNote:Note (?)
@@ -120,7 +88,7 @@ class SustainTrail extends ZSprite
    * @param SustainLength Length in milliseconds.
    * @param fileName
    */
-  public function new(noteDirection:NoteDirection, sustainLength:Float, noteStyle:NoteStyle, isArrowPath:Bool = false, ?parentStrum:Strumline)
+  public function new(noteDirection:Int, sustainLength:Float, noteStyle:NoteStyle, isArrowPath:Bool = false, ?parentStrum:Strumline)
   {
     this.isArrowPath = isArrowPath;
     this.parentStrumline = parentStrum;
@@ -129,34 +97,13 @@ class SustainTrail extends ZSprite
     this.fullSustainLength = sustainLength;
     this.noteDirection = noteDirection;
 
-    if (isArrowPath)
-    {
-      if (parentStrum != null)
-      {
-        super(0, 0, Paths.image(parentStrum.arrowPathFileName));
-        // trace("pathpath: " + parentStrum.arrowPathFileName);
-      }
-      else
-      {
-        super(0, 0, Paths.image('NOTE_ArrowPath'));
-      }
-      useShader = false; // Don't use the hsv shader for arrowpaths cuz by default they should be white so they can easily be tinted instead of relying on a shader.
-    }
-    else
-    {
-      super(0, 0, noteStyle.getHoldNoteAssetPath());
-      // setupHoldNoteGraphic(noteStyle);// still need to support this lmfao
-    }
-
-    noteStyleOffsets = noteStyle.getHoldNoteOffsets();
+    super(0, 0, Paths.image('NOTE_ArrowPath'));
 
     noteModData = new NoteData();
 
-    noteStyleName = noteStyle.id;
-
     antialiasing = true;
 
-    this.isPixel = noteStyle.isHoldNotePixel();
+    this.isPixel = PlayState.isPixelStage;
     if (isPixel)
     {
       endOffset = bottomClip = 1;
@@ -169,21 +116,31 @@ class SustainTrail extends ZSprite
     }
 
     zoom = 1.0;
-    zoom *= noteStyle.fetchHoldNoteScale();
+    zoom *= isPixel ? 8.0 : 1.55;
+    zoom *= 0.7;
+
+    var leData:Int = Std.int(Math.abs(noteDirection % 4));
+    rgbShader = new RGBShaderReference(this, Note.initializeGlobalRGBShader(leData));
+    if (PlayState.SONG != null && PlayState.SONG.disableNoteRGB) rgbShader.enabled = false;
+
+    var arr:Array<FlxColor> = ClientPrefs.arrowRGB[leData];
+
+    if (leData <= arr.length)
+    {
+      @:bypassAccessor
+      {
+        rgbShader.r = arr[0];
+        rgbShader.g = arr[1];
+        rgbShader.b = arr[2];
+      }
+    }
 
     // CALCULATE SIZE
     graphicWidth = graphic.width / 8 * zoom; // amount of notes * 2
-    graphicHeight = sustainHeight(sustainLength, parentStrumline?.scrollSpeed ?? 1.0);
+    graphicHeight = sustainHeight(sustainLength, 1.0);
     // instead of scrollSpeed, PlayState.SONG.speed
 
-    if (parentStrum != null)
-    {
-      if (parentStrum.sustainGraphicWidth == null && !isArrowPath)
-      {
-        parentStrum.sustainGraphicWidth = graphicWidth;
-      }
-    }
-    flipY = Preferences.downscroll;
+    flipY = ClientPrefs.downScroll;
 
     indices = new DrawData<Int>(12, true, TRIANGLE_VERTEX_INDICES);
 
@@ -195,43 +152,45 @@ class SustainTrail extends ZSprite
     updateClipping();
   }
 
-  /**
-   * Creates hold note graphic and applies correct zooming
-   * @param noteStyle The note style
-   */
-  public function setupHoldNoteGraphic(noteStyle:NoteStyle):Void
-  {
-    loadGraphic(noteStyle.getHoldNoteAssetPath());
-    noteStyleName = noteStyle.id;
-    antialiasing = true;
+  // /**
+  //  * Creates hold note graphic and applies correct zooming
+  //  * @param noteStyle The note style
+  //  */
+  // public function setupHoldNoteGraphic(noteStyle:NoteStyle):Void
+  // {
+  //   loadGraphic(noteStyle.getHoldNoteAssetPath());
+  //   noteStyleName = noteStyle.id;
+  //   antialiasing = true;
 
-    this.isPixel = noteStyle.isHoldNotePixel();
-    if (isPixel)
-    {
-      endOffset = bottomClip = 1;
-      antialiasing = false;
-    }
-    else
-    {
-      endOffset = 0.5;
-      bottomClip = 0.9;
-    }
+  //   this.isPixel = noteStyle.isHoldNotePixel();
+  //   if (isPixel)
+  //   {
+  //     endOffset = bottomClip = 1;
+  //     antialiasing = false;
+  //   }
+  //   else
+  //   {
+  //     endOffset = 0.5;
+  //     bottomClip = 0.9;
+  //   }
 
-    zoom = 1.0;
-    zoom *= noteStyle.fetchHoldNoteScale();
-    zoom *= 0.7;
+  //   zoom = 1.0;
+  //   zoom *= noteStyle.fetchHoldNoteScale();
+  //   zoom *= 0.7;
 
-    // alpha = 0.6;
-    alpha = 1.0;
-    // calls updateColorTransform(), which initializes processedGraphic!
-    updateColorTransform();
+  //   // alpha = 0.6;
+  //   alpha = 1.0;
+  //   // calls updateColorTransform(), which initializes processedGraphic!
+  //   updateColorTransform();
 
-    updateClipping();
-  }
+  //   updateClipping();
+  // }
 
   function getBaseScrollSpeed():Float
   {
-    return (PlayState.instance?.currentChart?.scrollSpeed ?? 1.0);
+    var speed:Float = 1.0;
+    if (FlxG.state is PlayState) speed = PlayState.SONG.speed;
+    return speed;
   }
 
   var previousScrollSpeed:Float = 1;
@@ -239,11 +198,11 @@ class SustainTrail extends ZSprite
   override function update(elapsed):Void
   {
     super.update(elapsed);
-    if (previousScrollSpeed != (parentStrumline?.scrollSpeed ?? 1.0))
+    if (previousScrollSpeed != 1.0)
     {
       triggerRedraw();
     }
-    previousScrollSpeed = parentStrumline?.scrollSpeed ?? 1.0;
+    previousScrollSpeed = 1.0;
   }
 
   /**
@@ -253,7 +212,7 @@ class SustainTrail extends ZSprite
    */
   public static inline function sustainHeight(susLength:Float, scroll:Float)
   {
-    return (susLength * Constants.PIXELS_PER_MS * scroll);
+    return (susLength * 0.45 * scroll);
   }
 
   function set_sustainLength(s:Float):Float
@@ -268,8 +227,7 @@ class SustainTrail extends ZSprite
 
   function triggerRedraw():Void
   {
-    graphicHeight = sustainHeight(sustainLength, parentStrumline?.scrollSpeed ?? 1.0);
-
+    graphicHeight = sustainHeight(sustainLength, 1.0);
     updateClipping();
     updateHitbox();
   }
@@ -280,14 +238,6 @@ class SustainTrail extends ZSprite
     height = graphicHeight;
 
     offset.set(0, 0);
-    if (noteStyleOffsets != null)
-    {
-      if (!usingHazModHolds || parentStrumline == null || parentStrumline.mods == null)
-      {
-        offset.set(noteStyleOffsets[0], noteStyleOffsets[1]);
-      }
-    }
-
     origin.set(width * 0.5, height * 0.5);
   }
 
@@ -304,21 +254,8 @@ class SustainTrail extends ZSprite
     {
       return;
     }
-    if (parentStrumline == null || parentStrumline.mods == null)
-    {
-      // trace("AW FUCK, THERE IS NO WAY TO SAMPLE MOD DATA!");
-      updateClipping_Legacy(songTime);
-      return;
-    }
 
-    if (usingHazModHolds)
-    {
-      updateClipping_mods(songTime);
-    }
-    else
-    {
-      updateClipping_Legacy(songTime);
-    }
+    updateClipping_mods(songTime);
   }
 
   var fakeNote:ZSprite;
@@ -340,17 +277,9 @@ class SustainTrail extends ZSprite
     fakeNote.skew.x = 0;
     fakeNote.skew.y = 0;
 
-    if (isArrowPath)
-    {
-      // straightHoldsModAmount = parentStrumline.mods.arrowpathStraightHold[noteDirection % 4];
-      fakeNote.alpha = 0;
-      fakeNote.scale.set(ModConstants.arrowPathScale, ModConstants.arrowPathScale);
-    }
-    else
-    {
-      fakeNote.alpha = 1;
-      fakeNote.scale.set(ModConstants.noteScale, ModConstants.noteScale);
-    }
+    // straightHoldsModAmount = parentStrumline.mods.arrowpathStraightHold[noteDirection % 4];
+    fakeNote.alpha = 0;
+    fakeNote.scale.set(ModConstants.arrowPathScale, ModConstants.arrowPathScale);
   }
 
   var noteModData:NoteData;
@@ -359,88 +288,72 @@ class SustainTrail extends ZSprite
 
   public var hazCullMode:String = "none";
 
-  public var whichStrumNote:StrumlineNote;
-
   private var old3Dholds:Bool = false;
 
-  function susSample(t:Float, yJank:Bool = false, isRoot:Bool = false, dumbHeight:Float = 0):Void
+  function susSample(noteData:NotePositionData, t:Float, yJank:Bool = false, isRoot:Bool = false, dumbHeight:Float = 0):Void
   {
     var strumTimmy:Float = t - whichStrumNote.strumExtraModData.strumPos; // parentStrumline.mods.strumPos[noteDirection % 4];
 
-    var notePos:Float = parentStrumline.calculateNoteYPos(strumTimmy, false);
-    if (parentStrumline.mods.mathCutOffCheck(notePos, noteDirection % 4)
-      || (!isRoot
-        && whichStrumNote.strumExtraModData.noHoldMathShortcut < 0.5
-        && hitNote
-        && !missedNote
-        && ((notePos < 0.5 && !Preferences.downscroll) || (notePos > -0.5 && Preferences.downscroll))))
-    {
-      // if (noteDirection == 0) trace("skipped!");
-      return;
-    }
+    var notePos:Float = noteData.y;
 
     // resetFakeNote(straightHoldsModAmount);
     resetFakeNote();
     dumbHeight = 8; // lol, lmao, fuck you, fix this later
 
-    noteModData.defaultValues();
-    noteModData.setValuesFromZSprite(fakeNote);
-    noteModData.strumTime = strumTimmy;
-    noteModData.direction = noteDirection % Strumline.KEY_COUNT;
-    noteModData.curPos_unscaled = notePos;
 
-    noteModData.whichStrumNote = whichStrumNote;
+    var straightHoldsModAmount:Float = 0;
 
-    var straightHoldsModAmount:Float = isArrowPath ? whichStrumNote.strumExtraModData.arrowpathStraightHold : whichStrumNote.strumExtraModData.straightHolds;
+    var songSpeed:Float = pfr.getCorrectScrollSpeed();
 
-    var scrollMult:Float = 1.0;
-    // for (mod in modifiers){
-    for (mod in parentStrumline.mods.mods_speed)
-    {
-      if (mod.targetLane != -1 && noteModData.direction != mod.targetLane) continue;
-      scrollMult *= mod.speedMath(noteModData.direction, noteModData.curPos_unscaled, parentStrumline, true);
-    }
-    noteModData.speedMod = scrollMult;
+    var noteDist:Float = pfr.getNoteDist(noteData.index); //?????
 
-    noteModData.x = noteModData.whichStrumNote.x + parentStrumline.mods.getHoldOffsetX(isArrowPath, graphicWidth);
-    var sillyPos:Float = parentStrumline.calculateNoteYPos(noteModData.strumTime, true) * scrollMult;
-    if (Preferences.downscroll)
-    {
-      noteModData.y = (noteModData.whichStrumNote.y + sillyPos + Strumline.STRUMLINE_SIZE / 2);
-    }
-    else
-    {
-      noteModData.y = (noteModData.whichStrumNote.y - Strumline.INITIAL_OFFSET + sillyPos + Strumline.STRUMLINE_SIZE / 2);
-    }
-    noteModData.z = noteModData.whichStrumNote.z;
-    noteModData.curPos = sillyPos;
+    var curPos = (Conductor.songPosition - strumTim) * songSpeed;
 
-    noteModData.x -= noteModData.whichStrumNote.strumExtraModData.noteStyleOffsetX; // undo strum offset
-    noteModData.y -= noteModData.whichStrumNote.strumExtraModData.noteStyleOffsetY;
+    curPos = pfr.modifierTable.applyCurPosMods(lane, curPos, pf);
 
-    for (mod in (isArrowPath ? parentStrumline.mods.mods_arrowpath : parentStrumline.mods.mods_notes))
-    {
-      if (mod.targetLane != -1 && noteModData.direction != mod.targetLane) continue;
-      mod.noteMath(noteModData, parentStrumline, true, isArrowPath);
-    }
+    var incomingAngle:Array<Float> = pfr.modifierTable.applyIncomingAngleMods(lane, curPos, pf);
+    if (noteDist < 0)
+      incomingAngle[0] += 180; // make it match for both scrolls
 
-    for (mod in noteModData.noteMods)
-    {
-      if (mod.targetLane != -1 && noteModData.direction != mod.targetLane) continue;
-      mod.noteMath(noteModData, parentStrumline, true, isArrowPath);
-    }
+    // get the general note path
+    NoteMovement.setNotePath_positionData(noteData, lane, songSpeed, curPos, noteDist, incomingAngle[0], incomingAngle[1]);
 
-    noteModData.funnyOffMyself();
+    //move the x and y to properly be in the center of the strum graphic
+    var strumNote = pfr.strumGroup.members[lane]; //first we need to know what the strum is though lol
+    noteData.x += strumNote.width/2 - frameWidth/15;
+    noteData.y += strumNote.height/2 - frameHeight/15;
 
-    is3D = (noteModData.whichStrumNote?.strumExtraModData?.threeD ?? false);
-    old3Dholds = (noteModData.whichStrumNote?.strumExtraModData?.old3Dholds ?? false);
+    // add offsets to data with modifiers
+    pfr.modifierTable.applyNoteMods(noteData, lane, curPos, pf);
+
+    // add position data to list //idk what this does so I just commented it out lol cuz we just constantly reuse 1 notePosition data.
+    //notePositions.push(noteData);
+
+
+    //Apply z-axis projection! 
+    var pointWidth:Float = width;
+    var pointHeight:Float = height;
+
+    var thisNotePos = ModchartUtil.calculatePerspective(
+      new Vector3D(noteData.x + (pointWidth / 2), noteData.y + (pointHeight / 2), noteData.z * 0.001),
+          ModchartUtil.defaultFOV * (Math.PI / 180), -(pointWidth / 2), -(pointHeight / 2)
+    );
+
+    noteData.x = thisNotePos.x;
+    noteData.y = thisNotePos.y;
+    noteData.scaleX *= (1 / -thisNotePos.z);
+    noteData.scaleY *= (1 / -thisNotePos.z);
+
+    this.x = noteData.x;
+    this.y = noteData.y;
+    this.scale.x = noteData.scaleX;
+    this.scale.y = noteData.scaleY;
+
+    is3D = false;
+    old3Dholds = false;
     // is3D = false;
 
-    noteModData.x -= noteStyleOffsets[0]; // apply notestyle offset here for z math reasons lol
-    noteModData.y -= noteStyleOffsets[1];
-
-    fakeNote.applyNoteData(noteModData, !is3D);
-    if (Preferences.downscroll) fakeNote.y += 27; // fix gap for downscroll lol Moved from verts so it is applied before perspective fucks it up!
+    fakeNote.applyNoteData(noteData, !is3D);
 
     var rememberMe:Vector2 = new Vector2(fakeNote.x, fakeNote.y);
 
@@ -454,8 +367,8 @@ class SustainTrail extends ZSprite
     // parentStrumline.mods.sampleModMath(fakeNote, strumTimmy, noteDirection, parentStrumline, true, yJank, notePosModified, isArrowPath, graphicWidth,
     //  dumbHeight);
 
-    var scaleX = FlxMath.remapToRange(fakeNote.scale.x, 0, isArrowPath ? ModConstants.arrowPathScale : ModConstants.noteScale, 0, 1);
-    var scaleY = FlxMath.remapToRange(fakeNote.scale.y, 0, isArrowPath ? ModConstants.arrowPathScale : ModConstants.noteScale, 0, 1);
+    var scaleX = FlxMath.remapToRange(fakeNote.scale.x, 0, 1500, 0, 1);
+    var scaleY = FlxMath.remapToRange(fakeNote.scale.y, 0, 1500, 0, 1);
 
     switch (hazCullMode)
     {
@@ -560,8 +473,6 @@ class SustainTrail extends ZSprite
   private function clipTimeThing(songTimmy:Float, strumtimm:Float, piece:Int = 0):Float
   {
     var returnVal:Float = 0.0;
-    // if (hitNote && !missedNote) returnVal = songTimmy - strumTime;
-    if (!(hitNote && !missedNote)) return 0.0;
     if (songTimmy >= strumtimm)
     {
       returnVal = songTimmy - strumtimm;
@@ -582,31 +493,14 @@ class SustainTrail extends ZSprite
    * @param songTime	The time to clip the note at, in milliseconds.
    * @param uvSetup	Should UV's be updated?.
    */
-  public function updateClipping_mods(songTime:Float = 0, uvSetup:Bool = true):Void
+  public function updateClipping_mods(noteData:NotePositionData, songTime:Float = 0, uvSetup:Bool = true):Void
   {
-    whichStrumNote = parentStrumline.getByIndex(noteDirection);
-
     if (fakeNote == null) fakeNote = new ZSprite();
 
-    var holdGrain:Float = isArrowPath ? (whichStrumNote?.strumExtraModData?.pathGrain ?? 95) : (whichStrumNote?.strumExtraModData?.holdGrain ?? 82);
-    var songTimmy:Float = (Conductor?.instance?.songPosition ?? songTime);
+    var holdGrain:Float = noteData != null ? noteData.arrowPathLength : 1500;
+    var songTimmy:Float = Conductor.songPosition;
 
     var longHolds:Float = 0;
-    if (!isArrowPath)
-    {
-      longHolds = whichStrumNote.strumExtraModData?.longHolds ?? 0;
-      // longHolds = parentStrumline?.mods?.longHolds[noteDirection % 4] ?? 0;
-      if (longHolds != 0)
-      {
-        var percentageTillCompletion_part:Float = 0;
-        if (songTimmy >= strumTime) percentageTillCompletion_part = songTimmy - strumTime;
-        if (percentageTillCompletion_part < 0) percentageTillCompletion_part = 0;
-        var percentageTillCompletion:Float = percentageTillCompletion_part / fullSustainLength;
-        percentageTillCompletion = FlxMath.bound(percentageTillCompletion, 0, 1); // clamp
-        percentageTillCompletion = 1 - percentageTillCompletion;
-        longHolds *= percentageTillCompletion;
-      }
-    }
     longHolds += 1;
 
     var holdResolution:Int = Math.floor(fullSustainLength * longHolds / holdGrain);
@@ -620,7 +514,7 @@ class SustainTrail extends ZSprite
     var holdNoteJankY:Float = ModConstants.holdNoteJankY * -1;
 
     // var spiralHolds:Bool = parentStrumline?.mods?.spiralHolds[noteDirection % 4] ?? false;
-    var spiralHolds:Bool = (isArrowPath ? (whichStrumNote.strumExtraModData?.spiralPaths ?? false) : (whichStrumNote.strumExtraModData?.spiralHolds ?? false));
+    var spiralHolds:Bool = true;
 
     var testCol:Array<Int> = [];
     var vertices:Array<Float> = [];
@@ -664,7 +558,7 @@ class SustainTrail extends ZSprite
     //  noteIndices.push(highestNumSoFar_ + k + 2);
     // }
 
-    var clipHeight:Float = FlxMath.bound(sustainHeight(sustainLength - (songTime - strumTime), parentStrumline?.scrollSpeed ?? 1.0), 0, graphicHeight);
+    var clipHeight:Float = FlxMath.bound(sustainHeight(sustainLength - (songTime - strumTime),  1.0), 0, graphicHeight);
     if (clipHeight <= 0.1)
     {
       visible = false;
@@ -673,13 +567,6 @@ class SustainTrail extends ZSprite
     else
     {
       visible = true;
-    }
-
-    // lmao, make it invisible if we dropped a hold. Done using alpha in base game but since alpha is being used, we need to use visible instead
-    if (hitNote && missedNote && hideOnMiss)
-    {
-      visible = false;
-      return; // Update v0.7.3 -> No need to do any more math / code if it's going to not be seen lol
     }
 
     var sussyLength:Float = fullSustainLength;
@@ -693,7 +580,7 @@ class SustainTrail extends ZSprite
     var bottomHeight:Float = graphic.height * zoom * endOffset;
     var partHeight:Float = clipHeight - bottomHeight;
 
-    susSample(this.strumTime + clippingTimeOffset, false, true, 0);
+    susSample(noteData, this.strumTime + clippingTimeOffset, false, true, 0);
     var scaleTest = fakeNote.scale.x;
     var widthScaled = holdWidth * scaleTest;
     var scaleChange = widthScaled - holdWidth;
@@ -742,14 +629,6 @@ class SustainTrail extends ZSprite
     this.alpha = fakeNote.alpha;
     // }
     this.z = fakeNote.z; // for z ordering
-
-    if (useShader && this.hsvShader != null)
-    {
-      this.hsvShader.stealthGlow = fakeNote.stealthGlow;
-      this.hsvShader.stealthGlowBlue = fakeNote.stealthGlowBlue;
-      this.hsvShader.stealthGlowGreen = fakeNote.stealthGlowGreen;
-      this.hsvShader.stealthGlowRed = fakeNote.stealthGlowRed;
-    }
 
     // Top right
     vert = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
@@ -1158,7 +1037,7 @@ class SustainTrail extends ZSprite
    */
   public function updateClipping_Legacy(songTime:Float = 0):Void
   {
-    var clipHeight:Float = FlxMath.bound(sustainHeight(sustainLength - (songTime - strumTime), parentStrumline?.scrollSpeed ?? 1.0), 0, graphicHeight);
+    var clipHeight:Float = FlxMath.bound(sustainHeight(sustainLength - (songTime - strumTime),  1.0), 0, graphicHeight);
     if (clipHeight <= 0.1)
     {
       visible = false;
@@ -1294,10 +1173,6 @@ class SustainTrail extends ZSprite
     noteDirection = 0;
     sustainLength = 0;
     fullSustainLength = 0;
-    noteData = null;
-
-    hitNote = false;
-    missedNote = false;
   }
 
   public override function revive():Void
@@ -1308,11 +1183,6 @@ class SustainTrail extends ZSprite
     noteDirection = 0;
     sustainLength = 0;
     fullSustainLength = 0;
-    noteData = null;
-
-    hitNote = false;
-    missedNote = false;
-    handledMiss = false;
   }
 
   public override function destroy():Void
@@ -1336,22 +1206,5 @@ class SustainTrail extends ZSprite
       processedGraphic = FlxGraphic.fromGraphic(graphic, true);
       // processedGraphic.bitmap.colorTransform(processedGraphic.bitmap.rect, colorTransform);
     }
-    if (useShader && this.hsvShader == null)
-    {
-      this.hsvShader = new HSVShader();
-    }
   }
-
-  public function desaturate():Void
-  {
-    this.hsvShader.saturation = 0.2;
-  }
-
-  public function setHue(hue:Float):Void
-  {
-    this.hsvShader.hue = hue;
-  }
-
-  var useShader:Bool = true;
-  var hsvShader:HSVShader = null;
 }
