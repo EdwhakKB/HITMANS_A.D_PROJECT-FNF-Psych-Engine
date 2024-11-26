@@ -741,8 +741,8 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		var pathTime:Float = Conductor.songPosition;
 		pathTime += 250;
 		pathTime += noteData.arrowPathBackwardsLength;
-		strumNote.arrowPath.songTime = pathTime;
-		strumNote.arrowPath.updateClipping_mods(noteData, pathTime);
+		//strumNote.arrowPath.songTime = pathTime;
+		strumNote.arrowPath.updateClipping(pathTime);
 
 		//strumNote.arrowPath.updatePath(pathTime,noteData.lane,noteData.playfieldIndex);
 

@@ -235,14 +235,14 @@ class SustainTrail extends FlxSprite
    * If flipY is true, top and bottom bounds swap places.
    * @param songTime	The time to clip the note at, in milliseconds.
    */
-  public function updateClipping():Void
+  public function updateClipping(songT:Float = 0):Void
   {
     if (graphic == null)
     {
       return;
     }
 
-    updateClipping_mods(fakeNote, songTime);
+    updateClipping_mods(fakeNote, songT);
   }
 
   var fakeNote:NotePositionData = new NotePositionData();
@@ -260,7 +260,7 @@ class SustainTrail extends FlxSprite
     fakeNote.skewY = 0;
 
     // straightHoldsModAmount = parentStrumline.mods.arrowpathStraightHold[noteDirection % 4];
-    fakeNote.alpha = 0;
+    fakeNote.alpha = 1;
     fakeNote.scaleX = 1;
     fakeNote.scaleY = 1;
   }
@@ -591,7 +591,7 @@ class SustainTrail extends FlxSprite
    // this.color = fakeNote.color;
     // if (!isArrowPath)
     // {
-    this.alpha = fakeNote.alpha;
+    this.alpha = noteData.arrowPathAlpha;
     // }
     this.z = fakeNote.z; // for z ordering
 
