@@ -45,6 +45,8 @@ class NotePositionData implements IFlxDestroyable
 
     public var spiralHold:Float = 0;
 
+    public var orient:Float = 0;
+
     public var angleX:Float = 0;
     public var angleY:Float = 0;
     public var angleZ:Float = 0;
@@ -163,6 +165,8 @@ class NotePositionData implements IFlxDestroyable
         this.pathGrain = 50;
 
         this.spiralHold = 0;
+
+        this.orient = 0;
 
         this.angleX = 0;
         this.angleY = 0;
