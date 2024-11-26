@@ -733,7 +733,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		var strumNote = strumGroup.members[noteData.index];
 
 		if (strumNote.arrowPath == null)
-			strumNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, "", this);
+			strumNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, this);
 
 		strumNote.arrowPath.alpha = noteData.arrowPathAlpha; //this one goes inversed...
 
@@ -742,8 +742,10 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		var pathTime:Float = Conductor.songPosition;
 		pathTime += 250;
 		pathTime += noteData.arrowPathBackwardsLength;
+		strumNote.arrowPath.songTime = pathTime;
+		strumNote.arrowPath.updateClipping_mods(noteData, pathTime);
 
-		strumNote.arrowPath.updatePath(pathTime,noteData.lane,noteData.playfieldIndex);
+		//strumNote.arrowPath.updatePath(pathTime,noteData.lane,noteData.playfieldIndex);
 
 		strumNote.arrowPath.cameras = this.cameras;
 		strumNote.arrowPath.draw();
