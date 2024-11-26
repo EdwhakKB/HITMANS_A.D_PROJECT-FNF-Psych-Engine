@@ -1,11 +1,11 @@
-package funkin.graphics;
+package modcharting;
 
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxSprite;
 import lime.math.Vector2;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import funkin.play.notes.Strumline;
-import funkin.play.modchartSystem.NoteData;
+//import funkin.play.notes.Strumline;
+import modcharting.*;
 import flixel.math.FlxMath;
 
 class ZSprite extends FlxSkewedSprite // class ZSprite extends FlxSprite
@@ -25,7 +25,7 @@ class ZSprite extends FlxSkewedSprite // class ZSprite extends FlxSprite
   public var lastKnownOrientAngle:Float;
 
   // Was a test so that when Z-Sort mod gets disabled, everything can get returned to their proper strums.
-  public var weBelongTo:Strumline = null;
+  //public var weBelongTo:Strumline = null;
 
   // some extra variables for stealthGlow
   // jank way of doing it but, too bad
@@ -50,7 +50,7 @@ class ZSprite extends FlxSkewedSprite // class ZSprite extends FlxSprite
   }
 
   // Feed a noteData into this function to apply all of it's parameters to this sprite!
-  public function applyNoteData(data:NoteData, applyFake3D:Bool = false):Void
+  public function applyNoteData(data:NotePositionData, applyFake3D:Bool = false):Void
   {
     this.x = data.x + x2;
     this.y = data.y + y2;
@@ -62,7 +62,7 @@ class ZSprite extends FlxSkewedSprite // class ZSprite extends FlxSprite
     this.scale.y = data.scaleY;
 
     // temp for now
-    if (applyFake3D || data.whichStrumNote?.strumExtraModData?.threeD ?? false == false)
+    if (applyFake3D)
     {
       this.scale.x *= FlxMath.fastCos(data.angleY * (Math.PI / 180));
       this.scale.y *= FlxMath.fastCos(data.angleX * (Math.PI / 180));

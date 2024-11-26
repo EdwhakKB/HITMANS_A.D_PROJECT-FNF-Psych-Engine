@@ -10,6 +10,7 @@ import sys.FileSystem;
 import modcharting.*;
 import openfl.geom.Vector3D;
 import flixel.util.FlxColor;
+import lime.math.Vector2;
 
 /**
  * This is based heavily on the `FlxStrip` class. It uses `drawTriangles()` to clip a sustain note
@@ -499,8 +500,8 @@ class SustainTrail extends ZSprite
       holdResolution = 1;
     }
 
-    var holdNoteJankX:Float = ModConstants.holdNoteJankX * -1;
-    var holdNoteJankY:Float = ModConstants.holdNoteJankY * -1;
+    var holdNoteJankX:Float = 0;
+    var holdNoteJankY:Float = 0;
 
     // var spiralHolds:Bool = parentStrumline?.mods?.spiralHolds[noteDirection % 4] ?? false;
     var spiralHolds:Bool = true;

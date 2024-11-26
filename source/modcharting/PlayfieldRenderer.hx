@@ -581,8 +581,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		if (noteData.orient != 0){
 			angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG;
-			//angle *= (180/Math.PI);
-			trace(angle-90);
+			//angle *= (180/Math.PI);		
 			finalAngle = (angle-90) * noteData.orient;
 		}
 
