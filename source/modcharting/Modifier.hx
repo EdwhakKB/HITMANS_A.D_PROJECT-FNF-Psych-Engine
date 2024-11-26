@@ -200,8 +200,16 @@ class ModifierMath
     };
 
     //Reverse Math
-    public static function Reverse(noteData:NotePositionData, lane:Int) //no clue how would this be useful but ok??
+    public static function Reverse(noteData:NotePositionData, lane:Int, usingDownscroll:Bool) //no clue how would this be useful but ok??
     {  
+        var scrollSwitch = 520;
+        if (usingDownscroll)
+            scrollSwitch *= -1;
+
+        return scrollSwitch;
+    }
+
+    public static function Centered(noteData:NotePositionData, lane:Int){
         var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
         var differenceBetween:Float = noteData.y - screenCenter;
         return differenceBetween * -1;
@@ -742,31 +750,20 @@ class ReverseModifier extends Modifier
 {
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
-        noteData.y += (currentValue*2) * ModifierMath.Reverse(noteData, lane);
-        //var screenCenter:Float = (FlxG.height/2) - (NoteMovement.arrowSizes[lane]/2);
-        //var differenceBetween:Float = noteData.y - screenCenter;
-        //noteData.y += (currentValue*2) * differenceBetween * -1;
+        var ud = false;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                ud = true;
+        noteData.y += ModifierMath.Reverse(noteData, lane, ud) * currentValue;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         strumMath(noteData, lane, pf);
     }
-    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     var scrollSwitch = 520;
-    //     if (instance != null)
-    //         if (ModchartUtil.getDownscroll(instance))
-    //             scrollSwitch *= -1;
-    //     noteData.y += scrollSwitch * currentValue;
-    // }
-    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     return noteDist * (1-(currentValue*2));
-    // }
-    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    // {
-    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
-    // }
+    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    {
+        return noteDist * (1-(currentValue*2));
+    }
 }
 class SplitModifier extends Modifier 
 {
@@ -779,49 +776,34 @@ class SplitModifier extends Modifier
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
+        var ud = false;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                ud = true;
         var laneThing = lane % NoteMovement.keyCount;
 
         if (laneThing > 1)
-            noteData.y += (subValues.get('VarA').value*2) * ModifierMath.Reverse(noteData, lane);
+            noteData.y += (subValues.get('VarA').value) * ModifierMath.Reverse(noteData, lane, ud);
 
         if (laneThing < 2)
-            noteData.y += (subValues.get('VarB').value*2) * ModifierMath.Reverse(noteData, lane);
+            noteData.y += (subValues.get('VarB').value) * ModifierMath.Reverse(noteData, lane, ud);
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         strumMath(noteData, lane, pf);
     }
-    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     var scrollSwitch = 520;
-    //     if (instance != null)
-    //         if (ModchartUtil.getDownscroll(instance))
-    //             scrollSwitch *= -1;
+    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    {
+        var laneThing = lane % NoteMovement.keyCount;
 
-    //     var laneThing = lane % NoteMovement.keyCount;
+        if (laneThing > 1)
+            return noteDist * (1-(subValues.get('VarA').value*2));
 
-    //     if (laneThing > 1)
-    //         noteData.y += scrollSwitch * subValues.get('VarA').value;
+        if (laneThing < 2)
+            return noteDist * (1-(subValues.get('VarB').value*2));
 
-    //     if (laneThing < 2)
-    //         noteData.y += scrollSwitch * subValues.get('VarB').value;
-    // }
-    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     var laneThing = lane % NoteMovement.keyCount;
-
-    //     if (laneThing > 1)
-    //         return noteDist * (1-(subValues.get('VarA').value*2));
-
-    //     if (laneThing < 2)
-    //         return noteDist * (1-(subValues.get('VarB').value*2));
-
-    //     return noteDist;
-    // }
-    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    // {
-    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
-    // }
+        return noteDist;
+    }
     override function reset()
     {
         super.reset();
@@ -840,49 +822,34 @@ class CrossModifier extends Modifier
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
+        var ud = false;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                ud = true;
         var laneThing = lane % NoteMovement.keyCount;
 
         if (laneThing > 0 && laneThing < 3)
-            noteData.y += (subValues.get('VarA').value*2) * ModifierMath.Reverse(noteData, lane);
+            noteData.y += (subValues.get('VarA').value) * ModifierMath.Reverse(noteData, lane, ud);
 
         if (laneThing == 0 || laneThing == 3)
-            noteData.y += (subValues.get('VarB').value*2) * ModifierMath.Reverse(noteData, lane);
+            noteData.y += (subValues.get('VarB').value) * ModifierMath.Reverse(noteData, lane, ud);
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         strumMath(noteData, lane, pf);
     }
-    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     var scrollSwitch = 520;
-    //     if (instance != null)
-    //         if (ModchartUtil.getDownscroll(instance))
-    //             scrollSwitch *= -1;
+    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    {
+        var laneThing = lane % NoteMovement.keyCount;
 
-    //     var laneThing = lane % NoteMovement.keyCount;
+        if (laneThing > 0 && laneThing < 3)
+            return noteDist * (1-(subValues.get('VarA').value*2));
 
-    //     if (laneThing > 0 && laneThing < 3)
-    //         noteData.y += scrollSwitch * subValues.get('VarA').value;
+        if (laneThing == 0 || laneThing == 3)
+            return noteDist * (1-(subValues.get('VarB').value*2));
 
-    //     if (laneThing == 0 || laneThing == 3)
-    //         noteData.y += scrollSwitch * subValues.get('VarB').value;
-    // }
-    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     var laneThing = lane % NoteMovement.keyCount;
-
-    //     if (laneThing > 0 && laneThing < 3)
-    //         return noteDist * (1-(subValues.get('VarA').value*2));
-
-    //     if (laneThing == 0 || laneThing == 3)
-    //         return noteDist * (1-(subValues.get('VarB').value*2));
-
-    //     return noteDist;
-    // }
-    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    // {
-    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
-    // }
+        return noteDist;
+    }
     override function reset()
     {
         super.reset();
@@ -901,42 +868,30 @@ class AlternateModifier extends Modifier
     }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {  
+        var ud = false;
+        if (instance != null)
+            if (ModchartUtil.getDownscroll(instance))
+                ud = true;
         if (lane%2 == 1)
-            noteData.y += (subValues.get('VarA').value*2) * ModifierMath.Reverse(noteData, lane);
+            noteData.y += (subValues.get('VarA').value) * ModifierMath.Reverse(noteData, lane, ud);
 
         if (lane%2 == 0)
-            noteData.y += (subValues.get('VarB').value*2) * ModifierMath.Reverse(noteData, lane);
+            noteData.y += (subValues.get('VarB').value) * ModifierMath.Reverse(noteData, lane, ud);
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
         strumMath(noteData, lane, pf);
     }
-    // override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     var scrollSwitch = 520;
-    //     if (instance != null)
-    //         if (ModchartUtil.getDownscroll(instance))
-    //             scrollSwitch *= -1;
-    //     if (lane%2 == 1)
-    //         noteData.y += scrollSwitch * subValues.get('VarA').value;
+    override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
+    {
+        if (lane%2 == 1)
+            return noteDist * (1-(subValues.get('VarA').value*2));
 
-    //     if (lane%2 == 0)
-    //         noteData.y += scrollSwitch * subValues.get('VarB').value;
-    // }
-    // override function noteDistMath(noteDist:Float, lane:Int, curPos:Float, pf:Int)
-    // {
-    //     if (lane%2 == 1)
-    //         return noteDist * (1-(subValues.get('VarA').value*2));
+        if (lane%2 == 0)
+            return noteDist * (1-(subValues.get('VarB').value*2));
 
-    //     if (lane%2 == 0)
-    //         return noteDist * (1-(subValues.get('VarB').value*2));
-
-    //     return noteDist;
-    // }
-    // override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
-    // {
-    //     noteMath(noteData, lane, 0, pf); //just reuse same thing
-    // }
+        return noteDist;
+    }
     override function reset()
     {
         super.reset();
@@ -4673,7 +4628,6 @@ class CullTargetsModifier extends Modifier
 }
 
 
-
 class ArrowPathAlphaModifier extends Modifier //used but unstable (as old way)
 {
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
@@ -4685,6 +4639,20 @@ class ArrowPathAlphaModifier extends Modifier //used but unstable (as old way)
         noteData.arrowPathAlpha += currentValue;
     }
 }
+
+
+class OrientModifier extends Modifier //ig this must work?
+{
+    override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
+    {
+        noteData.orient += currentValue;
+    }
+    override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
+    {
+        noteData.orient += currentValue;
+    }
+}
+
 
 // class LongHoldsModifier extends Modifier //unused
 // {
