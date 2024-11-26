@@ -88,18 +88,13 @@ class SustainTrail extends ZSprite
    * @param SustainLength Length in milliseconds.
    * @param fileName
    */
-  public function new(noteDirection:Int, sustainLength:Float, noteStyle:NoteStyle, isArrowPath:Bool = false, ?parentStrum:Strumline)
+  public function new(noteDirection:Int, sustainLength:Float)
   {
-    this.isArrowPath = isArrowPath;
-    this.parentStrumline = parentStrum;
-
     this.sustainLength = sustainLength;
     this.fullSustainLength = sustainLength;
     this.noteDirection = noteDirection;
 
     super(0, 0, Paths.image('NOTE_ArrowPath'));
-
-    noteModData = new NoteData();
 
     antialiasing = true;
 
@@ -279,10 +274,8 @@ class SustainTrail extends ZSprite
 
     // straightHoldsModAmount = parentStrumline.mods.arrowpathStraightHold[noteDirection % 4];
     fakeNote.alpha = 0;
-    fakeNote.scale.set(ModConstants.arrowPathScale, ModConstants.arrowPathScale);
+    fakeNote.scale.set(1, 1);
   }
-
-  var noteModData:NoteData;
 
   public var cullMode = TriangleCulling.NONE;
 
@@ -292,8 +285,6 @@ class SustainTrail extends ZSprite
 
   function susSample(noteData:NotePositionData, t:Float, yJank:Bool = false, isRoot:Bool = false, dumbHeight:Float = 0):Void
   {
-    var strumTimmy:Float = t - whichStrumNote.strumExtraModData.strumPos; // parentStrumline.mods.strumPos[noteDirection % 4];
-
     var notePos:Float = noteData.y;
 
     // resetFakeNote(straightHoldsModAmount);
@@ -357,8 +348,6 @@ class SustainTrail extends ZSprite
 
     var rememberMe:Vector2 = new Vector2(fakeNote.x, fakeNote.y);
 
-    if (old3Dholds || !is3D) applyPerspective(fakeNote, graphicWidth, dumbHeight);
-
     // caluclate diff
     perspectiveShift.x = fakeNote.x - rememberMe.x;
     perspectiveShift.y = fakeNote.y - rememberMe.y;
@@ -367,8 +356,8 @@ class SustainTrail extends ZSprite
     // parentStrumline.mods.sampleModMath(fakeNote, strumTimmy, noteDirection, parentStrumline, true, yJank, notePosModified, isArrowPath, graphicWidth,
     //  dumbHeight);
 
-    var scaleX = FlxMath.remapToRange(fakeNote.scale.x, 0, 1500, 0, 1);
-    var scaleY = FlxMath.remapToRange(fakeNote.scale.y, 0, 1500, 0, 1);
+    var scaleX = FlxMath.remapToRange(fakeNote.scale.x, 0, 1, 0, 1);
+    var scaleY = FlxMath.remapToRange(fakeNote.scale.y, 0, 1, 0, 1);
 
     switch (hazCullMode)
     {
@@ -416,7 +405,7 @@ class SustainTrail extends ZSprite
 
   var is3D:Bool = false;
 
-  function applyPerspective(pos:Vector3D, rotatePivot:Vector2):Vector2
+  function applyPerspective(noteData:NotePositionData, pos:Vector3D, rotatePivot:Vector2):Vector2
   {
     if (!is3D || old3Dholds)
     {
@@ -426,7 +415,7 @@ class SustainTrail extends ZSprite
     {
       var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
 
-      var angleY:Float = noteModData.angleY;
+      var angleY:Float = noteData.angleY;
       var angleX:Float = 0;
 
       // Already done with spiral holds lol
@@ -611,7 +600,7 @@ class SustainTrail extends ZSprite
     var rotateOrigin:Vector2 = new Vector2(fakeNote.x + holdLeftSide, fakeNote.y);
     // move rotateOrigin to be inbetween the left and right vert so it's centered
     rotateOrigin.x += ((fakeNote.x + holdRightSide) - (fakeNote.x + holdLeftSide)) / 2;
-    var vert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    var vert:Vector2 = applyPerspective(noteData, new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
 
     // Top left
     vertices[0 * 2] = vert.x; // Inline with left side
@@ -631,7 +620,7 @@ class SustainTrail extends ZSprite
     this.z = fakeNote.z; // for z ordering
 
     // Top right
-    vert = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    vert = applyPerspective(noteData, new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
     vertices[1 * 2] = vert.x;
     vertices[1 * 2 + 1] = vert.y; // Inline with top left vertex
 
@@ -675,7 +664,7 @@ class SustainTrail extends ZSprite
       // move rotateOrigin to be inbetween the left and right vert so it's centered
       rotateOrigin.x += ((fakeNote.x + holdRightSide) - (fakeNote.x + holdLeftSide)) / 2;
 
-      var vert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
+      var vert:Vector2 = applyPerspective(noteData, new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
 
       // Bottom left
       vertices[i * 2] = vert.x; // Inline with left side
@@ -720,7 +709,7 @@ class SustainTrail extends ZSprite
         // var rvert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
         var rotatePoint:Vector2 = new Vector2(fakeNote.x + holdRightSide, fakeNote.y);
         var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-        thing = applyPerspective(new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
+        thing = applyPerspective(noteData, new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
         rightSideOffX = thing.x;
         rightSideOffY = thing.y;
 
@@ -731,7 +720,7 @@ class SustainTrail extends ZSprite
         // left
         rotatePoint = new Vector2(fakeNote.x + holdLeftSide, fakeNote.y);
         thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-        thing = applyPerspective(new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
+        thing = applyPerspective(noteData, new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
         rightSideOffX = thing.x;
         rightSideOffY = thing.y;
 
@@ -764,7 +753,7 @@ class SustainTrail extends ZSprite
       else
       {
         // Bottom right
-        var vert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
+        var vert:Vector2 = applyPerspective(noteData, new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
         vertices[(i + 1) * 2] = vert.x;
         vertices[(i + 1) * 2 + 1] = vert.y;
       }
@@ -800,7 +789,7 @@ class SustainTrail extends ZSprite
     var sillyEndOffset = (graphic.height * (endOffset) * zoom);
 
     // just some random magic number for now. Don't know how to convert the pixels / height into strumTime
-    sillyEndOffset = sillyEndOffset / (0.45 * parentStrumline?.scrollSpeed ?? 1.0);
+    sillyEndOffset = sillyEndOffset / (0.45 * 1.0);
 
     sillyEndOffset *= 1.9; // MAGIC NUMBER IDFK
 
@@ -855,7 +844,7 @@ class SustainTrail extends ZSprite
     // move rotateOrigin to be inbetween the left and right vert so it's centered
     rotateOrigin.x += ((fakeNote.x + holdRightSide) - (fakeNote.x + holdLeftSide)) / 2;
 
-    vert = applyPerspective(new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    vert = applyPerspective(noteData, new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
     vertices[highestNumSoFar * 2] = vert.x;
     vertices[highestNumSoFar * 2 + 1] = vert.y;
     testCol[highestNumSoFar * 2] = fakeNote.color;
@@ -866,7 +855,7 @@ class SustainTrail extends ZSprite
 
     // Bottom right
     highestNumSoFar += 1;
-    vert = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    vert = applyPerspective(noteData, new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
     vertices[highestNumSoFar * 2] = vert.x;
     vertices[highestNumSoFar * 2 + 1] = vert.y;
     testCol[highestNumSoFar * 2] = fakeNote.color;
