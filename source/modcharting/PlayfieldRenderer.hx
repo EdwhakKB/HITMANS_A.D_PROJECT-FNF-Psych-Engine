@@ -736,13 +736,20 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		strumNote.arrowPath.alpha = noteData.arrowPathAlpha; //this one goes inversed...
 
+		strumNote.arrowPath.fullSustainLength = strumNote.arrowPath.sustainLength = noteData.arrowPathLength + noteData.arrowPathBackwardsLength;
+
 		//strumNote.arrowPath.shader = strumNote.rgbShader.parent.shader; // idfk if this works.
 
 		var pathTime:Float = Conductor.songPosition;
 		pathTime += 250;
 		pathTime += noteData.arrowPathBackwardsLength;
-		//strumNote.arrowPath.songTime = pathTime;
-		strumNote.arrowPath.updateClipping_mods(noteData,pathTime);
+
+		strumNote.arrowPath.strumTime = pathTime;
+
+		strumNote.arrowPath.x = 0;
+		strumNote.arrowPath.y = 0;
+		
+		strumNote.arrowPath.updateClipping_mods(noteData);
 
 		//strumNote.arrowPath.updatePath(pathTime,noteData.lane,noteData.playfieldIndex);
 

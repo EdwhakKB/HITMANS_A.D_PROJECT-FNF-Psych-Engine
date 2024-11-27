@@ -271,21 +271,18 @@ class SustainTrail extends FlxSprite
 
   private var old3Dholds:Bool = false;
 
-  function susSample(noteData:NotePositionData, strumTim:Float, lane:Int, pf:Int):Void
+  function susSample(noteData:NotePositionData, strumTimmy:Float, lane:Int, pf:Int):Void
   {
-    var notePos:Float = noteData.y;
-
-    // resetFakeNote(straightHoldsModAmount);
     resetFakeNote();
 
-
-    var straightHoldsModAmount:Float = 0;
+    //Apply the information of this sustain to the noteData such as the lane / direction, the strumTime of this note, etc
+    //Apply any extra information here if needed to like, idk, "noteData.isHold = true"
 
     var songSpeed:Float = pfr.getCorrectScrollSpeed();
 
     var noteDist:Float = pfr.getNoteDist(noteData.index); //?????
 
-    var curPos = (Conductor.songPosition - strumTim) * songSpeed;
+    var curPos = (Conductor.songPosition - strumTimmy) * songSpeed;
 
     curPos = pfr.modifierTable.applyCurPosMods(lane, curPos, pf);
 
@@ -322,73 +319,12 @@ class SustainTrail extends FlxSprite
     noteData.scaleX *= (1 / -thisNotePos.z);
     noteData.scaleY *= (1 / -thisNotePos.z);
 
-    this.x = noteData.x;
-    this.y = noteData.y;
-    this.scale.x = noteData.scaleX;
-    this.scale.y = noteData.scaleY;
 
-    // is3D = false;
 
+    //Now finally, we apply this data onto the fake note!
+    //Since fake note is just a copy of noteData, we can just... do this I think?
+    //This fake note is used in the construction of the sustainTrail to figure out where shit goes.
     fakeNote = noteData;
-
-    var rememberMe:Vector2 = new Vector2(fakeNote.x, fakeNote.y);
-
-    // caluclate diff
-    perspectiveShift.x = fakeNote.x - rememberMe.x;
-    perspectiveShift.y = fakeNote.y - rememberMe.y;
-
-    // var notePosModified:Float = parentStrumline.mods.makeHoldCopyStrum_sample(fakeNote, strumTimmy, noteDirection, parentStrumline, notePos, isArrowPath);
-    // parentStrumline.mods.sampleModMath(fakeNote, strumTimmy, noteDirection, parentStrumline, true, yJank, notePosModified, isArrowPath, graphicWidth,
-    //  dumbHeight);
-
-    var scaleX = FlxMath.remapToRange(fakeNote.scaleX, 0, 1, 0, 1);
-    var scaleY = FlxMath.remapToRange(fakeNote.scaleY, 0, 1, 0, 1);
-
-    switch (hazCullMode)
-    {
-      case "positive" | "back":
-        if (scaleX < 0) scaleX = 0;
-        if (scaleY < 0) scaleY = 0;
-      case "negative" | "front":
-        if (scaleX > 0) scaleX = 0;
-        if (scaleY > 0) scaleY = 0;
-    }
-
-    // fakeNote.scale.set(scaleX, scaleY);
-
-    if (straightHoldsModAmount == 0)
-    {
-      fakeNote.x = FlxMath.lerp(fakeNote.x, holdRootX, straightHoldsModAmount);
-      // fakeNote.y = FlxMath.lerp(fakeNote.y, holdRootY, straightHoldsModAmount);
-      fakeNote.z = FlxMath.lerp(fakeNote.z, holdRootZ, straightHoldsModAmount);
-      fakeNote.angle = FlxMath.lerp(fakeNote.x, holdRootAngle, straightHoldsModAmount);
-      scaleX = FlxMath.lerp(scaleX, holdRootScaleX, straightHoldsModAmount);
-      scaleY = FlxMath.lerp(scaleY, holdRootScaleY, straightHoldsModAmount);
-      fakeNote.scaleX = scaleX;
-      fakeNote.scaleY = scaleY;
-    }
-    else
-    {
-      holdRootX = fakeNote.x;
-      holdRootY = fakeNote.y;
-      holdRootZ = fakeNote.z;
-      holdRootAngle = fakeNote.angle;
-      // holdRootAlpha = fakeNote.alpha
-      holdRootScaleX = scaleX;
-      holdRootScaleY = scaleY;
-      fakeNote.scaleX = scaleX; 
-      fakeNote.scaleY = scaleY;
-    }
-
-    // temp fix for sus notes covering the entire fucking screen
-    if (fakeNote.z > 825)
-    {
-      // fakeNote.x = 0;
-      // fakeNote.y = 0;
-      fakeNote.alpha = 0;
-      fakeNote.scaleX = 0.0;
-      fakeNote.scaleY = 0.0;
-    }
   }
 
   function applyPerspective(noteData:NotePositionData, pos:Vector3D, rotatePivot:Vector2):Vector2
@@ -465,7 +401,7 @@ class SustainTrail extends FlxSprite
   {
     if (fakeNote == null) fakeNote = new NotePositionData();
 
-    var holdGrain:Float = noteData != null ? noteData.arrowPathLength : 1500;
+    var holdGrain:Float = 100;
     var songTimmy:Float = songTime;
 
     var longHolds:Float = 0;
