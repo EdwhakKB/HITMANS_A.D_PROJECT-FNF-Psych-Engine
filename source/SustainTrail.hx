@@ -254,12 +254,10 @@ class SustainTrail extends FlxSprite
     fakeNote.y = 0;
     fakeNote.z = 0;
     fakeNote.angle = 0;
-    // fakeNote.color = FlxColor.WHITE;
 
     fakeNote.skewX = 0;
     fakeNote.skewY = 0;
 
-    // straightHoldsModAmount = parentStrumline.mods.arrowpathStraightHold[noteDirection % 4];
     fakeNote.alpha = 1;
     fakeNote.scaleX = 1;
     fakeNote.scaleY = 1;
@@ -267,20 +265,18 @@ class SustainTrail extends FlxSprite
 
   public var cullMode = TriangleCulling.NONE;
 
-  public var hazCullMode:String = "none";
-
-  private var old3Dholds:Bool = false;
+  private var old3Dholds:Bool = true;
 
   function susSample(noteData:NotePositionData, strumTimmy:Float, lane:Int, pf:Int):Void
   {
     resetFakeNote();
-
     //Apply the information of this sustain to the noteData such as the lane / direction, the strumTime of this note, etc
     //Apply any extra information here if needed to like, idk, "noteData.isHold = true"
+    fakeNote.index = noteData.index;
 
     var songSpeed:Float = pfr.getCorrectScrollSpeed();
 
-    var noteDist:Float = pfr.getNoteDist(noteData.index); //?????
+    var noteDist:Float = pfr.getNoteDist(fakeNote.index); //?????
 
     var curPos = (Conductor.songPosition - strumTimmy) * songSpeed;
 
@@ -291,47 +287,52 @@ class SustainTrail extends FlxSprite
       incomingAngle[0] += 180; // make it match for both scrolls
 
     // get the general note path
-    NoteMovement.setNotePath_positionData(noteData, lane, songSpeed, curPos, noteDist, incomingAngle[0], incomingAngle[1]);
+    NoteMovement.setNotePath_positionData(fakeNote, lane, songSpeed, curPos, noteDist, incomingAngle[0], incomingAngle[1]);
 
     //move the x and y to properly be in the center of the strum graphic
     var strumNote = pfr.strumGroup.members[lane]; //first we need to know what the strum is though lol
-    noteData.x += strumNote.width/2 - frameWidth/15;
-    noteData.y += strumNote.height/2 - frameHeight/15;
+    fakeNote.x += strumNote.width/2 - frameWidth/15;
+    fakeNote.y += strumNote.height/2 - frameHeight/15;
 
     // add offsets to data with modifiers
-    pfr.modifierTable.applyNoteMods(noteData, lane, curPos, pf);
+    pfr.modifierTable.applyNoteMods(fakeNote, lane, curPos, pf);
 
     // add position data to list //idk what this does so I just commented it out lol cuz we just constantly reuse 1 notePosition data.
     //notePositions.push(noteData);
 
 
-    //Apply z-axis projection! 
-    var pointWidth:Float = width;
-    var pointHeight:Float = height;
+    //Apply z-axis projection!  (only apply it here if using old 3D math logic (not using 3d render mode (since this is arrowpaths, we don't really care about making them all fancy 3D anyway...?)))
+    if(old3Dholds){
+        var pointWidth:Float = graphicWidth;
+        var pointHeight:Float = 0;
 
-    var thisNotePos = ModchartUtil.calculatePerspective(
-      new Vector3D(noteData.x + (pointWidth / 2), noteData.y + (pointHeight / 2), noteData.z * 0.001),
-          ModchartUtil.defaultFOV * (Math.PI / 180), -(pointWidth / 2), -(pointHeight / 2)
-    );
+        var thisNotePos = ModchartUtil.calculatePerspective(
+          new Vector3D(fakeNote.x + (pointWidth / 2), fakeNote.y + (pointHeight / 2), fakeNote.z * 0.001),
+              ModchartUtil.defaultFOV * (Math.PI / 180), -(pointWidth / 2), -(pointHeight / 2)
+        );
 
-    noteData.x = thisNotePos.x;
-    noteData.y = thisNotePos.y;
-    noteData.scaleX *= (1 / -thisNotePos.z);
-    noteData.scaleY *= (1 / -thisNotePos.z);
-
-
-
-    //Now finally, we apply this data onto the fake note!
-    //Since fake note is just a copy of noteData, we can just... do this I think?
-    //This fake note is used in the construction of the sustainTrail to figure out where shit goes.
-    fakeNote = noteData;
+        fakeNote.x = thisNotePos.x;
+        fakeNote.y = thisNotePos.y;
+        fakeNote.scaleX *= (1 / -thisNotePos.z);
+        fakeNote.scaleY *= (1 / -thisNotePos.z);
+    }
   }
 
-  function applyPerspective(noteData:NotePositionData, pos:Vector3D, rotatePivot:Vector2):Vector2
-  {
-    var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
 
-      var angleY:Float = noteData.angleY;
+  //For now, default to the old 3D render method. We can make it work for 3D render mode another time.
+  function applyPerspective(pos:Vector3D, rotatePivot:Vector2):Vector2
+  {
+    
+    if (/*!is3D ||*/ old3Dholds)
+    {
+      return new Vector2(pos.x, pos.y);
+    }
+
+
+
+      var pos_modified:Vector3D = new Vector3D(pos.x, pos.y, pos.z);
+
+      var angleY:Float = fakeNote.angleY;
       var angleX:Float = 0;
 
       // Already done with spiral holds lol
@@ -364,7 +365,7 @@ class SustainTrail extends FlxSprite
   }
 
   var spiralHoldOldMath:Bool = false;
-  private var tinyOffsetForSpiral:Float = 5.0;
+  private var tinyOffsetForSpiral:Float = 0.5;
 
   private var holdRootX:Float = 0.0;
   private var holdRootY:Float = 0.0;
@@ -401,7 +402,7 @@ class SustainTrail extends FlxSprite
   {
     if (fakeNote == null) fakeNote = new NotePositionData();
 
-    var holdGrain:Float = 100;
+    var holdGrain:Float = 55; //Seems to use my grain format, neat. Higher default grain then my Modchart fork cuz this engine can actually do the math without dying
     var songTimmy:Float = songTime;
 
     var longHolds:Float = 0;
@@ -512,7 +513,7 @@ class SustainTrail extends FlxSprite
     var rotateOrigin:Vector2 = new Vector2(fakeNote.x + holdLeftSide, fakeNote.y);
     // move rotateOrigin to be inbetween the left and right vert so it's centered
     rotateOrigin.x += ((fakeNote.x + holdRightSide) - (fakeNote.x + holdLeftSide)) / 2;
-    var vert:Vector2 = applyPerspective(noteData, new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    var vert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
 
     // Top left
     vertices[0 * 2] = vert.x; // Inline with left side
@@ -532,7 +533,7 @@ class SustainTrail extends FlxSprite
     this.z = fakeNote.z; // for z ordering
 
     // Top right
-    vert = applyPerspective(noteData, new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    vert = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
     vertices[1 * 2] = vert.x;
     vertices[1 * 2 + 1] = vert.y; // Inline with top left vertex
 
@@ -576,7 +577,7 @@ class SustainTrail extends FlxSprite
       // move rotateOrigin to be inbetween the left and right vert so it's centered
       rotateOrigin.x += ((fakeNote.x + holdRightSide) - (fakeNote.x + holdLeftSide)) / 2;
 
-      var vert:Vector2 = applyPerspective(noteData, new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
+      var vert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
 
       // Bottom left
       vertices[i * 2] = vert.x; // Inline with left side
@@ -621,7 +622,7 @@ class SustainTrail extends FlxSprite
         // var rvert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
         var rotatePoint:Vector2 = new Vector2(fakeNote.x + holdRightSide, fakeNote.y);
         var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-        thing = applyPerspective(noteData, new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
+        thing = applyPerspective(new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
         rightSideOffX = thing.x;
         rightSideOffY = thing.y;
 
@@ -632,7 +633,7 @@ class SustainTrail extends FlxSprite
         // left
         rotatePoint = new Vector2(fakeNote.x + holdLeftSide, fakeNote.y);
         thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-        thing = applyPerspective(noteData, new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
+        thing = applyPerspective(new Vector3D(thing.x, thing.y, fakeNote.z), rotateOrigin);
         rightSideOffX = thing.x;
         rightSideOffY = thing.y;
 
@@ -665,7 +666,7 @@ class SustainTrail extends FlxSprite
       else
       {
         // Bottom right
-        var vert:Vector2 = applyPerspective(noteData, new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
+        var vert:Vector2 = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
         vertices[(i + 1) * 2] = vert.x;
         vertices[(i + 1) * 2 + 1] = vert.y;
       }
@@ -756,7 +757,7 @@ class SustainTrail extends FlxSprite
     // move rotateOrigin to be inbetween the left and right vert so it's centered
     rotateOrigin.x += ((fakeNote.x + holdRightSide) - (fakeNote.x + holdLeftSide)) / 2;
 
-    vert = applyPerspective(noteData, new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    vert = applyPerspective(new Vector3D(fakeNote.x + holdLeftSide, fakeNote.y, fakeNote.z), rotateOrigin);
     vertices[highestNumSoFar * 2] = vert.x;
     vertices[highestNumSoFar * 2 + 1] = vert.y;
     // testCol[highestNumSoFar * 2] = fakeNote.color;
@@ -767,7 +768,7 @@ class SustainTrail extends FlxSprite
 
     // Bottom right
     highestNumSoFar += 1;
-    vert = applyPerspective(noteData, new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
+    vert = applyPerspective(new Vector3D(fakeNote.x + holdRightSide, fakeNote.y, fakeNote.z), rotateOrigin);
     vertices[highestNumSoFar * 2] = vert.x;
     vertices[highestNumSoFar * 2 + 1] = vert.y;
     // testCol[highestNumSoFar * 2] = fakeNote.color;

@@ -38,7 +38,7 @@ class NotePositionData implements IFlxDestroyable
     public var glowBlue:Float;
 
     public var arrowPathAlpha:Float = 0;
-    public var arrowPathLength:Float = 1800;
+    public var arrowPathLength:Float = 1400;
     public var arrowPathBackwardsLength:Float = 0;
 
     public var pathGrain:Float = 50;
@@ -102,7 +102,7 @@ class NotePositionData implements IFlxDestroyable
         this.glowBlue = 1;
 
         this.arrowPathAlpha = 0;
-        this.arrowPathLength = 1800;
+        this.arrowPathLength = 1400;
         this.arrowPathBackwardsLength = 200;
 
         this.pathGrain = 50;

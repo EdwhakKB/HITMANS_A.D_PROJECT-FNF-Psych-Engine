@@ -731,24 +731,25 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		var strumNote = strumGroup.members[noteData.index];
 
+		var arrowPathLength:Float= noteData.arrowPathLength;
+		var arrowPathBackLength:Float = noteData.arrowPathBackwardsLength;
+		//arrowPathLength = 600;
+		//arrowPathBackLength = 0;
+
 		if (strumNote.arrowPath == null)
-			strumNote.arrowPath = new SustainTrail(noteData.index, noteData.arrowPathLength, this);
+			strumNote.arrowPath = new SustainTrail(noteData.index, arrowPathLength, this);
 
 		strumNote.arrowPath.alpha = noteData.arrowPathAlpha; //this one goes inversed...
 
-		strumNote.arrowPath.fullSustainLength = strumNote.arrowPath.sustainLength = noteData.arrowPathLength + noteData.arrowPathBackwardsLength;
+		strumNote.arrowPath.fullSustainLength = strumNote.arrowPath.sustainLength = arrowPathLength + arrowPathBackLength;
+		strumNote.arrowPath.strumTime = Conductor.songPosition;
+		strumNote.arrowPath.strumTime -= arrowPathBackLength;
+		strumNote.arrowPath.x = 0;
+		strumNote.arrowPath.y = 0;
+
 
 		//strumNote.arrowPath.shader = strumNote.rgbShader.parent.shader; // idfk if this works.
 
-		var pathTime:Float = Conductor.songPosition;
-		pathTime += 250;
-		pathTime += noteData.arrowPathBackwardsLength;
-
-		strumNote.arrowPath.strumTime = pathTime;
-
-		strumNote.arrowPath.x = 0;
-		strumNote.arrowPath.y = 0;
-		
 		strumNote.arrowPath.updateClipping_mods(noteData);
 
 		//strumNote.arrowPath.updatePath(pathTime,noteData.lane,noteData.playfieldIndex);
