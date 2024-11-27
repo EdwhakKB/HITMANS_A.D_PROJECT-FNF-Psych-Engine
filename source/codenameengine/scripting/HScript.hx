@@ -1,13 +1,13 @@
 package codenameengine.scripting;
 
 import haxe.io.Path;
-import _hscript.Expr.ClassDecl;
-import _hscript.Expr.ModuleDecl;
-import _hscript.Expr.Error;
-import _hscript.Parser;
+import hscript.Expr.ClassDecl;
+import hscript.Expr.ModuleDecl;
+import hscript.Expr.Error;
+import hscript.Parser;
 import openfl.Assets;
 import lime.utils.AssetType;
-import _hscript.*;
+import hscript.*;
 import haxe.io.Path;
 
 class HScript extends Script {

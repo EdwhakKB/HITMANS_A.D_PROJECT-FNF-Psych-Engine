@@ -153,6 +153,8 @@
 		 Reduces compilation time at the cost of limited HScript flexibility. !-->
 	<define name="CUSTOM_CLASSES" />
 
+	<haxelib name="compiletime" />
+
 	<haxelib name="hscript-improved" />
 	<haxedef name="hscriptPos" /> <!-- for logging -->
 	<define name="HScriptImproved" if="hscript-improved"/>

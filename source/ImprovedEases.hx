@@ -4,8 +4,21 @@ package;
  * Class contains regular FlxEases and advanced ones.
  * Class is used for more than the original eases from FlxEase.
  */
+@:build(modcharting.ModchartMacros.registerEases())
 class ImprovedEases
 {
+  // this is what the macro will generate
+  // public static var easeList:Array<String> = [blahblah]
+  // if u put a function that is not a ease func
+  // put the ignore meta, like
+  /**
+   * @:ignore
+   * function dosomething()
+   * {
+   *     trace('wooo');
+   * }
+   */
+
   public static inline function bounce(t:Float):Float
   {
     return 4 * t * (1 - t);
