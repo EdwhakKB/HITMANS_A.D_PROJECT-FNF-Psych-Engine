@@ -277,6 +277,7 @@ class SustainTrail extends FlxSprite
     var songSpeed:Float = pfr.getCorrectScrollSpeed();
 
     var noteDist:Float = pfr.getNoteDist(fakeNote.index); //?????
+    noteDist = pfr.modifierTable.applyNoteDistMods(noteDist, lane, pf);
 
     var curPos = (Conductor.songPosition - strumTimmy) * songSpeed;
 
