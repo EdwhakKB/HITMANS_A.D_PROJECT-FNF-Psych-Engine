@@ -731,15 +731,15 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 
 		var strumNote = strumGroup.members[noteData.index];
 
-		var arrowPathLength:Float= noteData.arrowPathLength;
-		var arrowPathBackLength:Float = noteData.arrowPathBackwardsLength;
+		var arrowPathLength:Float= noteData.arrowPathLength * 100;
+		var arrowPathBackLength:Float = noteData.arrowPathBackwardsLength * 100;
 		//arrowPathLength = 600;
 		//arrowPathBackLength = 0;
 
 		if (strumNote.arrowPath == null)
 			strumNote.arrowPath = new SustainTrail(noteData.index, arrowPathLength, this);
 
-		strumNote.arrowPath.alpha = noteData.arrowPathAlpha; //this one goes inversed...
+		strumNote.arrowPath.alpha = noteData.arrowPathAlpha;
 
 		strumNote.arrowPath.fullSustainLength = strumNote.arrowPath.sustainLength = arrowPathLength + arrowPathBackLength;
 		strumNote.arrowPath.strumTime = Conductor.songPosition;
@@ -748,7 +748,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		strumNote.arrowPath.y = 0;
 
 
-		//strumNote.arrowPath.shader = strumNote.rgbShader.parent.shader; // idfk if this works.
+		strumNote.arrowPath.shader = strumNote.rgbShader.parent.shader; // idfk if this works.
 
 		strumNote.arrowPath.updateClipping_mods(noteData);
 

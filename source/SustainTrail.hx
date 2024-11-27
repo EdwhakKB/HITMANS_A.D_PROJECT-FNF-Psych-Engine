@@ -402,8 +402,9 @@ class SustainTrail extends FlxSprite
   {
     if (fakeNote == null) fakeNote = new NotePositionData();
 
-    var holdGrain:Float = 55; //Seems to use my grain format, neat. Higher default grain then my Modchart fork cuz this engine can actually do the math without dying
+    var holdGrain:Float = 50 + noteData.pathGrain; //Seems to use my grain format, neat. Higher default grain then my Modchart fork cuz this engine can actually do the math without dying
     var songTimmy:Float = songTime;
+    var scale:Float = 0.5 * noteData.arrowPathWidth;
 
     var longHolds:Float = 0;
     longHolds += 1;
@@ -484,7 +485,7 @@ class SustainTrail extends FlxSprite
 
     susSample(noteData, this.strumTime + clippingTimeOffset, noteData.index, noteData.playfieldIndex);
     var scaleTest = fakeNote.scaleX;
-    var widthScaled = holdWidth * scaleTest;
+    var widthScaled = holdWidth * scaleTest * scale;
     var scaleChange = widthScaled - holdWidth;
     var holdLeftSide = 0 - (scaleChange / 2);
     var holdRightSide = widthScaled - (scaleChange / 2);
@@ -567,7 +568,7 @@ class SustainTrail extends FlxSprite
       // holdRightSide = holdWidth * scaleTest;
 
       scaleTest = fakeNote.scaleX;
-      widthScaled = holdWidth * scaleTest;
+      widthScaled = holdWidth * scaleTest * scale;
       scaleChange = widthScaled - holdWidth;
       holdLeftSide = 0 - (scaleChange / 2);
       holdRightSide = widthScaled - (scaleChange / 2);
@@ -721,7 +722,7 @@ class SustainTrail extends FlxSprite
     susSample(noteData, tm_end + clipTimeThing(songTimmy, holdPieceStrumTime), noteData.index, noteData.playfieldIndex);
 
     scaleTest = fakeNote.scaleX;
-    widthScaled = holdWidth * scaleTest;
+    widthScaled = holdWidth * scaleTest * scale;
     scaleChange = widthScaled - holdWidth;
     holdLeftSide = 0 - (scaleChange / 2);
     holdRightSide = widthScaled - (scaleChange / 2);

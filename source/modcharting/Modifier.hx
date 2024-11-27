@@ -4628,15 +4628,26 @@ class CullTargetsModifier extends Modifier
 }
 
 
-class ArrowPathAlphaModifier extends Modifier //used but unstable (as old way)
+class ArrowPathModifier extends Modifier //used but unstable (as old way)
 {
+    override function setupSubValues()
+    {
+        subValues.set('length', new ModifierSubValue(14.0));
+        subValues.set('backlength', new ModifierSubValue(2.0));
+        subValues.set('grain', new ModifierSubValue(5.0));
+        subValues.set('width', new ModifierSubValue(1.0));
+    }
     override function strumMath(noteData:NotePositionData, lane:Int, pf:Int)
     {
         noteData.arrowPathAlpha += currentValue;
+        noteData.arrowPathLength += subValues.get('length').value; //length is in pixels
+        noteData.arrowPathBackwardsLength += subValues.get('backlength').value;
+        noteData.pathGrain += subValues.get('grain').value;
+        noteData.arrowPathWidth *= subValues.get('width').value;
     }
     override function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int)
     {
-        noteData.arrowPathAlpha += currentValue;
+        strumMath(noteData, lane, pf);
     }
 }
 
@@ -4673,7 +4684,7 @@ class OrientModifier extends Modifier //ig this must work?
 // }
 
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
-class ArrowPath extends Modifier
+class CustomPathModifier extends Modifier
 {
     public var _path:List<TimeVector> = null;
     public var _pathDistance:Float = 0;

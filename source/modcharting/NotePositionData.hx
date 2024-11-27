@@ -38,10 +38,12 @@ class NotePositionData implements IFlxDestroyable
     public var glowBlue:Float;
 
     public var arrowPathAlpha:Float = 0;
-    public var arrowPathLength:Float = 1400;
-    public var arrowPathBackwardsLength:Float = 0;
+    public var arrowPathLength:Float = 14;
+    public var arrowPathBackwardsLength:Float = 2;
 
-    public var pathGrain:Float = 50;
+    public var arrowPathWidth:Float = 1;
+
+    public var pathGrain:Float = 0;
 
     public var spiralHold:Float = 0;
 
@@ -102,10 +104,10 @@ class NotePositionData implements IFlxDestroyable
         this.glowBlue = 1;
 
         this.arrowPathAlpha = 0;
-        this.arrowPathLength = 1400;
-        this.arrowPathBackwardsLength = 200;
+        this.arrowPathLength = 14;
+        this.arrowPathBackwardsLength = 2;
 
-        this.pathGrain = 50;
+        this.pathGrain = 0;
 
         this.spiralHold = 0;
 
@@ -159,10 +161,10 @@ class NotePositionData implements IFlxDestroyable
         this.glowBlue = 1;
 
         this.arrowPathAlpha = 0;
-        this.arrowPathLength = 1800;
-        this.arrowPathBackwardsLength = 200;
+        this.arrowPathLength = 14;
+        this.arrowPathBackwardsLength = 2;
 
-        this.pathGrain = 50;
+        this.pathGrain = 0;
 
         this.spiralHold = 0;
 
