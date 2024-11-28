@@ -17,6 +17,7 @@ import Note;
 import lime.math.Vector4;
 import haxe.ds.List;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import openfl.geom.Vector3D;
 
 enum ModifierType
 {
@@ -4689,25 +4690,33 @@ class CustomPathModifier extends Modifier
     public var _path:List<TimeVector> = null;
     public var _pathDistance:Float = 0;
 
+    var calculatedOffset:Bool = false;
+    var offset:Vector3D = new Vector3D(0, 0, 0);
+  
+
     override public function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int) {
         if (Paths.fileExists("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt", TEXT)){
-            var newPosition = executePath(0, (curPos*0.45), lane, lane < 4 ? 0 : 1, new Vector4(noteData.x, noteData.y, noteData.z, 0), "data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt");
-            noteData.x = newPosition.x;
-            noteData.y = newPosition.y;
-            noteData.z = newPosition.z;
+            var newPosition = executePath(Modifier.beat, (curPos*0.4), lane, 1, new Vector4(noteData.x, noteData.y, noteData.z, 0), 
+                "data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt");
+
+            var blend:Float = Math.abs(currentValue);
+            blend = FlxMath.bound(blend, 0, 1); // clamp
+
+            noteData.x = newPosition.x * blend;
+            noteData.y = newPosition.y * blend;
+            noteData.z = newPosition.z * blend;
+
+            //noteData.y += curPos * (currentValue*-1);
         }
+    }
+    override public function strumMath(noteData:NotePositionData, lane:Int, pf:Int) {
+        noteMath(noteData, lane, 0, pf);
     }
     override function setupSubValues()
     {
-        subValues.set('x', new ModifierSubValue(0.0));
-        subValues.set('y', new ModifierSubValue(0.0));
         subValues.set('path', new ModifierSubValue(0.0));
         currentValue = 1.0;
         baseValue = 0.0;
-    }
-    override function incomingAngleMath(lane:Int, curPos:Float, pf:Int)
-    {
-        return [subValues.get('x').value, subValues.get('y').value];
     }
     override function reset()
     {
