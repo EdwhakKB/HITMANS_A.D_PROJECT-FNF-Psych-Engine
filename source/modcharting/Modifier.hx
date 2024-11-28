@@ -4685,15 +4685,13 @@ class OrientModifier extends Modifier //ig this must work?
 // }
 
 //OH MY FUCKING GOD, thanks to @noamlol for the code of this thing//
-class CustomPathModifier extends Modifier
+class CustomPathModifier extends Modifier //wow. it sucks when you spend time trying to add something you wanted a lot, to end scrapping it because a single error.
 {
     public var _path:List<TimeVector> = null;
     public var _pathDistance:Float = 0;
 
     var calculatedOffset:Bool = false;
     var offset:Vector3D = new Vector3D(0, 0, 0);
-  
-
     override public function noteMath(noteData:NotePositionData, lane:Int, curPos:Float, pf:Int) {
         if (Paths.fileExists("data/"+PlayState.SONG.song.toLowerCase()+"/customMods/path"+subValues.get('path').value+".txt", TEXT)){
             var newPosition = executePath(Modifier.beat, (curPos*0.4), lane, 1, new Vector4(noteData.x, noteData.y, noteData.z, 0), 
@@ -4705,8 +4703,6 @@ class CustomPathModifier extends Modifier
             noteData.x = newPosition.x * blend;
             noteData.y = newPosition.y * blend;
             noteData.z = newPosition.z * blend;
-
-            //noteData.y += curPos * (currentValue*-1);
         }
     }
     override public function strumMath(noteData:NotePositionData, lane:Int, pf:Int) {
@@ -4715,14 +4711,10 @@ class CustomPathModifier extends Modifier
     override function setupSubValues()
     {
         subValues.set('path', new ModifierSubValue(0.0));
-        currentValue = 1.0;
-        baseValue = 0.0;
     }
     override function reset()
     {
         super.reset();
-        currentValue = 1.0; //the code that stop the mod from running gets confused when it resets in the editor i guess??
-        baseValue = 0.0;
     }
     public var firstPath:String = "";
     public function loadPath() {
