@@ -398,11 +398,18 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 				var songSpeed = getCorrectScrollSpeed();
 
 				var lane = getLane(i);
+				var sustainTimeThingy:Float = 0;
 
 				var noteDist = getNoteDist(i);
+				var curPos = getNoteCurPos(i, sustainTimeThingy, pf);
+
+				if (notes.members[i].isSustainNote)
+				{
+					notePositions.push(createDataFromNote(i, pf, curPos, noteDist, [0,0,0]));
+					continue;
+				}
 				noteDist = modifierTable.applyNoteDistMods(noteDist, lane, pf);
 
-				var sustainTimeThingy:Float = 0;
 
 				// just causes too many issues lol, might fix it at some point
 				// if (notes.members[i].animation.curAnim.name.endsWith('end') && ClientPrefs.downScroll) //checking rn LMAO
@@ -413,7 +420,6 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 				//         //sustainTimeThingy = (-NoteMovement.getFakeCrochet()/4)/songSpeed;
 				// }
 
-				var curPos = getNoteCurPos(i, sustainTimeThingy, pf);
 				curPos = modifierTable.applyCurPosMods(lane, curPos, pf);
 
 				if ((notes.members[i].wasGoodHit || (notes.members[i].prevNote.wasGoodHit))
@@ -481,6 +487,11 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			noteData.scaleX *= (1 / -thisNotePos.z);
 			noteData.scaleY *= (1 / -thisNotePos.z);
 		}
+
+		var getNextNote = getNotePoss(noteData,1);
+
+		if (noteData.orient != 0)
+			noteData.angle = (-90 + (angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG)) * noteData.orient;
 
 		if (noteData.stealthGlow != 0)
 			strumGroup.members[noteData.index].rgbShader.enabled = true; // enable stealthGlow once it finds its not 0?
@@ -573,19 +584,10 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			noteData.scaleY *= (1 / -thisNotePos.z);
 		}
 
-		var timeToNextNote = ModchartUtil.getFakeCrochet() / 4;
-		var getNextNote = getNotePoss(noteData,timeToNextNote);
+		var getNextNote = getNotePoss(noteData,1);
 
-		var angle:Float = 0;
-		var finalAngle:Float = 0;
-
-		if (noteData.orient != 0){
-			angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG;
-			//angle *= (180/Math.PI);		
-			finalAngle = (angle-90) * noteData.orient;
-		}
-
-		noteData.angle += finalAngle;
+		if (noteData.orient != 0)
+			noteData.angle = (90 + (angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG)) * noteData.orient;
 
 		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0)
 		{
@@ -658,12 +660,14 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		if (daNote.mesh == null)
 			daNote.mesh = new SustainStrip(daNote);
 
+		var spiral = (noteData.spiralHold >= 1);
+
 		// daNote.scrollFactor.x = daNote.scrollFactor.x;
 		// daNote.scrollFactor.y = daNote.scrollFactor.y;
 		daNote.alpha = noteData.alpha;
 		daNote.mesh.alpha = daNote.alpha;
 		daNote.mesh.shader = daNote.rgbShader.parent.shader; // idfk if this works.
-		daNote.mesh.spiralHolds = (noteData.spiralHold >= 1); // if noteData its 1 spiral holds mod should be enabled?
+		daNote.mesh.spiralHolds = spiral; // if noteData its 1 spiral holds mod should be enabled?
 
 		// daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
 		// daNote.rgbShader.stealthGlowRed = noteData.glowRed;
@@ -676,22 +680,24 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		// makes the sustain match the center of the parent note when at weird angles
 		var yOffsetThingy = (NoteMovement.arrowSizes[lane] / 2);
 
-		var thisNotePos = ModchartUtil.calculatePerspective(new Vector3D(noteData.x
-			+ (daNote.width / 2)
-			+ ModchartUtil.getNoteOffsetX(daNote, instance),
-			noteData.y
-			+ (NoteMovement.arrowSizes[noteData.lane] / 2), noteData.z * 0.001),
-			ModchartUtil.defaultFOV * (Math.PI / 180),
-			- (daNote.width / 2), yOffsetThingy
-			- (NoteMovement.arrowSizes[noteData.lane] / 2));
-
 		var timeToNextSustain = ModchartUtil.getFakeCrochet() / 4;
 		if (noteData.noteDist < 0)
 			timeToNextSustain *= -1; // weird shit that fixes upscroll lol
-		// timeToNextSustain = -ModchartUtil.getFakeCrochet()/4; //weird shit that fixes upscroll lol
 
-		var nextHalfNotePos = getSustainPoint(noteData, timeToNextSustain / 2);
-		var nextNotePos = getSustainPoint(noteData, timeToNextSustain);
+		var top = [];
+		var mid = [];
+		var bot = [];
+		
+		if (spiral)
+		{
+			top = [getSustainPoint(noteData, 0), getSustainPoint(noteData, 1)];
+			mid = [getSustainPoint(noteData, timeToNextSustain * .5), getSustainPoint(noteData, timeToNextSustain * .5 + 1)];
+			bot = [getSustainPoint(noteData, timeToNextSustain), getSustainPoint(noteData, timeToNextSustain + 1)];
+		} else {
+			top = [getSustainPoint(noteData, 0)];
+			mid = [getSustainPoint(noteData, timeToNextSustain * .5)];
+			bot = [getSustainPoint(noteData, timeToNextSustain)];
+		}
 
 		var flipGraphic = false;
 
@@ -711,7 +717,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 				flipGraphic = true;
 		}
 		// render that shit
-		daNote.mesh.constructVertices(noteData, thisNotePos, nextHalfNotePos, nextNotePos, flipGraphic, reverseClip);
+		daNote.mesh.constructVertices(noteData, top, mid, bot, flipGraphic, reverseClip);
 
 		daNote.mesh.cameras = this.cameras;
 		daNote.mesh.draw();
@@ -807,8 +813,8 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			noteData.y
 			+ (NoteMovement.arrowSizes[noteData.lane] / 2), noteData.z * 0.001),
 			ModchartUtil.defaultFOV * (Math.PI / 180),
-			-(daNote.width / 2), yOffsetThingy
-			- (NoteMovement.arrowSizes[noteData.lane] / 2));
+			0, 0
+		);
 
 		noteData.x = finalNotePos.x;
 		noteData.y = finalNotePos.y;
