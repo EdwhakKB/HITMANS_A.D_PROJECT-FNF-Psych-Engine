@@ -403,11 +403,12 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 				var noteDist = getNoteDist(i);
 				var curPos = getNoteCurPos(i, sustainTimeThingy, pf);
 
-				if (notes.members[i].isSustainNote)
-				{
-					notePositions.push(createDataFromNote(i, pf, curPos, noteDist, [0,0,0]));
-					continue;
-				}
+				// if (notes.members[i].isSustainNote) //so probably this code is needed for sustain movements on incoming angle, fuck
+				// {
+				// 	notePositions.push(createDataFromNote(i, pf, curPos, noteDist, [0,0,0]));
+				// 	continue;
+				// }
+
 				noteDist = modifierTable.applyNoteDistMods(noteDist, lane, pf);
 
 
@@ -488,10 +489,10 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 			noteData.scaleY *= (1 / -thisNotePos.z);
 		}
 
-		var getNextNote = getNotePoss(noteData,1);
+		// var getNextNote = getNotePoss(noteData,1);
 
-		if (noteData.orient != 0)
-			noteData.angle = (-90 + (angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG)) * noteData.orient;
+		// if (noteData.orient != 0)
+		// 	noteData.angle = (-90 + (angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG)) * noteData.orient;
 
 		if (noteData.stealthGlow != 0)
 			strumGroup.members[noteData.index].rgbShader.enabled = true; // enable stealthGlow once it finds its not 0?
@@ -587,7 +588,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		var getNextNote = getNotePoss(noteData,1);
 
 		if (noteData.orient != 0)
-			noteData.angle = (90 + (angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG)) * noteData.orient;
+			noteData.angle = ((angle = Math.atan2(getNextNote.y - noteData.y , getNextNote.x - noteData.x) * FlxAngle.TO_DEG) - 90) * noteData.orient;
 
 		if (noteData.angleX != 0 || noteData.angleY != 0 || noteData.skewZ != 0 || noteData.skewX != 0 || noteData.skewY != 0)
 		{

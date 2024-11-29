@@ -69,7 +69,7 @@ class SustainStrip extends FlxStrip
     public function constructVertices(noteData:NotePositionData, topPositions:Array<NotePositionData>, middlePositions:Array<NotePositionData>, bottomPositions:Array<NotePositionData>, flipGraphic:Bool, reverseClip:Bool)
     {
         var holdWidth = daNote.frameWidth;
-        var xOffset = daNote.frameWidth/6.5; //FUCK YOU, MAGIC NUMBER GO! MAKE THEM HOLDS CENTERED DAMNIT!
+        //var xOffset = daNote.frameWidth/6.5; //FUCK YOU, MAGIC NUMBER GO! MAKE THEM HOLDS CENTERED DAMNIT!
 
         daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
         daNote.rgbShader.stealthGlowRed = noteData.glowRed;
@@ -86,28 +86,54 @@ class SustainStrip extends FlxStrip
         var mid = [];
         var bottom = [];
 
-        if (spiralHolds)
-        {
-            top = getPointsNormal(topPositions[0], topPositions[1], holdWidth);
-            mid = getPointsNormal(middlePositions[0], middlePositions[1], holdWidth);
-            bottom = getPointsNormal(bottomPositions[0], bottomPositions[1], holdWidth);
-        } else {
-            var zScaleTop = 1/-topPositions[0].z;
-            var zScaleMid = 1/-middlePositions[0].z;
-            var zScaleBottom = 1/-bottomPositions[0].z;
+        if (!flipGraphic){
+            if (spiralHolds)
+            {
+                top = getPointsNormal(topPositions[0], topPositions[1], holdWidth);
+                mid = getPointsNormal(middlePositions[0], middlePositions[1], holdWidth);
+                bottom = getPointsNormal(bottomPositions[0], bottomPositions[1], holdWidth);
+            } else {
+                var zScaleTop = 1/-topPositions[0].z;
+                var zScaleMid = 1/-middlePositions[0].z;
+                var zScaleBottom = 1/-bottomPositions[0].z;
 
-            top = [
-                topPositions[0].x - holdWidth * .5 * zScaleTop * topPositions[0].scaleX, topPositions[0].y,
-                topPositions[0].x + holdWidth * .5 * zScaleTop * topPositions[0].scaleX,  topPositions[0].y
-            ];
-            mid = [
-                middlePositions[0].x - holdWidth * .5 * zScaleMid * middlePositions[0].scaleX, middlePositions[0].y,
-                middlePositions[0].x + holdWidth * .5 * zScaleMid * middlePositions[0].scaleX,  middlePositions[0].y
-            ];
-            bottom = [
-                bottomPositions[0].x - holdWidth * .5 * zScaleBottom * bottomPositions[0].scaleX, bottomPositions[0].y,
-                bottomPositions[0].x + holdWidth * .5 * zScaleBottom * bottomPositions[0].scaleX,  bottomPositions[0].y
-            ];
+                top = [
+                    topPositions[0].x - holdWidth * .5 * zScaleTop * topPositions[0].scaleX, topPositions[0].y,
+                    topPositions[0].x + holdWidth * .5 * zScaleTop * topPositions[0].scaleX,  topPositions[0].y
+                ];
+                mid = [
+                    middlePositions[0].x - holdWidth * .5 * zScaleMid * middlePositions[0].scaleX, middlePositions[0].y,
+                    middlePositions[0].x + holdWidth * .5 * zScaleMid * middlePositions[0].scaleX,  middlePositions[0].y
+                ];
+                bottom = [
+                    bottomPositions[0].x - holdWidth * .5 * zScaleBottom * bottomPositions[0].scaleX, bottomPositions[0].y,
+                    bottomPositions[0].x + holdWidth * .5 * zScaleBottom * bottomPositions[0].scaleX,  bottomPositions[0].y
+                ];
+            }
+        }else{
+            if (spiralHolds)
+            {
+                top = getPointsNormal(bottomPositions[0], bottomPositions[1], holdWidth);
+                mid = getPointsNormal(middlePositions[0], middlePositions[1], holdWidth);
+                bottom = getPointsNormal(topPositions[0], topPositions[1], holdWidth);
+            } else {
+                var zScaleTop = 1/-bottomPositions[0].z;
+                var zScaleMid = 1/-middlePositions[0].z;
+                var zScaleBottom = 1/-topPositions[0].z;
+
+                top = [
+                    bottomPositions[0].x - holdWidth * .5 * zScaleTop * bottomPositions[0].scaleX, bottomPositions[0].y,
+                    bottomPositions[0].x + holdWidth * .5 * zScaleTop * bottomPositions[0].scaleX,  bottomPositions[0].y
+                ];
+                mid = [
+                    middlePositions[0].x - holdWidth * .5 * zScaleMid * middlePositions[0].scaleX, middlePositions[0].y,
+                    middlePositions[0].x + holdWidth * .5 * zScaleMid * middlePositions[0].scaleX,  middlePositions[0].y
+                ];
+                bottom = [
+                    topPositions[0].x - holdWidth * .5 * zScaleBottom * topPositions[0].scaleX, topPositions[0].y,
+                    topPositions[0].x + holdWidth * .5 * zScaleBottom * topPositions[0].scaleX,  topPositions[0].y
+                ];
+            }
         }
 
 
