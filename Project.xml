@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project>
+<project 
+xmlns="http://lime.openfl.org/project/1.0.4"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
 	<!-- _________________________ Application Settings _________________________ -->
 
 	<app title="Hitmans: The Annihilate and Destroy Project" file="Hitmans" packageName="com.edwhak.hitmans" package="com.edwhak.hitmans" main="Main" version="0.2.8" company="HitmansCorporation" />
@@ -48,7 +51,7 @@
 	<set name="BUILD_DIR" value="export/release" unless="debug" />
 	<set name="BUILD_DIR" value="export/32bit" if="32bits" />
 
-	<classpath name="source" />
+	<classpath path="source" />
 	
 	<!-- PSYCH ENGINE CUSTOMIZATION -->
 	<define name="MODS_ALLOWED" if="desktop" />
@@ -132,18 +135,29 @@
 	<assets path="assets/art" />
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="lime" version="8.0.1" />
-	<haxelib name="openfl" version="9.2.2" />
-	<haxelib name="flixel" version="5.2.2"/>
-	<haxedev set='webgl' />
-	<!--<haxelib name="flixel-shadertoy-shader" />-->
-	
-	<!--In case you want to use the addons package-->
-	<haxelib name="flixel-addons" version="3.0.2"/>
-	<haxelib name="hscript" />
-	<haxelib name="flxanimate" />
+	<haxelib name="flixel"/>
+	<haxelib name="flixel-addons"/>
+	<haxelib name="tjson"/>
+	<haxelib name="FlxPartialSound"/>
+	<haxelib name="grig.audio" />
+	<haxelib name="funkin.vis" />
+		<haxelib name="hscript" />
 
-	<haxelib name="SScript" version="4.0.1" if="HSCRIPT_ALLOWED"/>
+	<!--Psych stuff needed-->
+	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
+	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED" version="1.1.0"/>
+	<section if="VIDEOS_ALLOWED">
+		<haxelib name="hxCodec" if="linux"/>
+		<haxelib name="hxvlc" unless="linux"/>
+	</section>
+	<haxelib name="flxanimate"/>
+	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
+
+	<haxelib name="SScript" version="4.0.1" if="HSCRIPT_ALLOWE"/>
+
+	<!-- Disable Discord IO Thread -->
+	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
+	<haxedef name="NO_PRECOMPILED_HEADERS" if="linux" />
 
 	<!-- Comment this out to prevent unused classes from being compiled.
 		 Reduces compilation time at the cost of limited HScript flexibility. !-->
@@ -160,7 +174,6 @@
 	<define name="HScriptImproved" if="hscript-improved"/>
 
 	<!--In case you want to use the ui package-->
-	<haxelib name="flixel-ui" />
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
 	<haxelib name="hxCodec" if="VIDEOS_ALLOWED"/>
 	<haxelib name="faxe" if='switch'/>
@@ -231,9 +244,16 @@
 	<icon path="art/icon64.png" size='64'/>
 	<icon path="art/iconOG.png" />
 
+	<haxeflag name="--macro" value="include('flixel', true, [ 'flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*' ])" />
+
 	<section if="COMPILE_ALL_CLASSES">
 		<haxeflag name="-dce" value="no" />
+		<haxeflag name="--macro" value="codenameengine.Macros.addAdditionalClasses()" />
 	</section>
+
+	<!--Macro fixes-->
+	<haxeflag name="--macro" value="allowPackage('flash')" />
+	<haxeflag name="--macro" value="include('my.pack')" />
 
 	<assets path="Hitmans-CrashDialog.exe" type="template" if="windows release" />
     <assets path="Hitmans-CrashDialog" type="template" if="linux release" />

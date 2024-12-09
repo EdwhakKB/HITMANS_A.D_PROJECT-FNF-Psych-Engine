@@ -10,16 +10,17 @@ import Mods;
 #end
 
 #if flxanimate
-import flxanimate.*;
+import flxanimate.PsychFlxAnimate as FlxAnimate;
 #end
 
 import ui.*;
 
 import SSHScript;
 
-#if HSCRIPT_ALLOWED
+#if SScript
 import tea.SScript;
 #end
+
 
 using StringTools;
 #end

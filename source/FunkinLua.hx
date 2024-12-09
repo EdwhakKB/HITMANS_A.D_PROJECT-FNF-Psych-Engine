@@ -102,7 +102,7 @@ class FunkinLua {
 	public static var hscript:HScript = null;
 	#end
 
-	#if HSCRIPT_ALLOWED
+	#if SScript
 	public var ssHscript:SSHScript = null;
 	#end
 	public var callbacks:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -3604,12 +3604,7 @@ class FunkinLua {
 
 		Lua_helper.add_callback(lua, "pushShaderToCamera", function(id:String, camera:String){
 			var funnyCustomShader:CustomCodeShader = lua_Custom_Shaders.get(id);
-			#if (flixel >= "5.4.0")
-				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
-			#else
-				@:privateAccess
-				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
-			#end
+			cameraFromString(camera).filters.push(new ShaderFilter(funnyCustomShader));
 		});
 
 		Lua_helper.add_callback(lua, "setCameraNoCustomShader", function(camera:String){
@@ -3864,7 +3859,7 @@ class FunkinLua {
 		});
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
-		#if HSCRIPT_ALLOWED SSHScript.implement(this); #end
+		#if SScript SSHScript.implement(this); #end
 		
 		try{
 			var isString:Bool = !FileSystem.exists(scriptName);
@@ -4549,7 +4544,7 @@ class FunkinLua {
 		Lua.close(lua);
 		lua = null;
 
-		#if HSCRIPT_ALLOWED
+		#if SScript
 		if(ssHscript != null)
 		{
 			#if (SScript > "6.1.80" || SScript != "6.1.80")

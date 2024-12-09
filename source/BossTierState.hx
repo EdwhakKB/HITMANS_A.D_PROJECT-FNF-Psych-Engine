@@ -34,7 +34,9 @@ class BossTierState extends MusicBeatState
 
     public var continueText:FlxText;
 
+	#if SScript
 	public var bossScript:ScriptHandler = null;
+	#end
 
     override public function create()
     {
@@ -53,13 +55,12 @@ class BossTierState extends MusicBeatState
 				loadEnemy = bossCharacter;
 		}
 
+		#if SScript
 		bossScript = new ScriptHandler(Paths.scriptsForHandler(loadEnemy, 'data/boss'));
 
 		if (bossScript.disabled){
 			trace('boss script is null, using in source version');
-		}
-
-		if (!bossScript.disabled){
+		} else{
 			bossScript.setVar('BossTierState', this);
 			bossScript.setVar('add', add);
 			bossScript.setVar('insert', insert);
@@ -68,6 +69,7 @@ class BossTierState extends MusicBeatState
 
 			bossScript.callFunc('onCreate', []);
 		}
+		#end
 
         super.create();
 
@@ -77,15 +79,17 @@ class BossTierState extends MusicBeatState
 		continueText.visible = false;
 		add(continueText);
 
-		if (!bossScript.disabled)
-			bossScript.callFunc('onCreatePost', []);
 
-		if (bossScript.disabled){
+		#if SScript
+		if (!bossScript.disabled) {
+			bossScript.callFunc('onCreatePost', []);
+	    } else {
 			new FlxTimer().start(1, function(twn:FlxTimer) {
 				setupBossFight();
 				setupIntro(true);
 			});
 		}	
+		#end
     }
 
 	override public function update(elapsed:Float)
@@ -96,16 +100,20 @@ class BossTierState extends MusicBeatState
 		if (controls.ACCEPT)
 			LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7);
 
+		#if SScript
 		if(!bossScript.disabled){
 			bossScript.callFunc('onUpdate', [elapsed]);
 			bossScript.callFunc('onUpdatePost', [elapsed]);
 		}
+		#end
 		super.update(elapsed);
 	}
 
 	function setupBossFight(){
+		#if SScript
 		if(!bossScript.disabled)
 			bossScript.callFunc('setupBossFight', []);
+		#end
 
 		var theEnemy = "none";
 		switch(bossCharacter.toLowerCase()){
@@ -144,8 +152,10 @@ class BossTierState extends MusicBeatState
 	}
 
 	function setupIntro(enter:Bool = false){
+		#if SScript
 		if(!bossScript.disabled)
 			bossScript.callFunc('setupIntro', [enter]);
+		#end
 
 		var blackFade = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, CustomFlxColor.BLACK);
 		blackFade.alpha = enter ? 1 : 0;
@@ -157,27 +167,34 @@ class BossTierState extends MusicBeatState
 	{
 		super.beatHit();
 
+		#if SScript
 		if(!bossScript.disabled){
 			bossScript.setVar('curBeat', [curBeat]);
 			bossScript.callFunc('onBeatHit', [curBeat]);
 		}
+		#end
 	}
 
 	override public function stepHit()
 	{
 		super.stepHit();
+
+		#if SScript
 		if(!bossScript.disabled){
 			bossScript.setVar('curStep', [curStep]);
 			bossScript.callFunc('onStepHit', [curStep]);
 		}
+		#end
 	}
 
 	override public function destroy()
 	{
+		#if SScript
 		if(!bossScript.disabled){
 			bossScript.callFunc('onDestroy', []);
 			bossScript.destroy();
 		}
+		#end
 		super.destroy();
 	}
 }

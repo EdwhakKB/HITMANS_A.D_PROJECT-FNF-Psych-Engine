@@ -1,8 +1,8 @@
 package modcharting;
 
 import flixel.math.FlxAngle;
-import flixel.tweens.misc.BezierPathTween;
-import flixel.tweens.misc.BezierPathNumTween;
+/*import flixel.tweens.misc.BezierPathTween;
+import flixel.tweens.misc.BezierPathNumTween;*/
 import flixel.util.FlxTimer.FlxTimerManager;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxTween;
@@ -876,7 +876,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		return tween;
 	}
 
-	public function createBezierPathTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
+	/*public function createBezierPathTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween
 	{
 		var tween:FlxTween = tweenManager.bezierPathTween(Object, Values, Duration, Options);
 		tween.manager = tweenManager;
@@ -888,7 +888,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		var tween:FlxTween = tweenManager.bezierPathNumTween(Points, Duration, Options, TweenFunction);
 		tween.manager = tweenManager;
 		return tween;
-	}
+	}*/
 
 	override public function destroy()
 	{

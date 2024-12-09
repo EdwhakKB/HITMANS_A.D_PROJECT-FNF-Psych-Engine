@@ -414,7 +414,7 @@ class NewModchartArrow extends FlxSprite
 			// getScreenPosition(_point, camera).subtractPoint(offset);
 			getScreenPosition(_point, camera);
 			camera.drawTriangles(graphicToUse, vertices, indices, uvtData, null, _point, blend, true, antialiasing, spriteGraphic.colorTransform != null ? spriteGraphic.colorTransform : colorTransform,
-				spriteGraphic.shader != null ? spriteGraphic.shader : null, c);
+				spriteGraphic.shader != null ? spriteGraphic.shader : null);
 		}
 
 		#if FLX_DEBUG

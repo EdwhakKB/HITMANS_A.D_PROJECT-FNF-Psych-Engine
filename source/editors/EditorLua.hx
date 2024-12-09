@@ -103,7 +103,7 @@ class EditorLua {
 	public static var hscript:HScript = null;
 	#end
 
-	#if HSCRIPT_ALLOWED
+	#if SScript
 	public var ssHscript:SSHScriptEditor = null;
 	#end
 	public var callbacks:Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -3588,12 +3588,7 @@ class EditorLua {
 
 		Lua_helper.add_callback(lua, "pushShaderToCamera", function(id:String, camera:String){
 			var funnyCustomShader:CustomCodeShader = lua_Custom_Shaders.get(id);
-			#if (flixel >= "5.4.0")
-				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
-			#else
-				@:privateAccess
-				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
-			#end
+			cameraFromString(camera).filters.push(new ShaderFilter(funnyCustomShader));
 		});
 
 		Lua_helper.add_callback(lua, "setCameraNoCustomShader", function(camera:String){
@@ -3848,7 +3843,7 @@ class EditorLua {
 		});
 
 		Discord.DiscordClient.addLuaCallbacks(lua);
-		#if HSCRIPT_ALLOWED SSHScriptEditor.implement(this); #end
+		#if SScript SSHScriptEditor.implement(this); #end
 		
 		try{
 			var isString:Bool = !FileSystem.exists(scriptName);
@@ -4614,7 +4609,7 @@ class EditorLua {
 		Lua.close(lua);
 		lua = null;
 
-		#if HSCRIPT_ALLOWED
+		#if SScript
 		if(ssHscript != null)
 		{
 			#if (SScript > "6.1.80" || SScript != "6.1.80")

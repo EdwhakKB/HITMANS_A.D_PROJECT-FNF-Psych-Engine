@@ -33,7 +33,7 @@ using StringTools;
  * and on Lore engine FuckinHX/Yoshi engine's HxScript support 
  * @see https://github.com/sayofthelor/lore-engine/blob/main/source/lore/FunkinHX.hx
  */
-class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
+class ScriptHandler #if SScript extends tea.SScript #end
 {
 	var ignoreErrors:Bool = false;
 	var hxFileName:String = '';
@@ -41,7 +41,7 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
 
 	public function new(file:String, ?preset:Bool = true)
 	{
-        #if HSCRIPT_ALLOWED
+        #if SScript
 		if (file == null){
 			disabled = true;
 			return;
@@ -53,7 +53,7 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
         #end
 	}
 
-    #if HSCRIPT_ALLOWED
+    #if SScript
 	override public function preset():Void
 	{
 		super.preset();
@@ -201,7 +201,7 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
 
 	public function callFunc(key:String, args:Array<Dynamic>)
 	{
-		#if HSCRIPT_ALLOWED
+		#if SScript
 		if (this == null || interp == null)
 			return null;
 		else
@@ -213,7 +213,7 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
 
 	public function setVar(key:String, value:Dynamic)
 	{
-		#if HSCRIPT_ALLOWED
+		#if SScript
 		if (this == null || interp == null)
 			return null;
 		else
@@ -225,7 +225,7 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
 
 	public function varExists(key:String):Bool
 	{
-        #if HSCRIPT_ALLOWED
+        #if SScript
 		if (this != null && interp != null)
 			return exists(key);
         #end
@@ -234,7 +234,7 @@ class ScriptHandler #if HSCRIPT_ALLOWED extends tea.SScript #end
 
 	public function getVar(key:String):Dynamic
 	{
-        #if HSCRIPT_ALLOWED
+        #if SScript
 		if (this != null && interp != null)
 			return get(key);
         #end

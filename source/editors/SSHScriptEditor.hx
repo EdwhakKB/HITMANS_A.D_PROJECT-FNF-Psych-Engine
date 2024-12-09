@@ -8,13 +8,13 @@ import flixel.util.FlxAxes;
 import editors.EditorLua;
 #end
 
-#if HSCRIPT_ALLOWED
+#if SScript
 import tea.SScript;
 #end
 
 using StringTools;
 
-#if HSCRIPT_ALLOWED
+#if SScript
 class SSHScriptEditor extends SScript
 {	
 	#if LUA_ALLOWED
@@ -407,5 +407,9 @@ class SSHScriptEditor extends SScript
 		active = false;
 	}
 	#end
+}
+#else
+class SSHScriptEditor {
+	public static function implement(funk:FunkinLua) {}
 }
 #end

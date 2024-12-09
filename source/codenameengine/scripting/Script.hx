@@ -75,7 +75,7 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			"FunkinShader"	  => codenameengine.FunkinShader,
 			"CustomCodeShader"	  => codenameengine.CustomCodeShader,
             "CustomShader"	  => codenameengine.CustomCodeShader,
-			#if flxanimate "FlxAnimate"		=> flxanimate.FlxAnimate, #end
+			#if flxanimate "FlxAnimate"		=> FlxAnimate, #end
 			"Alphabet"		  => Alphabet,
 
 			"CoolUtil"		  => CoolUtil,

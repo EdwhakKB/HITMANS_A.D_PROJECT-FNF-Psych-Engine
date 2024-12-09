@@ -15,9 +15,6 @@ import states.PlayState;
 import game.Conductor;
 #end
 import flixel.FlxG;
-#if HSCRIPT_ALLOWED
-import SSHScript as FunkinHScript;
-#end
 import modcharting.Modifier;
 import modcharting.PlayfieldRenderer;
 import modcharting.NoteMovement;

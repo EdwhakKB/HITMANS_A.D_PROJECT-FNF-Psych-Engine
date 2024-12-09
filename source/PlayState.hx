@@ -1486,7 +1486,6 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.pitch = value;
 		}
 		playbackRate = value;
-		FlxAnimationController.globalSpeed = value;
 		// trace('Anim speed: ' + FlxAnimationController.globalSpeed);
 		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000 * value;
 		setOnScripts('playbackRate', playbackRate);
@@ -5151,7 +5150,6 @@ class PlayState extends MusicBeatState
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyPress);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
-		FlxAnimationController.globalSpeed = 1;
 		FlxG.sound.music.pitch = 1;
 		cleanManagers();
 		super.destroy();
@@ -5340,7 +5338,9 @@ class PlayState extends MusicBeatState
 
 		if(FileSystem.exists(scriptToLoad))
 		{
+			#if SScript
 			if (SScript.global.exists(scriptToLoad)) return false;
+			#end
 
 			initHScript(scriptToLoad);
 			return true;

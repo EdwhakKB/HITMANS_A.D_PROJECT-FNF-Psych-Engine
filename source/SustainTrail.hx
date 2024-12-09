@@ -1059,7 +1059,7 @@ class SustainTrail extends FlxSprite
       // else
       getScreenPosition(_point, camera).subtractPoint(offset);
 
-      camera.drawTriangles(processedGraphic, vertices, indices, uvtData, colors, _point, blend, true, antialiasing, colorTransform, this.shader, cullMode);
+      camera.drawTriangles(processedGraphic, vertices, indices, uvtData, colors, _point, blend, true, antialiasing, colorTransform, this.shader);
 
       // camera.drawTriangles(graphicToUse, vertices, indices, uvtData, null, _point, blend, textureRepeat, antialiasing,
       //   spriteGraphic?.colorTransform ?? colorTransform, spriteGraphic?.shader ?? null, c);
