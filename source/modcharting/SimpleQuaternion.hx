@@ -3,13 +3,15 @@ package modcharting;
 import flixel.math.FlxAngle;
 import openfl.geom.Vector3D;
 
-typedef Quaternion = 
+@:publicFields
+@:structInit
+class Quaternion
 {
     var x:Float;
     var y:Float;
     var z:Float;
     var w:Float;
-};
+}
 //me whenthe
 class SimpleQuaternion
 {

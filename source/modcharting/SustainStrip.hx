@@ -47,10 +47,29 @@ class SustainStrip extends FlxStrip
     //Note, they might cause some visual gaps. Maybe fix later?
     public var spiralHolds:Bool = false; //for now false cuz yeah 
 
-    public function constructVertices(noteData:NotePositionData, thisNotePos:Vector3D, nextHalfNotePos:NotePositionData, nextNotePos:NotePositionData, flipGraphic:Bool, reverseClip:Bool)
+    // for spiral holds
+    // ported from FunkinModchart
+    public function getPointsNormal(pos:NotePositionData, nextFramePos:NotePositionData, holdSize:Float)
+    {
+        var unitX = nextFramePos.x - pos.x;
+        var unitY = nextFramePos.y - pos.y;
+        // normalizing
+        var length = Math.sqrt(unitX * unitX + unitY * unitY);
+        unitX /= length;
+        unitY /= length;
+        holdSize *= .5 * (1 / -pos.z) * pos.scaleX;
+
+        return [
+            //  left
+            pos.x + -unitY * holdSize, pos.y + unitX * holdSize,
+            // right
+            pos.x + unitY * holdSize, pos.y + -unitX * holdSize,
+        ];
+    }
+    public function constructVertices(noteData:NotePositionData, topPositions:Array<NotePositionData>, middlePositions:Array<NotePositionData>, bottomPositions:Array<NotePositionData>, flipGraphic:Bool, reverseClip:Bool)
     {
         var holdWidth = daNote.frameWidth;
-        var xOffset = daNote.frameWidth/6.5; //FUCK YOU, MAGIC NUMBER GO! MAKE THEM HOLDS CENTERED DAMNIT!
+        //var xOffset = daNote.frameWidth/6.5; //FUCK YOU, MAGIC NUMBER GO! MAKE THEM HOLDS CENTERED DAMNIT!
 
         daNote.rgbShader.stealthGlow = noteData.stealthGlow; //make sure at the moment we render sustains they get shader changes? (OMG THIS FIXED SUDDEN HIDDEN AND ETC LMAO)
         daNote.rgbShader.stealthGlowRed = noteData.glowRed;
@@ -62,241 +81,68 @@ class SustainStrip extends FlxStrip
             yOffset *= -1;
 
         var verts:Array<Float> = [];
-        if (flipGraphic)
-        {
-            var scaleTest = nextNotePos.scaleX;
-            //MAKE IT TAKE IN Z!
-            scaleTest *= (1/-nextNotePos.z);
-            var widthScaled = holdWidth * scaleTest;
-            var scaleChange = widthScaled - holdWidth;
-            var holdLeftSide = 0 - (scaleChange / 2);
-            var holdRightSide = widthScaled - (scaleChange / 2);
-            holdLeftSide -= xOffset;
-            holdRightSide -= xOffset;
 
+        var top = [];
+        var mid = [];
+        var bottom = [];
 
-            var vert_X_L:Float = nextNotePos.x+holdLeftSide;
-            var vert_Y_L:Float = nextNotePos.y;
-            var vert_X_R:Float = nextNotePos.x+holdRightSide;
-            var vert_Y_R:Float = nextNotePos.y;
+        if (!flipGraphic){
+            if (spiralHolds)
+            {
+                top = getPointsNormal(topPositions[0], topPositions[1], holdWidth);
+                mid = getPointsNormal(middlePositions[0], middlePositions[1], holdWidth);
+                bottom = getPointsNormal(bottomPositions[0], bottomPositions[1], holdWidth);
+            } else {
+                var zScaleTop = 1/-topPositions[0].z;
+                var zScaleMid = 1/-middlePositions[0].z;
+                var zScaleBottom = 1/-bottomPositions[0].z;
 
-            var calculateAngleDif:Float = 0.0;
-            if(spiralHolds){
-                var a:Float = (nextNotePos.y - thisNotePos.y) * -1.0; // height
-                var b:Float = (nextNotePos.x - thisNotePos.x); // length
-                var angle:Float = Math.atan2(b,a);
-                angle *= (180 / Math.PI);
-                calculateAngleDif = angle;
+                top = [
+                    topPositions[0].x - holdWidth * .5 * zScaleTop * topPositions[0].scaleX, topPositions[0].y,
+                    topPositions[0].x + holdWidth * .5 * zScaleTop * topPositions[0].scaleX,  topPositions[0].y
+                ];
+                mid = [
+                    middlePositions[0].x - holdWidth * .5 * zScaleMid * middlePositions[0].scaleX, middlePositions[0].y,
+                    middlePositions[0].x + holdWidth * .5 * zScaleMid * middlePositions[0].scaleX,  middlePositions[0].y
+                ];
+                bottom = [
+                    bottomPositions[0].x - holdWidth * .5 * zScaleBottom * bottomPositions[0].scaleX, bottomPositions[0].y,
+                    bottomPositions[0].x + holdWidth * .5 * zScaleBottom * bottomPositions[0].scaleX,  bottomPositions[0].y
+                ];
             }
+        }else{
+            if (spiralHolds)
+            {
+                top = getPointsNormal(bottomPositions[0], bottomPositions[1], holdWidth);
+                mid = getPointsNormal(middlePositions[0], middlePositions[1], holdWidth);
+                bottom = getPointsNormal(topPositions[0], topPositions[1], holdWidth);
+            } else {
+                var zScaleTop = 1/-bottomPositions[0].z;
+                var zScaleMid = 1/-middlePositions[0].z;
+                var zScaleBottom = 1/-topPositions[0].z;
 
-            if(spiralHolds){
-                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
-
-                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-
-                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_L = thing.x;
-                vert_Y_L = thing.y;
-
-                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_R = thing.x;
-                vert_Y_R = thing.y;
+                top = [
+                    bottomPositions[0].x - holdWidth * .5 * zScaleTop * bottomPositions[0].scaleX, bottomPositions[0].y,
+                    bottomPositions[0].x + holdWidth * .5 * zScaleTop * bottomPositions[0].scaleX,  bottomPositions[0].y
+                ];
+                mid = [
+                    middlePositions[0].x - holdWidth * .5 * zScaleMid * middlePositions[0].scaleX, middlePositions[0].y,
+                    middlePositions[0].x + holdWidth * .5 * zScaleMid * middlePositions[0].scaleX,  middlePositions[0].y
+                ];
+                bottom = [
+                    topPositions[0].x - holdWidth * .5 * zScaleBottom * topPositions[0].scaleX, topPositions[0].y,
+                    topPositions[0].x + holdWidth * .5 * zScaleBottom * topPositions[0].scaleX,  topPositions[0].y
+                ];
             }
-
-            verts.push(vert_X_L);
-            verts.push(vert_Y_L);
-            verts.push(vert_X_R);
-            verts.push(vert_Y_R);
-
-            scaleTest = nextHalfNotePos.scaleX;
-            scaleTest *= (1/-nextHalfNotePos.z);
-            widthScaled = holdWidth * scaleTest;
-            scaleChange = widthScaled - holdWidth;
-            holdLeftSide = 0 - (scaleChange / 2);
-            holdRightSide = widthScaled - (scaleChange / 2);
-            holdLeftSide -= xOffset;
-            holdRightSide -= xOffset;
-
-            vert_X_L = nextHalfNotePos.x+holdLeftSide;
-            vert_Y_L = nextHalfNotePos.y;
-            vert_X_R = nextHalfNotePos.x+holdRightSide;
-            vert_Y_R = nextHalfNotePos.y;
-
-            if(spiralHolds){
-                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
-
-                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-
-                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_L = thing.x;
-                vert_Y_L = thing.y;
-
-                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_R = thing.x;
-                vert_Y_R = thing.y;
-            }
-
-            verts.push(vert_X_L);
-            verts.push(vert_Y_L);
-            verts.push(vert_X_R);
-            verts.push(vert_Y_R);
-
-            scaleTest = noteData.scaleX;
-            scaleTest *= (1/-thisNotePos.z);
-            widthScaled = holdWidth * scaleTest;
-            scaleChange = widthScaled - holdWidth;
-            holdLeftSide = 0 - (scaleChange / 2);
-            holdRightSide = widthScaled - (scaleChange / 2);
-            holdLeftSide -= xOffset;
-            holdRightSide -= xOffset;
-
-            vert_X_L = thisNotePos.x+holdLeftSide;
-            vert_Y_L = thisNotePos.y;
-            vert_X_R = thisNotePos.x+holdRightSide;
-            vert_Y_R = thisNotePos.y;
-
-            if(spiralHolds){
-                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
-
-                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-
-                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_L = thing.x;
-                vert_Y_L = thing.y;
-
-                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_R = thing.x;
-                vert_Y_R = thing.y;
-            }
-
-            verts.push(vert_X_L);
-            verts.push(vert_Y_L);
-            verts.push(vert_X_R);
-            verts.push(vert_Y_R);
         }
-        else 
+
+
+        for (vector in [top, mid, bottom])
         {
-            var scaleTest = noteData.scaleX;
-            scaleTest *= (1/-thisNotePos.z);
-            var widthScaled = holdWidth * scaleTest;
-            var scaleChange = widthScaled - holdWidth;
-            var holdLeftSide = 0 - (scaleChange / 2);
-            var holdRightSide = widthScaled - (scaleChange / 2);
-            holdLeftSide -= xOffset;
-            holdRightSide -= xOffset;
-
-            var vert_X_L:Float = thisNotePos.x+holdLeftSide;
-            var vert_Y_L:Float = thisNotePos.y;
-            var vert_X_R:Float = thisNotePos.x+holdRightSide;
-            var vert_Y_R:Float = thisNotePos.y;
-
-            var calculateAngleDif:Float = 0.0;
-            if(spiralHolds){
-                var a:Float = (thisNotePos.y - nextNotePos.y) * -1.0; // height
-                var b:Float = (thisNotePos.x - nextNotePos.x); // length
-                var angle:Float = Math.atan2(b,a);
-                angle *= (180 / Math.PI);
-                calculateAngleDif = angle;
-            }
-            if(spiralHolds){
-                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
-
-                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-
-                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_L = thing.x;
-                vert_Y_L = thing.y;
-
-                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_R = thing.x;
-                vert_Y_R = thing.y;
-            }
-
-
-            verts.push(vert_X_L);
-            verts.push(vert_Y_L); 
-            verts.push(vert_X_R);
-            verts.push(vert_Y_R);
-
-            scaleTest = nextHalfNotePos.scaleX;
-            scaleTest *= (1/-nextHalfNotePos.z);
-            widthScaled = holdWidth * scaleTest;
-            scaleChange = widthScaled - holdWidth;
-            holdLeftSide = 0 - (scaleChange / 2);
-            holdRightSide = widthScaled - (scaleChange / 2);
-            holdLeftSide -= xOffset;
-            holdRightSide -= xOffset;
-
-            vert_X_L = nextHalfNotePos.x+holdLeftSide;
-            vert_Y_L = nextHalfNotePos.y;
-            vert_X_R = nextHalfNotePos.x+holdRightSide;
-            vert_Y_R = nextHalfNotePos.y;
-
-            if(spiralHolds){
-                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
-
-                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-
-                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_L = thing.x;
-                vert_Y_L = thing.y;
-
-                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_R = thing.x;
-                vert_Y_R = thing.y;
-            }
-
-            verts.push(vert_X_L);
-            verts.push(vert_Y_L);
-            verts.push(vert_X_R);
-            verts.push(vert_Y_R);
-
-
-            scaleTest = nextNotePos.scaleX;
-            scaleTest *= (1/-nextNotePos.z);
-            widthScaled = holdWidth * scaleTest;
-            scaleChange = widthScaled - holdWidth;
-            holdLeftSide = 0 - (scaleChange / 2);
-            holdRightSide = widthScaled - (scaleChange / 2);
-            holdLeftSide -= xOffset;
-            holdRightSide -= xOffset;
-
-            vert_X_L = nextNotePos.x+holdLeftSide;
-            vert_Y_L = nextNotePos.y;
-            vert_X_R = nextNotePos.x+holdRightSide;
-            vert_Y_R = nextNotePos.y;
-
-            if(spiralHolds){
-                var rotateOrigin:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-                rotateOrigin.x += (vert_X_R - vert_X_L) / 2;
-
-                var rotatePoint:Vector2 = new Vector2(vert_X_L, vert_Y_L);
-
-                var thing:Vector2 = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_L = thing.x;
-                vert_Y_L = thing.y;
-
-                rotatePoint = new Vector2(vert_X_R, vert_Y_R);
-                thing = ModchartUtil.rotateAround(rotateOrigin, rotatePoint, calculateAngleDif);
-                vert_X_R = thing.x;
-                vert_Y_R = thing.y;
-            }
-
-            verts.push(vert_X_L);
-            verts.push(vert_Y_L);
-            verts.push(vert_X_R);
-            verts.push(vert_Y_R);
+            for (i in vector)
+                verts.push(i);
         }
+
         vertices = new DrawData(12, true, verts);
     }
 }
