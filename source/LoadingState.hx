@@ -61,7 +61,8 @@ class AsyncAssetPreloader
 			characters.push(PlayState.SONG.gfVersion);
 
 			audio.push(Paths.inst(PlayState.SONG.song));
-			audio.push(Paths.voices(PlayState.SONG.song));
+			if (PlayState.SONG.needsVoices)
+				audio.push(Paths.voices(PlayState.SONG.song));
 
 			var events:Array<Dynamic> = [];
             var eventStr:String = '';

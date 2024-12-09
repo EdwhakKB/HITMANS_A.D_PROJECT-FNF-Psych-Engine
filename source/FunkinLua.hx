@@ -3604,7 +3604,13 @@ class FunkinLua {
 
 		Lua_helper.add_callback(lua, "pushShaderToCamera", function(id:String, camera:String){
 			var funnyCustomShader:CustomCodeShader = lua_Custom_Shaders.get(id);
-			cameraFromString(camera).filters.push(new ShaderFilter(funnyCustomShader));
+			#if (flixel >= "5.4.0")
+				@:privateAccess
+				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
+			#else
+				@:privateAccess
+				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
+			#end
 		});
 
 		Lua_helper.add_callback(lua, "setCameraNoCustomShader", function(camera:String){
