@@ -207,6 +207,15 @@ class ImprovedEases
     return t * t * t * (t * (t * 6 - 15) + 10);
   }
 
+  public static inline function outInSmoothStep(t:Float):Float
+  {
+    return (t < 0.5 ? smoothStepOut(t * 2) * 0.5 : smoothStepIn(t * 2 - 1) * 0.5 + 0.5);
+  }
+  public static inline function outInSmootherStep(t:Float):Float
+  {
+    return (t < 0.5 ? smootherStepOut(t * 2) * 0.5 : smootherStepIn(t * 2 - 1) * 0.5 + 0.5);
+  }
+
   public static inline function sineIn(t:Float):Float
   {
     return 1 - Math.cos(t * (Math.PI * 0.5));
@@ -284,7 +293,7 @@ class ImprovedEases
 
   public static inline function expoIn(t:Float):Float
   {
-    return Math.pow(1000, (t - 1)) - 0.001;
+    return Math.pow(1000, (t - 1));
   }
 
   public static inline function expoOut(t:Float):Float
@@ -365,7 +374,7 @@ class InternalEases
   public static inline function impulseInternal(t:Float, damp:Float):Float
   {
     t = Math.pow(t, damp);
-    return t * (Math.pow(100, -t) - 0.001) * 18.6;
+    return t * (Math.pow(1000, -t) - 0.001) * 18.6;
   }
 
   public static inline function inBackInternal(t:Float, a:Float):Float
