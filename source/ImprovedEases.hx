@@ -284,7 +284,7 @@ class ImprovedEases
 
   public static inline function expoIn(t:Float):Float
   {
-    return Math.pow(1000, (t - 1)) - 0.001;
+    return Math.pow(1000, (t - 1));
   }
 
   public static inline function expoOut(t:Float):Float
@@ -365,7 +365,7 @@ class InternalEases
   public static inline function impulseInternal(t:Float, damp:Float):Float
   {
     t = Math.pow(t, damp);
-    return t * (Math.pow(100, -t) - 0.001) * 18.6;
+    return t * (Math.pow(1000, -t) - 0.001) * 18.6;
   }
 
   public static inline function inBackInternal(t:Float, a:Float):Float
