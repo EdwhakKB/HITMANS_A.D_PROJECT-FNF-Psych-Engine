@@ -207,6 +207,15 @@ class ImprovedEases
     return t * t * t * (t * (t * 6 - 15) + 10);
   }
 
+  public static inline function outInSmoothStep(t:Float):Float
+  {
+    return (t < 0.5 ? smoothStepOut(t * 2) * 0.5 : smoothStepIn(t * 2 - 1) * 0.5 + 0.5);
+  }
+  public static inline function outInSmootherStep(t:Float):Float
+  {
+    return (t < 0.5 ? smootherStepOut(t * 2) * 0.5 : smootherStepIn(t * 2 - 1) * 0.5 + 0.5);
+  }
+
   public static inline function sineIn(t:Float):Float
   {
     return 1 - Math.cos(t * (Math.PI * 0.5));
