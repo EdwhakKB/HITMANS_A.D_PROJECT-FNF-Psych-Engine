@@ -13,6 +13,7 @@ class ClientPrefs {
 	public static var middleScroll:Bool = false;
 	public static var opponentStrums:Bool = true;
 	public static var casualMode:Bool = false;
+	public static var guitarHeroSustains:Bool = true;
 	public static var showFPS:Bool = true;
 	public static var flashing:Bool = true;
 	public static var globalAntialiasing:Bool = true;
@@ -162,6 +163,7 @@ class ClientPrefs {
 		FlxG.save.data.middleScroll = middleScroll;
 		FlxG.save.data.opponentStrums = opponentStrums;
 		FlxG.save.data.casualMode = casualMode;
+		FlxG.save.data.guitarHeroSustains = guitarHeroSustains;
 		FlxG.save.data.showFPS = showFPS;
 		FlxG.save.data.flashing = flashing;
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
@@ -242,6 +244,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.casualMode != null) {
 			casualMode = FlxG.save.data.casualMode;
+		}
+		if(FlxG.save.data.guitarHeroSustains != null) {
+			guitarHeroSustains = FlxG.save.data.guitarHeroSustains;
 		}
 		if(FlxG.save.data.showFPS != null) {
 			showFPS = FlxG.save.data.showFPS;

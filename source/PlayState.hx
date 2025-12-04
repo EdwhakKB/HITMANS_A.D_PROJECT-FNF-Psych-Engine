@@ -349,6 +349,7 @@ class PlayState extends MusicBeatState
 	public var chaosMod:Bool = false;
 	public var chaosDifficulty:Float = 1;
 	public var randomizedNotes:Bool = false;
+	public var guitarHeroSustains:Bool = false;
 
 	public var botplaySine:Float = 0;
 	public var botplayTxt:FlxText;
@@ -674,6 +675,7 @@ class PlayState extends MusicBeatState
 		chaosMod = ClientPrefs.getGameplaySetting('chaosmode', false);
 		chaosDifficulty = ClientPrefs.getGameplaySetting('chaosdifficulty', 1);
 		randomizedNotes = ClientPrefs.getGameplaySetting('randomnotes', false);
+		guitarHeroSustains = ClientPrefs.guitarHeroSustains;
 
 		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
@@ -4419,7 +4421,7 @@ class PlayState extends MusicBeatState
 		}
 
 		// FlxG.watch.addQuick('asdfa', upP);
-		if (startedCountdown && !boyfriend.stunned && generatedMusic)
+		/*if (startedCountdown && !boyfriend.stunned && generatedMusic)
 		{
 			// rewritten inputs???
 			notes.forEachAlive(function(daNote:Note)
@@ -4434,6 +4436,29 @@ class PlayState extends MusicBeatState
 						opponentNoteHit(daNote);
 					}
 			});
+			if (!parsedHoldArray.contains(true) || endingSong)
+				playerDance();
+		}*/
+
+		if (startedCountdown && !boyfriend.stunned && generatedMusic)
+		{
+			// rewritten inputs???
+			if (notes.length > 0) {
+				for (n in notes) { // I can't do a filter here, that's kinda awesome
+					var canHit:Bool = (n != null && !strumsBlocked[n.noteData] && n.canBeHit
+						&& n.mustPress && !n.tooLate && !n.wasGoodHit && !n.blockHit);
+
+					if (guitarHeroSustains)
+						canHit = canHit && n.parent != null && n.parent.wasGoodHit;
+
+					if (canHit && n.isSustainNote) {
+						var released:Bool = !parsedHoldArray[n.noteData];
+
+						if (!released)
+							goodNoteHit(n);
+					}
+				}
+			}
 			if (!parsedHoldArray.contains(true) || endingSong)
 				playerDance();
 		}
@@ -4463,6 +4488,85 @@ class PlayState extends MusicBeatState
 		return ret;
 	}
 
+	public var pressMissDamage:Float = 0.023;
+	function noteMissCommon(direction:Int, note:Note = null) {
+		// score and data
+		var subtract:Float = pressMissDamage;
+		if(note != null) subtract = note.missHealth;
+
+		var lastCombo:Int = combo;
+		judgement.display(5);
+		comboNums.display(combo = 0);
+
+		// GUITAR HERO SUSTAIN CHECK LOL!!!!
+		if (note != null && guitarHeroSustains && note.parent == null) {
+			if(note.tail.length > 0) {
+				note.alpha = 0.35;
+				for(childNote in note.tail) {
+					childNote.alpha = note.alpha;
+					childNote.missed = true;
+					childNote.canBeHit = false;
+					childNote.ignoreNote = true;
+					childNote.tooLate = true;
+				}
+				note.missed = true;
+				note.canBeHit = false;
+
+				//subtract += 0.385; // you take more damage if playing with this gameplay changer enabled.
+				// i mean its fair :p -Crow
+				note.tail.length + 1 * (0.75 * note.tail.length); //fuck you shadow mario
+				// i think it would be fair if damage multiplied based on how long the sustain is -[REDACTED]
+			}
+	
+		}
+		if (note != null && guitarHeroSustains && note.parent != null && note.isSustainNote) {
+			if (!note.missed){
+				var parentNote:Note = note.parent;
+				if (parentNote.wasGoodHit && parentNote.tail.length > 0) {
+					for (child in parentNote.tail) if (child != note) {
+						child.missed = true;
+						child.canBeHit = false;
+						child.ignoreNote = true;
+						child.tooLate = true;
+					}
+				}
+			}
+		}
+
+		if(instakillOnMiss)
+		{
+			vocals.volume = 0;
+			doDeathCheck(true);
+		}
+
+		health -= subtract * healthLoss;
+		songScore -= 10;
+		if(!endingSong) songMisses++;
+		totalPlayed++;
+		RecalculateRating(true);
+
+		// play character anims
+		var char:Character = boyfriend;
+		if((note != null && note.gfNote) || (SONG.notes[curSection] != null && SONG.notes[curSection].gfSection)) char = gf;
+
+		if(char != null && (note == null || !note.noMissAnimation) && char.hasMissAnimations)
+		{
+			var postfix:String = '';
+			if(note != null) postfix = note.animSuffix;
+
+			var animToPlay:String = singAnimations[Std.int(Math.abs(Math.min(singAnimations.length-1, direction)))] + 'miss' + postfix;
+			char.playAnim(animToPlay, true);
+
+			if(char != gf && lastCombo > 5 && gf != null && gf.animOffsets.exists('sad'))
+			{
+				gf.playAnim('sad');
+				gf.specialAnim = true;
+			}
+		}
+
+		vocals.volume = 0;
+	}
+
 	function noteMiss(daNote:Note):Void { //You didn't hit the key and let it go offscreen, also used by Hurt Notes
 		//Dupe note remove
 		notes.forEachAlive(function(note:Note) {
@@ -4471,6 +4575,8 @@ class PlayState extends MusicBeatState
 				notes.remove(note, true);
 				note.destroy();
 			}
+			noteMissCommon(daNote.noteData, daNote);
+			callOnLuas('noteMiss', [notes.members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote]);
 		});
 
 		if (!isDead){
@@ -4527,9 +4633,6 @@ class PlayState extends MusicBeatState
 			var animToPlay:String = singAnimations[Std.int(Math.abs(daNote.noteData))] + 'miss' + daNote.animSuffix;
 			char.playAnim(animToPlay, true);
 		}
-
-		var result:Dynamic = callOnLuas('noteMiss', [notes.members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote]);
-		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('noteMiss', [daNote]);
 	}
 
 	function noteMissPress(direction:Int = 1):Void //You pressed a key when there was no notes to press for this key
@@ -4605,7 +4708,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 		var noteStyle = note.noteType.toLowerCase();
-		if (allowEnemyDrain){
+		if (allowEnemyDrain && ((guitarHeroSustains && !note.isSustainNote) || !guitarHeroSustains)){
 			switch (ClientPrefs.casualMode){
 				case false:
 					if (edwhakIsEnemy){

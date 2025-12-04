@@ -214,6 +214,7 @@ class FunkinLua {
 		set('gfSection', false);
 
 		// Gameplay settings
+		set('guitarHeroSustains', PlayState.instance.guitarHeroSustains);
 		set('healthGainMult', PlayState.instance.healthGain);
 		set('healthLossMult', PlayState.instance.healthLoss);
 		set('playbackRate', PlayState.instance.playbackRate);
