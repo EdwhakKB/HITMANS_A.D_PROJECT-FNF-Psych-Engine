@@ -6,13 +6,7 @@ import flixel.util.FlxSort;
 import achievements.Bar;
 import flixel.FlxG;
 import flixel.tweens.FlxTween;
-import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.group.FlxSpriteGroup;
-import flixel.util.FlxColor;
-import flixel.tweens.FlxEase;
 import achievements.Achievements.Achievement;
-import Discord.DiscordClient;
 
 #if ACHIEVEMENTS_ALLOWED
 class AchievementsMenuState extends MusicBeatState
@@ -58,7 +52,7 @@ class AchievementsMenuState extends MusicBeatState
 		add(camFollow);
 
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBG'));
-		menuBG.antialiasing = ClientPrefs.globalAntialiasing;
+		menuBG.antialiasing = ClientPrefs.data.antialiasing;
 		menuBG.setGraphicSize(FlxG.width, FlxG.height);
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
@@ -71,7 +65,7 @@ class AchievementsMenuState extends MusicBeatState
 		options.sort(sortByID);
 		for (option in options)
 		{
-			var hasAntialias:Bool = ClientPrefs.globalAntialiasing;
+			var hasAntialias:Bool = ClientPrefs.data.antialiasing;
 			var graphic = null;
 			if(option.unlocked)
 			{
@@ -354,7 +348,7 @@ class ResetAchievementSubstate extends MusicBeatSubstate
 				option.name = state.nameText.text = '???';
 				if(option.maxProgress > 0) state.progressTxt.text = '0 / ' + option.maxProgress;
 				state.grpOptions.members[state.curSelected].loadGraphic(Paths.image('achievements/lockedachievement'));
-				state.grpOptions.members[state.curSelected].antialiasing = ClientPrefs.globalAntialiasing;
+				state.grpOptions.members[state.curSelected].antialiasing = ClientPrefs.data.antialiasing;
 
 				if(state.progressBar.visible)
 				{

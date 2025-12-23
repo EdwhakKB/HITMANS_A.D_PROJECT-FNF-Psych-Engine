@@ -1,7 +1,7 @@
 package editors.content;
 
-import Song;
-import CoolUtil;
+import engine.Song;
+import engine.CoolUtil;
 
 import flixel.math.FlxMath;
 import flixel.util.FlxSort;

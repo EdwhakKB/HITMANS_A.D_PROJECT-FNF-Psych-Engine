@@ -4,8 +4,6 @@ import textbox.CommandValues;
 import textbox.Text;
 import textbox.TextboxLine;
 import textbox.TextPool;
-import flixel.group.FlxGroup;
-import flixel.group.FlxSpriteGroup;
 import flixel.util.typeLimit.OneOfTwo;
 import haxe.Utf8;
 

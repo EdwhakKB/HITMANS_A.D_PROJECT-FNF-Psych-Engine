@@ -1,65 +1,72 @@
 package modcharting;
 
 // STOLEN FROM HAXEFLIXEL DEMO LOL
-//Am I even allowed to use this?
-//Blantados code! Thanks!!
+// Am I even allowed to use this?
+// Blantados code! Thanks!!
+import flixel.FlxG;
+import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.tile.FlxGraphicsShader;
+import flixel.math.FlxAngle;
 import flixel.system.FlxAssets.FlxShader;
+import flixel.system.FlxAssets;
+import flixel.util.FlxColor;
+import haxe.Json;
+import openfl.Lib;
 import openfl.display.BitmapData;
 import openfl.display.Shader;
 import openfl.display.ShaderInput;
 import openfl.utils.Assets;
-import flixel.FlxG;
-import openfl.Lib;
-import flixel.util.FlxColor;
-import haxe.Json;
-import flixel.math.FlxAngle;
-import flixel.FlxG;
-import flixel.system.FlxAssets;
-import flixel.graphics.tile.FlxGraphicsShader;
 
 using StringTools;
 
 class ShaderEffectNew
 {
 	public function update(elapsed:Float)
-    {
-        // nothing yet
-    }
+	{
+		// nothing yet
+	}
 }
 
 class StealthEffect extends ShaderEffectNew
 {
-    public var shader(default, null):StealthShader = new StealthShader();
-    public var stealthGlow(default, set):Float;
+	public var shader(default, null):StealthShader = new StealthShader();
+	public var stealthGlow(default, set):Float;
 	public var stealthGlowRed(default, set):Float;
 	public var stealthGlowGreen(default, set):Float;
 	public var stealthGlowBlue(default, set):Float;
 
-    public function new()
-    {
-        stealthGlow = 0.0;
-        stealthGlowRed = 1.0;
-        stealthGlowGreen = 1.0;
-        stealthGlowBlue = 1.0;
-    }
+	public function new()
+	{
+		stealthGlow = 0.0;
+		stealthGlowRed = 1.0;
+		stealthGlowGreen = 1.0;
+		stealthGlowBlue = 1.0;
+	}
 
-    private function set_stealthGlow(value:Float) {
+	private function set_stealthGlow(value:Float)
+	{
 		stealthGlow = value;
 		shader._stealthGlow.value = [stealthGlow];
 		return value;
 	}
-	private function set_stealthGlowRed(value:Float) {
+
+	private function set_stealthGlowRed(value:Float)
+	{
 		stealthGlowRed = value;
 		shader._stealthR.value = [stealthGlowRed];
 		return value;
 	}
-	private function set_stealthGlowGreen(value:Float) {
+
+	private function set_stealthGlowGreen(value:Float)
+	{
 		stealthGlowGreen = value;
 		shader._stealthG.value = [stealthGlowGreen];
 		return value;
 	}
-	private function set_stealthGlowBlue(value:Float) {
+
+	private function set_stealthGlowBlue(value:Float)
+	{
 		stealthGlowBlue = value;
 		shader._stealthB.value = [stealthGlowBlue];
 		return value;
@@ -68,7 +75,7 @@ class StealthEffect extends ShaderEffectNew
 
 class StealthShader extends FlxShader
 {
-    @:glFragmentSource('
+	@:glFragmentSource('
         #pragma header
 
         uniform float _stealthGlow;
@@ -85,65 +92,64 @@ class StealthShader extends FlxShader
             gl_FragColor = vec4(finalCol.r, finalCol.g, finalCol.b, spritecolor.a );
         }
     ')
-    public function new()
-    {
-        super();
-    }
-
+	public function new()
+	{
+		super();
+	}
 }
 
 class ThreeDEffect extends ShaderEffectNew
 {
 	public var shader:ThreeDShader = new ThreeDShader();
 
-    public var xrot(default, set):Float = 0;
-    public var yrot(default, set):Float = 0;
-    public var zrot(default, set):Float = 0;
-    public var depth(default, set):Float = 0;
+	public var xrot(default, set):Float = 0;
+	public var yrot(default, set):Float = 0;
+	public var zrot(default, set):Float = 0;
+	public var depth(default, set):Float = 0;
 
-    public function new()
-    {
-        shader.xrot.value = [xrot];
-        shader.yrot.value = [yrot];
-        shader.zrot.value = [zrot];
-        shader.depth.value = [depth];
-    }
+	public function new()
+	{
+		shader.xrot.value = [xrot];
+		shader.yrot.value = [yrot];
+		shader.zrot.value = [zrot];
+		shader.depth.value = [depth];
+	}
 
-    override public function update(elapsed:Float)
-    {
-        shader.xrot.value = [xrot];
-        shader.yrot.value = [yrot];
-        shader.zrot.value = [zrot];
-        shader.depth.value = [depth];
-    }
+	override public function update(elapsed:Float)
+	{
+		shader.xrot.value = [xrot];
+		shader.yrot.value = [yrot];
+		shader.zrot.value = [zrot];
+		shader.depth.value = [depth];
+	}
 
-    function set_xrot(x:Float):Float
-    {
-        xrot = x;
-        shader.xrot.value = [xrot];
-        return x;
-    }
+	function set_xrot(x:Float):Float
+	{
+		xrot = x;
+		shader.xrot.value = [xrot];
+		return x;
+	}
 
-    function set_yrot(y:Float):Float
-    {
-        yrot = y;
-        shader.yrot.value = [yrot];
-        return y;
-    }
+	function set_yrot(y:Float):Float
+	{
+		yrot = y;
+		shader.yrot.value = [yrot];
+		return y;
+	}
 
-    function set_zrot(z:Float):Float
-    {
-        zrot = z;
-        shader.zrot.value = [zrot];
-        return z;
-    }
+	function set_zrot(z:Float):Float
+	{
+		zrot = z;
+		shader.zrot.value = [zrot];
+		return z;
+	}
 
-    function set_depth(d:Float):Float
-    {
-        depth = d;
-        shader.depth.value = [depth];
-        return d;
-    }
+	function set_depth(d:Float):Float
+	{
+		depth = d;
+		shader.depth.value = [depth];
+		return d;
+	}
 }
 
 class ThreeDShader extends FlxShader
@@ -215,53 +221,52 @@ class ThreeDShader extends FlxShader
             }
         }
 	')
-	
-	public function new(){
+	public function new()
+	{
 		super();
 	}
-	
 }
 
-//some unused shaders that might work?
+// some unused shaders that might work?
 /*
-StealthShader2
+	StealthShader2
 
-    #pragma header
+	#pragma header
 
-    uniform float red;
-    uniform float green;
-    uniform float blue;
-    uniform float fade;
-    
-    void main()
-    {
-        vec4 spritecolor = flixel_texture2D(bitmap, openfl_TextureCoordv);
-        vec4 col = vec4(red/255,green/255,blue/255, spritecolor.a);
-        vec3 finalCol = mix(col.rgb*spritecolor.a, spritecolor.rgb, fade);
-    
-        gl_FragColor = vec4( finalCol.r, finalCol.g, finalCol.b, spritecolor.a );
-    }
+	uniform float red;
+	uniform float green;
+	uniform float blue;
+	uniform float fade;
+
+	void main()
+	{
+		vec4 spritecolor = flixel_texture2D(bitmap, openfl_TextureCoordv);
+		vec4 col = vec4(red/255,green/255,blue/255, spritecolor.a);
+		vec3 finalCol = mix(col.rgb*spritecolor.a, spritecolor.rgb, fade);
+
+		gl_FragColor = vec4( finalCol.r, finalCol.g, finalCol.b, spritecolor.a );
+	}
 
 
-OG Shader
-    #pragma header
+	OG Shader
+	#pragma header
 
-        uniform float _stealthGlow;
-        uniform float _stealthR;
-        uniform float _stealthG;
-        uniform float _stealthB;
+		uniform float _stealthGlow;
+		uniform float _stealthR;
+		uniform float _stealthG;
+		uniform float _stealthB;
 
-        void main()
-        {
-            vec3 col = vec3(_stealthR,_stealthG,_stealthB);
+		void main()
+		{
+			vec3 col = vec3(_stealthR,_stealthG,_stealthB);
 
-            vec4 textureStuff = flixel_texture2D(bitmap,openfl_TextureCoordv);
+			vec4 textureStuff = flixel_texture2D(bitmap,openfl_TextureCoordv);
 
-            col = mix(col, textureStuff.rgb, _stealthGlow);
+			col = mix(col, textureStuff.rgb, _stealthGlow);
 
-            float sampleAlpha = textureStuff.a;
-            col *= sampleAlpha;
-            gl_FragColor = vec4(col.r,col.g,col.b,sampleAlpha);
-        }
+			float sampleAlpha = textureStuff.a;
+			col *= sampleAlpha;
+			gl_FragColor = vec4(col.r,col.g,col.b,sampleAlpha);
+		}
 
-*/
+ */

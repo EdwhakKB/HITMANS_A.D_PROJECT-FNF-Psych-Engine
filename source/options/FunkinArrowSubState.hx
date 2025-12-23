@@ -7,17 +7,8 @@ import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.util.FlxGradient;
 import lime.system.Clipboard;
-import StrumNote;
-import Note;
-import RGBPalette;
-import RGBPalette.RGBShaderReference;
-import flixel.util.FlxColor;
-import flixel.FlxSprite;
-import flixel.FlxG;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.group.FlxGroup;
-import flixel.math.FlxPoint;
-import flixel.text.FlxText;
+import objects.StrumNote;
+import objects.Note;
 
 class FunkinArrowSubState extends MusicBeatSubstate
 {
@@ -64,7 +55,7 @@ class FunkinArrowSubState extends MusicBeatSubstate
 
     var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
     bg.screenCenter();
-    bg.antialiasing = ClientPrefs.globalAntialiasing;
+    bg.antialiasing = ClientPrefs.data.antialiasing;
     add(bg);
 
     myNotes = new FlxTypedGroup<StrumNote>();
@@ -121,7 +112,7 @@ class FunkinArrowSubState extends MusicBeatSubstate
           if (curSelectedNote != note.ID && pointerOverlaps(note))
           {
             curSelectedNote = note.ID;
-            ClientPrefs.notesSkin[0] = dataArray[note.ID];
+            ClientPrefs.data.notesSkin[0] = dataArray[note.ID];
             ClientPrefs.saveSettings();
             updateNotes();
             FlxG.sound.play(Paths.sound('scrollMenu'), 0.6);
@@ -175,7 +166,7 @@ class FunkinArrowSubState extends MusicBeatSubstate
 
   public function spawnNotes()
   {
-    colorArray = ClientPrefs.arrowRGB9;
+    colorArray = ClientPrefs.data.arrowRGB9;
     // clear groups
     myNotes.forEachAlive(function(note:StrumNote) {
       note.kill();

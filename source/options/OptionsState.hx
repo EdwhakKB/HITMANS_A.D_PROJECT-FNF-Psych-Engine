@@ -1,30 +1,17 @@
 package options;
 
-#if desktop
-import Discord.DiscordClient;
-#end
-import flash.text.TextField;
+import openfl.text.TextField;
 import flixel.text.FlxText;
-import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import lime.utils.Assets;
+
 import flixel.FlxSubState;
-import flash.text.TextField;
+import openfl.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxSave;
 import haxe.Json;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
-import Controls;
 import flixel.addons.transition.FlxTransitionableState;
 
 using StringTools;
@@ -75,14 +62,14 @@ class OptionsState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.fromString('#403736'));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		//bg.blend = MULTIPLY;
 		add(bg);
 
 		var fg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('MenuShit/Options'));
 		fg.updateHitbox();
 		fg.screenCenter();
-		fg.antialiasing = ClientPrefs.globalAntialiasing;
+		fg.antialiasing = ClientPrefs.data.antialiasing;
 		fg.scale.set(1.2, 1.2);
 		add(fg);
 		

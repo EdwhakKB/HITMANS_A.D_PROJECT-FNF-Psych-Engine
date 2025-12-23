@@ -12,7 +12,7 @@ import sys.io.File;
 #end
 
 #if LUA_ALLOWED
-import FunkinLua;
+import scripting.FunkinLua;
 #end
 
 using StringTools;

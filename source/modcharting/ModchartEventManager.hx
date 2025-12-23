@@ -3,6 +3,9 @@ package modcharting;
 #if LEATHER
 import game.Conductor;
 #end
+import haxe.ds.Vector;
+
+using modcharting.utils.OptimizationUtil;
 
 class ModchartEventManager
 {

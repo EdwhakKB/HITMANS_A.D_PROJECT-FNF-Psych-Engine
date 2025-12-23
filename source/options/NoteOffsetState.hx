@@ -1,24 +1,7 @@
 package options;
 
 import flixel.util.FlxStringUtil;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.tweens.FlxEase;
-import flixel.text.FlxText;
-import flixel.group.FlxSpriteGroup;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.util.FlxColor;
-import flixel.FlxSprite;
-import flixel.FlxCamera;
-import flixel.FlxG;
 import flixel.ui.FlxBar;
-import flixel.math.FlxPoint;
-import haxe.Json;
-import openfl.Assets;
-#if MODS_ALLOWED
-import sys.io.File;
-import sys.FileSystem;
-#end
 
 using StringTools;
 
@@ -97,23 +80,23 @@ class NoteOffsetState extends MusicBeatState
         var path:String = Paths.modFolders(hudJsonPath);
         if (!FileSystem.exists(path))
         {
-            path = Paths.getPreloadPath(hudJsonPath);
+            path = Paths.getSharedPath(hudJsonPath);
         }
 
         if (!FileSystem.exists(hudJsonPath))
         #else
-        var path:String = Paths.getPreloadPath(hudJsonPath);
-        if (!Assets.exists(hudJsonPath))
+        var path:String = Paths.getSharedPath(hudJsonPath);
+        if (!OpenFLAssets.exists(hudJsonPath))
         #end
         {
-            path = Paths.getPreloadPath('customHuds/' + styleModAntiCrash + '.json'); 
+            path = Paths.getSharedPath('customHuds/' + styleModAntiCrash + '.json'); 
             // If a json couldn't be found, change it to FNF just to prevent a crash
         }
 
         #if MODS_ALLOWED
         var rawHudJson = File.getContent(path);
         #else
-        var rawHudJson = Assets.getText(path);
+        var rawHudJson = OpenFLAssets.getText(path);
         #end
 
         trace(path);
@@ -145,12 +128,12 @@ class NoteOffsetState extends MusicBeatState
 			if (hudJson.GameOverStyle != "")
 				hudJson.GameOverStyle = gameoverType;
 	
-			// ClientPrefs.hudStyle = customHudName;
-			// ClientPrefs.healthBarStyle = healthType;
-			// ClientPrefs.countDownStyle = countdownType;
-			// ClientPrefs.countDownSounds = countdownsoundsType;
-			// ClientPrefs.ratingStyle = ratingType;
-			// ClientPrefs.goStyle = gameoverType;
+			// ClientPrefs.data.hudStyle = customHudName;
+			// ClientPrefs.data.healthBarStyle = healthType;
+			// ClientPrefs.data.countDownStyle = countdownType;
+			// ClientPrefs.data.countDownSounds = countdownsoundsType;
+			// ClientPrefs.data.ratingStyle = ratingType;
+			// ClientPrefs.data.goStyle = gameoverType;
 
 		// Cameras
 		camGame = new FlxCamera();
@@ -181,7 +164,7 @@ class NoteOffsetState extends MusicBeatState
 		extrabg.alpha = 0.1;
 		add(extrabg);
 
-		if(!ClientPrefs.lowQuality) {
+		if(!ClientPrefs.data.lowQuality) {
 			island = new FlxSprite().loadGraphic(Paths.image('Edwhak/Hitmans/offsetShit/flotant1'));
 			island.scrollFactor.set();
 			island.screenCenter();
@@ -247,7 +230,7 @@ class NoteOffsetState extends MusicBeatState
 		rating.cameras = [camHUD];
 		rating.setGraphicSize(Std.int(rating.width * 0.7));
 		rating.updateHitbox();
-		rating.antialiasing = ClientPrefs.globalAntialiasing;
+		rating.antialiasing = ClientPrefs.data.antialiasing;
 		
 		add(rating);
 
@@ -268,7 +251,7 @@ class NoteOffsetState extends MusicBeatState
 			numScore.cameras = [camHUD];
 			numScore.setGraphicSize(Std.int(numScore.width * 0.5));
 			numScore.updateHitbox();
-			numScore.antialiasing = ClientPrefs.globalAntialiasing;
+			numScore.antialiasing = ClientPrefs.data.antialiasing;
 			comboNums.add(numScore);
 			daLoop++;
 		}
@@ -300,7 +283,7 @@ class NoteOffsetState extends MusicBeatState
 		timeTxt.visible = false;
 		timeTxt.cameras = [camHUD];
 
-		barPercent = ClientPrefs.noteOffset;
+		barPercent = ClientPrefs.data.noteOffset;
 		updateNoteDelay();
 		
 		timeBarBG = new FlxSprite(0, timeTxt.y + 8).loadGraphic(Paths.image('timeBar'));
@@ -385,21 +368,21 @@ class NoteOffsetState extends MusicBeatState
 						switch(i)
 						{
 							case 0:
-								ClientPrefs.comboOffset[0] -= addNum;
+								ClientPrefs.data.comboOffset[0] -= addNum;
 							case 1:
-								ClientPrefs.comboOffset[0] += addNum;
+								ClientPrefs.data.comboOffset[0] += addNum;
 							case 2:
-								ClientPrefs.comboOffset[1] += addNum;
+								ClientPrefs.data.comboOffset[1] += addNum;
 							case 3:
-								ClientPrefs.comboOffset[1] -= addNum;
+								ClientPrefs.data.comboOffset[1] -= addNum;
 							case 4:
-								ClientPrefs.comboOffset[2] -= addNum;
+								ClientPrefs.data.comboOffset[2] -= addNum;
 							case 5:
-								ClientPrefs.comboOffset[2] += addNum;
+								ClientPrefs.data.comboOffset[2] += addNum;
 							case 6:
-								ClientPrefs.comboOffset[3] += addNum;
+								ClientPrefs.data.comboOffset[3] += addNum;
 							case 7:
-								ClientPrefs.comboOffset[3] -= addNum;
+								ClientPrefs.data.comboOffset[3] -= addNum;
 						}
 					}
 				}
@@ -415,16 +398,16 @@ class NoteOffsetState extends MusicBeatState
 					startMousePos.y - comboNums.y >= 0 && startMousePos.y - comboNums.y <= comboNums.height)
 				{
 					holdingObjectType = true;
-					startComboOffset.x = ClientPrefs.comboOffset[2];
-					startComboOffset.y = ClientPrefs.comboOffset[3];
+					startComboOffset.x = ClientPrefs.data.comboOffset[2];
+					startComboOffset.y = ClientPrefs.data.comboOffset[3];
 					//trace('yo bro');
 				}
 				else if (startMousePos.x - rating.x >= 0 && startMousePos.x - rating.x <= rating.width &&
 						 startMousePos.y - rating.y >= 0 && startMousePos.y - rating.y <= rating.height)
 				{
 					holdingObjectType = false;
-					startComboOffset.x = ClientPrefs.comboOffset[0];
-					startComboOffset.y = ClientPrefs.comboOffset[1];
+					startComboOffset.x = ClientPrefs.data.comboOffset[0];
+					startComboOffset.y = ClientPrefs.data.comboOffset[1];
 					//trace('heya');
 				}
 			}
@@ -439,17 +422,17 @@ class NoteOffsetState extends MusicBeatState
 				{
 					var mousePos:FlxPoint = FlxG.mouse.getScreenPosition(camHUD);
 					var addNum:Int = holdingObjectType ? 2 : 0;
-					ClientPrefs.comboOffset[addNum + 0] = Math.round((mousePos.x - startMousePos.x) + startComboOffset.x);
-					ClientPrefs.comboOffset[addNum + 1] = -Math.round((mousePos.y - startMousePos.y) - startComboOffset.y);
+					ClientPrefs.data.comboOffset[addNum + 0] = Math.round((mousePos.x - startMousePos.x) + startComboOffset.x);
+					ClientPrefs.data.comboOffset[addNum + 1] = -Math.round((mousePos.y - startMousePos.y) - startComboOffset.y);
 					repositionCombo();
 				}
 			}
 
 			if(controls.RESET)
 			{
-				for (i in 0...ClientPrefs.comboOffset.length)
+				for (i in 0...ClientPrefs.data.comboOffset.length)
 				{
-					ClientPrefs.comboOffset[i] = 0;
+					ClientPrefs.data.comboOffset[i] = 0;
 				}
 				repositionCombo();
 			}
@@ -459,12 +442,12 @@ class NoteOffsetState extends MusicBeatState
 		{
 			if(controls.UI_LEFT_P)
 			{
-				barPercent = Math.max(delayMin, Math.min(ClientPrefs.noteOffset - 1, delayMax));
+				barPercent = Math.max(delayMin, Math.min(ClientPrefs.data.noteOffset - 1, delayMax));
 				updateNoteDelay();
 			}
 			else if(controls.UI_RIGHT_P)
 			{
-				barPercent = Math.max(delayMin, Math.min(ClientPrefs.noteOffset + 1, delayMax));
+				barPercent = Math.max(delayMin, Math.min(ClientPrefs.data.noteOffset + 1, delayMax));
 				updateNoteDelay();
 			}
 
@@ -571,12 +554,12 @@ class NoteOffsetState extends MusicBeatState
 	function repositionCombo()
 	{
 		rating.screenCenter();
-		rating.x = coolText.x - 40 + ClientPrefs.comboOffset[0];
-		rating.y -= 60 + ClientPrefs.comboOffset[1];
+		rating.x = coolText.x - 40 + ClientPrefs.data.comboOffset[0];
+		rating.y -= 60 + ClientPrefs.data.comboOffset[1];
 
 		comboNums.screenCenter();
-		comboNums.x = coolText.x - 90 + ClientPrefs.comboOffset[2];
-		comboNums.y += 80 - ClientPrefs.comboOffset[3];
+		comboNums.x = coolText.x - 90 + ClientPrefs.data.comboOffset[2];
+		comboNums.y += 80 - ClientPrefs.data.comboOffset[3];
 		reloadTexts();
 	}
 
@@ -623,9 +606,9 @@ class NoteOffsetState extends MusicBeatState
 			switch(i)
 			{
 				case 0: dumbTexts.members[i].text = 'Rating Offset:';
-				case 1: dumbTexts.members[i].text = '[' + ClientPrefs.comboOffset[0] + ', ' + ClientPrefs.comboOffset[1] + ']';
+				case 1: dumbTexts.members[i].text = '[' + ClientPrefs.data.comboOffset[0] + ', ' + ClientPrefs.data.comboOffset[1] + ']';
 				case 2: dumbTexts.members[i].text = 'Numbers Offset:';
-				case 3: dumbTexts.members[i].text = '[' + ClientPrefs.comboOffset[2] + ', ' + ClientPrefs.comboOffset[3] + ']';
+				case 3: dumbTexts.members[i].text = '[' + ClientPrefs.data.comboOffset[2] + ', ' + ClientPrefs.data.comboOffset[3] + ']';
 			}
 		}
 		for (i in 0...dumbOpTexts.length)
@@ -633,26 +616,26 @@ class NoteOffsetState extends MusicBeatState
 				switch(i)
 				{
 					case 0: dumbOpTexts.members[i].text = 'Hud Mode:';
-					case 1: dumbOpTexts.members[i].text = '[' + ClientPrefs.customHudName + ']';
+					case 1: dumbOpTexts.members[i].text = '[' + ClientPrefs.data.customHudName + ']';
 					case 2: dumbOpTexts.members[i].text = 'Hud Name:';
-					case 3: dumbOpTexts.members[i].text = '[' + ClientPrefs.hudStyle + ']';
+					case 3: dumbOpTexts.members[i].text = '[' + ClientPrefs.data.hudStyle + ']';
 					case 4: dumbOpTexts.members[i].text = 'HealthBar Type:';
-					case 5: dumbOpTexts.members[i].text = '[' + ClientPrefs.healthBarStyle + ']';
+					case 5: dumbOpTexts.members[i].text = '[' + ClientPrefs.data.healthBarStyle + ']';
 					case 6: dumbOpTexts.members[i].text = 'CountDown Type:';
-					case 7: dumbOpTexts.members[i].text = '[' + ClientPrefs.countDownStyle + ']';
+					case 7: dumbOpTexts.members[i].text = '[' + ClientPrefs.data.countDownStyle + ']';
 					case 8: dumbOpTexts.members[i].text = 'CountDownSound Type:';
-					case 9: dumbOpTexts.members[i].text = '[' + ClientPrefs.countDownSounds + ']';
+					case 9: dumbOpTexts.members[i].text = '[' + ClientPrefs.data.countDownSounds + ']';
 					case 10: dumbOpTexts.members[i].text = 'Rating Type:';
-					case 11: dumbOpTexts.members[i].text = '[' + ClientPrefs.ratingStyle + ']';
+					case 11: dumbOpTexts.members[i].text = '[' + ClientPrefs.data.ratingStyle + ']';
 					case 12: dumbOpTexts.members[i].text = 'GameOver Type:';
-					case 13: dumbOpTexts.members[i].text = '[' + ClientPrefs.goStyle + ']';
+					case 13: dumbOpTexts.members[i].text = '[' + ClientPrefs.data.goStyle + ']';
 				}
 			}
 	}
 
 	function updateNoteDelay()
 	{
-		ClientPrefs.noteOffset = Math.round(barPercent);
+		ClientPrefs.data.noteOffset = Math.round(barPercent);
 		timeTxt.text = 'Current offset: ' + Math.floor(barPercent) + ' ms';
 	}
 

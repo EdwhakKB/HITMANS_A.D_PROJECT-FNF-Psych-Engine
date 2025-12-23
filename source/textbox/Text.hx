@@ -1,5 +1,5 @@
 package textbox;
-import flixel.text.FlxText;
+
 import textbox.effects.IEffect;
 
 class Text extends FlxText {

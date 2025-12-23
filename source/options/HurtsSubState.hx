@@ -1,29 +1,13 @@
 package options;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.FlxG;
 import lime.system.Clipboard;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.display.shapes.FlxShapeCircle;
 import flixel.input.keyboard.FlxKey;
 import flixel.input.gamepad.FlxGamepadInputID;
-import flixel.math.FlxPoint;
-import flixel.util.FlxGradient;
-import flixel.util.FlxColor;
-import flixel.FlxSprite;
-import flixel.text.FlxText;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
-import flixel.math.FlxMath;
-import StrumNote;
-import Note;
-
-import RGBPalette;
-import RGBPalette.RGBShaderReference;
-
-using StringTools;
+import objects.StrumNote;
+import objects.Note;
 
 class HurtsSubState extends MusicBeatSubstate
 {
@@ -79,7 +63,7 @@ class HurtsSubState extends MusicBeatSubstate
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		add(bg);
 
 		modeBG = new FlxSprite(215, 85).makeGraphic(315, 115, FlxColor.BLACK);
@@ -122,7 +106,7 @@ class HurtsSubState extends MusicBeatSubstate
 		leftArrow.animation.addByPrefix('idle', "arrow left");
 		leftArrow.animation.addByPrefix('press', "arrow push left");
 		leftArrow.animation.play('idle');
-		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		leftArrow.antialiasing = ClientPrefs.data.antialiasing;
 		leftArrow.scale.x = 2;
 		leftArrow.scale.y = 2;
 		leftArrow.updateHitbox();
@@ -133,7 +117,7 @@ class HurtsSubState extends MusicBeatSubstate
 		rightArrow.animation.addByPrefix('idle', "arrow left");
 		rightArrow.animation.addByPrefix('press', "arrow push left");
 		rightArrow.animation.play('idle');
-		rightArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		rightArrow.antialiasing = ClientPrefs.data.antialiasing;
 		rightArrow.scale.x = 2;
 		rightArrow.scale.y = 2;
 		rightArrow.flipX = true;
@@ -186,7 +170,7 @@ class HurtsSubState extends MusicBeatSubstate
 		hexTypeLine.visible = false;
 		add(hexTypeLine);
 
-		switch (ClientPrefs.notesSkin[1])
+		switch (ClientPrefs.data.notesSkin[1])
 		{
 			case 'MIMIC':
 				noteSkinInt = 0;
@@ -622,7 +606,7 @@ class HurtsSubState extends MusicBeatSubstate
 		if (curNum >= skins.length)
 			curNum = 0;
 
-		ClientPrefs.notesSkin[1] = skins[curNum];
+		ClientPrefs.data.notesSkin[1] = skins[curNum];
 		skinIndicator.text = skins[curNum];
 	}
 	
@@ -633,7 +617,7 @@ class HurtsSubState extends MusicBeatSubstate
 	var bigNote:Note;
 	public function spawnNotes()
 	{
-		dataArray = ClientPrefs.hurtRGB;
+		dataArray = ClientPrefs.data.hurtRGB;
 
 		// clear groups
 		modeNotes.forEachAlive(function(note:FlxSprite) {
@@ -662,7 +646,7 @@ class HurtsSubState extends MusicBeatSubstate
 
 		var res:Int = 160;
 		skinNote = new FlxSprite(48, 24).loadGraphic(Paths.image('noteColorMenu/hurtNote'), true, res, res);
-		skinNote.antialiasing = ClientPrefs.globalAntialiasing;
+		skinNote.antialiasing = ClientPrefs.data.antialiasing;
 		skinNote.setGraphicSize(68);
 		skinNote.updateHitbox();
 		skinNote.animation.add('anim', [0], 24, true);
@@ -674,7 +658,7 @@ class HurtsSubState extends MusicBeatSubstate
 		for (i in 0...3)
 		{
 			var newNote:FlxSprite = new FlxSprite(230 + (100 * i), 100).loadGraphic(Paths.image('noteColorMenu/hurtNote'), true, res, res);
-			newNote.antialiasing = ClientPrefs.globalAntialiasing;
+			newNote.antialiasing = ClientPrefs.data.antialiasing;
 			newNote.setGraphicSize(85);
 			newNote.updateHitbox();
 			newNote.animation.add('anim', [i], 24, true);
@@ -696,7 +680,7 @@ class HurtsSubState extends MusicBeatSubstate
 		}
 
 		bigNote = new Note(0, 0, false, true);
-		if (ClientPrefs.notesSkin[1] != 'MIMIC')
+		if (ClientPrefs.data.notesSkin[1] != 'MIMIC')
 			bigNote.noteType = 'HurtAgressive';
 		bigNote.setPosition(250, 325);
 		bigNote.setGraphicSize(250);

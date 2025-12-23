@@ -1,25 +1,10 @@
 package editors;
 
-import Discord;
-import Controls.Control;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.input.keyboard.FlxKey;
-import flixel.system.FlxSound;
 import editors.content.EditorPlayState;
-
-import flixel.text.FlxText;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
-import flixel.FlxCamera;
 import flixel.util.FlxTimer;
 import flixel.util.FlxStringUtil;
-
-using StringTools;
 
 class EditorPauseSubState extends MusicBeatSubstate
 {
@@ -42,7 +27,7 @@ class EditorPauseSubState extends MusicBeatSubstate
 
 	var inCountDown:Bool = false;
 
-	var antialias:Bool = ClientPrefs.globalAntialiasing;
+	var antialias:Bool = ClientPrefs.data.antialiasing;
 	public var notes:FlxTypedGroup<Note>;
 
 	public static var goToOptions:Bool = false;
@@ -153,7 +138,7 @@ class EditorPauseSubState extends MusicBeatSubstate
 	function getPauseSong()
 	{
 		var formattedSongName:String = (songName != null ? Paths.formatToSongPath(songName) : '');
-		var formattedPauseMusic:String = Paths.formatToSongPath(ClientPrefs.pauseMusic);
+		var formattedPauseMusic:String = Paths.formatToSongPath(ClientPrefs.data.pauseMusic);
 		if(formattedSongName == 'none' || (formattedSongName != 'none' && formattedPauseMusic == 'none')) return null;
 
 		return (formattedSongName != '') ? formattedSongName : formattedPauseMusic;
@@ -193,7 +178,7 @@ class EditorPauseSubState extends MusicBeatSubstate
 
 			var daSelected:String = menuItems[curSelected];
 
-			if (accepted && (cantUnpause <= 0 || !ClientPrefs.controllerMode))
+			if (accepted && (cantUnpause <= 0 || !controls.controllerMode))
 			{
 				if (menuItems == difficultyChoices)
 				{
@@ -256,8 +241,6 @@ class EditorPauseSubState extends MusicBeatSubstate
 							else if (unPauseTimer.finished && unPauseTimer.loopsLeft == 0)
 							{
 								EditorPlayState.instance.modchartTimers.remove('hmmm');
-								if (PlayState.SONG.song.toLowerCase() == "cyber" && PlayState.storyDifficulty != 0)
-									PlayWindow.reset();
 								close();
 							}
 						}, 5);

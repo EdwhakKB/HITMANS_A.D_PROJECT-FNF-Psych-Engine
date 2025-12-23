@@ -1,33 +1,17 @@
 package editors;
 
-#if desktop
-import Discord.DiscordClient;
-#end
-import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import flixel.system.FlxSound;
 
 import flixel.ui.FlxButton;
 import openfl.net.FileReference;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
-import flash.net.FileFilter;
+import openfl.net.FileFilter;
 import haxe.Json;
-import DialogueBoxPsych;
+import cutscene.DialogueBoxPsych;
 import lime.system.Clipboard;
-import Alphabet;
-#if sys
-import sys.io.File;
-#end
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
-
-using StringTools;
+import objects.Alphabet;
 
 class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
 {
@@ -507,7 +491,7 @@ class DialogueEditorState extends MusicBeatState implements PsychUIEventHandler.
 		);
 		box.frames = Paths.getSparrowAtlas(dialogueFile.background[boxId].bg != null ? dialogueFile.background[boxId].bg : 'speech_bubble');
 		box.scrollFactor.set();
-		box.antialiasing = ClientPrefs.globalAntialiasing;
+		box.antialiasing = ClientPrefs.data.antialiasing;
 		if (dialogueFile.background[boxId].includeDefaultAnimations)
 		{
 			box.animation.addByPrefix('normal', 'speech bubble normal', 24);

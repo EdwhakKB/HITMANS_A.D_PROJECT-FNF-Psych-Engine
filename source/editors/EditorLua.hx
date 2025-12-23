@@ -8,25 +8,9 @@ import llua.State;
 import llua.Convert;
 #end
 
-import animateatlas.AtlasFrameMaker;
-import flixel.FlxG;
 import flixel.addons.effects.FlxTrail;
 import flixel.input.keyboard.FlxKey;
-import flixel.tweens.FlxTween;
-import flixel.tweens.FlxEase;
-import flixel.text.FlxText;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxPoint;
-import flixel.system.FlxSound;
 
-import flixel.util.FlxTimer;
-import flixel.FlxSprite;
-import flixel.FlxCamera;
-import FlxTransWindow;
-import flixel.util.FlxColor;
-import flixel.FlxBasic;
-import flixel.FlxObject;
-import flixel.FlxSprite;
 import openfl.Lib;
 import openfl.display.BlendMode;
 import openfl.filters.BitmapFilter;
@@ -43,16 +27,11 @@ import editors.content.EditorPlayState;
 import flixel.addons.display.FlxRuntimeShader;
 #end
 
-#if sys
-import sys.FileSystem;
-import sys.io.File;
-#end
-
 import Type.ValueType;
-import Controls;
-import DialogueBoxPsych;
-import Shaders.ShaderEffectNew as ShaderEffect;
-import Shaders;
+import play.Controls;
+import cutscene.DialogueBoxPsych;
+import modcharting.ModchartShaders.ShaderEffectNew as ShaderEffect;
+import shaders.Shaders;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
 
@@ -62,15 +41,8 @@ import hscript.Interp;
 import hscript.Expr;
 #end
 
-#if desktop
-import Discord;
-#end
-
 import codenameengine.CustomCodeShader;
 import lime.app.Application;
-
-import RGBPalette;
-import RGBPalette.RGBShaderReference;
 
 using StringTools;
 
@@ -84,12 +56,6 @@ typedef LuaCamera =
 typedef  NewNote = Note; typedef StrumNew = StrumNote;
 
 class EditorLua {
-	public static var Function_Stop:Dynamic = "##PSYCHLUA_FUNCTIONSTOP";
-	public static var Function_Continue:Dynamic = "##PSYCHLUA_FUNCTIONCONTINUE";
-	public static var Function_StopLua:Dynamic = "##PSYCHLUA_FUNCTIONSTOPLUA";
-
-	public static var Function_StopHScript:Dynamic = "##PSYCHLUA_FUNCTIONSTOPHSCRIPT";
-	public static var Function_StopAll:Dynamic = "##PSYCHLUA_FUNCTIONSTOPALL";
 
 	//public var errorHandler:String->Void;
 	#if LUA_ALLOWED
@@ -110,7 +76,7 @@ class EditorLua {
 	public var playbackRate:Float = ClientPrefs.getGameplaySetting('songspeed', 1); //so i can make this auto instead of do it every lua ig?
 
 	public static var lua_Cameras:Map<String, LuaCamera> = [];
-	public static var lua_Shaders:Map<String, Shaders.ShaderEffectNew> = [];
+	public static var lua_Shaders:Map<String, ModchartShaders.ShaderEffectNew> = [];
 	public static var lua_Custom_Shaders:Map<String, codenameengine.CustomCodeShader> = [];
 
 	public function new(script:String) {
@@ -157,9 +123,9 @@ class EditorLua {
 		// trace('lua file loaded succesfully:' + script);
 
 		// Lua shit
-		set('Function_StopLua', Function_StopLua);
-		set('Function_Stop', Function_Stop);
-		set('Function_Continue', Function_Continue);
+		set('Function_StopLua', FunkinLua.Function_StopLua);
+		set('Function_Stop', FunkinLua.Function_Stop);
+		set('Function_Continue', FunkinLua.Function_Continue);
 		set('luaDebugMode', false);
 		set('luaDeprecatedWarnings', true);
 		set('inChartEditor', true);
@@ -246,20 +212,20 @@ class EditorLua {
 		set('gfName', PlayState.SONG.gfVersion);
 
 		// Some settings, no jokes
-		set('downscroll', ClientPrefs.downScroll);
-		set('middlescroll', ClientPrefs.middleScroll);
-		set('framerate', ClientPrefs.framerate);
-		set('ghostTapping', ClientPrefs.ghostTapping);
-		set('hideHud', ClientPrefs.hideHud);
-		set('timeBarType', ClientPrefs.timeBarType);
-		set('scoreZoom', ClientPrefs.scoreZoom);
-		set('cameraZoomOnBeat', ClientPrefs.camZooms);
-		set('flashingLights', ClientPrefs.flashing);
-		set('noteOffset', ClientPrefs.noteOffset);
-		set('healthBarAlpha', ClientPrefs.healthBarAlpha);
-		set('noResetButton', ClientPrefs.noReset);
-		set('lowQuality', ClientPrefs.lowQuality);
-		set('shadersEnabled', ClientPrefs.shaders);
+		set('downscroll', ClientPrefs.data.downScroll);
+		set('middlescroll', ClientPrefs.data.middleScroll);
+		set('framerate', ClientPrefs.data.framerate);
+		set('ghostTapping', ClientPrefs.data.ghostTapping);
+		set('hideHud', ClientPrefs.data.hideHud);
+		set('timeBarType', ClientPrefs.data.timeBarType);
+		set('scoreZoom', ClientPrefs.data.scoreZoom);
+		set('cameraZoomOnBeat', ClientPrefs.data.camZooms);
+		set('flashingLights', ClientPrefs.data.flashing);
+		set('noteOffset', ClientPrefs.data.noteOffset);
+		set('healthBarAlpha', ClientPrefs.data.healthBarAlpha);
+		set('noResetButton', ClientPrefs.data.noReset);
+		set('lowQuality', ClientPrefs.data.lowQuality);
+		set('shadersEnabled', ClientPrefs.data.shaders);
 		set('scriptName', scriptName);
 		set('currentModDirectory', Mods.currentModDirectory);
 
@@ -304,7 +270,7 @@ class EditorLua {
 
 		// shader shit
 		Lua_helper.add_callback(lua, "initLuaShader", function(name:String, classString:String, ?glslVersion:Int = 120) {
-			if(!ClientPrefs.shaders) return false;
+			if(!ClientPrefs.data.shaders) return false;
 
 			#if (!flash && MODS_ALLOWED && sys)
 			return initLuaShader(name, glslVersion);
@@ -315,7 +281,7 @@ class EditorLua {
 		});
 		
 		Lua_helper.add_callback(lua, "setSpriteShader", function(obj:String, shader:String) {
-			if(!ClientPrefs.shaders) return false;
+			if(!ClientPrefs.data.shaders) return false;
 
 			#if (!flash && MODS_ALLOWED && sys)
 			if(!EditorPlayState.instance.runtimeShaders.exists(shader) && !initLuaShader(shader))
@@ -527,7 +493,7 @@ class EditorLua {
 
 
 		// Lua_helper.add_callback(lua,"setCameraLuaShader", function(camStr:String, shaderName:String) {
-        //     if (!ClientPrefs.shaders)
+        //     if (!ClientPrefs.data.shaders)
         //         return;
         //     var cam = getCameraByName(camStr);
         //     var shad = EditorPlayState.instance.runtimeShaders.exists(shaderName);
@@ -627,14 +593,14 @@ class EditorLua {
 				doPush = true;
 			}
 			else {
-				cervix = Paths.getPreloadPath(cervix);
+				cervix = Paths.getSharedPath(cervix);
 				if(FileSystem.exists(cervix)) {
 					doPush = true;
 				}
 			}
 			#else
-			cervix = Paths.getPreloadPath(cervix);
-			if(Assets.exists(cervix)) {
+			cervix = Paths.getSharedPath(cervix);
+			if(OpenFLAssets.exists(cervix)) {
 				doPush = true;
 			}
 			#end
@@ -682,14 +648,14 @@ class EditorLua {
 				doPush = true;
 			}
 			else {
-				cervix = Paths.getPreloadPath(cervix);
+				cervix = Paths.getSharedPath(cervix);
 				if(FileSystem.exists(cervix)) {
 					doPush = true;
 				}
 			}
 			#else
-			cervix = Paths.getPreloadPath(cervix);
-			if(Assets.exists(cervix)) {
+			cervix = Paths.getSharedPath(cervix);
+			if(OpenFLAssets.exists(cervix)) {
 				doPush = true;
 			}
 			#end
@@ -735,14 +701,14 @@ class EditorLua {
 				doPush = true;
 			}
 			else {
-				cervix = Paths.getPreloadPath(cervix);
+				cervix = Paths.getSharedPath(cervix);
 				if(FileSystem.exists(cervix)) {
 					doPush = true;
 				}
 			}
 			#else
-			cervix = Paths.getPreloadPath(cervix);
-			if(Assets.exists(cervix)) {
+			cervix = Paths.getSharedPath(cervix);
+			if(OpenFLAssets.exists(cervix)) {
 				doPush = true;
 			}
 			#end
@@ -774,14 +740,14 @@ class EditorLua {
 				doPush = true;
 			}
 			else {
-				cervix = Paths.getPreloadPath(cervix);
+				cervix = Paths.getSharedPath(cervix);
 				if(FileSystem.exists(cervix)) {
 					doPush = true;
 				}
 			}
 			#else
-			cervix = Paths.getPreloadPath(cervix);
-			if(Assets.exists(cervix)) {
+			cervix = Paths.getSharedPath(cervix);
+			if(OpenFLAssets.exists(cervix)) {
 				doPush = true;
 			}
 			#end
@@ -910,14 +876,14 @@ class EditorLua {
 				doPush = true;
 			}
 			else {
-				cervix = Paths.getPreloadPath(cervix);
+				cervix = Paths.getSharedPath(cervix);
 				if(FileSystem.exists(cervix)) {
 					doPush = true;
 				}
 			}
 			#else
-			cervix = Paths.getPreloadPath(cervix);
-			if(Assets.exists(cervix)) {
+			cervix = Paths.getSharedPath(cervix);
+			if(OpenFLAssets.exists(cervix)) {
 				doPush = true;
 			}
 			#end
@@ -950,14 +916,14 @@ class EditorLua {
 				doPush = true;
 			}
 			else {
-				cervix = Paths.getPreloadPath(cervix);
+				cervix = Paths.getSharedPath(cervix);
 				if(FileSystem.exists(cervix)) {
 					doPush = true;
 				}
 			}
 			#else
-			cervix = Paths.getPreloadPath(cervix);
-			if(Assets.exists(cervix)) {
+			cervix = Paths.getSharedPath(cervix);
+			if(OpenFLAssets.exists(cervix)) {
 				doPush = true;
 			}
 			#end
@@ -995,14 +961,14 @@ class EditorLua {
 				doPush = true;
 			}
 			else {
-				cervix = Paths.getPreloadPath(cervix);
+				cervix = Paths.getSharedPath(cervix);
 				if(FileSystem.exists(cervix)) {
 					doPush = true;
 				}
 			}
 			#else
-			cervix = Paths.getPreloadPath(cervix);
-			if(Assets.exists(cervix)) {
+			cervix = Paths.getSharedPath(cervix);
+			if(OpenFLAssets.exists(cervix)) {
 				doPush = true;
 			}
 			#end
@@ -2365,7 +2331,7 @@ class EditorLua {
 			{
 				leSprite.loadGraphic(Paths.image(image));
 			}
-			leSprite.antialiasing = ClientPrefs.globalAntialiasing;
+			leSprite.antialiasing = ClientPrefs.data.antialiasing;
 			EditorPlayState.instance.modchartSprites.set(tag, leSprite);
 			leSprite.active = true;
 		});
@@ -2375,7 +2341,7 @@ class EditorLua {
 			var leSprite:ModchartSprite = new ModchartSprite(x, y);
 
 			loadFrames(leSprite, image, spriteType);
-			leSprite.antialiasing = ClientPrefs.globalAntialiasing;
+			leSprite.antialiasing = ClientPrefs.data.antialiasing;
 			EditorPlayState.instance.modchartSprites.set(tag, leSprite);
 		});
 
@@ -2833,7 +2799,7 @@ class EditorLua {
 			#if MODS_ALLOWED
 			if(FileSystem.exists(path))
 			#else
-			if(Assets.exists(path))
+			if(OpenFLAssets.exists(path))
 			#end
 			{
 				var shit:DialogueFile = DialogueBoxPsych.parseDialogue(path);
@@ -3219,9 +3185,9 @@ class EditorLua {
 			#else
 			if(absolute)
 			{
-				return Assets.exists(filename);
+				return OpenFLAssets.exists(filename);
 			}
-			return Assets.exists(Paths.getPath('assets/$filename', TEXT));
+			return OpenFLAssets.exists(Paths.getPath('assets/$filename', TEXT));
 			#end
 		});
 		Lua_helper.add_callback(lua, "saveFile", function(path:String, content:String, ?absolute:Bool = false)
@@ -3254,7 +3220,7 @@ class EditorLua {
 				#end
 
 				var lePath:String = Paths.getPath(path, TEXT);
-				if(Assets.exists(lePath))
+				if(OpenFLAssets.exists(lePath))
 				{
 					FileSystem.deleteFile(lePath);
 					return true;
@@ -3451,7 +3417,7 @@ class EditorLua {
 
         Lua_helper.add_callback(lua, "summongHxShader", function(name:String, classString:String, ?hardCoded:Bool) {
 
-            if (!ClientPrefs.shaders && !hardCoded) //now it should get some shaders hardcoded if i need
+            if (!ClientPrefs.data.shaders && !hardCoded) //now it should get some shaders hardcoded if i need
                 return;
 
             var shaderClass = Type.resolveClass(classString);
@@ -3537,7 +3503,7 @@ class EditorLua {
             {
                 cam.shaders.push(new ShaderFilter(Reflect.getProperty(shad, 'shader'))); //use reflect to workaround compiler errors
                 cam.shaderNames.push(shaderName);
-                cam.cam.setFilters(cam.shaders);
+                cam.cam.filters = cam.shaders;
                 //trace('added shader '+shaderName+" to " + camStr);
 			}else if(cam == null && shad == null){
 				return;
@@ -3554,7 +3520,7 @@ class EditorLua {
                     {
                         cam.shaderNames.remove(cam.shaderNames[idx]);
                         cam.shaders.remove(cam.shaders[idx]);
-                        cam.cam.setFilters(cam.shaders); //refresh filters
+                        cam.cam.filters = cam.shaders; //refresh filters
                     }
                     
                 }
@@ -3583,22 +3549,16 @@ class EditorLua {
 
 		Lua_helper.add_callback(lua, "setCameraCustomShader", function(id:String, camera:String){
 			var funnyCustomShader:CustomCodeShader = lua_Custom_Shaders.get(id);
-			cameraFromString(camera).setFilters([new ShaderFilter(funnyCustomShader)]);
+			cameraFromString(camera).filters = [new ShaderFilter(funnyCustomShader)];
 		});
 
 		Lua_helper.add_callback(lua, "pushShaderToCamera", function(id:String, camera:String){
 			var funnyCustomShader:CustomCodeShader = lua_Custom_Shaders.get(id);
-			#if (flixel >= "5.4.0")
-				@:privateAccess
-				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
-			#else
-				@:privateAccess
-				cameraFromString(camera)._filters.push(new ShaderFilter(funnyCustomShader));
-			#end
+			cameraFromString(camera).filters.push(new ShaderFilter(funnyCustomShader));
 		});
 
 		Lua_helper.add_callback(lua, "setCameraNoCustomShader", function(camera:String){
-			cameraFromString(camera).setFilters(null);
+			cameraFromString(camera).filters = [];
 		});
 
 		Lua_helper.add_callback(lua, "getCustomShaderProperty", function(id:String, property:Dynamic) {
@@ -3613,7 +3573,7 @@ class EditorLua {
 
 		//Custom shader made by me (glowsoony)
 		Lua_helper.add_callback(lua, "tweenCustomShaderProperty", function(tag:String, shaderName:String, prop:String, value:Dynamic, time:Float, easeStr:String = "linear", startVal:Null<Float> = null) {
-            if (!ClientPrefs.shaders) return;
+            if (!ClientPrefs.data.shaders) return;
             var shad:CustomCodeShader = lua_Custom_Shaders.get(shaderName);
             var ease = getFlxEaseByString(easeStr);
 			var startValue:Null<Float> = startVal;
@@ -3677,7 +3637,7 @@ class EditorLua {
 
             var noteTypeSkin = compositionArray[7];
 
-            var theSkin = 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets';
+            var theSkin = 'Skins/Notes/${ClientPrefs.data.notesSkin[0]}/NOTE_assets';
             if (compositionArray[5] != '') theSkin = compositionArray[5];
 
  			var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
@@ -3703,7 +3663,7 @@ class EditorLua {
                    spriteCopy.reloadNote('', compositionArray[5]);
                 }
                 else{
-                   spriteCopy.reloadNote('', 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets');
+                   spriteCopy.reloadNote('', 'Skins/Notes/${ClientPrefs.data.notesSkin[0]}/NOTE_assets');
                 }
 
 				spriteCopy.animation.play(colArray[Std.int(compositionArray[2]) % colArray.length] + 'Scroll', true);
@@ -3729,7 +3689,7 @@ class EditorLua {
 
             var noteTypeSkin = compositionArray[7];
 
-            var theSkin = 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets';
+            var theSkin = 'Skins/Notes/${ClientPrefs.data.notesSkin[0]}/NOTE_assets';
             if (compositionArray[5] != '') theSkin = compositionArray[5];
 
  			var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
@@ -3755,7 +3715,7 @@ class EditorLua {
                    spriteCopy.reloadNote('', compositionArray[5]);
                 }
                 else{
-                   spriteCopy.reloadNote('', 'Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets');
+                   spriteCopy.reloadNote('', 'Skins/Notes/${ClientPrefs.data.notesSkin[0]}/NOTE_assets');
                 }
 
 				spriteCopy.animation.play(colArray[Std.int(compositionArray[2]) % colArray.length] + 'Scroll', true);
@@ -3834,7 +3794,7 @@ class EditorLua {
 
 				leSprite.loadGraphic(EditorPlayState.instance.aftBitmap.bitmap); //idk if this even works but whatever
 				
-				leSprite.antialiasing = ClientPrefs.globalAntialiasing;
+				leSprite.antialiasing = ClientPrefs.data.antialiasing;
 				EditorPlayState.instance.modchartSkewedSprite.set(tag, leSprite);
 				leSprite.active = true;
 
@@ -4001,7 +3961,7 @@ class EditorLua {
 	
 	function initLuaShader(name:String, ?glslVersion:Int = 120)
 	{
-		if(!ClientPrefs.shaders) return false;
+		if(!ClientPrefs.data.shaders) return false;
 
 		#if (!flash && sys)
 		if(EditorPlayState.instance.runtimeShaders.exists(name))
@@ -4080,11 +4040,6 @@ class EditorLua {
 	{
 		switch(spriteType.toLowerCase().trim())
 		{
-			case "texture" | "textureatlas" | "tex":
-				spr.frames = AtlasFrameMaker.construct(image);
-
-			case "texture_noaa" | "textureatlas_noaa" | "tex_noaa":
-				spr.frames = AtlasFrameMaker.construct(image, null, true);
 
 			case "packer" | "packeratlas" | "pac":
 				spr.frames = Paths.getPackerAtlas(image);
@@ -4457,12 +4412,12 @@ class EditorLua {
 	public static var lastCalledScript:EditorLua = null;
 	public function call(func:String, args:Array<Dynamic>):Dynamic {
 		#if LUA_ALLOWED
-		if(closed) return Function_Continue;
+		if(closed) return FunkinLua.Function_Continue;
 
 		lastCalledFunction = func;
 		lastCalledScript = this;
 		try {
-			if(lua == null) return Function_Continue;
+			if(lua == null) return FunkinLua.Function_Continue;
 
 			Lua.getglobal(lua, func);
 			var type:Int = Lua.type(lua, -1);
@@ -4472,7 +4427,7 @@ class EditorLua {
 					luaTrace("ERROR (" + func + "): attempt to call a " + typeToString(type) + " value", false, false, FlxColor.RED);
 
 				Lua.pop(lua, 1);
-				return Function_Continue;
+				return FunkinLua.Function_Continue;
 			}
 
 			for (arg in args) Convert.toLua(lua, arg);
@@ -4482,12 +4437,12 @@ class EditorLua {
 			if (status != Lua.LUA_OK) {
 				var error:String = getErrorMessage(status);
 				luaTrace("ERROR (" + func + "): " + error, false, false, FlxColor.RED);
-				return Function_Continue;
+				return FunkinLua.Function_Continue;
 			}
 
 			// If successful, pass and then return the result.
 			var result:Dynamic = cast Convert.fromLua(lua, -1);
-			if (result == null) result = Function_Continue;
+			if (result == null) result = FunkinLua.Function_Continue;
 
 			Lua.pop(lua, 1);
 			if(closed) stop();
@@ -4498,7 +4453,7 @@ class EditorLua {
 			trace(e);
 		}
 		#end
-		return Function_Continue;
+		return FunkinLua.Function_Continue;
 	}
 
 	static function addAnimByIndices(obj:String, name:String, prefix:String, indices:String, framerate:Int = 24, loop:Bool = false)
@@ -4752,7 +4707,7 @@ class ModchartSprite extends FlxSprite
 	public function new(?x:Float = 0, ?y:Float = 0)
 	{
 		super(x, y);
-		antialiasing = ClientPrefs.globalAntialiasing;
+		antialiasing = ClientPrefs.data.antialiasing;
 	}
 }
 
@@ -4850,7 +4805,7 @@ class HScript
 		interp.variables.set('game', EditorPlayState.instance);
 		interp.variables.set('Paths', Paths);
 		interp.variables.set('Conductor', Conductor);
-		interp.variables.set('ClientPrefs', ClientPrefs);
+		interp.variables.set('ClientPrefs.data', ClientPrefs.data);
 		interp.variables.set('Character', Character);
 		interp.variables.set('Alphabet', Alphabet);
 		interp.variables.set('CustomSubstate', CustomSubstate);
@@ -4920,7 +4875,7 @@ class ExclusiveCopy extends FlxSkewedSprite
 	public function new(noteData:Int, x:Float, y:Float, isStrum:Bool, usedCamera:FlxCamera, daSkin:String)
 	{
 		super(x, y);
-		// x += (ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
+		// x += (ClientPrefs.data.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X) + 50;
 		// if (noteData > -1) x += swagWidth * (noteData);
 		// y -= 2000;
 		this.isStrum = isStrum;
@@ -4935,13 +4890,13 @@ class ExclusiveCopy extends FlxSkewedSprite
 		defaultRGB();
 
 		if (daSkin != '') frames = Paths.getSparrowAtlas(daSkin, 'shared');
-		else frames = Paths.getSparrowAtlas('Skins/Notes/${ClientPrefs.notesSkin[0]}/NOTE_assets', 'shared');
+		else frames = Paths.getSparrowAtlas('Skins/Notes/${ClientPrefs.data.notesSkin[0]}/NOTE_assets', 'shared');
 		if (frames != null)
 		{
 			addNoteAnims();
 			playAnims();
 		}
-		antialiasing = ClientPrefs.globalAntialiasing;
+		antialiasing = ClientPrefs.data.antialiasing;
 	}
 
 	public function addNoteAnims() { 
@@ -4960,7 +4915,7 @@ class ExclusiveCopy extends FlxSkewedSprite
 
 	public function defaultRGB() 
 	{
-		var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+		var arr:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData];
 
 		if (noteData > -1 && noteData <= arr.length)
 		{
@@ -4977,7 +4932,7 @@ class ExclusiveCopy extends FlxSkewedSprite
 			var newRGB:RGBPalette = new RGBPalette();
 			globalRgbShaders[noteData] = newRGB;
 
-			var arr:Array<FlxColor> = ClientPrefs.arrowRGB[noteData];
+			var arr:Array<FlxColor> = ClientPrefs.data.arrowRGB[noteData];
 			if (noteData > -1 && noteData <= arr.length)
 			{
 				newRGB.r = arr[0];

@@ -1,8 +1,5 @@
 package editors;
 
-import flixel.text.FlxText;
-import flixel.FlxG;
-
 class EmptyPauseSubState extends MusicBeatSubstate
 {
     public function new(x:Float, y:Float)

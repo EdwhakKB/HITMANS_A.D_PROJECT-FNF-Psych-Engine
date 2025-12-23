@@ -1,8 +1,8 @@
 package codenameengine.scripting;
 
-import Conductor;
+import engine.Conductor;
 import flixel.FlxState;
-import Mods;
+import engine.Mods;
 import flixel.FlxG;
 
 #if HSCRIPT_ALLOWED
