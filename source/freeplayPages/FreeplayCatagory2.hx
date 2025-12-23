@@ -1,32 +1,11 @@
 package freeplayPages;
 
 import flixel.graphics.FlxGraphic;
-#if desktop
-import Discord.DiscordClient;
-#end
 import editors.ChartingState;
-import flash.text.TextField;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
+import openfl.text.TextField;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import flixel.tweens.FlxTween;
-import lime.utils.Assets;
-import flixel.system.FlxSound;
 
-import openfl.utils.Assets as OpenFlAssets;
 import flixel.addons.display.FlxBackdrop;
-import flixel.tweens.FlxEase;
-import WeekData;
-#if MODS_ALLOWED
-import sys.FileSystem;
-#end
-
-using StringTools;
 
 class FreeplayState extends MusicBeatState
 {
@@ -93,17 +72,17 @@ class FreeplayState extends MusicBeatState
 		Mods.loadTopMod();
 
 		bg = new FlxSprite().loadGraphic(Paths.image('freeplay/backgroundlool'));
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.screenCenter();
 		bg.setGraphicSize(1280, 720);
 		add(bg);
 
 		sliceBar2 = new FlxSprite(0, -10).loadGraphic(Paths.image('freeplay/other_pause_slice'));
-		sliceBar2.antialiasing = ClientPrefs.globalAntialiasing;
+		sliceBar2.antialiasing = ClientPrefs.data.antialiasing;
 		add(sliceBar2);
 
 		sliceBar = new FlxSprite(0, -10).loadGraphic(Paths.image('freeplay/pause_slice'));
-		sliceBar.antialiasing = ClientPrefs.globalAntialiasing;
+		sliceBar.antialiasing = ClientPrefs.data.antialiasing;
 		add(sliceBar);
 
 		grupoImagen = new FlxTypedGroup<FlxSprite>();
@@ -122,7 +101,7 @@ class FreeplayState extends MusicBeatState
 			// box.x=FlxG.width / 2 -(box.width/16);
 			box.x = FlxG.width / 2;
 			box.y = FlxG.height / 2 - (box.height / 2) + (i * 415);
-			box.antialiasing = ClientPrefs.globalAntialiasing;
+			box.antialiasing = ClientPrefs.data.antialiasing;
 			box.ID = i;
 			grupo.add(box);
 
@@ -133,7 +112,7 @@ class FreeplayState extends MusicBeatState
 
 			// var filePath:String = imagenPath+imageShow;
 			// trace("File path is: " + filePath);
-			// if(!OpenFlAssets.exists(filePath)){ //If file doesn't exist, change path to load placeholder instead
+			// if(!OpenFLAssets.exists(filePath)){ //If file doesn't exist, change path to load placeholder instead
 			//   filePath = imagenPath + imagePH;
 			//   trace("Could not find. Loading backup path: " + filePath);
 			// }
@@ -146,7 +125,7 @@ class FreeplayState extends MusicBeatState
 			// imagen.x=FlxG.width / 2 -(imagen.width/16);
 			imagen.x = FlxG.width / 2;
 			imagen.y = FlxG.height / 2 - (imagen.height / 2) + (i * 415);
-			imagen.antialiasing = ClientPrefs.globalAntialiasing;
+			imagen.antialiasing = ClientPrefs.data.antialiasing;
 			imagen.ID = i;
 			grupoImagen.add(imagen);
 		}
@@ -554,7 +533,7 @@ class FreeplayState extends MusicBeatState
 			curSelected = 0;
 		grupo.forEach(function(spr:FlxSprite)
 		{
-			FlxTween.tween(spr.offset, {y: 415 * curSelected}, 0.2, {ease: FlxEase.expoOut, type: FlxTween.ONESHOT});
+			FlxTween.tween(spr.offset, {y: 415 * curSelected}, 0.2, {ease: FlxEase.expoOut, type: FlxTweenType.ONESHOT});
 
 			if (spr.ID == curSelected)
 			{
@@ -570,7 +549,7 @@ class FreeplayState extends MusicBeatState
 
 		grupoImagen.forEach(function(spr:FlxSprite)
 		{
-			FlxTween.tween(spr.offset, {y: 415 * curSelected}, 0.2, {ease: FlxEase.expoOut, type: FlxTween.ONESHOT});
+			FlxTween.tween(spr.offset, {y: 415 * curSelected}, 0.2, {ease: FlxEase.expoOut, type: FlxTweenType.ONESHOT});
 
 			if (spr.ID == curSelected)
 			{

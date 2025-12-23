@@ -13,41 +13,19 @@ class Macros
   {
     for (inc in [
       // FLIXEL
-      "flixel.util",
-      "flixel.ui",
-      "flixel.tweens",
-      "flixel.tile",
-      "flixel.text",
-      "flixel.system",
-      "flixel.sound",
-      "flixel.path",
-      "flixel.math",
-      "flixel.input",
-      "flixel.group",
-      "flixel.graphics",
-      "flixel.effects",
-      "flixel.animation",
-      // FLIXEL ADDONS
-      "flixel.addons.api",
-      "flixel.addons.display",
-      "flixel.addons.effects",
-      "flixel.addons.ui",
-      "flixel.addons.plugin",
-      "flixel.addons.text",
-      "flixel.addons.tile",
-      "flixel.addons.transition",
-      "flixel.addons.util",
+      "flixel",
+      
       // BASE HAXE
-      "DateTools",
-      "EReg",
-      "Lambda",
-      "StringBuf",
-      "haxe.crypto",
-      "haxe.display",
-      "haxe.exceptions",
-      "haxe.extern"
+      "haxe",
     ])
-      Compiler.include(inc);
+      Compiler.include(inc, true, [
+        'haxe.atomic.*',
+        'haxe.macro.*',
+        'flixel.addons.tile.FlxRayCastTilemap',
+        'flixel.addons.editors.spine.*',
+        'flixel.addons.nape.*',
+        'flixel.system.macros.*'
+      ]);
 
     if (Context.defined("sys"))
     {

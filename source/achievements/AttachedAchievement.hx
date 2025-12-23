@@ -8,7 +8,7 @@ class AttachedAchievement extends FlxSprite {
 	public function new(x:Float = 0, y:Float = 0, name:String) {
 		super(x, y);
 
-		antialiasing = ClientPrefs.globalAntialiasing;
+		antialiasing = ClientPrefs.data.antialiasing;
 		changeAchievement(name);
 	}
 

@@ -1,19 +1,12 @@
 package;
 
-import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
-import flixel.FlxG;
-import flixel.FlxGame;
-import flixel.FlxState;
-import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
+import engine.CrashHandler;
 
 //crash handler stuff
 #if CRASH_HANDLER
@@ -21,15 +14,8 @@ import lime.app.Application;
 import openfl.events.UncaughtErrorEvent;
 import haxe.CallStack;
 import haxe.io.Path;
-import Discord.DiscordClient;
-import sys.FileSystem;
-import sys.io.File;
 import sys.io.Process;
 #end
-
-import haxe.ui.Toolkit;
-
-using StringTools;
 
 class Main extends Sprite
 {
@@ -52,37 +38,15 @@ class Main extends Sprite
 		Lib.current.addChild(new Main());
 	}
 
-	public function new()
-	{
-		super();
-
-		if (stage != null)
-		{
-			init();
-		}
-		else
-		{
-			addEventListener(Event.ADDED_TO_STAGE, init);
-		}
-	}
-
-	private function init(?E:Event):Void
-	{
-		if (hasEventListener(Event.ADDED_TO_STAGE))
-		{
-			removeEventListener(Event.ADDED_TO_STAGE, init);
-		}
-
-		setupGame();
-	}
-
 	var oldVol:Float = 1.0;
 	var newVol:Float = 0.2;
 
 	public static var focusMusicTween:FlxTween;
 
-	private function setupGame():Void
+	public function new()
 	{
+		super();
+
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -94,21 +58,30 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
+		
+		#if LUA_ALLOWED
+		Mods.pushGlobalMods();
+		#end
+		Mods.loadTopMod();
+
+		FlxG.save.bind('Hitmans A.D', CoolUtil.getSavePath());
+		Highscore.load();
 
 		CrashHandler.initCrashHandler();
-	
-		addChild(new CrashHandler.MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
-		Toolkit.init();
-        Toolkit.theme = "DARK";
-		Toolkit.autoScale = false;
+		Controls.instance = new Controls();
+		ClientPrefs.loadDefaultKeys();
+	
+		#if ACHIEVEMENTS_ALLOWED 
+		Achievements.load(); 
+		#end
+		addChild(new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
 		#if HSCRIPT_ALLOWED
 		codenameengine.scripting.GlobalScript.init();
 		#end
 
-		mouseCursor = new FlxSprite().loadGraphic(Paths.getPreloadPath('images/mouse'));
-        // } 
+		mouseCursor = new FlxSprite().loadGraphic(Paths.getSharedPath('images/mouse')); 
         FlxG.mouse.load(mouseCursor.pixels);
         FlxG.mouse.enabled = true;
         FlxG.mouse.visible = false;
@@ -119,7 +92,7 @@ class Main extends Sprite
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		if(fpsVar != null) {
-			fpsVar.visible = ClientPrefs.showFPS;
+			fpsVar.visible = ClientPrefs.data.showFPS;
 		}
 		#end
 
@@ -127,70 +100,62 @@ class Main extends Sprite
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;
 		#end
-
-		ClientPrefs.loadPrefs();
-
-		#if ACHIEVEMENTS_ALLOWED 
-		Achievements.load(); 
-		#end
 		
 		FlxGraphic.defaultPersist = false;
-	        FlxG.signals.preStateSwitch.add(function()
-	        {
+		FlxG.signals.preStateSwitch.add(function()
+		{
 
-	            //i tihnk i finally fixed it
+			//i tihnk i finally fixed it
 
-	            @:privateAccess
-	            for (key in FlxG.bitmap._cache.keys())
-	            {
-	                var obj = FlxG.bitmap._cache.get(key);
-	                if (obj != null)
-	                {
-	                    lime.utils.Assets.cache.image.remove(key);
-	                    openfl.Assets.cache.removeBitmapData(key);
-	                    FlxG.bitmap._cache.remove(key);
-	                    //obj.destroy(); //breaks the game lol
-	                }
-	            }
+			@:privateAccess
+			for (key in FlxG.bitmap._cache.keys())
+			{
+				var obj = FlxG.bitmap._cache.get(key);
+				if (obj != null)
+				{
+					LimeAssets.cache.image.remove(key);
+					OpenFLAssets.cache.removeBitmapData(key);
+					FlxG.bitmap._cache.remove(key);
+					//obj.destroy(); //breaks the game lol
+				}
+			}
 
-	            //idk if this helps because it looks like just clearing it does the same thing
-	            for (k => f in lime.utils.Assets.cache.font)
-	                lime.utils.Assets.cache.font.remove(k);
-	            for (k => s in lime.utils.Assets.cache.audio)
-	                lime.utils.Assets.cache.audio.remove(k);
+			//idk if this helps because it looks like just clearing it does the same thing
+			for (k => f in LimeAssets.cache.font)
+				LimeAssets.cache.font.remove(k);
+			for (k => s in LimeAssets.cache.audio)
+				LimeAssets.cache.audio.remove(k);
 
-	            lime.utils.Assets.cache.clear();
+			LimeAssets.cache.clear();
+			OpenFLAssets.cache.clear();
 
-	            openfl.Assets.cache.clear();
+			// FlxG.bitmap.dumpCache();
 
-	            FlxG.bitmap.dumpCache();
+			#if cpp
+			cpp.vm.Gc.enable(true);
+			#end
 
-	            #if polymod
-	            polymod.Polymod.clearCache();
+			#if sys
+			openfl.system.System.gc();
+			#end
+		});
 
-	            #end
+		FlxG.signals.postStateSwitch.add(function()
+		{
+			#if cpp
+			cpp.vm.Gc.enable(true);
+			#end
 
-	            #if cpp
-	            cpp.vm.Gc.enable(true);
-	            #end
+			#if sys
+			openfl.system.System.gc();
+			#end
+		});
+		// shader coords fix
+		FlxG.signals.gameResized.add(fixCameraShaders);
 
-	            #if sys
-	            openfl.system.System.gc();
-	            #end
-	        });
-
-	        FlxG.signals.postStateSwitch.add(function()
-	        {
-	            #if cpp
-	            cpp.vm.Gc.enable(true);
-	            #end
-
-	            #if sys
-	            openfl.system.System.gc();
-	            #end
-	        });
-			// shader coords fix
-        	FlxG.signals.gameResized.add(fixCameraShaders);
+		FlxG.fixedTimestep = false;
+		FlxG.game.focusLostFramerate = 60;
+		FlxG.keys.preventDefaultKeys = [TAB];
 
 		#if CRASH_HANDLER
 		//Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);

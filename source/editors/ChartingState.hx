@@ -1,13 +1,5 @@
 package editors;
 
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.FlxCamera;
-import flixel.FlxSubState;
-import flixel.text.FlxText;
-import flixel.math.FlxPoint;
-import flixel.math.FlxMath;
-import flixel.system.FlxSound;
 import flixel.util.FlxSave;
 import flixel.util.FlxSort;
 import flixel.util.FlxColor;
@@ -17,12 +9,6 @@ import flixel.util.FlxDestroyUtil;
 import flixel.input.keyboard.FlxKey;
 import flixel.group.FlxGroup;
 import flixel.tweens.FlxTween;
-#if sys
-import sys.FileSystem;
-import sys.io.File;
-#end
-
-import lime.utils.Assets;
 import lime.media.AudioBuffer;
 
 import openfl.media.Sound;
@@ -37,13 +23,13 @@ import editors.content.VSlice;
 import editors.content.Prompt;
 import editors.content.*;
 
-import Song;
-import StageData;
-import Highscore;
-import Character;
-import HealthIcon;
-import Note;
-import StrumNote;
+import engine.Song;
+import engine.StageData;
+import engine.Highscore;
+import objects.Character;
+import objects.HealthIcon;
+import objects.Note;
+import objects.StrumNote;
 
 using DateTools;
 
@@ -253,7 +239,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		chartEditorSave.bind('chart_editor_data', 'ShadowMario');
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.scrollFactor.set();
 		add(bg);
 
@@ -333,7 +319,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		if(SHOW_EVENT_COLUMN)
 		{
 			eventIcon = new FlxSprite(0, iconY).loadGraphic(Paths.image('editors/eventIcon'));
-			eventIcon.antialiasing = ClientPrefs.globalAntialiasing;
+			eventIcon.antialiasing = ClientPrefs.data.antialiasing;
 			eventIcon.alpha = 0.6;
 			eventIcon.setGraphicSize(30, 30);
 			eventIcon.updateHitbox();
@@ -397,7 +383,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		autoSaveIcon = new FlxSprite(50).loadGraphic(Paths.image('editors/autosave'));
 		autoSaveIcon.screenCenter(Y);
 		autoSaveIcon.scale.set(0.6, 0.6);
-		autoSaveIcon.antialiasing = ClientPrefs.globalAntialiasing;
+		autoSaveIcon.antialiasing = ClientPrefs.data.antialiasing;
 		autoSaveIcon.scrollFactor.set();
 		autoSaveIcon.alpha = 0;
 		add(autoSaveIcon);
@@ -1796,7 +1782,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 			for (key in sndsToKill)
 			{
-				Assets.cache.clear(key);
+				OpenFLAssets.cache.clear(key);
 				Paths.currentTrackedSounds.remove(key);
 				Paths.localTrackedAssets.remove(key);
 			}
@@ -4672,7 +4658,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		}
 
 		#if MODS_ALLOWED
-		for (directory in Mods.directoriesWithFile(Paths.getPreloadPath(), mainFolder))
+		for (directory in Mods.directoriesWithFile(Paths.getSharedPath(), mainFolder))
 		{
 			for (file in FileSystem.readDirectory(directory))
 			{
@@ -4705,7 +4691,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 				#if MODS_ALLOWED
 				var unparsedJson = File.getContent(path);
 				#else
-				var unparsedJson = Assets.getText(path);
+				var unparsedJson = OpenFLAssets.getText(path);
 				#end
 				return cast Json.parse(unparsedJson);
 			}

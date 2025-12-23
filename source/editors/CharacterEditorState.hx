@@ -4,38 +4,21 @@ import flixel.FlxObject;
 import flixel.graphics.FlxGraphic;
 
 import flixel.animation.FlxAnimation;
-import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.util.FlxDestroyUtil;
 
 import openfl.net.FileReference;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
-import openfl.utils.Assets;
 import lime.system.Clipboard;
 
 import flixel.ui.FlxBar;
-import flixel.FlxSprite;
 
-import Character;
-import HealthIcon;
+import objects.Character;
+import objects.HealthIcon;
 
-import flixel.group.FlxSpriteGroup;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.text.FlxText;
-import flixel.FlxCamera;
-import flixel.math.FlxPoint;
-import flixel.util.FlxColor;
-import flixel.FlxG;
-
-#if sys
-import sys.FileSystem;
-import sys.io.File;
-#end
-
-import flixel.math.FlxMath;
-
-using StringTools;
+@:bitmap("assets/images/debugger/cursorCross.png")
+class Cross extends openfl.display.BitmapData {}
 
 class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler.PsychUIEvent
 {
@@ -106,13 +89,13 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		add(silhouettes);
 
 		var dad:FlxSprite = new FlxSprite(dadPosition.x, dadPosition.y).loadGraphic(Paths.image('editors/silhouetteDad'));
-		dad.antialiasing = ClientPrefs.globalAntialiasing;
+		dad.antialiasing = ClientPrefs.data.antialiasing;
 		dad.active = false;
 		dad.offset.set(-4, 1);
 		silhouettes.add(dad);
 
 		var boyfriend:FlxSprite = new FlxSprite(bfPosition.x, bfPosition.y + 350).loadGraphic(Paths.image('editors/silhouetteBF'));
-		boyfriend.antialiasing = ClientPrefs.globalAntialiasing;
+		boyfriend.antialiasing = ClientPrefs.data.antialiasing;
 		boyfriend.active = false;
 		boyfriend.offset.set(-6, 2);
 		silhouettes.add(boyfriend);
@@ -126,7 +109,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 		addCharacter();
 
-		cameraFollowPointer = new FlxSprite().loadGraphic(FlxGraphic.fromClass(GraphicCursorCross));
+		cameraFollowPointer = new FlxSprite().loadGraphic(FlxGraphic.fromClass(Cross));
 		cameraFollowPointer.setGraphicSize(40, 40);
 		cameraFollowPointer.updateHitbox();
 		add(cameraFollowPointer);
@@ -465,7 +448,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			#if MODS_ALLOWED
 			if (FileSystem.exists(path))
 			#else
-			if (Assets.exists(path))
+			if (OpenFLAssets.exists(path))
 			#end
 			{
 				_char = intended;
@@ -664,7 +647,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 		noAntialiasingCheckBox.checked = character.noAntialiasing;
 		noAntialiasingCheckBox.onClick = function() {
 			character.antialiasing = false;
-			if(!noAntialiasingCheckBox.checked && ClientPrefs.globalAntialiasing) {
+			if(!noAntialiasingCheckBox.checked && ClientPrefs.data.antialiasing) {
 				character.antialiasing = true;
 			}
 			character.noAntialiasing = noAntialiasingCheckBox.checked;
@@ -819,7 +802,7 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 			character.isAnimateAtlas = true;
 		}
 		else #end if(Paths.fileExists('images/' + character.imageFile + '.txt', TEXT)) character.frames = Paths.getPackerAtlas(character.imageFile);
-		else if(Paths.fileExists('images/' + character.imageFile + '.json', TEXT)) character.frames = Paths.getJsonAtlas(character.imageFile);
+		else if(Paths.fileExists('images/' + character.imageFile + '.json', TEXT)) character.frames = Paths.getAsepriteAtlas(character.imageFile);
 		else character.frames = Paths.getSparrowAtlas(character.imageFile);
 
 		for (anim in anims) {
@@ -1229,8 +1212,8 @@ class CharacterEditorState extends MusicBeatState implements PsychUIEventHandler
 
 	var characterList:Array<String> = [];
 	function reloadCharacterDropDown() {
-		characterList = Mods.mergeAllTextsNamed('characterList.txt', Paths.getPreloadPath());
-		var foldersToCheck:Array<String> = Mods.directoriesWithFile(Paths.getPreloadPath(), 'characters/');
+		characterList = Mods.mergeAllTextsNamed('characterList.txt', Paths.getSharedPath());
+		var foldersToCheck:Array<String> = Mods.directoriesWithFile(Paths.getSharedPath(), 'characters/');
 		for (folder in foldersToCheck)
 			for (file in FileSystem.readDirectory(folder))
 				if(file.toLowerCase().endsWith('.json'))

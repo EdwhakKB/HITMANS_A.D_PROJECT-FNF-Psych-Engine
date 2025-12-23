@@ -54,66 +54,24 @@
 	<define name="MODS_ALLOWED" if="desktop" />
 	<define name="LUA_ALLOWED" if="desktop" />
 	<define name="ACHIEVEMENTS_ALLOWED" />
+	<define name="DISCORD_ALLOWED" if="desktop"/>
 	<define name="VIDEOS_ALLOWE" if="web || windows" unless="32bits"/>
 	<define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE WATERMARKS/DEV NAMES ON TITLE SCREEN -->
 	<define name="TITLE_SCREEN_EASTER_EGG" if="officialBuild"/> <!-- DELETE THE if="officialBuild" for enabling this on an unofficial build -->
 	<define name="CRASH_HANDLER" if="desktop release" />
 	<define name="HSCRIPT_ALLOWED" if="desktop" />
 
-	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
-	<assets path="assets/preload" rename="assets" exclude="*.mp3"  unless="web"/>
-	<section if="TITLE_SCREEN_EASTER_EGG">
-		<assets path="assets/secrets" rename="assets" exclude="*.ogg" if="web"/>
-		<assets path="assets/secrets" rename="assets" exclude="*.mp3"  unless="web"/>
-	</section>
-
 	<!-- DONT ENABLE THIS -->
 	<define name="CHECK_FOR_UPDATES" if="desktop officialBuild"/>
 
-	<!-- <define name="PRELOAD_ALL" /> -->
-	<define name="PRELOAD_ALL" unless="web" />
-	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
-	
-	<library name="videos"        preload="true" />
-	<section if="PRELOAD_ALL">
-		<library name="songs"         preload="true" />
-		<library name="shared"        preload="true" />
-		<library name="week2"         preload="true" />
-		<library name="week3"         preload="true" />
-		<library name="week4"         preload="true" />
-		<library name="week5"         preload="true" />
-		<library name="week6"         preload="true" />
-		<library name="week7"         preload="true" />
-	</section>
-	
-	<section if="NO_PRELOAD_ALL">
-		<library name="songs"         preload="true" />
-		<library name="shared"        preload="false" />
-		<library name="week2"         preload="false" />
-		<library name="week3"         preload="false" />
-		<library name="week4"         preload="false" />
-		<library name="week5"         preload="false" />
-		<library name="week6"         preload="false" />
-		<library name="week7"         preload="false" />
-	</section>
-	
-	<assets path="assets/videos"        library="videos"        if="VIDEOS_ALLOWED"/>
-	<assets path="assets/songs"         library="songs"         exclude="*.ogg" if="web"/>
-	<assets path="assets/songs"         library="songs"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/shared"        library="shared"        exclude="*.ogg" if="web"/>
-	<assets path="assets/shared"        library="shared"        exclude="*.mp3" unless="web"/>
-	<assets path="assets/week2"         library="week2"         exclude="*.ogg" if="web"/>
-	<assets path="assets/week2"         library="week2"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/week3"         library="week3"         exclude="*.ogg" if="web"/>
-	<assets path="assets/week3"         library="week3"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/week4"         library="week4"         exclude="*.ogg" if="web"/>
-	<assets path="assets/week4"         library="week4"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/week5"         library="week5"         exclude="*.ogg" if="web"/>
-	<assets path="assets/week5"         library="week5"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/week6"         library="week6"         exclude="*.ogg" if="web"/>
-	<assets path="assets/week6"         library="week6"         exclude="*.mp3" unless="web"/>
-	<assets path="assets/week7"         library="week7"         exclude="*.ogg" if="web"/>
-	<assets path="assets/week7"         library="week7"         exclude="*.mp3" unless="web"/>
+	<assets path="assets/fonts" />
+	<assets path="assets/shared"        exclude="*.ogg" if="web"/>
+	<assets path="assets/shared"        exclude="*.mp3" unless="web"/>
+	<assets path="assets/videos"        if="VIDEOS_ALLOWED"/>
+	<assets path="assets/songs"         exclude="*.ogg" if="web"/>
+	<assets path="assets/songs"         exclude="*.mp3" unless="web"/>
+	<assets path="assets/week_assets"   rename="assets" exclude="*.ogg" if="web"/>
+	<assets path="assets/week_assets"   rename="assets" exclude="*.mp3" unless="web"/>
 	
 	<section if="MODS_ALLOWED">
 		<assets path='example_mods' rename='mods' embed='false'/>
@@ -138,7 +96,7 @@
 	<haxelib name="FlxPartialSound"/>
 	<haxelib name="grig.audio" />
 	<haxelib name="funkin.vis" />
-		<haxelib name="hscript" />
+	<haxelib name="hscript" />
 
 	<!--Psych stuff needed-->
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
@@ -177,12 +135,6 @@
 	<!--<haxelib name="polymod"/> -->
 	<haxelib name="discord_rpc" if="desktop"/>
 	<!-- <haxelib name="hxcpp-debug-server" if="desktop"/> -->
-
-	<define name="haxeui_allow_drag_any_component" value="true"/>
-	<define name="haxeui_flixel_no_custom_cursors" value="true"/>
-
-	<haxelib name="haxeui-flixel"/>
-	<haxelib name="haxeui-core"/>
 
 	<!-- <haxelib name="markdown" /> -->
 	<!-- <haxelib name="HtmlParser" /> -->
@@ -241,7 +193,7 @@
 	<icon path="art/icon64.png" size='64'/>
 	<icon path="art/iconOG.png" />
 
-	<haxeflag name="--macro" value="include('flixel', true, [ 'flixel.addons.editors.spine.*', 'flixel.addons.nape.*', 'flixel.system.macros.*' ])" />
+	<haxeflag name="--macro" value="codenameengine.Macros.addAdditionalClasses()" />
 
 	<section if="COMPILE_ALL_CLASSES">
 		<haxeflag name="-dce" value="no" />

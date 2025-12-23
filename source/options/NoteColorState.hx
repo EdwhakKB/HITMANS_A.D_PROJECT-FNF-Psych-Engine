@@ -1,18 +1,7 @@
 package options;
-
-#if desktop
-import Discord.DiscordClient;
-#end
-import flash.text.TextField;
+import openfl.text.TextField;
 import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import lime.utils.Assets;
-import flixel.FlxSubState;
-import flixel.FlxG;
-import flixel.FlxSprite;
+
 import flixel.util.FlxSave;
 import haxe.Json;
 import flixel.tweens.FlxEase;
@@ -20,11 +9,9 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
-import Controls;
+import play.Controls;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.FlxCamera;
-import flixel.FlxObject;
 
 using StringTools;
 
@@ -57,7 +44,7 @@ class NoteColorState extends MusicBeatState
 
 	var skins:Array<String> = ['HITMANS', 'INHUMAN', 'FNF', 'ITHIT', 'MANIAHIT', 'FUTURE', 'CIRCLE', 'STEPMANIA', 'NOTITG']; //There must be a better way but for now with this im okay -Ed
 	var skinNoteTypes:Array<String> = ['Left Note', 'Down Note', 'Up Note', 'Right Note', 'Hurt Note'];
-	var skinIndicator:String = ClientPrefs.notesSkin[0];
+	var skinIndicator:String = ClientPrefs.data.notesSkin[0];
 
 	var noteBar:FlxSprite;
 	var noteHSVText:FlxText;
@@ -95,7 +82,7 @@ class NoteColorState extends MusicBeatState
 		super.create();
 		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('MenuShit/wallPaper'));
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		bg.screenCenter();
 		bg.cameras = [camGame];
 		add(bg);
@@ -106,10 +93,10 @@ class NoteColorState extends MusicBeatState
 		optbg.cameras = [camGame];
 		add(optbg);
 
-		var noteSuffix:String = ClientPrefs.notesSkin[0].toLowerCase();
-		var hurtNoteSuffix:String = ClientPrefs.notesSkin[1].toLowerCase();
-		var holdSuffix:String = ClientPrefs.notesSkin[2].toLowerCase(); //tho this one its unnused
-		if(ClientPrefs.notesSkin[1].toLowerCase() == 'mimic') hurtNoteSuffix = noteSuffix;
+		var noteSuffix:String = ClientPrefs.data.notesSkin[0].toLowerCase();
+		var hurtNoteSuffix:String = ClientPrefs.data.notesSkin[1].toLowerCase();
+		var holdSuffix:String = ClientPrefs.data.notesSkin[2].toLowerCase(); //tho this one its unnused
+		if(ClientPrefs.data.notesSkin[1].toLowerCase() == 'mimic') hurtNoteSuffix = noteSuffix;
 		
 		// NOTES
 
@@ -368,14 +355,14 @@ class NoteColorState extends MusicBeatState
 			note.y = hold.y = holdend.y = yPos - 40;
 
 			var animations:Array<String> = ['purple', 'blue', 'green', 'red', 'purple'];
-			note.antialiasing = ClientPrefs.globalAntialiasing;
+			note.antialiasing = ClientPrefs.data.antialiasing;
 			note.cameras = [camNoteColor];
 
-			hold.antialiasing = ClientPrefs.globalAntialiasing;
+			hold.antialiasing = ClientPrefs.data.antialiasing;
 			hold.cameras = [camNoteColor];
 			hold.animation.play(animations[i]+'hold', true);
 
-			holdend.antialiasing = ClientPrefs.globalAntialiasing;
+			holdend.antialiasing = ClientPrefs.data.antialiasing;
 			holdend.cameras = [camNoteColor];
 			holdend.animation.play(animations[i]+'holdend', true);
 
@@ -403,7 +390,7 @@ class NoteColorState extends MusicBeatState
 		if(curNum < 0) curNum = skins.length - 1;
 		if(curNum >= skins.length) curNum = 0;
 
-		ClientPrefs.notesSkin[0] = skins[curNum];
+		ClientPrefs.data.notesSkin[0] = skins[curNum];
 		skinIndicator = skins[curNum];
 	}
 

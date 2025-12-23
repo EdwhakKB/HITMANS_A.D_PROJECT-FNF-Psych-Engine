@@ -1,5 +1,6 @@
 package;
 
+#if cpp
 @:cppFileCode('#include <windows.h>\n#include <dwmapi.h>\n\n#pragma comment(lib, "Dwmapi")')
 class FlxTransWindow
 {
@@ -29,3 +30,4 @@ class FlxTransWindow
 		return res;
 	}
 }
+#end

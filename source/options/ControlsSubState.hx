@@ -1,29 +1,16 @@
 package options;
 
-#if desktop
-import Discord.DiscordClient;
-#end
-import flash.text.TextField;
-import flixel.FlxG;
-import flixel.FlxSprite;
+
+import openfl.text.TextField;
 import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import lime.utils.Assets;
+
 import flixel.FlxSubState;
-import flash.text.TextField;
-import flixel.FlxG;
-import flixel.FlxSprite;
+import openfl.text.TextField;
 import flixel.util.FlxSave;
-import haxe.Json;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
-import Controls;
+import play.Controls;
 
 using StringTools;
 
@@ -74,7 +61,7 @@ class ControlsSubState extends MusicBeatSubstate {
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.screenCenter();
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = ClientPrefs.data.antialiasing;
 		add(bg);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
@@ -127,7 +114,6 @@ class ControlsSubState extends MusicBeatSubstate {
 			}
 
 			if (controls.BACK) {
-				ClientPrefs.reloadControls();
 				close();
 				MainMenuState.inFolder = true;
 				FlxG.state.openSubState(new OptionsMenu());
@@ -343,6 +329,99 @@ class ControlsSubState extends MusicBeatSubstate {
 					}
 				}
 			}
+		}
+	}
+}
+
+class InputFormatter {
+	public static function getKeyName(key:FlxKey):String {
+		switch (key) {
+			case BACKSPACE:
+				return "BckSpc";
+			case CONTROL:
+				return "Ctrl";
+			case ALT:
+				return "Alt";
+			case CAPSLOCK:
+				return "Caps";
+			case PAGEUP:
+				return "PgUp";
+			case PAGEDOWN:
+				return "PgDown";
+			case ZERO:
+				return "0";
+			case ONE:
+				return "1";
+			case TWO:
+				return "2";
+			case THREE:
+				return "3";
+			case FOUR:
+				return "4";
+			case FIVE:
+				return "5";
+			case SIX:
+				return "6";
+			case SEVEN:
+				return "7";
+			case EIGHT:
+				return "8";
+			case NINE:
+				return "9";
+			case NUMPADZERO:
+				return "#0";
+			case NUMPADONE:
+				return "#1";
+			case NUMPADTWO:
+				return "#2";
+			case NUMPADTHREE:
+				return "#3";
+			case NUMPADFOUR:
+				return "#4";
+			case NUMPADFIVE:
+				return "#5";
+			case NUMPADSIX:
+				return "#6";
+			case NUMPADSEVEN:
+				return "#7";
+			case NUMPADEIGHT:
+				return "#8";
+			case NUMPADNINE:
+				return "#9";
+			case NUMPADMULTIPLY:
+				return "#*";
+			case NUMPADPLUS:
+				return "#+";
+			case NUMPADMINUS:
+				return "#-";
+			case NUMPADPERIOD:
+				return "#.";
+			case SEMICOLON:
+				return ";";
+			case COMMA:
+				return ",";
+			case PERIOD:
+				return ".";
+			//case SLASH:
+			//	return "/";
+			case GRAVEACCENT:
+				return "`";
+			case LBRACKET:
+				return "[";
+			//case BACKSLASH:
+			//	return "\\";
+			case RBRACKET:
+				return "]";
+			case QUOTE:
+				return "'";
+			case PRINTSCREEN:
+				return "PrtScrn";
+			case NONE:
+				return '---';
+			default:
+				var label:String = '' + key;
+				if(label.toLowerCase() == 'null') return '---';
+				return '' + label.charAt(0).toUpperCase() + label.substr(1).toLowerCase();
 		}
 	}
 }

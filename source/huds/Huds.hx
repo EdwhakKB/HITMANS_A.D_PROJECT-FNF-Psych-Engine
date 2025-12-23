@@ -1,23 +1,10 @@
 package huds;
 
-import flixel.group.FlxGroup;
-import flixel.FlxBasic;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
-import flixel.util.FlxColor;
 import flixel.util.FlxSort;
-import flixel.util.FlxTimer;
 import flixel.util.FlxStringUtil;
 import editors.content.EditorPlayState;
+import flixel.text.FlxText.FlxTextBorderStyle;
 
 using StringTools;
 
@@ -109,13 +96,13 @@ class Huds extends FlxGroup
 
 	var hudadded:Bool = false;
 
-	var hudUsed:String = ClientPrefs.hudStyle.toLowerCase(); //so it grabs the hud you want and stuff (for now only like this, in a future it will be way complex)
+	var hudUsed:String = ClientPrefs.data.hudStyle.toLowerCase(); //so it grabs the hud you want and stuff (for now only like this, in a future it will be way complex)
 	var ratingsScaleMultiplier:Float = 1.0;
 	var comboOffset:Array<Float> = [0,0];
 	var ratingsPoss:Array<Float> = [0,0];
 	var iconsYOffset:Array<Float> = [0,0];
 	var scoreOffset:Array<Float> = [0,0]; //upscroll/Downscroll
-	// var hudRating:String = ClientPrefs.hudStyle.toLowerCase();
+	// var hudRating:String = ClientPrefs.data.hudStyle.toLowerCase();
 
 	public var songScore:Int = 0;
 	public var songMisses:Int = 0;
@@ -146,8 +133,8 @@ class Huds extends FlxGroup
 					comboOffset[1] = 0;
 					ratingsPoss[0] = 850;
 					ratingsPoss[1] = 230;
-					iconsYOffset[0] = !ClientPrefs.downScroll ? -75 : -30;
-					iconsYOffset[1] = !ClientPrefs.downScroll ? -75 : -30;
+					iconsYOffset[0] = !ClientPrefs.data.downScroll ? -75 : -30;
+					iconsYOffset[1] = !ClientPrefs.data.downScroll ? -75 : -30;
 					scoreOffset[0] = -33;
 					scoreOffset[1] = 66;
 				case 'classic':
@@ -231,18 +218,18 @@ class Huds extends FlxGroup
             noteScore.visible = false;
             add(noteScore);
     
-			var showTime:Bool = (ClientPrefs.timeBarType != 'Disabled');
+			var showTime:Bool = (ClientPrefs.data.timeBarType != 'Disabled');
 
             timeBarBG = new EditedAttachedSprite('timeBar');
 			timeBarBG.screenCenter(X);
-            timeBarBG.y = !ClientPrefs.downScroll ? 20 : 676;
+            timeBarBG.y = !ClientPrefs.data.downScroll ? 20 : 676;
             timeBarBG.scrollFactor.set();
             timeBarBG.alpha = 0;
             timeBarBG.visible = showTime;
             timeBarBG.color = FlxColor.BLACK;
             add(timeBarBG);
     
-            timeTxt = new EditedFlxText(timeBarBG.x + (timeBarBG.width/2) + (if(ClientPrefs.timeBarType == 'Song Name') 3 else 0), timeBarBG.y - 10, 400, "", 32);
+            timeTxt = new EditedFlxText(timeBarBG.x + (timeBarBG.width/2) + (if(ClientPrefs.data.timeBarType == 'Song Name') 3 else 0), timeBarBG.y - 10, 400, "", 32);
 
             timeTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             timeTxt.scrollFactor.set();
@@ -250,7 +237,7 @@ class Huds extends FlxGroup
             timeTxt.borderSize = 2;
             timeTxt.visible = showTime;
     
-            if(ClientPrefs.timeBarType == 'Song Name')
+            if(ClientPrefs.data.timeBarType == 'Song Name')
             {
 				timeTxt.size = 24;
                 timeTxt.text = PlayState.SONG.song;
@@ -268,35 +255,35 @@ class Huds extends FlxGroup
             add(timeTxt);
             // timeBarBG.sprTracker = timeBar;
 
-            healthBarBG = new EditedAttachedSprite(ClientPrefs.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBarEmpty');
-			if (ClientPrefs.hudStyle == 'HITMANS'){
+            healthBarBG = new EditedAttachedSprite(ClientPrefs.data.hudStyle == 'HITMANS' ? 'healthBarHit' : 'healthBarEmpty');
+			if (ClientPrefs.data.hudStyle == 'HITMANS'){
 				// healthBarBG.flipY = false;
-				healthBarBG.y = ClientPrefs.downScroll ? 10 : 650;
+				healthBarBG.y = ClientPrefs.data.downScroll ? 10 : 650;
             }else{
-				healthBarBG.y = ClientPrefs.downScroll ? 100 : 610;
+				healthBarBG.y = ClientPrefs.data.downScroll ? 100 : 610;
 				healthBarBG.xAdd = -4;
 				healthBarBG.yAdd = -4;
 			}
             healthBarBG.screenCenter(X);
-           	// if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.scrollFactor.set();
-            healthBarBG.visible = !ClientPrefs.hideHud;
+           	// if (ClientPrefs.data.hudStyle == 'CLASSIC') healthBarBG.scrollFactor.set();
+            healthBarBG.visible = !ClientPrefs.data.hideHud;
     
             healthBar = new EditedFlxBar(
-				ClientPrefs.hudStyle == 'HITMANS' ? healthBarBG.x + 50 : healthBarBG.x + 4, 
-				ClientPrefs.hudStyle == 'HITMANS' ? healthBarBG.y + 20 : healthBarBG.y + 4, 
+				ClientPrefs.data.hudStyle == 'HITMANS' ? healthBarBG.x + 50 : healthBarBG.x + 4, 
+				ClientPrefs.data.hudStyle == 'HITMANS' ? healthBarBG.y + 20 : healthBarBG.y + 4, 
 				RIGHT_TO_LEFT, 
-				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.width - 100) : Std.int(healthBarBG.width - 8), //593
-				ClientPrefs.hudStyle == 'HITMANS' ? Std.int(healthBarBG.height - 40) : Std.int(healthBarBG.height - 8), //11
+				ClientPrefs.data.hudStyle == 'HITMANS' ? Std.int(healthBarBG.width - 100) : Std.int(healthBarBG.width - 8), //593
+				ClientPrefs.data.hudStyle == 'HITMANS' ? Std.int(healthBarBG.height - 40) : Std.int(healthBarBG.height - 8), //11
 				this,
 				'health', 0, 2
 			);
 			healthBar.numDivisions = 10000;
-            // if (ClientPrefs.hudStyle == 'CLASSIC') healthBar.scrollFactor.set();
+            // if (ClientPrefs.data.hudStyle == 'CLASSIC') healthBar.scrollFactor.set();
             // healthBar
-            healthBar.visible = !ClientPrefs.hideHud;
-            healthBar.alpha = ClientPrefs.healthBarAlpha;
+            healthBar.visible = !ClientPrefs.data.hideHud;
+            healthBar.alpha = ClientPrefs.data.healthBarAlpha;
             add(healthBar);
-			// if (ClientPrefs.hudStyle == 'CLASSIC') healthBarBG.sprTracker = healthBar;
+			// if (ClientPrefs.data.hudStyle == 'CLASSIC') healthBarBG.sprTracker = healthBar;
 			add(healthBarBG);
 
 			var edwhakVariable:Array<String> = ['Edwhak', 'he', 'edwhakBroken', 'edkbmassacre'];
@@ -309,23 +296,23 @@ class Huds extends FlxGroup
 					iconP1 = new EditedHealthIcon(PlayState.instance != null ? PlayState.instance.boyfriend.healthIcon : (PlayState.SONG != null ? PlayState.SONG.player1 : 'bf'), true); //if it crash for some reazon?
 			}
             iconP1.y = healthBar.y + iconsYOffset[0];
-            iconP1.visible = !ClientPrefs.hideHud;
-            iconP1.alpha = ClientPrefs.healthBarAlpha;
+            iconP1.visible = !ClientPrefs.data.hideHud;
+            iconP1.alpha = ClientPrefs.data.healthBarAlpha;
             add(iconP1);
     
             iconP2 = new EditedHealthIcon(PlayState.instance != null ? PlayState.instance.dad.healthIcon : (PlayState.SONG != null ? PlayState.SONG.player2 : 'dad'), false);
             iconP2.y = healthBar.y + iconsYOffset[1];
-            iconP2.visible = !ClientPrefs.hideHud;
-            iconP2.alpha = ClientPrefs.healthBarAlpha;
+            iconP2.visible = !ClientPrefs.data.hideHud;
+            iconP2.alpha = ClientPrefs.data.healthBarAlpha;
             add(iconP2);
             reloadHealthBarColors();
     
-            scoreTxt = new EditedFlxText(0, healthBarBG.y + (!ClientPrefs.downScroll ? scoreOffset[0] : scoreOffset[1]), FlxG.width, "", 20);
+            scoreTxt = new EditedFlxText(0, healthBarBG.y + (!ClientPrefs.data.downScroll ? scoreOffset[0] : scoreOffset[1]), FlxG.width, "", 20);
 
-            scoreTxt.setFormat(ClientPrefs.hudStyle == 'HITMANS' ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+            scoreTxt.setFormat(ClientPrefs.data.hudStyle == 'HITMANS' ? Paths.font("DEADLY KILLERS.ttf") : Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
             scoreTxt.scrollFactor.set();
             scoreTxt.borderSize = 1.25;
-            scoreTxt.visible = !ClientPrefs.hideHud;
+            scoreTxt.visible = !ClientPrefs.data.hideHud;
             add(scoreTxt);
     
             botplayTxt = new EditedFlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
@@ -335,7 +322,7 @@ class Huds extends FlxGroup
             botplayTxt.borderSize = 1.25;
             botplayTxt.visible = PlayState.instance != null ? PlayState.instance.cpuControlled : false;
             add(botplayTxt);
-            if(ClientPrefs.downScroll) {
+            if(ClientPrefs.data.downScroll) {
                 botplayTxt.y = timeBarBG.y - 78;
             }
 
@@ -462,7 +449,7 @@ class Huds extends FlxGroup
 	public function setTime(time:Float){
 		if (updateTime)
 		{
-			var curTime:Float = Conductor.songPosition - ClientPrefs.noteOffset;
+			var curTime:Float = Conductor.songPosition - ClientPrefs.data.noteOffset;
 			var secondsTotal:Int = Math.floor(curTime / 1000);
 			if (curTime < 0)
 				curTime = 0;
@@ -595,7 +582,7 @@ class Huds extends FlxGroup
 		// 	},
 		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
 		// });
-		// if (ClientPrefs.hudStyle == 'HITMANS'){
+		// if (ClientPrefs.data.hudStyle == 'HITMANS'){
 			ratings.visible = true;
 			noteScore.visible = true;
 		// }
@@ -646,7 +633,7 @@ class Huds extends FlxGroup
 		// 	},
 		// 	startDelay: Conductor.crochet * 0.001 / playbackRate
 		// });
-		// if (ClientPrefs.hudStyle == 'HITMANS'){
+		// if (ClientPrefs.data.hudStyle == 'HITMANS'){
 			ratingsOP.visible = true;
 			noteScoreOp.visible = true;
 		// }
@@ -654,27 +641,27 @@ class Huds extends FlxGroup
 
 	public function setRatingAnimation(rat:Float){
 		if (rat >= 0){
-			if (rat <= ClientPrefs.marvelousWindow){
+			if (rat <= ClientPrefs.data.marvelousWindow){
 				ratings.animation.play("fantastic");
-			} else if (rat <= ClientPrefs.sickWindow){
+			} else if (rat <= ClientPrefs.data.sickWindow){
 				ratings.animation.play("excellent Early");
-			}else if (rat >= ClientPrefs.sickWindow && rat <= ClientPrefs.goodWindow){
+			}else if (rat >= ClientPrefs.data.sickWindow && rat <= ClientPrefs.data.goodWindow){
 				ratings.animation.play("great Early");
-			}else if (rat >= ClientPrefs.goodWindow && rat <= ClientPrefs.badWindow){
+			}else if (rat >= ClientPrefs.data.goodWindow && rat <= ClientPrefs.data.badWindow){
 				ratings.animation.play("decent Early");
-			}else if (rat >= ClientPrefs.badWindow){
+			}else if (rat >= ClientPrefs.data.badWindow){
 				ratings.animation.play("way Off Early");
 			}
 		} else {
-			if (rat >= ClientPrefs.marvelousWindow * -1){
+			if (rat >= ClientPrefs.data.marvelousWindow * -1){
 				ratings.animation.play("fantastic");
-			} else if (rat >= ClientPrefs.sickWindow * -1){
+			} else if (rat >= ClientPrefs.data.sickWindow * -1){
 				ratings.animation.play("excellent Late");
-			}else if (rat <= ClientPrefs.sickWindow * -1 && rat >= ClientPrefs.goodWindow * -1){
+			}else if (rat <= ClientPrefs.data.sickWindow * -1 && rat >= ClientPrefs.data.goodWindow * -1){
 				ratings.animation.play("great Late");
-			}else if (rat <= ClientPrefs.goodWindow * -1 && rat >= ClientPrefs.badWindow * -1){
+			}else if (rat <= ClientPrefs.data.goodWindow * -1 && rat >= ClientPrefs.data.badWindow * -1){
 				ratings.animation.play("decent Late");
-			}else if (rat <= ClientPrefs.badWindow * -1){
+			}else if (rat <= ClientPrefs.data.badWindow * -1){
 				ratings.animation.play("way Off Late");
 			}
 		}
@@ -682,27 +669,27 @@ class Huds extends FlxGroup
 
 	public function setRatingImageOP(rat:Float){
 		if (rat >= 0){
-			if (rat <= ClientPrefs.marvelousWindow){
+			if (rat <= ClientPrefs.data.marvelousWindow){
 				ratingsOP.animation.play("fantastic");
-			} else if (rat <= ClientPrefs.sickWindow){
+			} else if (rat <= ClientPrefs.data.sickWindow){
 				ratingsOP.animation.play("excellent Early");
-			}else if (rat >= ClientPrefs.sickWindow && rat <= ClientPrefs.goodWindow){
+			}else if (rat >= ClientPrefs.data.sickWindow && rat <= ClientPrefs.data.goodWindow){
 				ratingsOP.animation.play("great Early");
-			}else if (rat >= ClientPrefs.goodWindow && rat <= ClientPrefs.badWindow){
+			}else if (rat >= ClientPrefs.data.goodWindow && rat <= ClientPrefs.data.badWindow){
 				ratingsOP.animation.play("decent Early");
-			}else if (rat >= ClientPrefs.badWindow){
+			}else if (rat >= ClientPrefs.data.badWindow){
 				ratingsOP.animation.play("way Off Early");
 			}
 		} else {
-			if (rat >= ClientPrefs.marvelousWindow * -1){
+			if (rat >= ClientPrefs.data.marvelousWindow * -1){
 				ratingsOP.animation.play("fantastic");
-			} else if (rat >= ClientPrefs.sickWindow * -1){
+			} else if (rat >= ClientPrefs.data.sickWindow * -1){
 				ratingsOP.animation.play("excellent Late");
-			}else if (rat <= ClientPrefs.sickWindow * -1 && rat >= ClientPrefs.goodWindow * -1){
+			}else if (rat <= ClientPrefs.data.sickWindow * -1 && rat >= ClientPrefs.data.goodWindow * -1){
 				ratingsOP.animation.play("great Late");
-			}else if (rat <= ClientPrefs.goodWindow * -1 && rat >= ClientPrefs.badWindow * -1){
+			}else if (rat <= ClientPrefs.data.goodWindow * -1 && rat >= ClientPrefs.data.badWindow * -1){
 				ratingsOP.animation.play("decent Late");
-			}else if (rat <= ClientPrefs.badWindow * -1){
+			}else if (rat <= ClientPrefs.data.badWindow * -1){
 				ratingsOP.animation.play("way Off Late");
 			}
 		}

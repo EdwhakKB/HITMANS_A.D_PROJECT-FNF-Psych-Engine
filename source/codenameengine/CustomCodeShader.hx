@@ -1,7 +1,6 @@
 package codenameengine;
 
 import haxe.Exception;
-import openfl.Assets;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
@@ -25,10 +24,10 @@ class CustomCodeShader extends FunkinShader {
 	 * @param glslVersion GLSL version to use. Defaults to `120`.
 	 */
 	public function new(name:String, glslVersion:String = "120") {
-		var fragShaderPath = #if MODS_ALLOWED Paths.modsShaderFragment(name) #else Paths.shaderFragment(name) #end;
-		var vertShaderPath = #if MODS_ALLOWED Paths.modsShaderVertex(name) #else Paths.shaderVertex(name) #end;
-		var fragCode = #if MODS_ALLOWED FileSystem.exists(fragShaderPath) ? File.getContent(fragShaderPath) : null #else Assets.exists(fragShaderPath) ? Assets.getText(fragShaderPath) : null #end;
-		var vertCode = #if MODS_ALLOWED FileSystem.exists(vertShaderPath) ? File.getContent(vertShaderPath) : null #else Assets.exists(vertShaderPath) ? Assets.getText(vertShaderPath) : null #end;
+		var fragShaderPath = Paths.getFilePath('$name.frag');
+		var vertShaderPath = Paths.getFilePath('$name.vert');
+		var fragCode = Paths.getTextFromFile(fragShaderPath);
+		var vertCode = Paths.getTextFromFile(vertShaderPath);
 
 		path = fragShaderPath+vertShaderPath;
 

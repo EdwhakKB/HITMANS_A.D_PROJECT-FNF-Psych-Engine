@@ -350,7 +350,6 @@ class Script extends FlxBasic implements IFlxDestroyable {
 		set('SustainStrip', modcharting.SustainStrip);
 
 		//Why?
-		set('BeatXModifier', modcharting.Modifier.BeatXModifier);
 		if (PlayState.instance != null && PlayState.SONG != null && PlayState.SONG.notITG && PlayState.instance.notITGMod)
 			modcharting.ModchartFuncs.loadHScriptFunctions(this);
 		else if (EditorPlayState.instance != null && PlayState.SONG != null && PlayState.SONG.notITG)

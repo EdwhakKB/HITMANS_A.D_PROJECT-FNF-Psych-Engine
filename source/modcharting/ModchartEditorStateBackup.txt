@@ -1238,7 +1238,7 @@ class ModchartEditorState extends MusicBeatState
                                                                     else if (PlayState.forceMiddleScroll && !PlayState.forceRightScroll) PlayState.STRUM_X_MIDDLESCROLL 
                                                                     else ClientPrefs.middleScroll ? PlayState.STRUM_X_MIDDLESCROLL : PlayState.STRUM_X)
                 , strumLine.y, i, player);
-            babyArrow.downScroll = ClientPrefs.downScroll;
+            babyArrow.downScroll = ClientPrefs.data.downScroll;
             babyArrow.alpha = targetAlpha;
 
             var middleScroll:Bool = false;

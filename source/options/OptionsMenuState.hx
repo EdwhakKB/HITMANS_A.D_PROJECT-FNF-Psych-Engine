@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
-import MusicBeatState;
+import states.MusicBeatState;
 
 class OptionsMenuState extends MusicBeatState
 {

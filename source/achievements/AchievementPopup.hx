@@ -3,7 +3,7 @@ package achievements;
 #if ACHIEVEMENTS_ALLOWED
 import openfl.events.Event;
 import openfl.geom.Matrix;
-import flash.display.BitmapData;
+import openfl.display.BitmapData;
 import openfl.Lib;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -23,7 +23,7 @@ class AchievementPopup extends openfl.display.Sprite {
 
 		// achievement icon
 		var graphic = null;
-		var hasAntialias:Bool = ClientPrefs.globalAntialiasing;
+		var hasAntialias:Bool = ClientPrefs.data.antialiasing;
 		var image:String = 'achievements/$achieve';
 
 		var achievement:Achievement = null;

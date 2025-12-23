@@ -1,6 +1,5 @@
 package textbox;
 
-import flixel.util.FlxColor;
 import flixel.system.FlxAssets;
 
 @:structInit
@@ -9,7 +8,7 @@ class Settings
     public var font:String;
     public var fontSize:Int;
     public var textFieldWidth:Float;
-    public var color: FlxColor;
+    public var color:FlxColor;
     public var numLines:Int;
     public var charactersPerSecond:Float;
     /**

@@ -1,24 +1,8 @@
 package huds;
 
-import flixel.group.FlxGroup;
-import flixel.FlxBasic;
-import flixel.FlxCamera;
-import flixel.FlxG;
-import flixel.FlxObject;
-import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
-import flixel.util.FlxColor;
 import flixel.util.FlxSort;
-import flixel.util.FlxTimer;
 import flixel.util.FlxStringUtil;
-
-using StringTools;
 
 /**
  *	usually this class would be way more simple when it comes to objects
@@ -54,17 +38,17 @@ class DiedHud extends FlxGroup
 
 		diedTo = noteWhoKilled; //so i make sure that the noteWhoKilled is set in the function ig?
 
-        CoolUtil.precacheImage("overlays/ctr","image");
-		if (ClientPrefs.downScroll)
+        CoolUtil.precacheImage("overlays/ctr");
+		if (ClientPrefs.data.downScroll)
 			{
-				CoolUtil.precacheImage("overlays/white_scanline-ds","image");
+				CoolUtil.precacheImage("overlays/white_scanline-ds");
 			}
-			else if (!ClientPrefs.downScroll)
+			else if (!ClientPrefs.data.downScroll)
 			{
-				CoolUtil.precacheImage("overlays/white_scanline","image");
+				CoolUtil.precacheImage("overlays/white_scanline");
 			}
-		CoolUtil.precacheImage("overlays/cam_fuck","image");
-		CoolUtil.precacheImage("static/static","image");
+		CoolUtil.precacheImage("overlays/cam_fuck");
+		CoolUtil.precacheImage("static/static");
 		crtFilter = new FlxSprite().loadGraphic(Paths.image('overlays/crt'));
 		crtFilter.scrollFactor.set();
 		crtFilter.antialiasing = true;
@@ -72,11 +56,11 @@ class DiedHud extends FlxGroup
         crtFilter.alpha = 0.2;
 
 		whiteAnimeshoun = new FlxSprite();
-		if (ClientPrefs.downScroll)
+		if (ClientPrefs.data.downScroll)
 		{
 			whiteAnimeshoun.frames = Paths.getSparrowAtlas('overlays/white_scanline-ds');
 		}
-		else if (!ClientPrefs.downScroll)
+		else if (!ClientPrefs.data.downScroll)
 		{
 			whiteAnimeshoun.frames = Paths.getSparrowAtlas('overlays/white_scanline');
 		}

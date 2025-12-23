@@ -10,11 +10,7 @@ import editors.EditorLua;
 
 #if SScript
 import tea.SScript;
-#end
 
-using StringTools;
-
-#if SScript
 class SSHScriptEditor extends SScript
 {	
 	#if LUA_ALLOWED
@@ -79,7 +75,7 @@ class SSHScriptEditor extends SScript
 		set('PlayState', PlayState);
 		set('Paths', Paths);
 		set('Conductor', Conductor);
-		set('ClientPrefs', ClientPrefs);
+		set('ClientPrefs.data', ClientPrefs.data);
 		#if ACHIEVEMENTS_ALLOWED
 		set('Achievements', achievements.Achievements);
 		#end

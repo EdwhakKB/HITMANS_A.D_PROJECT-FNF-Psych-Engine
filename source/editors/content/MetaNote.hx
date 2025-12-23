@@ -1,7 +1,6 @@
 package editors.content;
 
-import Note;
-import RGBPalette;
+import objects.Note;
 import flixel.util.FlxDestroyUtil;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;

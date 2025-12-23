@@ -1,7 +1,7 @@
 package _hscript;
 
 class Config {
-     // Runs support for custom classes in these
+  // Runs support for custom classes in these
   public static final ALLOWED_CUSTOM_CLASSES = ["flixel"];
 
   // Runs support for abstract support in these
