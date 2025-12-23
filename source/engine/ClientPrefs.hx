@@ -134,10 +134,10 @@ class ClientPrefs {
 
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
-		'note_left'		=> [A, LEFT],
-		'note_down'		=> [S, DOWN],
-		'note_up'		=> [W, UP],
-		'note_right'	=> [D, RIGHT],
+		'note_left'		=> [D, LEFT],
+		'note_down'		=> [F, DOWN],
+		'note_up'		=> [J, UP],
+		'note_right'	=> [K, RIGHT],
 
 		'ui_left'		=> [A, LEFT],
 		'ui_down'		=> [S, DOWN],
@@ -175,8 +175,8 @@ class ClientPrefs {
 	];
 	public static var defaultKeys:Map<String, Array<FlxKey>> = null;
 	public static var defaultButtons:Map<String, Array<FlxGamepadInputID>> = null;
-	public static var developerMode:Bool = false; // so they can have access to a lot of stuff (such as chart editor, modchart editor, blocked stuff and etc)
-	public static var edwhakMode:Bool = false; //so i have way more stuff than devs lol (includes god mode, autoComplete and others that i'll don't say im not dumb LOL)
+	public static var developerMode:Bool = true; // so they can have access to a lot of stuff (such as chart editor, modchart editor, blocked stuff and etc)
+	public static var edwhakMode:Bool = true; //so i have way more stuff than devs lol (includes god mode, autoComplete and others that i'll don't say im not dumb LOL)
 
 	public static function resetKeys(controller:Null<Bool> = null) //Null = both, False = Keyboard, True = Controller
 	{

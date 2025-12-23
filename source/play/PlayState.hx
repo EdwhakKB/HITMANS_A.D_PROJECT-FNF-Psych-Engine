@@ -33,8 +33,8 @@ import states.menus.ResultScreen;
 
 #if !flash 
 import flixel.addons.display.FlxRuntimeShader;
-import modcharting.ModchartShaders.ShaderEffectNew as ShaderEffect;
-import shaders.Shaders;
+// import modcharting.ModchartShaders.ShaderEffectNew as ShaderEffect;
+import shaders.Shaders.ShaderEffectNew as ShaderEffect;
 import shaders.FNFShader;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
@@ -478,12 +478,7 @@ class PlayState extends MusicBeatState
 		PauseSubState.songName = null; //Reset to default
 		playbackRate = ClientPrefs.getGameplaySetting('songspeed', 1);
 
-		keysArray = [
-			'note_left',
-			'note_down',
-			'note_up',
-			'note_right'
-		];
+		keysArray = ['note_left', 'note_down', 'note_up', 'note_right'];
 
 		//Ratings
 		ratingsData.push(new Rating('marvelous')); //default rating
@@ -997,9 +992,6 @@ class PlayState extends MusicBeatState
 			FlxG.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
 
-		if (notITGMod && SONG.notITG)
-			ModchartFuncs.loadLuaFunctions();
-
 		if (boyfriend.LNoteColors != null && boyfriend.DNoteColors != null && boyfriend.UNoteColors != null && boyfriend.RNoteColors != null)
 		{
 			trace('this is not null bruh');
@@ -1100,6 +1092,10 @@ class PlayState extends MusicBeatState
 		}
 
 		CustomFadeTransition.nextCamera = camOther;
+
+		if (notITGMod && SONG.notITG)
+			ModchartFuncs.loadLuaFunctions();
+
 
 		passedCheckPoint = new FlxText(0, 0, 0, "Player's current checkpoint spot is 0.", 20);
 		passedCheckPoint.size = 40;
@@ -2682,20 +2678,20 @@ class PlayState extends MusicBeatState
 
 		if (!endingSong && !inCutscene)
 		{
-			if (FlxG.keys.anyJustPressed(debugKeysModchart)){
+			if (controls.justPressed('debug_3')){
 				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
 					antiCheat();
 				}else{
 					openModchartEditor();
 				}
-			}else if (FlxG.keys.anyJustPressed(debugKeysChart))
+			}else if (controls.justPressed('debug_1'))
 			{
 				if (hitmansSongs.contains(SONG.song.toLowerCase()) && !ClientPrefs.edwhakMode && !ClientPrefs.developerMode){
 					antiCheat();
 				}else{
 					openChartEditor();
 				}
-			}else if (FlxG.keys.anyJustPressed(debugKeysCharacter)) {
+			}else if (controls.justPressed('debug_2')) {
 				persistentUpdate = false;
 				paused = true;
 				cancelMusicFadeTween();
