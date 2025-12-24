@@ -70,7 +70,7 @@ class ModchartFile
 		this.renderer = renderer;
 		renderer.modchart = this;
 		// if (!ClientPrefs.getGameplaySetting('chaosmode')){
-		loadPlayfields();
+		// loadPlayfields();
 		loadProxiefields();
 		loadModifiers();
 		loadEvents();
@@ -82,7 +82,8 @@ class ModchartFile
 		var rawJson = null;
 		var folderShit:String = "";
 
-		var files = ['data/$folder/modchart-$difficulty.json', 'data/$folder/modchart.json'];
+		final files:Array<String> = ['data/$folder/modchart.json'];
+		if (difficulty != null) files.insert(0, 'data/$folder/modchart-$difficulty.json');
 
 		// find modchart file
 		for (f in files)
@@ -91,15 +92,15 @@ class ModchartFile
 
 			if (fileContent != null)
 			{
+				trace('found file: $f');
 				rawJson = fileContent;
 				break;
-
-				trace('found file: $f');
 			}
 			trace('tried with: $f');
 		}
 
 		folderShit = Paths.getPath('data/$folder/customMods/');
+		trace(folderShit);
 
 		var json:ModchartJson = null;
 		if (rawJson != null)
@@ -314,11 +315,8 @@ class CustomModifierScript
 		interp.variables.set('Conductor', engine.Conductor);
 		interp.variables.set('StringTools', StringTools);
 		interp.variables.set('Note', objects.Note);
-
-		#if PSYCH
 		interp.variables.set('ClientPrefs', engine.ClientPrefs);
 		interp.variables.set('ColorSwap', shaders.ColorSwap);
-		#end
 	}
 
 	public function call(event:String, args:Array<Dynamic>)

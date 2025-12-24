@@ -25,7 +25,6 @@ import flixel.addons.display.FlxRuntimeShader;
 import Type.ValueType;
 import play.Controls;
 import cutscene.DialogueBoxPsych;
-import modcharting.ModchartShaders.ShaderEffectNew as ShaderEffect;
 import shaders.Shaders;
 import openfl.filters.ShaderFilter;
 import openfl.filters.BitmapFilter;
@@ -75,7 +74,7 @@ class FunkinLua {
 	public var playbackRate:Float = ClientPrefs.getGameplaySetting('songspeed', 1); //so i can make this auto instead of do it every lua ig?
 
 	public static var lua_Cameras:Map<String, LuaCamera> = [];
-	public static var lua_Shaders:Map<String, ModchartShaders.ShaderEffectNew> = [];
+	public static var lua_Shaders:Map<String, Shaders.ShaderEffectNew> = [];
 	public static var lua_Custom_Shaders:Map<String, codenameengine.CustomCodeShader> = [];
 
 	public function new(script:String) {
@@ -283,7 +282,7 @@ class FunkinLua {
 			if(!ClientPrefs.data.shaders) return false;
 
 			#if (!flash && MODS_ALLOWED && sys)
-			if(!PlayState.instance.runtimeShaders.exists(shader) && !initLuaShader(shader))
+			if(!PlayState.instance.shaderValues.exists(shader) && !initLuaShader(shader))
 			{
 				luaTrace('setSpriteShader: Shader $shader is missing!', false, false, FlxColor.RED);
 				return false;
@@ -296,8 +295,9 @@ class FunkinLua {
 			}
 
 			if(leObj != null) {
-				var arr:Array<String> = PlayState.instance.runtimeShaders.get(shader);
-				leObj.shader = new FlxRuntimeShader(arr[0], arr[1]);
+				var arr:Array<String> = PlayState.instance.shaderValues.get(shader);
+				PlayState.instance.runtimeShaders.set(shader, new FlxRuntimeShader(arr[0], arr[1]));
+				leObj.shader = PlayState.instance.runtimeShaders.get(shader);
 				return true;
 			}
 			#else
@@ -495,7 +495,7 @@ class FunkinLua {
         //     if (!ClientPrefs.data.shaders)
         //         return;
         //     var cam = getCameraByName(camStr);
-        //     var shad = PlayState.instance.runtimeShaders.exists(shaderName);
+        //     var shad = PlayState.instance.shaderValues.exists(shaderName);
 
         //     if(cam != null && shad != null)
         //     {
@@ -508,10 +508,10 @@ class FunkinLua {
 
 		Lua_helper.add_callback(lua, "tweenLuaShader", function(tag:String, usedShader:String, prop:String, val:Float , time:Float, easeStr:String = "linear") {
 			#if (!flash && MODS_ALLOWED && sys)
-			var exist:Dynamic = PlayState.instance.runtimeShaders.exists(usedShader);
+			var exist:Dynamic = PlayState.instance.shaderValues.exists(usedShader);
 			var easing = getFlxEaseByString(easeStr);
 			if (exist != null){
-				var shader = PlayState.instance.runtimeShaders.get(usedShader);
+				var shader = PlayState.instance.shaderValues.get(usedShader);
 				var name = prop;
     			var sertProperty = 'shader.${name}.value';
     			var serted = 'shader.${name}';
@@ -521,7 +521,7 @@ class FunkinLua {
            			ease: easing,
             		onComplete: function(test:FlxTween){
 						// Std.parseFloat('shader.${name}.value[0]') = val;
-            			PlayState.instance.runtimeShaders.remove(tag);
+            			PlayState.instance.shaderValues.remove(tag);
             			PlayState.instance.callOnLuas("onTweenCompleted", [tag, name]);
         			}
     			}));
@@ -3436,10 +3436,13 @@ class FunkinLua {
             if (!ClientPrefs.data.shaders && !hardCoded) //now it should get some shaders hardcoded if i need
                 return;
 
-            var shaderClass = Type.resolveClass(classString);
+			trace('shaders.' + classString);
+            var shaderClass = Type.resolveClass('shaders.' + classString);
+			trace(shaderClass);
             if (shaderClass != null)
             {
-                var shad = Type.createInstance(shaderClass, []);
+                var shad:ShaderEffectNew = Type.createInstance(shaderClass, []);
+				trace(shad);
                 lua_Shaders.set(name, shad);
                 trace('created shader: '+name);
             }
@@ -3615,7 +3618,7 @@ class FunkinLua {
 
 		//SHADER PROPERTY FROM LUA BRUH
 		Lua_helper.add_callback(lua, "getLuaShaderProperty", function(shaderName:String, prop:String) {
-            var shad = PlayState.instance.runtimeShaders.get(shaderName);
+            var shad = PlayState.instance.shaderValues.get(shaderName);
 
             if(shad != null)
             {
@@ -3627,7 +3630,7 @@ class FunkinLua {
         });
 
 		Lua_helper.add_callback(lua, "setLuaShaderProperty", function(shaderName:String, prop:String, value:Dynamic) {
-            var shad = PlayState.instance.runtimeShaders.get(shaderName);
+            var shad = PlayState.instance.shaderValues.get(shaderName);
 
             if(shad != null)
             {
@@ -3980,7 +3983,7 @@ class FunkinLua {
 		if(!ClientPrefs.data.shaders) return false;
 
 		#if (!flash && sys)
-		if(PlayState.instance.runtimeShaders.exists(name))
+		if (PlayState.instance.shaderValues.exists(name))
 		{
 			luaTrace('Shader $name was already initialized!');
 			return true;
@@ -4017,7 +4020,7 @@ class FunkinLua {
 
 				if(found)
 				{
-					PlayState.instance.runtimeShaders.set(name, [frag, vert]);
+					PlayState.instance.shaderValues.set(name, [frag, vert]);
 					//trace('Found shader $name!');
 					return true;
 				}

@@ -76,7 +76,7 @@ class EditorLua {
 	public var playbackRate:Float = ClientPrefs.getGameplaySetting('songspeed', 1); //so i can make this auto instead of do it every lua ig?
 
 	public static var lua_Cameras:Map<String, LuaCamera> = [];
-	public static var lua_Shaders:Map<String, ModchartShaders.ShaderEffectNew> = [];
+	public static var lua_Shaders:Map<String, Shaders.ShaderEffectNew> = [];
 	public static var lua_Custom_Shaders:Map<String, codenameengine.CustomCodeShader> = [];
 
 	public function new(script:String) {
@@ -284,7 +284,7 @@ class EditorLua {
 			if(!ClientPrefs.data.shaders) return false;
 
 			#if (!flash && MODS_ALLOWED && sys)
-			if(!EditorPlayState.instance.runtimeShaders.exists(shader) && !initLuaShader(shader))
+			if(!EditorPlayState.instance.shaderValues.exists(shader) && !initLuaShader(shader))
 			{
 				luaTrace('setSpriteShader: Shader $shader is missing!', false, false, FlxColor.RED);
 				return false;
@@ -297,7 +297,7 @@ class EditorLua {
 			}
 
 			if(leObj != null) {
-				var arr:Array<String> = EditorPlayState.instance.runtimeShaders.get(shader);
+				var arr:Array<String> = EditorPlayState.instance.shaderValues.get(shader);
 				leObj.shader = new FlxRuntimeShader(arr[0], arr[1]);
 				return true;
 			}
@@ -496,7 +496,7 @@ class EditorLua {
         //     if (!ClientPrefs.data.shaders)
         //         return;
         //     var cam = getCameraByName(camStr);
-        //     var shad = EditorPlayState.instance.runtimeShaders.exists(shaderName);
+        //     var shad = EditorPlayState.instance.shaderValues.exists(shaderName);
 
         //     if(cam != null && shad != null)
         //     {
@@ -514,18 +514,13 @@ class EditorLua {
 			if (exist != null){
 				var shader = EditorPlayState.instance.runtimeShaders.get(usedShader);
 				var name = prop;
-    			var sertProperty = 'shader.${name}.value';
-    			var serted = 'shader.${name}';
-        		if (Type.typeof(serted) == null) return;
-        		if (Type.typeof(sertProperty) == null) Type.typeof('shader.${name}.value = [0];');
-        		EditorPlayState.instance.modchartTweens.set(tag, FlxTween.num(Std.parseFloat('shader.${name}.value[0]'), val, time, {
+        		EditorPlayState.instance.modchartTweens.set(tag, FlxTween.num(shader.getFloat(name), val, time, {
            			ease: easing,
             		onComplete: function(test:FlxTween){
-						// Std.parseFloat('shader.${name}.value[0]') = val;
-            			EditorPlayState.instance.runtimeShaders.remove(tag);
+						shader.setFloat(name, val);
             			EditorPlayState.instance.callOnLuas("onTweenCompleted", [tag, name]);
         			}
-    			}));
+    			}, function(v:Float) shader.setFloat(name, v)));
 			}else{
 				luaTrace('tweenShaders: Couldnt find shader: ' + usedShader, false, false, FlxColor.RED);
 			}
@@ -3423,7 +3418,7 @@ class EditorLua {
             var shaderClass = Type.resolveClass(classString);
             if (shaderClass != null)
             {
-                var shad = Type.createInstance(shaderClass, []);
+                var shad:ShaderEffectNew = Type.createInstance(shaderClass, []);
                 lua_Shaders.set(name, shad);
                 trace('created shader: '+name);
             }
@@ -3599,7 +3594,7 @@ class EditorLua {
 
 		//SHADER PROPERTY FROM LUA BRUH
 		Lua_helper.add_callback(lua, "getLuaShaderProperty", function(shaderName:String, prop:String) {
-            var shad = EditorPlayState.instance.runtimeShaders.get(shaderName);
+            var shad = EditorPlayState.instance.shaderValues.get(shaderName);
 
             if(shad != null)
             {
@@ -3611,7 +3606,7 @@ class EditorLua {
         });
 
 		Lua_helper.add_callback(lua, "setLuaShaderProperty", function(shaderName:String, prop:String, value:Dynamic) {
-            var shad = EditorPlayState.instance.runtimeShaders.get(shaderName);
+            var shad = EditorPlayState.instance.shaderValues.get(shaderName);
 
             if(shad != null)
             {
@@ -3964,7 +3959,7 @@ class EditorLua {
 		if(!ClientPrefs.data.shaders) return false;
 
 		#if (!flash && sys)
-		if(EditorPlayState.instance.runtimeShaders.exists(name))
+		if(EditorPlayState.instance.shaderValues.exists(name))
 		{
 			luaTrace('Shader $name was already initialized!');
 			return true;
@@ -4001,7 +3996,7 @@ class EditorLua {
 
 				if(found)
 				{
-					EditorPlayState.instance.runtimeShaders.set(name, [frag, vert]);
+					EditorPlayState.instance.shaderValues.set(name, [frag, vert]);
 					//trace('Found shader $name!');
 					return true;
 				}

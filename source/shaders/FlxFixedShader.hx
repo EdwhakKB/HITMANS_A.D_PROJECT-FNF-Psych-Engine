@@ -13,7 +13,9 @@ using StringTools;
 @:access(openfl.display.ShaderParameter)
 class FlxFixedShader extends FlxShader {
     public var custom:Bool = false;
-    public override function new() {
+	public var glslVersion:String = "120";
+    public override function new(glslVersion:String = "120") {
+		this.glslVersion = glslVersion;
         super();
     }
     @:noCompletion private override function __initGL():Void
@@ -35,7 +37,7 @@ class FlxFixedShader extends FlxShader {
 
         if (__context != null && program == null)
         {
-            var prefix = "#version 120\n";
+            var prefix = '#version ${glslVersion}\n';
 
             var gl = __context.gl;
 

@@ -6,8 +6,6 @@ class Strumline
 {
     public var strums:FlxTypedGroup<objects.StrumNote>;
 	public var notes:FlxTypedGroup<objects.Note>;
-	public var splashes:FlxTypedGroup<objects.NoteSplash>;
-	public var holdSplashes:FlxTypedGroup<objects.SustainSplash>;
     public var unspawnNotes:Array<Note>;
 	public var loadedNotes:Array<Note>;
 	public var cpuControlled:Bool = false;
@@ -24,14 +22,8 @@ class Strumline
 		this.field = field;
 		strums = new FlxTypedGroup<objects.StrumNote>();
 		notes = new FlxTypedGroup<objects.Note>();
-		splashes = new FlxTypedGroup<objects.NoteSplash>();
-		holdSplashes = new FlxTypedGroup<objects.SustainSplash>();
 		unspawnNotes = [];
 		loadedNotes = [];
-
-		final splash:NoteSplash = new NoteSplash();
-		splashes.add(splash);
-		splash.alpha = 0.000001; // cant make it invisible or it won't allow precaching
 	}
 
 	public function clearNotesBefore(time:Float, ?completeClear:Bool = false)

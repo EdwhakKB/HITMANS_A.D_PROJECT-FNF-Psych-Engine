@@ -24,11 +24,15 @@ class OptionCata extends FlxSprite
 
 	public var fixedY:Bool = false;
 
+	public static var sizeWindow:Float = 230;
+
 	public function new(x:Float, y:Float, _title:String, _options:Array<SystemOptions>, middleType:Bool = false)
 	{
 		super(x, y);
 		title = _title;
 		middle = middleType;
+
+		_options = _options.filter(option -> return option.existInPause);
 
 		graphics = [];
 
@@ -114,6 +118,7 @@ class OptionCata extends FlxSprite
 
 class OptionText extends CoolText
 {
+	public var offsetY:Float = 0;
 	public var targetY:Float = 0;
 
 	public var rawY:Float = 0;
@@ -126,8 +131,8 @@ class OptionText extends CoolText
 
 		var optLerp = CoolUtil.boundTo(elapsed * 15, 0, 1);
 
-		rawY = (targetY * 45.75) + 405;
-		y = FlxMath.lerp(y, rawY, optLerp);
+		rawY = (targetY * 45.75) + OptionCata.sizeWindow;
+		y = FlxMath.lerp(y, rawY, optLerp) + offsetY;
 
 		lerpFinished = y == rawY;
 	}
@@ -136,6 +141,7 @@ class OptionText extends CoolText
 class OptionsMenu extends MusicBeatSubstate
 {
 	private var camOptions:FlxCamera;
+	private var camMenu:FlxCamera;
 
 	public static var instance:OptionsMenu = null;
 
@@ -169,18 +175,23 @@ class OptionsMenu extends MusicBeatSubstate
 
 	public static var changedAntialising:Bool = false;
 
+	var camFollow:FlxPoint = FlxPoint.get(0, 0);
+
 	public function new(pauseMenu:Bool = false)
 	{
 		Paths.setCurrentLevel('shared'); //LMAO LMAO
 		
 		super();
 
+		camMenu = new FlxCamera();
+		camMenu.bgColor.alpha = 0;
 		camOptions = new FlxCamera();
 		camOptions.bgColor.alpha = 0;
 
+		FlxG.cameras.add(camMenu, false);
 		FlxG.cameras.add(camOptions, false);
 
-		camOptions.setScale(0.75, 0.75);
+		camMenu.setScale(0.75, 0.75);
 
 		isInPause = pauseMenu;
 		
@@ -306,7 +317,8 @@ class OptionsMenu extends MusicBeatSubstate
 
 		openCallback = refresh;
 
-		cameras = [camOptions];
+		cameras = [camMenu];
+		camOptions.y = 200;
 	}
 
 	public var menu:FlxTypedGroup<FlxSprite>;
@@ -434,7 +446,7 @@ class OptionsMenu extends MusicBeatSubstate
 			selectOption(selectedOption);
 
 		for (opt in selectedCat.optionObjects.members)
-			opt.targetY = opt.ID - 5;
+			opt.targetY = opt.ID;
 
 		for (i in selectedCat.optionObjects)
 			shownStuff.add(i);
@@ -470,7 +482,24 @@ class OptionsMenu extends MusicBeatSubstate
 		trace("Bounds: " + visibleRange[0] + "," + visibleRange[1]);
 	}
 
+	public function changeOptionSelection(change:Int = 0) {
+		if (selectedOption.acceptType)
+			selectedOption.waitingType = false;
+		FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
+		selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
+		selectedOptionIndex = FlxMath.wrap(selectedOptionIndex + change, 0, options[selectedCatIndex].options.length - 1);
+
+		var bullShit:Int = 0;
+		for (option in selectedCat.optionObjects.members) {
+			option.targetY = bullShit - selectedOptionIndex;
+			bullShit++;
+		}
+
+		selectOption(options[selectedCatIndex].options[selectedOptionIndex]);
+	}
+
 	var exiting:Bool = false;
+	var curView:Float = 0;
 
 	override function update(elapsed:Float)
 	{
@@ -686,68 +715,9 @@ class OptionsMenu extends MusicBeatSubstate
 			}
 			#end
 
-			var bullShit:Int = 0;
+			if (down || up)
+				changeOptionSelection(down ? 1 : -1);
 
-			for (option in selectedCat.optionObjects.members)
-			{
-				if (selectedOptionIndex > 4)
-				{
-					option.targetY = bullShit - selectedOptionIndex;
-					bullShit++;
-				}
-			}
-
-			if (down)
-			{
-				if (selectedOption.acceptType)
-					selectedOption.waitingType = false;
-				FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
-				selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
-				selectedOptionIndex++;
-
-				if (selectedOptionIndex < 0)
-				{
-					trace('UHH');
-					selectedOptionIndex = options[selectedCatIndex].options.length - 1;
-				}
-				if (selectedOptionIndex > options[selectedCatIndex].options.length - 1)
-				{
-					if (options[selectedCatIndex].options.length >= 6)
-					{
-						for (option in selectedCat.optionObjects.members)
-						{
-							var leY = option.targetY;
-							option.targetY = leY + (selectedOptionIndex - 6);
-						}
-					}
-					selectedOptionIndex = 0;
-					trace('returning');
-				}
-
-				selectOption(options[selectedCatIndex].options[selectedOptionIndex]);
-			}
-			else if (up)
-			{
-				if (selectedOption.acceptType)
-					selectedOption.waitingType = false;
-				FlxG.sound.play(Paths.sound('scrollMenu'),0.5);
-				selectedCat.optionObjects.members[selectedOptionIndex].text = selectedOption.getValue();
-				selectedOptionIndex--;
-
-				if (selectedOptionIndex < 0)
-				{
-					trace('UHH');
-					selectedOptionIndex = options[selectedCatIndex].options.length - 1;
-				}
-				if (selectedOptionIndex > options[selectedCatIndex].options.length - 1)
-				{
-					selectedOptionIndex = 0;
-
-					trace('returning');
-				}
-
-				selectOption(options[selectedCatIndex].options[selectedOptionIndex]);
-			}
 			if (!selectedOption.acceptType)
 			{
 				if (right)
@@ -790,25 +760,15 @@ class OptionsMenu extends MusicBeatSubstate
 				}
 				else
 				{
-					if (selectedCat.optionObjects != null)
-						for (i in selectedCat.optionObjects.members)
-						{
-							if (i != null)
-							{
-								if (selectedOptionIndex > 4)
-								{
-									i.targetY += (selectedOptionIndex - 5);
-									i.y = i.rawY;
-								}
-							}
-						}
+					for (opt in selectedCat.optionObjects.members)
+						opt.targetY = opt.ID;
 
-					for (object in selectedCat.optionObjects.members)
+					for (index => object in selectedCat.optionObjects.members)
 					{
 						object.text = selectedCat.options[selectedCat.optionObjects.members.indexOf(object)].getValue();
 						object.updateHitbox();
 					}
-					selectedOptionIndex = 0;
+					changeOptionSelection(-selectedOptionIndex); // Revert back the options
 
 					isInCat = true;
 				}

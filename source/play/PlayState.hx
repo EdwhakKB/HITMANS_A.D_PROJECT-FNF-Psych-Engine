@@ -1034,6 +1034,10 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		
+		// if (notITGMod && SONG.notITG)
+		// 	ModchartFuncs.loadLuaFunctions();
+
 		callOnScripts('onCreatePost');
 		callOnScripts('onModchart');
 
@@ -1092,10 +1096,6 @@ class PlayState extends MusicBeatState
 		}
 
 		CustomFadeTransition.nextCamera = camOther;
-
-		if (notITGMod && SONG.notITG)
-			ModchartFuncs.loadLuaFunctions();
-
 
 		passedCheckPoint = new FlxText(0, 0, 0, "Player's current checkpoint spot is 0.", 20);
 		passedCheckPoint.size = 40;
@@ -1166,20 +1166,25 @@ class PlayState extends MusicBeatState
 	}
 
 	#if (!flash && sys)
-	public var runtimeShaders:Map<String, Array<String>> = new Map<String, Array<String>>();
+	public var shaderValues:Map<String, Array<String>> = new Map<String, Array<String>>();
+	public var runtimeShaders:Map<String, FlxRuntimeShader> = new Map<String, FlxRuntimeShader>();
 	public function createRuntimeShader(name:String):FlxRuntimeShader
 	{
 		if(!ClientPrefs.data.shaders) return new FlxRuntimeShader();
 
 		#if (!flash && MODS_ALLOWED && sys)
-		if(!runtimeShaders.exists(name) && !initLuaShader(name))
+		if (runtimeShaders.exists(name))
+			return runtimeShaders.get(name);
+
+		if(!shaderValues.exists(name) && !initLuaShader(name))
 		{
 			FlxG.log.warn('Shader $name is missing!');
 			return new FlxRuntimeShader();
 		}
 
-		var arr:Array<String> = runtimeShaders.get(name);
-		return new FlxRuntimeShader(arr[0], arr[1]);
+		final arr:Array<String> = shaderValues.get(name);
+		runtimeShaders.set(name, new FlxRuntimeShader(arr[0], arr[1]));
+		return runtimeShaders.get(name);
 		#else
 		FlxG.log.warn("Platform unsupported for Runtime Shaders!");
 		return null;
@@ -1190,7 +1195,7 @@ class PlayState extends MusicBeatState
 	{
 		if(!ClientPrefs.data.shaders) return false;
 
-		if(runtimeShaders.exists(name))
+		if(shaderValues.exists(name))
 		{
 			FlxG.log.warn('Shader $name was already initialized!');
 			return true;
@@ -1219,7 +1224,7 @@ class PlayState extends MusicBeatState
 
 				if(found)
 				{
-					runtimeShaders.set(name, [frag, vert]);
+					shaderValues.set(name, [frag, vert]);
 					//trace('Found shader $name!');
 					return true;
 				}
@@ -2575,8 +2580,6 @@ class PlayState extends MusicBeatState
 			iconP1.swapOldIcon();
 		}*/
 		callOnScripts('onUpdate', [elapsed]);
-		if (notITGMod && SONG.notITG)
-			playfieldRenderer.speed = playbackRate; //LMAO IT LOOKS SOO GOOFY AS FUCK
 		
 		
 		if (aftBitmap != null) aftBitmap.update(elapsed); //if it fail this don't load
@@ -4519,15 +4522,17 @@ class PlayState extends MusicBeatState
 	{
 		if (ClientPrefs.data.holdSplashAlpha <= 0 || note.tail.length <= 1) return;
 		strum.playHoldSplash(note, playbackRate);
+		if (strum.holdSplash == null) return;
 		strum.holdSplash.cameras = [camHUD];
-		if (SONG.notITG && notITGMod && playfieldRenderer != null)
-		{
-			if (!playfieldRenderer?.splashObjects?.members?.contains(strum.holdSplash)) {
-				strum.holdSplash.field = playfieldRenderer?.noteFields[0];
-				playfieldRenderer?.splashObjects?.add(strum.holdSplash);
-			}
-		}
-		else if (!members.contains(strum.holdSplash))
+		// if (SONG.notITG && notITGMod && playfieldRenderer != null)
+		// {
+		// 	if (!playfieldRenderer?.splashObjects?.members?.contains(strum.holdSplash)) {
+		// 		strum.holdSplash.field = playfieldRenderer?.noteFields[0];
+		// 		playfieldRenderer?.splashObjects?.add(strum.holdSplash);
+		// 	}
+		// }
+		// else
+		if (!members.contains(strum.holdSplash))
 			add(strum.holdSplash);
 	}
 
@@ -4535,15 +4540,17 @@ class PlayState extends MusicBeatState
 	{
 		if (ClientPrefs.data.splashAlpha <= 0) return;
 		strum.playSplash(note);
+		if (strum.splash == null) return;
 		strum.splash.cameras = [camHUD];
-		if (SONG.notITG && notITGMod && playfieldRenderer != null)
-		{
-			if (!playfieldRenderer?.splashObjects?.members?.contains(strum.splash)) {
-				strum.splash.field = playfieldRenderer?.noteFields[0];
-				playfieldRenderer?.splashObjects?.add(strum.splash);
-			}
-		}
-		else if (!members.contains(strum.splash))
+		// if (SONG.notITG && notITGMod && playfieldRenderer != null)
+		// {
+		// 	if (!playfieldRenderer?.splashObjects?.members?.contains(strum.splash)) {
+		// 		strum.splash.field = playfieldRenderer?.noteFields[0];
+		// 		playfieldRenderer?.splashObjects?.add(strum.splash);
+		// 	}
+		// }
+		// else 
+		if (!members.contains(strum.splash))
 			add(strum.splash);
 	}
 

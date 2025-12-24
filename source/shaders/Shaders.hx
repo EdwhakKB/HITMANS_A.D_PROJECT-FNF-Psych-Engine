@@ -4241,9 +4241,8 @@ class VCRDistortionEffect extends ShaderEffectNew
   }
 }
 
-class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
+class VCRDistortionShader extends FlxFixedShader // https://www.shadertoy.com/view/ldjGzV and https://www.shadertoy.com/view/Ms23DR and https://www.shadertoy.com/view/MsXGD4 and https://www.shadertoy.com/view/Xtccz4
 {
-
   @:glFragmentSource('
     #pragma header
 
@@ -4366,7 +4365,7 @@ class VCRDistortionShader extends FlxShader // https://www.shadertoy.com/view/ld
   ')
   public function new()
   {
-    super();
+    super("120");
   }
 }
 

@@ -1242,20 +1242,25 @@ class EditorPlayState extends MusicBeatState
 	}
 
 	#if (!flash && sys)
-	public var runtimeShaders:Map<String, Array<String>> = new Map<String, Array<String>>();
+	public var shaderValues:Map<String, Array<String>> = new Map<String, Array<String>>();
+	public var runtimeShaders:Map<String, FlxRuntimeShader> = new Map<String, FlxRuntimeShader>();
 	public function createRuntimeShader(name:String):FlxRuntimeShader
 	{
 		if(!ClientPrefs.data.shaders) return new FlxRuntimeShader();
 
 		#if (!flash && MODS_ALLOWED && sys)
-		if(!runtimeShaders.exists(name) && !initLuaShader(name))
+		if (runtimeShaders.exists(name))
+			return runtimeShaders.get(name);
+
+		if(!shaderValues.exists(name) && !initLuaShader(name))
 		{
 			FlxG.log.warn('Shader $name is missing!');
 			return new FlxRuntimeShader();
 		}
 
-		var arr:Array<String> = runtimeShaders.get(name);
-		return new FlxRuntimeShader(arr[0], arr[1]);
+		final arr:Array<String> = shaderValues.get(name);
+		runtimeShaders.set(name, new FlxRuntimeShader(arr[0], arr[1]));
+		return runtimeShaders.get(name);
 		#else
 		FlxG.log.warn("Platform unsupported for Runtime Shaders!");
 		return null;
@@ -1266,7 +1271,7 @@ class EditorPlayState extends MusicBeatState
 	{
 		if(!ClientPrefs.data.shaders) return false;
 
-		if(runtimeShaders.exists(name))
+		if(runtimeShaders.exists(name) && shaderValues.exists(name))
 		{
 			FlxG.log.warn('Shader $name was already initialized!');
 			return true;
@@ -1295,7 +1300,7 @@ class EditorPlayState extends MusicBeatState
 
 				if(found)
 				{
-					runtimeShaders.set(name, [frag, vert]);
+					shaderValues.set(name, [frag, vert]);
 					//trace('Found shader $name!');
 					return true;
 				}

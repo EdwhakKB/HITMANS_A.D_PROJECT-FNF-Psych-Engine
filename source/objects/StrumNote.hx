@@ -119,8 +119,9 @@ class StrumNote extends modcharting.NewModchartArrow
 
 	public function playSplash(note:Note) {
 		if (ClientPrefs.data.splashAlpha <= 0) return;
-		if (splash == null)
-			splash = new NoteSplash(x, y);
+		// if (splash == null)
+		// 	splash = new NoteSplash(x, y);
+		return;
 		if (!splash.alive)
 			splash.revive();
 		splash.cameras = this.cameras;
@@ -132,8 +133,9 @@ class StrumNote extends modcharting.NewModchartArrow
 	public function playHoldSplash(note:Note, playbackRate:Float) {
 		if (ClientPrefs.data.holdSplashAlpha <= 0 || note.tail.length <= 1) return;
 		final end:Note = note.isSustainNote ? note.parent.tail[note.parent.tail.length - 1] : note.tail[note.tail.length - 1];
-		if (holdSplash == null)
-			holdSplash = new SustainSplash();
+		// if (holdSplash == null)
+		// 	holdSplash = new SustainSplash();
+		return;
 		if (!holdSplash.alive)
 			holdSplash.revive();
 		if (holdSplash.strumNote == null)

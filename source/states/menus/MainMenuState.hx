@@ -64,6 +64,7 @@ class MainMenuState extends MusicBeatState
 	//made this for the variables for "folders" (won't be used once i make the fix for mouse and things) -Ed
 	public static var inFolder:Bool = false;
 	public static var inCMD:Bool = false;
+	var vcrShader:shaders.Shaders.VCRDistortionEffect = new shaders.Shaders.VCRDistortionEffect();
 
 	override function create()
 	{
@@ -87,6 +88,9 @@ class MainMenuState extends MusicBeatState
 		FlxG.cameras.add(camPC, false);
 
 		camInsidePC.setScale(0.6,0.6);
+
+		vcrShader = new shaders.Shaders.VCRDistortionEffect();
+		// FlxG.camera.filters = [new openfl.filters.ShaderFilter(vcrShader.shader)];
 
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('MenuShit/wallPaper'));
 		bg.updateHitbox();
@@ -278,6 +282,7 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		vcrShader.update(elapsed);
 		if (FlxG.sound.music != null){
 			if (FlxG.sound.music.volume < 0.8)
 			{

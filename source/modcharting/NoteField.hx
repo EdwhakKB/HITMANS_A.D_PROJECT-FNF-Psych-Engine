@@ -41,24 +41,28 @@ class NoteField extends FlxBasic
 	private function get_noteGroup():FlxTypedGroup<Note>
 		return notes ?? strumLine.notes;
 
-
 	public function new(renderer:PlayfieldRenderer, ?pfIndex:Int = 0, ?strumNotes:FlxTypedGroup<StrumNote> = null,
 		?notes:FlxTypedGroup<Note> = null, ?unspawnNotes:Array<Note> = null)
 	{
-		this.renderer = renderer;
-		this.pfIndex = pfIndex;
-		this.strumLine = new Strumline(this);
-		super();
-		if (pfIndex == 0)
+		try 
 		{
-			this.strumLineNotes = strumNotes;
-			this.notes = notes;
+			this.renderer = renderer;
+			this.pfIndex = pfIndex;
+			this.strumLine = new Strumline(this);
+			super();
+			if (pfIndex == 0)
+			{
+				this.strumLineNotes = strumNotes;
+				this.notes = notes;
+			}
+			else 
+			{
+				strumLine.loadUnspawnNotes();
+				strumLine.loadStrums();
+			}
 		}
-		else 
-		{
-			strumLine.loadUnspawnNotes();
-			strumLine.loadStrums();
-		}
+		catch(e:haxe.Exception)
+			trace(e.message, e.stack);
 	}
 
 	private var debuggingMode:Bool = false; // to make tracing errors easier instead of a vague "null object reference"
@@ -125,13 +129,8 @@ class NoteField extends FlxBasic
 
 	private function getNoteCurPos(noteIndex:Int, strumTimeOffset:Float = 0)
 	{
-		#if PSYCH
 		if (noteGroup.members[noteIndex].isSustainNote && ModchartUtil.getDownscroll(renderer.instance))
 			strumTimeOffset -= Std.int(Conductor.stepCrochet / renderer.getCorrectScrollSpeed()); // psych does this to fix its sustains but that breaks the visuals so basically reverse it back to normal
-		#else
-		if (noteGroup.members[noteIndex].isSustainNote && !ModchartUtil.getDownscroll(renderer.instance))
-			strumTimeOffset += Conductor.stepCrochet; // fix upscroll lol
-		#end
 		if (noteGroup.members[noteIndex].isSustainNote)
 		{
 			// moved those inside holdsMath cuz they are only needed for sustains ig?

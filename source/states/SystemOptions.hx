@@ -43,6 +43,8 @@ class SystemOptions
 
 	public var blocked:Bool = false;
 
+	public var existInPause:Bool = true;
+
 	public var pauseDesc:String = "This option cannot be toggled in the pause menu.";
 
 	// Vars for Option Menu don't modify.

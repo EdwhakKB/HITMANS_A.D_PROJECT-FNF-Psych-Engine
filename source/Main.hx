@@ -75,7 +75,7 @@ class Main extends Sprite
 		#if ACHIEVEMENTS_ALLOWED 
 		Achievements.load(); 
 		#end
-		addChild(new FlxGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
+		addChild(new CrashHandler.MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
 		#if HSCRIPT_ALLOWED
 		codenameengine.scripting.GlobalScript.init();
