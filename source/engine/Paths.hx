@@ -152,10 +152,8 @@ class Paths
 		{
 			var customFile:String = file;
 			if (parentfolder != null) customFile = '$parentfolder/$file';
-			trace(customFile);
 
 			var modded:String = modFolders(customFile);
-			trace(modded);
 			if(FileSystem.exists(modded)) return modded;
 		}
 		#end

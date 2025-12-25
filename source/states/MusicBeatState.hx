@@ -54,10 +54,6 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		#if MODS_ALLOWED Mods.updatedOnState = false; #end
 
-		var mousecursor:FlxSprite = new FlxSprite().loadGraphic(Paths.image('mouse'));
-		mousecursor.scale.set(0.5, 0.5);
-        FlxG.mouse.load(mousecursor.pixels);
-
 		// var pcInterfas:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('MenuShit/PCInterfas'));
 		// pcInterfas.updateHitbox();
 		// pcInterfas.screenCenter();

@@ -583,6 +583,7 @@ class Strumline
 	{
 		if (ClientPrefs.data.holdSplashAlpha <= 0 || note.tail.length <= 1) return;
 		strum.playHoldSplash(note, renderer.rate);
+		if (strum.splash == null) return;
 		if (!renderer?.splashObjects?.members?.contains(strum.holdSplash)) {
 			strum.holdSplash.field = field;
 			renderer.splashObjects.add(strum.holdSplash);
@@ -592,6 +593,7 @@ class Strumline
 	public function playSplash(note:Note, strum:StrumNote) {
 		if (ClientPrefs.data.splashAlpha <= 0) return;
 		strum.playSplash(note);
+		if (strum.splash == null) return;
 		if (!renderer?.splashObjects?.members?.contains(strum.splash)) {
 			strum.splash.field = field;
 			renderer.splashObjects.add(strum.splash);

@@ -128,7 +128,6 @@ class PlayfieldRenderer extends FlxBasic
 			}
 			return null;
 		}
-		addPlayfield(0);
 
 		trace(noteFields, noteFields == null, noteFields.length);
 

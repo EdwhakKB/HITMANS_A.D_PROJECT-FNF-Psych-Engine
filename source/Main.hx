@@ -81,11 +81,11 @@ class Main extends Sprite
 		codenameengine.scripting.GlobalScript.init();
 		#end
 
-		mouseCursor = new FlxSprite().loadGraphic(Paths.image('mouse')); 
-		mouseCursor.scale.set(0.5, 0.5);
-        FlxG.mouse.load(mouseCursor.pixels);
-        FlxG.mouse.enabled = true;
-        FlxG.mouse.visible = false;
+		// mouseCursor = new FlxSprite().loadGraphic(Paths.image('mouse')); 
+		// mouseCursor.scale.set(0.5, 0.5);
+        // FlxG.mouse.load(mouseCursor.graphic.bitmapData);
+        // FlxG.mouse.enabled = true;
+        // FlxG.mouse.visible = true;
 		
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
