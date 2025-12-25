@@ -1035,8 +1035,8 @@ class PlayState extends MusicBeatState
 		}
 
 		
-		// if (notITGMod && SONG.notITG)
-		// 	ModchartFuncs.loadLuaFunctions();
+		if (notITGMod && SONG.notITG)
+			ModchartFuncs.loadLuaFunctions();
 
 		callOnScripts('onCreatePost');
 		callOnScripts('onModchart');

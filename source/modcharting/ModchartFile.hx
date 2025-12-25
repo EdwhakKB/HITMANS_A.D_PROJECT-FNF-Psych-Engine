@@ -70,7 +70,7 @@ class ModchartFile
 		this.renderer = renderer;
 		renderer.modchart = this;
 		// if (!ClientPrefs.getGameplaySetting('chaosmode')){
-		// loadPlayfields();
+		loadPlayfields();
 		loadProxiefields();
 		loadModifiers();
 		loadEvents();
