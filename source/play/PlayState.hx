@@ -1585,11 +1585,11 @@ class PlayState extends MusicBeatState
 		if(ret != FunkinLua.Function_Stop) {
 			if (skipCountdown || startOnTime > 0) skipArrowStartTween = true;
 
-			generateStaticArrows(0);
-			generateStaticArrows(1);
+			// generateStaticArrows(0);
+			// generateStaticArrows(1);
 
-			//add after generating strums
-			NoteMovement.getDefaultStrumPos(this);
+			// //add after generating strums
+			// NoteMovement.getDefaultStrumPos(this);
 			
 			updateLuaDefaultPos();
 
