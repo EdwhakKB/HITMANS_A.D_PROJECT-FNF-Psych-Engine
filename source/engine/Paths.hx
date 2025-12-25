@@ -152,8 +152,10 @@ class Paths
 		{
 			var customFile:String = file;
 			if (parentfolder != null) customFile = '$parentfolder/$file';
+			trace(customFile);
 
 			var modded:String = modFolders(customFile);
+			trace(modded);
 			if(FileSystem.exists(modded)) return modded;
 		}
 		#end
@@ -180,14 +182,10 @@ class Paths
 		return getPath('data/$key.txt', TEXT, folder, true);
 
 	inline static public function bitmapFont(key:String, ?library:String):FlxBitmapFont
-	{
 		return FlxBitmapFont.fromAngelCode(image(key, library), fontXML(key, library));
-	}
 
 	inline static public function fontXML(key:String, ?library:String):Xml
-	{
 		return Xml.parse(OpenFLAssets.getText(getPath('images/$key.fnt', TEXT, library)));
-	}
 
 	inline static public function xml(key:String, ?folder:String)
 		return getPath('data/$key.xml', TEXT, folder, true);

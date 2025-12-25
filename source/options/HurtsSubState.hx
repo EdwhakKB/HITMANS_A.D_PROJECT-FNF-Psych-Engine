@@ -140,7 +140,7 @@ class HurtsSubState extends MusicBeatSubstate
 		colorGradientSelector.offset.y = 5;
 		add(colorGradientSelector);
 
-		colorPalette = new FlxSprite(820, 580).loadGraphic(Paths.image('noteColorMenu/palette', 'shared'));
+		colorPalette = new FlxSprite(820, 580).loadGraphic(Paths.image('noteColorMenu/palette'));
 		colorPalette.scale.set(20, 20);
 		colorPalette.updateHitbox();
 		colorPalette.antialiasing = false;

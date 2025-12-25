@@ -81,7 +81,8 @@ class Main extends Sprite
 		codenameengine.scripting.GlobalScript.init();
 		#end
 
-		mouseCursor = new FlxSprite().loadGraphic(Paths.getSharedPath('images/mouse')); 
+		mouseCursor = new FlxSprite().loadGraphic(Paths.image('mouse')); 
+		mouseCursor.scale.set(0.5, 0.5);
         FlxG.mouse.load(mouseCursor.pixels);
         FlxG.mouse.enabled = true;
         FlxG.mouse.visible = false;

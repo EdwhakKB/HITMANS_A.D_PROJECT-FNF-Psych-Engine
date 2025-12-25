@@ -36,7 +36,7 @@ class ModchartEditorEvent extends FlxSprite
 	{
 		this.data = data;
 		super(-300, 0);
-		frames = Paths.getSparrowAtlas('eventArrowModchart', 'shared');
+		frames = Paths.getSparrowAtlas('eventArrowModchart');
 		animation.addByPrefix('note', 'idle0');
 		// makeGraphic(48, 48);
 

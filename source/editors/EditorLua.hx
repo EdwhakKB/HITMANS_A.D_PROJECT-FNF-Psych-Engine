@@ -4884,8 +4884,8 @@ class ExclusiveCopy extends FlxSkewedSprite
 
 		defaultRGB();
 
-		if (daSkin != '') frames = Paths.getSparrowAtlas(daSkin, 'shared');
-		else frames = Paths.getSparrowAtlas('Skins/Notes/${ClientPrefs.data.notesSkin[0]}/NOTE_assets', 'shared');
+		if (daSkin != '') frames = Paths.getSparrowAtlas(daSkin);
+		else frames = Paths.getSparrowAtlas('Skins/Notes/${ClientPrefs.data.notesSkin[0]}/NOTE_assets');
 		if (frames != null)
 		{
 			addNoteAnims();

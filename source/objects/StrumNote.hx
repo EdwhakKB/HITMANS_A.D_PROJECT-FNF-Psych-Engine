@@ -37,11 +37,11 @@ class StrumNote extends modcharting.NewModchartArrow
 
 	var rgb9:Bool = false;
 
-	public var myLibrary:String = "shared";
+	public var myLibrary:String = null;
 	public var loadShader:Bool = true;
 	public var time:Float = 0;
 
-	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String = 'shared', ?quantizedNotes:Bool = false,
+	public function new(x:Float, y:Float, leData:Int, player:Int, ?daTexture:String, ?library:String = null, ?quantizedNotes:Bool = false,
 			?loadShader:Bool = true)
 	{
 		notITGStrums = (PlayState.SONG != null && PlayState.SONG.notITG && ClientPrefs.getGameplaySetting('modchart'));

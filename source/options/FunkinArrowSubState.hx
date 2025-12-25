@@ -179,7 +179,7 @@ class FunkinArrowSubState extends MusicBeatSubstate
     for (i in 0...dataArray.length)
     {
       Note.initializeGlobalRGBShader(i, true);
-      var newNote:StrumNote = new StrumNote(80 + (480 / dataArray.length * i) * 2.5, 200, i, -1, 'Skins/Notes/${dataArray[i]}/NOTE_assets', 'shared', false, true);
+      var newNote:StrumNote = new StrumNote(80 + (480 / dataArray.length * i) * 2.5, 200, i, -1, 'Skins/Notes/${dataArray[i]}/NOTE_assets', null, false, true);
       newNote.useRGBShader = true;
       newNote.setGraphicSize(102);
       newNote.updateHitbox();

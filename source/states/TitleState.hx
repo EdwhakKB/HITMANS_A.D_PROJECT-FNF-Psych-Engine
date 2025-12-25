@@ -417,7 +417,7 @@ class TitleState extends MusicBeatState
 	function noteEffect()
 	{
 		if(!ClientPrefs.data.lowQuality) {
-			var note:FlxSprite = new FlxSprite().loadGraphic(Paths.image('DANOTE', 'shared'));
+			var note:FlxSprite = new FlxSprite().loadGraphic(Paths.image('DANOTE'));
 			note.antialiasing = ClientPrefs.data.antialiasing;
 			note.cameras = [camGame];
 			note.scale.set(1, 1);
@@ -449,7 +449,7 @@ class TitleState extends MusicBeatState
 	function noteEffectUp()
 		{
 			if(!ClientPrefs.data.lowQuality) {
-				var note:FlxSprite = new FlxSprite().loadGraphic(Paths.image('DANOTE', 'shared'));
+				var note:FlxSprite = new FlxSprite().loadGraphic(Paths.image('DANOTE'));
 				note.antialiasing = ClientPrefs.data.antialiasing;
 				note.cameras = [camGame];
 				note.scale.set(1, 1);

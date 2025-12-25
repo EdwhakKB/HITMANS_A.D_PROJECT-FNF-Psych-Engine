@@ -157,10 +157,8 @@ class Character extends FlxSprite
 		isAnimateAtlas = false;
 
 		#if flxanimate
-		var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT, 'shared', true);
-		var animToLook:String = Paths.getPath('images/' + json.image + '/Animation.json', TEXT, null, true);
+		var animToFind:String = Paths.getPath('images/' + json.image + '/Animation.json');
 		if (#if MODS_ALLOWED FileSystem.exists(animToFind) || #end OpenFLAssets.exists(animToFind)) isAnimateAtlas = true;
-		else if (#if MODS_ALLOWED FileSystem.exists(animToLook) || #end OpenFLAssets.exists(animToLook)) isAnimateAtlas = true;
 		else isAnimateAtlas = false;
 		#end
 
@@ -169,7 +167,7 @@ class Character extends FlxSprite
 
 		if(!isAnimateAtlas)
 		{
-			frames = Paths.getAtlas(json.image, 'shared');
+			frames = Paths.getAtlas(json.image);
 
 			// trace(frames + ', TIENE XML');
 
