@@ -494,8 +494,10 @@ class FreeplayState extends MusicBeatState
 					trace('BOSS TIER: ' + bossTier);
 					trace('BOSS LEVEL: ' + bossLvl);
 
-					if (!bossTier)
-						LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7);
+					if (!bossTier) {
+						LoadingState.prepareToSong();
+						LoadingState.loadAndSwitchState(new PlayState(), false);
+					}
 					else {
 						BossTierState.bossCharacter = bossChar;
 						BossTierState.bossLevel = bossLvl;

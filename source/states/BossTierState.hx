@@ -80,7 +80,7 @@ class BossTierState extends MusicBeatState
 			Conductor.songPosition = FlxG.sound.music.time;
 
 		if (controls.ACCEPT)
-			LoadingState.loadAndSwitchState(new PlayState(), false, true, 0.7);
+			LoadingState.loadAndSwitchState(new PlayState(), false);
 
 		#if SScript
 		if(!bossScript.disabled){

@@ -381,7 +381,7 @@ class EditorPauseSubState extends MusicBeatSubstate
 			if (!isReset)
 				MusicBeatState.resetState();
 			else
-				LoadingState.loadAndSwitchState(new EditorPlayState(0), true, true, 0.5);
+				LoadingState.loadAndSwitchState(new EditorPlayState(0), true);
 		}
 	}
 

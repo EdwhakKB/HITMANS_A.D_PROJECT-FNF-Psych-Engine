@@ -4646,6 +4646,15 @@ class ModchartSprite extends FlxSprite
 		super(x, y);
 		antialiasing = ClientPrefs.data.antialiasing;
 	}
+
+	public function addOffset(name:String, x:Float, y:Float) {
+		animOffsets.set(name, [x, y]);
+	}
+
+	public function playAnim(name:String, force:Bool = false, reverse:Bool = false, frame:Int = 0) {
+		animation.play(name, force, reverse, frame);
+		if (animOffsets.exists(name)) offset.set(animOffsets[name][0] * scale.x, animOffsets[name][1] * scale.y);
+	}
 }
 
 class ModchartText extends FlxText

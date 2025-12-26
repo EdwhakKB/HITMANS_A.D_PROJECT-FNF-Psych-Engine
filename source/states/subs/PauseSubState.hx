@@ -501,8 +501,10 @@ class PauseSubState extends MusicBeatSubstate
 		{
 			if (!isReset)
 				MusicBeatState.resetState();
-			else
-				LoadingState.loadAndSwitchState(new PlayState(), true, true, 0.5);
+			else {
+				LoadingState.prepareToSong();
+				LoadingState.loadAndSwitchState(new PlayState(), true);
+			}
 		}
 	}
 

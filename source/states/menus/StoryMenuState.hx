@@ -387,10 +387,6 @@ class StoryMenuState extends MusicBeatState {
 				Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
 				PlayState.campaignScore = 0;
 				PlayState.campaignMisses = 0;
-				new FlxTimer().start(1, function(tmr:FlxTimer) {
-					LoadingState.loadAndSwitchState(new PlayState(), true);
-					FreeplayState.destroyFreeplayVocals();
-				});
 			}
 			catch(e:Dynamic)
 			{
@@ -415,6 +411,17 @@ class StoryMenuState extends MusicBeatState {
 					}}); //please work :3!
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 			}
+
+			var directory = StageData.forceNextDirectory;
+			LoadingState.loadNextDirectory();
+			StageData.forceNextDirectory = directory;
+
+			LoadingState.prepareToSong();
+			new FlxTimer().start(1, function(tmr:FlxTimer) {
+				#if !SHOW_LOADING_SCREEN FlxG.sound.music.stop(); #end
+				LoadingState.loadAndSwitchState(new PlayState(), true);
+				FreeplayState.destroyFreeplayVocals();
+			});
 		} else {
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}

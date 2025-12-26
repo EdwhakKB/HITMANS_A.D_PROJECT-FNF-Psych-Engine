@@ -38,6 +38,8 @@ import modcharting.PlayfieldRenderer;
 import achievements.*;
 import engine.StageData;
 import editors.EditorLua;
+import scripting.FunkinLua.ModchartText;
+import scripting.FunkinLua.DebugLuaText;
 import cutscene.DialogueBoxPsych;
 import engine.Conductor.Rating;
 import states.menus.ResultScreen;
@@ -620,22 +622,7 @@ class EditorPlayState extends MusicBeatState
 		PlayState.SONG.stage = curStage;
 
 		var stageData:StageFile = StageData.getStageFile(curStage);
-		if(stageData == null) { //Stage couldn't be found, create a dummy stage for preventing a crash
-			stageData = {
-				directory: "",
-				defaultZoom: 0.8125,
-				isPixelStage: false,
-
-				boyfriend: [875, 403],
-				girlfriend: [820, 355],
-				opponent: [628, 403],
-				hide_girlfriend: false,
-
-				camera_boyfriend: [0, 0],
-				camera_opponent: [0, 0],
-				camera_girlfriend: [0, 0],
-				camera_speed: 1
-			};
+		if(stageData == StageData.dummy()) {
 			var bg:BGSprite = new BGSprite('DefaultBackGround', -605, -150, 0.5, 0.5);
 			bg.scale.x = 0.7;
 			bg.scale.y = 0.7;
@@ -1476,7 +1463,7 @@ class EditorPlayState extends MusicBeatState
 
 	public function startVideo(name:String)
 	{
-		#if VIDEOS_ALLOWED
+		#if (VIDEOS_ALLOWED && hxCodec)
 		inCutscene = true;
 
 		var filepath:String = Paths.video(name);

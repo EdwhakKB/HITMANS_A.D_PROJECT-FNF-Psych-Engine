@@ -608,22 +608,7 @@ class PlayState extends MusicBeatState
 		SONG.stage = curStage;
 
 		var stageData:StageFile = StageData.getStageFile(curStage);
-		if(stageData == null) { //Stage couldn't be found, create a dummy stage for preventing a crash
-			stageData = {
-				directory: "",
-				defaultZoom: 0.8125,
-				isPixelStage: false,
-
-				boyfriend: [875, 403],
-				girlfriend: [820, 355],
-				opponent: [628, 403],
-				hide_girlfriend: false,
-
-				camera_boyfriend: [0, 0],
-				camera_opponent: [0, 0],
-				camera_girlfriend: [0, 0],
-				camera_speed: 1
-			};
+		if(stageData == StageData.dummy()) { //Stage couldn't be found, create a dummy stage for preventing a crash
 			var bg:BGSprite = new BGSprite('DefaultBackGround', -605, -150, 0.5, 0.5);
 			bg.scale.x = 0.7;
 			bg.scale.y = 0.7;
@@ -1419,7 +1404,7 @@ class PlayState extends MusicBeatState
 
 	public function startVideo(name:String)
 	{
-		#if VIDEOS_ALLOWED
+		#if (VIDEOS_ALLOWED && hxCodec)
 		inCutscene = true;
 
 		var filepath:String = Paths.video(name);
@@ -2189,7 +2174,13 @@ class PlayState extends MusicBeatState
 					// CLEAR ANY POSSIBLE GHOST NOTES
 					for (evilNote in unspawnNotes) {
 						var matches: Bool = (noteColumn == evilNote.noteData && gottaHitNote == evilNote.mustPress && evilNote.noteType == noteType);
-						if (matches && Math.abs(spawnTime - evilNote.strumTime) == 0.0) {
+						if (matches && Math.abs(spawnTime - evilNote.strumTime) < flixel.math.FlxMath.EPSILON) {
+							if (evilNote.tail.length > 0)
+								for (tail in evilNote.tail)
+								{
+									tail.destroy();
+									unspawnNotes.remove(tail);
+								}
 							evilNote.destroy();
 							unspawnNotes.remove(evilNote);
 							ghostNotesCaught++;
@@ -2552,25 +2543,11 @@ class PlayState extends MusicBeatState
 		vocals.play();
 	}
 
-	public function getScrollPos(time:Float, mult:Float = 1)
-		{
-			var speed:Float = songSpeed * mult;
-			return (-(time * (0.45 * speed)));
-		}
-	
-		public function getScrollPosByStrum(strum:Float, mult:Float = 1)
-		{
-			return getScrollPos(Conductor.songPosition - strum, mult);
-		}
-
 	public var paused:Bool = false;
 	public var canReset:Bool = true;
 	var startedCountdown:Bool = false;
 	var canPause:Bool = false;
 	var lastSection:Int = 0;
-	public var camDisplaceX:Float = 0;
-	public var camDisplaceY:Float = 0;
-	var fakeCrochet:Float = 5000;
 
 	var resetted:Bool = false;
 	override public function update(elapsed:Float)
@@ -3544,26 +3521,15 @@ class PlayState extends MusicBeatState
 
 		var ret:Dynamic = callOnScripts('onRating', null, true);
 		if (ret != FunkinLua.Function_Stop){
-			#if PRELOAD_ALL	
-				sys.thread.Thread.create(() ->
-				{
-					if (!practiceMode && notITGMod)
-					{
-						var percent:Float = ratingPercent;
-						if(Math.isNaN(percent)) percent = 0;
-						Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
-					}
-				});
-			#else
-				if (!practiceMode && notITGMod)
-				{	
-					var percent:Float = ratingPercent;
-					if(Math.isNaN(percent)) percent = 0;
-					Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
-				}
-			#end
+			if (!practiceMode && notITGMod)
+			{
+				var percent:Float = ratingPercent;
+				if(Math.isNaN(percent)) percent = 0;
+				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
+			}
 		}
 	}
+
 	public function endSong():Void
 	{
 		//Should kill you if you tried to cheat
@@ -4250,7 +4216,6 @@ class PlayState extends MusicBeatState
 
 		var result:Dynamic = callOnLuas('opponentNoteHit', [notes.members.indexOf(note), Math.abs(note.noteData), note.noteType, note.isSustainNote]);
 		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('opponentNoteHit', [note]);
-			callOnHScript('opponentNoteHit', [note]);
 		opponentStrums.members[note.noteData].rgbShader.r = note.rgbShader.r;
 		opponentStrums.members[note.noteData].rgbShader.b = note.rgbShader.b;
 
@@ -4444,7 +4409,7 @@ class PlayState extends MusicBeatState
 		}
 			
 		var result:Dynamic = callOnLuas('goodNoteHit', [notes.members.indexOf(note),  Math.abs(note.noteData), note.noteType, note.isSustainNote]);
-		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('goodNoteHitPost', [note]);
+		if(result != FunkinLua.Function_Stop && result != FunkinLua.Function_StopHScript && result != FunkinLua.Function_StopAll) callOnHScript('goodNoteHit', [note]);
 		spawnHoldSplash(note, playerStrums.members[note.noteData]);
 		if (!note.isSustainNote && (note.newMesh == null || note.newMesh.sustainLength <= 0.0))
 			invalidateNote(note);
@@ -5057,19 +5022,12 @@ class PlayState extends MusicBeatState
 		var ef = new StrumNote(strum.x + animOffset[0], strum.y + animOffset[1], strum.noteData, note.mustPress ? 1 : 0);
 		add(ef);
 		ef.reloadNote();
-		if (!sustain){
-			ef.rgbShader.r = strum.rgbShader.r;
-			ef.rgbShader.g = strum.rgbShader.g;
-			ef.rgbShader.b = strum.rgbShader.b;
-		}else{
-			ef.rgbShader.r = 0xFFFFFF00;
-			ef.rgbShader.g = strum.rgbShader.g;
-			ef.rgbShader.b = 0xFF7F7F00;
-		}
+		ef.rgbShader.r = sustain ? 0xFFFFFF00 : strum.rgbShader.r;
+		ef.rgbShader.g = strum.rgbShader.g;
+		ef.rgbShader.b = sustain ? 0xFF7F7F00 : strum.rgbShader.b;
 		ef.alpha -= 0.3;
 		ef.angle = strum.angle;
-		ef.skew.x = strum.skew.x;
-		ef.skew.y = strum.skew.y;
+		ef.skew.copyFrom(strum.skew);
 		ef.playAnim("confirm", true);
 		// ef.offset.set(ef.offset.x + animOffset[0], ef.offset.y + animOffset[1]);
 		ef.cameras = [camHUD];

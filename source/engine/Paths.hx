@@ -37,13 +37,46 @@ class Paths
 	public static function clearUnusedMemory()
 	{
 		// clear non local assets in the tracked assets list
+		var counter:Int = 0;
 		for (key in currentTrackedAssets.keys())
 		{
 			// if it is not currently contained within the used local assets
 			if (!localTrackedAssets.contains(key) && !dumpExclusions.contains(key))
 			{
-				destroyGraphic(currentTrackedAssets.get(key)); // get rid of the graphic
-				currentTrackedAssets.remove(key); // and remove the key from local cache map
+				// get rid of it
+				var obj = cast(currentTrackedAssets.get(key), FlxGraphic);
+				@:privateAccess
+				if (obj != null)
+				{
+					obj.persist = false;
+					obj.destroyOnNoUse = true;
+					OpenFLAssets.cache.removeBitmapData(key);
+
+					FlxG.bitmap._cache.remove(key);
+					FlxG.bitmap.removeByKey(key);
+
+					if (obj.bitmap.__texture != null)
+					{
+						obj.bitmap.__texture.dispose();
+						obj.bitmap.__texture = null;
+					}
+
+					FlxG.bitmap.remove(obj);
+
+					obj.bitmap.disposeImage();
+					FlxDestroyUtil.dispose(obj.bitmap);
+
+					obj.bitmap = null;
+
+					obj.destroy();
+
+					obj = null;
+
+					currentTrackedAssets.remove(key);
+					counter++;
+					trace('Cleared $key form RAM');
+					trace('Cleared and removed $counter assets.');
+				}
 			}
 		}
 
@@ -58,10 +91,42 @@ class Paths
 	public static function clearStoredMemory()
 	{
 		// clear anything not in the tracked assets list
+
+		var counterAssets:Int = 0;
+
+		@:privateAccess
 		for (key in FlxG.bitmap._cache.keys())
 		{
-			if (!currentTrackedAssets.exists(key))
-				destroyGraphic(FlxG.bitmap.get(key));
+			var obj = cast(FlxG.bitmap._cache.get(key), FlxGraphic);
+			if (obj != null && !currentTrackedAssets.exists(key))
+			{
+				obj.persist = false;
+				obj.destroyOnNoUse = true;
+
+				OpenFLAssets.cache.removeBitmapData(key);
+
+				FlxG.bitmap._cache.remove(key);
+
+				FlxG.bitmap.removeByKey(key);
+
+				if (obj?.bitmap?.__texture != null)
+				{
+					obj.bitmap.__texture.dispose();
+					obj.bitmap.__texture = null;
+				}
+
+				FlxG.bitmap.remove(obj);
+
+				obj.bitmap.disposeImage();
+				FlxDestroyUtil.dispose(obj.bitmap);
+				obj.bitmap = null;
+
+				obj.destroy();
+				obj = null;
+				counterAssets++;
+				trace('Cleared $key from RAM');
+				trace('Cleared and removed $counterAssets cached assets.');
+			}
 		}
 
 		// clear all sounds that are cached
@@ -76,6 +141,8 @@ class Paths
 		// flags everything to be cleared out next unused memory clear
 		localTrackedAssets = [];
 		#if !html5 OpenFLAssets.cache.clear("songs"); #end
+
+		System.gc();
 	}
 
 	public static function freeGraphicsFromMemory()
@@ -269,7 +336,7 @@ class Paths
 			if (FileSystem.exists(file))
 				bitmap = BitmapData.fromFile(file);
 			else #end if (OpenFLAssets.exists(file, IMAGE))
-				bitmap = OpenFLAssets.getBitmapData(file);
+				bitmap = OpenFLAssets.getBitmapData(file, false);
 
 			if (bitmap == null)
 			{

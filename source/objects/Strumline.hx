@@ -134,8 +134,7 @@ class Strumline
 					for (evilNote in unspawnedNotes)
 					{
 						var matches:Bool = (noteColumn == evilNote.noteData && gottaHitNote == evilNote.mustPress && evilNote.noteType == noteType);
-						if (matches && Math.abs(spawnTime - evilNote.strumTime) < flixel.math.FlxMath.EPSILON)
-						{
+						if (matches && Math.abs(spawnTime - evilNote.strumTime) < flixel.math.FlxMath.EPSILON) {
 							if (evilNote.tail.length > 0)
 								for (tail in evilNote.tail)
 								{
@@ -145,7 +144,7 @@ class Strumline
 							evilNote.destroy();
 							unspawnedNotes.remove(evilNote);
 							ghostNotesCaught++;
-							// continue;
+							//continue;
 						}
 					}
 				}

@@ -452,7 +452,8 @@ class ResultScreen extends MusicBeatSubstate
 							FlxG.sound.music.stop();
 
 							PlayState.cancelMusicFadeTween();
-							LoadingState.loadAndSwitchState(new PlayState(), true, 0.75);
+							LoadingState.prepareToSong();
+							LoadingState.loadAndSwitchState(new PlayState(), false, false);
 						}
 					}else{
 						Mods.loadTopMod();
