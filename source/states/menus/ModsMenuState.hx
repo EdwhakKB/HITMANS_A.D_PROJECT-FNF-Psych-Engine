@@ -7,15 +7,18 @@ import flixel.math.FlxPoint;
 import flixel.ui.FlxButton;
 import flixel.graphics.FlxGraphic;
 import openfl.geom.Rectangle;
+import haxe.Json;
 
 import flixel.util.FlxSpriteUtil;
 import objects.AttachedSprite;
-//import options.ModSettingsSubState;
+import options.ModSettingsSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxTween;
+import openfl.display.BitmapData;
+import lime.utils.Assets;
 
 class ModsMenuState extends MusicBeatState
 {
@@ -62,7 +65,7 @@ class ModsMenuState extends MusicBeatState
 		persistentUpdate = false;
 
 		modsList = Mods.parseList();
-		Mods.currentModDirectory = modsList.all[0] != null ? modsList.all[0] : '';
+		Mods.loadTopMod();
 
 		#if desktop
 		// Updating Discord Rich Presence
@@ -116,7 +119,7 @@ class ModsMenuState extends MusicBeatState
 		});
 		add(buttonModFolder);*/
 
-		buttonEnableAll = new MenuButton(buttonX, myY, buttonWidth, buttonHeight, "ENABLE ALL", function() {
+		buttonEnableAll = new MenuButton(buttonX, myY, buttonWidth, buttonHeight, "ENABLE ALL", function(){
 			buttonEnableAll.ignoreCheck = false;
 			for (mod in modsGroup.members)
 			{
@@ -136,7 +139,7 @@ class ModsMenuState extends MusicBeatState
 		buttonEnableAll.focusChangeCallback = function(focus:Bool) if(!focus) buttonEnableAll.bg.color = FlxColor.GREEN;
 		add(buttonEnableAll);
 
-		buttonDisableAll = new MenuButton(buttonX, myY, buttonWidth, buttonHeight, "DISABLE ALL", function() {
+		buttonDisableAll = new MenuButton(buttonX, myY, buttonWidth, buttonHeight, "DISABLE ALL", function(){
 			buttonDisableAll.ignoreCheck = false;
 			for (mod in modsGroup.members)
 			{
@@ -234,10 +237,7 @@ class ModsMenuState extends MusicBeatState
 		if(modsList.all.length < 2)
 		{
 			for (button in buttons)
-			{
 				button.enabled = false;
-				button.alpha = 0.4;
-			}
 		}
 
 		settingsButton = new MenuButton(buttonsX + 300, buttonsY, 80, 80, Paths.image('modsMenuButtons'), function() //Settings
@@ -245,7 +245,7 @@ class ModsMenuState extends MusicBeatState
 			var curMod:ModItem = modsGroup.members[curSelectedMod];
 			if(curMod != null && curMod.settings != null && curMod.settings.length > 0)
 			{
-				//openSubState(new ModSettingsSubState(curMod.settings, curMod.folder, curMod.name));
+				openSubState(new ModSettingsSubState(curMod.settings, curMod.folder, curMod.name));
 			}
 		}, 54, 54);
 
@@ -314,21 +314,15 @@ class ModsMenuState extends MusicBeatState
 	{
 		if(controls.BACK && hoveringOnMods)
 		{
-			if(colorTween != null) {
-				colorTween.cancel();
-			}
 			saveTxt();
-			FlxG.mouse.visible = false;
 
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			if(waitingToRestart)
 			{
 				//MusicBeatState.switchState(new TitleState());
+				TitleState.initialized = false;
 				TitleState.closedState = false;
-				TitleState.updateVersion = null;
-				FlxG.sound.music.fadeOut(0.3, onComplete -> {
-					FlxG.sound.music = null;
-				});
+				FlxG.sound.music.fadeOut(0.3);
 				if(FreeplayState.vocals != null)
 				{
 					FreeplayState.vocals.fadeOut(0.3);
@@ -339,6 +333,7 @@ class ModsMenuState extends MusicBeatState
 			else MusicBeatState.switchState(new MainMenuState());
 			
 			persistentUpdate = false;
+			//FlxG.autoPause = ClientPrefs.data.autoPause;
 			FlxG.mouse.visible = false;
 			return;
 		}
@@ -671,18 +666,13 @@ class ModsMenuState extends MusicBeatState
 		}
 	}
 
-	var colorTween:FlxTween = null;
 	function updateModDisplayData()
 	{
 		var curMod:ModItem = modsGroup.members[curSelectedMod];
 		if(curMod == null) return;
 
-		if(colorTween != null)
-		{
-			colorTween.cancel();
-			colorTween.destroy();
-		}
-		colorTween = FlxTween.color(bg, 1, bg.color, curMod.bgColor, {onComplete: function(twn:FlxTween) colorTween = null});
+		FlxTween.cancelTweensOf(bg);
+		FlxTween.color(bg, 1, bg.color, curMod.bgColor);
 
 		if(Math.abs(centerMod - curSelectedMod) > 2)
 		{
@@ -780,6 +770,7 @@ class ModsMenuState extends MusicBeatState
 	function reload()
 	{
 		saveTxt();
+		//FlxG.autoPause = ClientPrefs.data.autoPause;
 		FlxTransitionableState.skipNextTransIn = true;
 		FlxTransitionableState.skipNextTransOut = true;
 		var curMod:ModItem = modsGroup.members[curSelectedMod];
@@ -802,6 +793,8 @@ class ModsMenuState extends MusicBeatState
 
 		var path:String = 'modsList.txt';
 		File.saveContent(path, fileStr);
+		Mods.parseList();
+		Mods.loadTopMod();
 	}
 }
 
@@ -832,11 +825,10 @@ class ModItem extends FlxSpriteGroup
 		var path:String = Paths.mods('$folder/data/settings.json');
 		if(FileSystem.exists(path))
 		{
-			var data:String = File.getContent(path);
 			try
 			{
 				//trace('trying to load settings: $folder');
-				settings = Json.parse(data);
+				settings = tjson.TJSON.parse(File.getContent(path));
 			}
 			catch(e:Dynamic)
 			{
@@ -865,16 +857,20 @@ class ModItem extends FlxSpriteGroup
 		add(text);
 
 		var isPixel = false;
-		var bmp = Paths.image(Paths.mods('$folder/pack.png'));
-		if(bmp == null)
+		var file:String = Paths.mods('$folder/pack.png');
+		if (!FileSystem.exists(file))
 		{
-			bmp = Paths.image(Paths.mods('$folder/pack-pixel.png'));
+			file = Paths.mods('$folder/pack-pixel.png');
 			isPixel = true;
 		}
 
-		if(bmp != null)
+		var bmp:BitmapData = null;
+		if (FileSystem.exists(file)) bmp = BitmapData.fromFile(file);
+		else isPixel = false;
+
+		if(FileSystem.exists(file))
 		{
-			icon.loadGraphic(bmp, true, 150, 150);
+			icon.loadGraphic(Paths.cacheBitmap(file, bmp), true, 150, 150);
 			if(isPixel) icon.antialiasing = false;
 		}
 		else icon.loadGraphic(Paths.image('unknownMod'), true, 150, 150);
@@ -969,7 +965,7 @@ class MenuButton extends FlxSpriteGroup
 			return;
 		}
 
-		if(!ignoreCheck && !Controls.instance.controllerMode && FlxG.mouse.justMoved && FlxG.mouse.visible)
+		if(!ignoreCheck && !Controls.instance.controllerMode && (FlxG.mouse.justPressed || FlxG.mouse.justMoved) && FlxG.mouse.visible)
 			onFocus = FlxG.mouse.overlaps(this);
 
 		if(onFocus && onClick != null && FlxG.mouse.justPressed)

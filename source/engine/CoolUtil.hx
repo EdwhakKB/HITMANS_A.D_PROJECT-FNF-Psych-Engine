@@ -91,6 +91,9 @@ class CoolUtil
 	inline public static function clamp(value:Float, min:Float, max:Float):Float
 		return Math.max(min, Math.min(max, value));
 	
+	inline public static function capitalize(text:String)
+		return text.charAt(0).toUpperCase() + text.substr(1).toLowerCase();
+	
 	inline public static function coolTextFile(path:String):Array<String>
 	{
 		var daList:String = null;
@@ -186,6 +189,15 @@ class CoolUtil
 		Sys.command('/usr/bin/xdg-open', [site]);
 		#else
 		FlxG.openURL(site);
+		#end
+	}
+
+	public static function showPopUp(message:String, title:String):Void
+	{
+		#if android
+		AndroidTools.showAlertDialog(title, message, {name: "OK", func: null}, null);
+		#else
+		FlxG.stage.window.alert(message, title);
 		#end
 	}
 
