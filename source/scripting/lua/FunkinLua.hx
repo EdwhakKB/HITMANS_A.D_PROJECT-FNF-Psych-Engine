@@ -164,6 +164,7 @@ class FunkinLua {
 			// set('guitarHeroSustains', game.guitarHeroSustains);
 			set('instakillOnMiss', game.instakillOnMiss);
 			set('botPlay', game.cpuControlled);
+			set('modchart', game.notITGMod);
 			set('practice', game.practiceMode);
 			set('chaosMod', game.chaosMod);
 			set('chaosDiff', game.chaosDifficulty);
