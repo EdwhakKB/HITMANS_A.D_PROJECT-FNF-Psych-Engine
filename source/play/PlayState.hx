@@ -545,7 +545,6 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camOther, false);
 
 		FlxG.cameras.setDefaultDrawTarget(camGame, true);
-		CustomFadeTransition.nextCamera = camOther;
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -1047,8 +1046,6 @@ class PlayState extends MusicBeatState
 		if(timeToStart > 0){						
 			clearNotesBefore(timeToStart);
 		}
-
-		CustomFadeTransition.nextCamera = camOther;
 
 		passedCheckPoint = new FlxText(0, 0, 0, "Player's current checkpoint spot is 0.", 20);
 		passedCheckPoint.size = 40;

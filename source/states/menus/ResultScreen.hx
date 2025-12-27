@@ -419,9 +419,6 @@ class ResultScreen extends MusicBeatSubstate
 							FlxG.sound.playMusic(Paths.music('bloodstained'));
 							#if desktop DiscordClient.resetClientID(); #end
 							PlayState.cancelMusicFadeTween();
-							if(FlxTransitionableState.skipNextTransIn) {
-								CustomFadeTransition.nextCamera = null;
-							}
 							MusicBeatState.switchState(new StoryMenuState());
 
 							if(!ClientPrefs.getGameplaySetting('practice', true) && !ClientPrefs.getGameplaySetting('botplay', true)  && !ClientPrefs.getGameplaySetting('modchart', false)) {

@@ -2137,9 +2137,6 @@ class FunkinLua {
 			}
 
 			PlayState.cancelMusicFadeTween();
-			CustomFadeTransition.nextCamera = PlayState.instance.camOther;
-			if(FlxTransitionableState.skipNextTransIn)
-				CustomFadeTransition.nextCamera = null;
 
 			if(PlayState.isStoryMode)
 				MusicBeatState.switchState(new StoryMenuState());
