@@ -25,83 +25,78 @@ class ModchartFuncs
 {
 	public static var editor:Bool = false;
 
-	public static function loadLuaFunctions()
+	#if LUA_ALLOWED
+	public static function implement(funk:FunkinLua)
 	{	
-		return;
-		#if PSYCH
-		#if LUA_ALLOWED
-		// if (isPlayState)
-		// {
-		for (funkin in PlayState.instance.luaArray)
-		{
-			Lua_helper.add_callback(funkin.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1)
+		try {
+			Lua_helper.add_callback(funk.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1)
 			{
 				startMod(name, modClass, type, pf);
 
 				PlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); // needs to be reconstructed for lua modcharts
 			});
-			Lua_helper.add_callback(funkin.lua, 'registerMod', function(name:String, type:String = '', pf:Int = -1)
+			Lua_helper.add_callback(funk.lua, 'registerMod', function(name:String, type:String = '', pf:Int = -1)
 			{
 				registerMod(name, type, pf);
 
 				PlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); // needs to be reconstructed for lua modcharts
 			});
-			Lua_helper.add_callback(funkin.lua, 'setMod', function(name:String, value:Float)
+			Lua_helper.add_callback(funk.lua, 'setMod', function(name:String, value:Float)
 			{
 				setMod(name, value);
 			});
-			Lua_helper.add_callback(funkin.lua, 'setSubMod', function(name:String, subValName:String, value:Float)
+			Lua_helper.add_callback(funk.lua, 'setSubMod', function(name:String, subValName:String, value:Float)
 			{
 				setSubMod(name, subValName, value);
 			});
-			Lua_helper.add_callback(funkin.lua, 'setModTargetLane', function(name:String, value:Int)
+			Lua_helper.add_callback(funk.lua, 'setModTargetLane', function(name:String, value:Int)
 			{
 				setModTargetLane(name, value);
 			});
-			Lua_helper.add_callback(funkin.lua, 'setModPlayfield', setModPlayfield);
-			Lua_helper.add_callback(funkin.lua, 'addPlayfield', addPlayfield);
-			Lua_helper.add_callback(funkin.lua, 'removePlayfield', removePlayfield);
-			Lua_helper.add_callback(funkin.lua, 'tweenModifier', tweenModifier);
-			Lua_helper.add_callback(funkin.lua, 'tweenModifierSubValue', tweenModifierSubValue);
-			Lua_helper.add_callback(funkin.lua, 'setModEaseFunc', setModEaseFunc);
-			Lua_helper.add_callback(funkin.lua, 'set', function(beat:Float, argsAsString:String)
+			Lua_helper.add_callback(funk.lua, 'setModPlayfield', setModPlayfield);
+			Lua_helper.add_callback(funk.lua, 'addPlayfield', addPlayfield);
+			Lua_helper.add_callback(funk.lua, 'removePlayfield', removePlayfield);
+			Lua_helper.add_callback(funk.lua, 'tweenModifier', tweenModifier);
+			Lua_helper.add_callback(funk.lua, 'tweenModifierSubValue', tweenModifierSubValue);
+			Lua_helper.add_callback(funk.lua, 'setModEaseFunc', setModEaseFunc);
+			Lua_helper.add_callback(funk.lua, 'set', function(beat:Float, argsAsString:String)
 			{
 				set(beat, argsAsString);
 			});
-			Lua_helper.add_callback(funkin.lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String)
+			Lua_helper.add_callback(funk.lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String)
 			{
 				ease(beat, time, easeStr, argsAsString);
 			});
-			Lua_helper.add_callback(funkin.lua, 'stepSet', function(beat:Float, argsAsString:String)
+			Lua_helper.add_callback(funk.lua, 'stepSet', function(beat:Float, argsAsString:String)
 			{
 				stepSet(beat, argsAsString);
 			});
-			Lua_helper.add_callback(funkin.lua, 'stepEase', function(beat:Float, time:Float, easeStr:String, argsAsString:String)
+			Lua_helper.add_callback(funk.lua, 'stepEase', function(beat:Float, time:Float, easeStr:String, argsAsString:String)
 			{
 				stepEase(beat, time, easeStr, argsAsString);
 			});
-			Lua_helper.add_callback(funkin.lua, 'add', function(beat:Float, time:Float, easeStr:String, argsAsString:String)
+			Lua_helper.add_callback(funk.lua, 'add', function(beat:Float, time:Float, easeStr:String, argsAsString:String)
 			{
 				add(beat, time, easeStr, argsAsString);
 			});
-			Lua_helper.add_callback(funkin.lua, 'setAdd', function(beat:Float, argsAsString:String)
+			Lua_helper.add_callback(funk.lua, 'setAdd', function(beat:Float, argsAsString:String)
 			{
 				setAdd(beat, argsAsString);
 			});
-			Lua_helper.add_callback(funkin.lua, 'getMod', function(name:String, base:Bool = false)
+			Lua_helper.add_callback(funk.lua, 'getMod', function(name:String, base:Bool = false)
 			{
 				var result = getMod(name, base);
 				return result;
 			});
-			Lua_helper.add_callback(funkin.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false)
+			Lua_helper.add_callback(funk.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false)
 			{
 				var result = getSubMod(name, subMod, base);
 				return result;
 			});
-		}
-		#end
-		#end
+		} catch(e:haxe.Exception) 
+			trace(e.message, e.stack);
 	}
+	#end
 
 	public static function loadHScriptFunctions(parent:Dynamic)
 	{

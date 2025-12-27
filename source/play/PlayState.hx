@@ -991,10 +991,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		
-		if (notITGMod && SONG.notITG)
-			ModchartFuncs.loadLuaFunctions();
-
 		callOnScripts('onCreatePost');
 		callOnScripts('onModchart');
 
@@ -1540,7 +1536,6 @@ class PlayState extends MusicBeatState
 				playfieldRenderer.modifierTable.resetMods();
 				playfieldRenderer.modchart.loadEvents();
 				playfieldRenderer.update(0);
-				ModchartFuncs.loadLuaFunctions();
 				callOnScripts('onModchart');
 			}
 		}
@@ -1952,7 +1947,6 @@ class PlayState extends MusicBeatState
 				playfieldRenderer.modifierTable.resetMods();
 				playfieldRenderer.modchart.loadEvents();
 				playfieldRenderer.update(0);
-				ModchartFuncs.loadLuaFunctions();
 				callOnScripts('onModchart');
 			}
 			
