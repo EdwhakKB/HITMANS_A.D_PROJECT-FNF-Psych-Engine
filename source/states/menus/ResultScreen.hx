@@ -94,8 +94,8 @@ class ResultScreen extends MusicBeatSubstate
 		super();
 
 		camRate = new FlxCamera();
-		FlxG.cameras.add(camRate, false);
-		FlxG.cameras.setDefaultDrawTarget(camRate, false);
+		FlxG.cameras.reset(camRate);
+		FlxG.cameras.setDefaultDrawTarget(camRate, true);
 
 		dascore = score;
 		daacc = acc;

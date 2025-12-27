@@ -53,7 +53,7 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 
 	override function create() {
 
-		// destroySubStates = false;
+		destroySubStates = false;
 
 		camBeat = FlxG.camera;
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
