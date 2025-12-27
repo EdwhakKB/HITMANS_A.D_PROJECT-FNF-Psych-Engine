@@ -7,7 +7,6 @@ import _hscript.IHScriptCustomConstructor;
 import flixel.util.FlxStringUtil;
 import flixel.FlxBasic;
 import flixel.FlxG;
-import editors.content.EditorPlayState;
 
 @:allow(codenameengine.scripting.ScriptPack)
 /**
@@ -57,7 +56,6 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			"FlxColor"		  => CoolUtil.getMacroAbstractClass("flixel.util.FlxColor"),
 			"Mods"		  => Mods,
 			"PlayState"		 => PlayState,
-			"EditorPlayState" => editors.content.EditorPlayState,
 			"GameOverSubstate"  => GameOverSubstate,
 			"HealthIcon"		=> HealthIcon,
 			"Note"			  => Note,
@@ -189,30 +187,20 @@ class Script extends FlxBasic implements IFlxDestroyable {
 		// Functions & Variables
 		set('setVar', function(name:String, value:Dynamic)
 		{
-			if (PlayState.instance == FlxG.state) PlayState.instance.variables.set(name, value);
-			else if (EditorPlayState.instance == FlxG.state) EditorPlayState.instance.variables.set(name, value);
+			MusicBeatState.getVariables().set(name, value);
 		});
 		set('getVar', function(name:String)
 		{
 			var result:Dynamic = null;
-			if (PlayState.instance == FlxG.state) if(PlayState.instance.variables.exists(name)) result = PlayState.instance.variables.get(name);
-			else if (EditorPlayState.instance == FlxG.state) if(EditorPlayState.instance.variables.exists(name)) result = EditorPlayState.instance.variables.get(name);
+			if(MusicBeatState.getVariables().exists(name)) result = MusicBeatState.getVariables().get(name);
 			return result;
 		});
 		set('removeVar', function(name:String)
 		{
-			if (PlayState.instance == FlxG.state){
-				if(PlayState.instance.variables.exists(name))
-				{
-					PlayState.instance.variables.remove(name);
-					return true;
-				}
-			}else if (EditorPlayState.instance == FlxG.state){
-				if(EditorPlayState.instance.variables.exists(name))
-				{
-					EditorPlayState.instance.variables.remove(name);
-					return true;
-				}
+			if(MusicBeatState.getVariables().exists(name))
+			{
+				MusicBeatState.getVariables().remove(name);
+				return true;
 			}
 			return false;
 		});
@@ -220,8 +208,6 @@ class Script extends FlxBasic implements IFlxDestroyable {
 			if(color == null) color = flixel.util.FlxColor.WHITE;
 			if (PlayState.instance == FlxG.state)
 				PlayState.instance.addTextToDebug(text, color);
-			else if (EditorPlayState.instance == FlxG.state)
-				EditorPlayState.instance.addTextToDebug(text, color);
 			else trace(text);
 		});
 
@@ -305,13 +291,13 @@ class Script extends FlxBasic implements IFlxDestroyable {
 		});*/
 
 		// set('buildTarget', FunkinLua.getBuildTarget());
-		set('customSubstate', FunkinLua.CustomSubstate.instance);
-		set('customSubstateName', FunkinLua.CustomSubstate.name);
-		set('Function_Stop', FunkinLua.Function_Stop);
-		set('Function_Continue', FunkinLua.Function_Continue);
-		set('Function_StopLua', FunkinLua.Function_StopLua); //doesnt do much cuz HScript has a lower priority than Lua
-		set('Function_StopHScript', FunkinLua.Function_StopHScript);
-		set('Function_StopAll', FunkinLua.Function_StopAll);
+		set('customSubstate', CustomSubstate.instance);
+		set('customSubstateName', CustomSubstate.name);
+		set('Function_Stop', LuaUtils.Function_Stop);
+		set('Function_Continue', LuaUtils.Function_Continue);
+		set('Function_StopLua', LuaUtils.Function_StopLua); //doesnt do much cuz HScript has a lower priority than Lua
+		set('Function_StopHScript', LuaUtils.Function_StopHScript);
+		set('Function_StopAll', LuaUtils.Function_StopAll);
 
 		set('add', FlxG.state.add);
 		set('insert', FlxG.state.insert);
@@ -352,19 +338,12 @@ class Script extends FlxBasic implements IFlxDestroyable {
 		//Why?
 		if (PlayState.instance != null && PlayState.SONG != null && PlayState.SONG.notITG && PlayState.instance.notITGMod)
 			modcharting.ModchartFuncs.loadHScriptFunctions(this);
-		else if (EditorPlayState.instance != null && PlayState.SONG != null && PlayState.SONG.notITG)
-			modcharting.ModchartFuncs.loadHScriptFunctions(this);
 
 		if(PlayState.instance == FlxG.state)
 		{
 			set('addBehindGF', PlayState.instance.addBehindGF);
 			set('addBehindDad', PlayState.instance.addBehindDad);
 			set('addBehindBF', PlayState.instance.addBehindBF);
-		}else if (EditorPlayState.instance == FlxG.state)
-		{
-			set('addBehindGF', EditorPlayState.instance.addBehindGF);
-			set('addBehindDad', EditorPlayState.instance.addBehindDad);
-			set('addBehindBF', EditorPlayState.instance.addBehindBF);
 		}
 
 		set('setVarFromClass', function(instance:String, variable:String, value:Dynamic)

@@ -44,7 +44,7 @@ class PauseSubState extends MusicBeatSubstate
 	public function new(x:Float, y:Float)
 	{
 		super();
-		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
+		if(Difficulty.list.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
 
 		if(PlayState.checkpointHistory.length > 0) //must add the "restartFromCheckpoint" option if there is a checkpoint inside song ig?
 		{
@@ -66,8 +66,8 @@ class PauseSubState extends MusicBeatSubstate
 		}
 		menuItems = menuItemsOG;
 
-		for (i in 0...CoolUtil.difficulties.length) {
-			var diff:String = '' + CoolUtil.difficulties[i];
+		for (i in 0...Difficulty.list.length) {
+			var diff:String = Difficulty.getString(i);
 			difficultyChoices.push(diff);
 		}
 		difficultyChoices.push('BACK');
@@ -100,7 +100,7 @@ class PauseSubState extends MusicBeatSubstate
 		add(levelInfo);
 
 		var levelDifficulty:FlxText = new FlxText(20, 15 + 32, 0, "", 32);
-		levelDifficulty.text += CoolUtil.difficultyString();
+		levelDifficulty.text += Difficulty.getString();
 		levelDifficulty.scrollFactor.set();
 		levelDifficulty.setFormat(Paths.font('vcr.ttf'), 32);
 		levelDifficulty.updateHitbox();
@@ -289,26 +289,15 @@ class PauseSubState extends MusicBeatSubstate
 						unPauseTimer = new FlxTimer().start(Conductor.crochet / 1000, function(hmmm:FlxTimer)
 						{
 							if (unPauseTimer.loopsLeft == 4)
-							{
 								pauseCountDown('3');
-							}
 							else if (unPauseTimer.loopsLeft == 3)
-							{
 								pauseCountDown('2');
-							}
 							else if (unPauseTimer.loopsLeft == 2)
-							{
 								pauseCountDown('1');
-							}
 							else if (unPauseTimer.loopsLeft == 1)
-							{
 								pauseCountDown('go');
-							}
 							else if (unPauseTimer.finished && unPauseTimer.loopsLeft == 0)
-							{
-								PlayState.instance.modchartTimers.remove('hmmm');
 								close();
-							}
 						}, 5);
 						pauseMusic.volume = 0;
 						pauseMusic.destroy();
@@ -494,18 +483,10 @@ class PauseSubState extends MusicBeatSubstate
 
 		if(noTrans)
 		{
+			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
 		}
-		else
-		{
-			if (!isReset)
-				MusicBeatState.resetState();
-			else {
-				LoadingState.prepareToSong();
-				LoadingState.loadAndSwitchState(new PlayState(), true);
-			}
-		}
+		MusicBeatState.resetState();
 	}
 
 	function changeSelection(change:Int = 0):Void

@@ -15,12 +15,6 @@ import openfl.net.FileReference;
 
 using StringTools;
 
-#if LUA_ALLOWED
-import llua.Convert;
-import llua.Lua;
-import llua.LuaL;
-import llua.State;
-#end
 #if LEATHER
 import game.Conductor;
 import states.PlayState;
@@ -32,17 +26,8 @@ class ModchartFuncs
 	public static var editor:Bool = false;
 
 	public static function loadLuaFunctions()
-	{
-		loadVars(true);
-	}
-
-	public static function loadLuaEditorFunctions()
-	{
-		loadVars(false);
-	}
-
-	public static function loadVars(isPlayState:Bool = true)
-	{
+	{	
+		return;
 		#if PSYCH
 		#if LUA_ALLOWED
 		// if (isPlayState)
@@ -114,84 +99,6 @@ class ModchartFuncs
 				return result;
 			});
 		}
-		// }
-		// else
-		// {
-		//     for (funkin in EditorPlayState.instance.luaArray)
-		//     {
-		//         Lua_helper.add_callback(funkin.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
-		//             startMod(name,modClass,type,pf);
-
-		//             EditorPlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'setMod', function(name:String, value:Float){
-		//             setMod(name, value);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'setSubMod', function(name:String, subValName:String, value:Float){
-		//             setSubMod(name, subValName,value);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'setModTargetLane', function(name:String, value:Int){
-		//             setModTargetLane(name, value);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'setModPlayfield', function(name:String, value:Int){
-		//             setModPlayfield(name,value);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'addPlayfield', function(?x:Float = 0, ?y:Float = 0, ?z:Float = 0){
-		//             addPlayfield(x,y,z);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'removePlayfield', function(idx:Int){
-		//             removePlayfield(idx);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
-		//             tweenModifier(modifier,val,time,ease);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
-		//             tweenModifierSubValue(modifier,subValue,val,time,ease);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'setModEaseFunc', function(name:String, ease:String){
-		//             setModEaseFunc(name,ease);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'set', function(beat:Float, argsAsString:String){
-		//             set(beat, argsAsString);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-		//             ease(beat, time, easeStr, argsAsString);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'stepSet', function(beat:Float, argsAsString:String){
-		//             stepSet(beat, argsAsString);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'stepEase', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-		//             stepEase(beat, time, easeStr, argsAsString);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'add', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-		//             add(beat, time, easeStr, argsAsString);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'setAdd', function(beat:Float, argsAsString:String){
-		//             setAdd(beat, argsAsString);
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'getMod', function(name:String, base:Bool = false){
-		//             var result = getMod(name, base);
-		//             return result;
-		//         });
-		//         Lua_helper.add_callback(funkin.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false){
-		//             var result = getSubMod(name, subMod, base);
-		//             return result;
-		//         });
-		//     }
-
-		//     #if hscript
-		//     if (EditorLua.hscript != null)
-		//     {
-		//         EditorLua.hscript.variables.set('Math', Math);
-		//         EditorLua.hscript.variables.set('PlayfieldRenderer', PlayfieldRenderer);
-		//         EditorLua.hscript.variables.set('ModchartUtil', ModchartUtil);
-		//         EditorLua.hscript.variables.set('Modifier', Modifier);
-		//         EditorLua.hscript.variables.set('NoteMovement', NoteMovement);
-		//         EditorLua.hscript.variables.set('NotePositionData', NotePositionData);
-		//         EditorLua.hscript.variables.set('ModchartFile', ModchartFile);
-		//     }
-		//     #end
-		// }
 		#end
 		#end
 	}

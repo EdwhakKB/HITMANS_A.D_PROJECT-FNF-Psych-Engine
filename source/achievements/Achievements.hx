@@ -12,7 +12,7 @@ import sys.io.File;
 #end
 
 #if LUA_ALLOWED
-import scripting.FunkinLua;
+import scripting.lua.FunkinLua;
 #end
 
 using StringTools;
@@ -293,7 +293,7 @@ class Achievements {
 		{
 			if(!achievements.exists(name))
 			{
-				//FunkinLua.luaTrace('getAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				FunkinLua.luaTrace('getAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
 				return -1;
 			}
 			return getScore(name);
@@ -302,7 +302,7 @@ class Achievements {
 		{
 			if(!achievements.exists(name))
 			{
-				//FunkinLua.luaTrace('setAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				FunkinLua.luaTrace('setAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
 				return -1;
 			}
 			return setScore(name, value, saveIfNotUnlocked);
@@ -311,7 +311,7 @@ class Achievements {
 		{
 			if(!achievements.exists(name))
 			{
-				//FunkinLua.luaTrace('addAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				FunkinLua.luaTrace('addAchievementScore: Couldnt find achievement: $name', false, false, FlxColor.RED);
 				return -1;
 			}
 			return addScore(name, value, saveIfNotUnlocked);
@@ -320,7 +320,7 @@ class Achievements {
 		{
 			if(!achievements.exists(name))
 			{
-				//FunkinLua.luaTrace('unlockAchievement: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				FunkinLua.luaTrace('unlockAchievement: Couldnt find achievement: $name', false, false, FlxColor.RED);
 				return null;
 			}
 			return unlock(name);
@@ -329,7 +329,7 @@ class Achievements {
 		{
 			if(!achievements.exists(name))
 			{
-				//FunkinLua.luaTrace('isAchievementUnlocked: Couldnt find achievement: $name', false, false, FlxColor.RED);
+				FunkinLua.luaTrace('isAchievementUnlocked: Couldnt find achievement: $name', false, false, FlxColor.RED);
 				return null;
 			}
 			return isUnlocked(name);

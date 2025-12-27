@@ -1,4 +1,11 @@
 #if !macro
+#if LUA_ALLOWED
+import llua.Convert;
+import llua.Lua;
+import llua.LuaL;
+import llua.State;
+#end
+
 import engine.*;
 import engine.Paths;
 import engine.CoolUtil;
@@ -16,6 +23,7 @@ import engine.StageData;
 import cutscene.*;
 import objects.*;
 import scripting.*;
+import scripting.lua.*;
 import states.*;
 import states.menus.*;
 import states.subs.*;
@@ -50,6 +58,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.system.*;
 import flixel.system.FlxAssets;
+import flixel.addons.*;
+import flixel.addons.transition.FlxTransitionableState;
 
 import modcharting.*;
 import modcharting.utils.RGBPalette;

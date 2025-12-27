@@ -4,7 +4,7 @@ import flixel.*;
 import flixel.util.FlxAxes;
 
 #if LUA_ALLOWED
-import scripting.FunkinLua;
+import scripting.lua.FunkinLua;
 #end
 
 #if SScript
@@ -83,13 +83,13 @@ class SSHScript extends SScript
 		set('Character', objects.Character);
 		set('Alphabet', objects.Alphabet);
 		set('Note', objects.Note);
-		set('CustomSubstate', scripting.FunkinLua.CustomSubstate);
+		set('CustomSubstate', scripting.lua.CustomSubstate);
 		#if (!flash && sys)
 		set('FlxRuntimeShader', flixel.addons.display.FlxRuntimeShader);
 		#end
 		set('ShaderFilter', openfl.filters.ShaderFilter);
 		#if LUA_ALLOWED
-		set('FunkinLua', scripting.FunkinLua);
+		set('FunkinLua', scripting.lua.FunkinLua);
 		#end
 		#if flxanimate
 		set('FlxAnimate', FlxAnimate);
@@ -98,19 +98,19 @@ class SSHScript extends SScript
 		// Functions & Variables
 		set('setVar', function(name:String, value:Dynamic)
 		{
-			PlayState.instance.variables.set(name, value);
+			MusicBeatState.getVariables().set(name, value);
 		});
 		set('getVar', function(name:String)
 		{
 			var result:Dynamic = null;
-			if(PlayState.instance.variables.exists(name)) result = PlayState.instance.variables.get(name);
+			if(MusicBeatState.getVariables().exists(name)) result = MusicBeatState.getVariables().get(name);
 			return result;
 		});
 		set('removeVar', function(name:String)
 		{
-			if(PlayState.instance.variables.exists(name))
+			if(MusicBeatState.getVariables().exists(name))
 			{
-				PlayState.instance.variables.remove(name);
+				MusicBeatState.getVariables().remove(name);
 				return true;
 			}
 			return false;
@@ -201,11 +201,11 @@ class SSHScript extends SScript
 		set('customSubstate', FunkinLua.CustomSubstate.instance);
 		set('customSubstateName', FunkinLua.CustomSubstate.name);
 		set('StringTools', StringTools);
-		set('Function_Stop', FunkinLua.Function_Stop);
-		set('Function_Continue', FunkinLua.Function_Continue);
-		set('Function_StopLua', FunkinLua.Function_StopLua); //doesnt do much cuz HScript has a lower priority than Lua
-		set('Function_StopHScript', FunkinLua.Function_StopHScript);
-		set('Function_StopAll', FunkinLua.Function_StopAll);
+		set('Function_Stop', LuaUtils.Function_Stop);
+		set('Function_Continue', LuaUtils.Function_Continue);
+		set('Function_StopLua', LuaUtils.Function_StopLua); //doesnt do much cuz HScript has a lower priority than Lua
+		set('Function_StopHScript', LuaUtils.Function_StopHScript);
+		set('Function_StopAll', LuaUtils.Function_StopAll);
 		
 		set('add', FlxG.state.add);
 		set('insert', FlxG.state.insert);

@@ -215,7 +215,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 
 	override function create()
 	{
-		if(CoolUtil.difficulties.length < 1) CoolUtil.difficulties = CoolUtil.defaultDifficulties;
+		Difficulty.resetList(false);
 		_keysPressedBuffer.resize(keysArray.length);
 
 		if(_shouldReset) Conductor.songPosition = 0;
@@ -754,14 +754,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		{
 			if(PsychUIInputText.focusOn == null) //If not typing anything
 			{
-				if(FlxG.keys.justPressed.F12)
-				{
-					super.update(elapsed);
-					openEditorPlayState();
-					lastFocus = PsychUIInputText.focusOn;
-					return;
-				}
-				else if(FlxG.keys.justPressed.F1)
+				if(FlxG.keys.justPressed.F1)
 				{
 					var vis:Bool = !fullTipText.visible;
 					tipBg.visible = tipBg.active = fullTipText.visible = fullTipText.active = vis;
@@ -3680,7 +3673,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 								if(diffs != null && diffs.length > 0)
 								{
 									var diffsFound:Array<String> = [];
-									var defaultDiff:String = Paths.formatToSongPath(CoolUtil.defaultDifficulty);
+									var defaultDiff:String = Paths.formatToSongPath(Difficulty.getDefault());
 									for (diff in diffs)
 									{
 										var diffPostfix:String = (diff != defaultDiff) ? '-$diff' : '';
@@ -3839,7 +3832,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 								if(!path.endsWith('/')) path += '/';
 
 								var diffs:Array<String> = metadata.playData.difficulties.copy();
-								var defaultDiff:String = Paths.formatToSongPath(CoolUtil.defaultDifficulty);
+								var defaultDiff:String = Paths.formatToSongPath(Difficulty.getDefault());
 								function nextChart()
 								{
 									while(diffs.length > 0)
@@ -3929,12 +3922,7 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 		btn.text.alignment = LEFT;
 		tab_group.add(btn);
 
-		btnY++;
-		btnY += 20;
-		var btn:PsychUIButton = new PsychUIButton(btnX, btnY, '  Preview (F12)', openEditorPlayState, btnWid);
-		btn.text.alignment = LEFT;
-		tab_group.add(btn);
-		
+		btnY++;		
 		btnY += 20;
 		var btn:PsychUIButton = new PsychUIButton(btnX, btnY, '  Playtest (Enter)', goToPlayState, btnWid);
 		btn.text.alignment = LEFT;
@@ -4588,16 +4576,6 @@ class ChartingState extends MusicBeatState implements PsychUIEventHandler.PsychU
 			upperBox.bg.setGraphicSize(menu.width, menu.height + 21);
 			upperBox.bg.updateHitbox();
 		}
-	}
-
-	function openEditorPlayState()
-	{
-		setSongPlaying(false);
-		chartEditorSave.flush(); //just in case a random crash happens before loading
-
-		LoadingState.loadAndSwitchState(new EditorPlayState(FlxG.sound.music.time));
-		upperBox.isMinimized = true;
-		upperBox.visible = mainBox.visible = infoBox.visible = false;
 	}
 
 	function goToPlayState()

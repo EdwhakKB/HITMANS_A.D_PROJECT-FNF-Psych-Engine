@@ -11,10 +11,10 @@ class MusicBeatSubstate extends FlxSubState
 	public function new()
 	{
 		super();
-		CoolUtil.precacheImage("overlays/ctr");
-		CoolUtil.precacheImage('overlays/white_scanline${ClientPrefs.data.downScroll ? '-ds' : ''}');
-		CoolUtil.precacheImage("overlays/cam_fuck");
-		CoolUtil.precacheImage("static/static");
+		Paths.image("overlays/ctr");
+		Paths.image('overlays/white_scanline${ClientPrefs.data.downScroll ? '-ds' : ''}');
+		Paths.image("overlays/cam_fuck");
+		Paths.image("static/static");
 		crtFilter = new FlxSprite().loadGraphic(Paths.image('overlays/crt'));
 		crtFilter.scrollFactor.set();
 		crtFilter.antialiasing = true;

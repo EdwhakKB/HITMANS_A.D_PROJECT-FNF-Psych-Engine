@@ -75,6 +75,7 @@ class Main extends Sprite
 		#if ACHIEVEMENTS_ALLOWED 
 		Achievements.load(); 
 		#end
+		#if LUA_ALLOWED Lua.set_callbacks_function(cpp.Callable.fromStaticFunction(scripting.lua.CallbackHandler.call)); #end
 		addChild(new CrashHandler.MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
 
 		#if HSCRIPT_ALLOWED
@@ -82,10 +83,11 @@ class Main extends Sprite
 		#end
 
 		// mouseCursor = new FlxSprite().loadGraphic(Paths.image('mouse')); 
-		// mouseCursor.scale.set(0.5, 0.5);
-        // FlxG.mouse.load(mouseCursor.graphic.bitmapData);
-        // FlxG.mouse.enabled = true;
-        // FlxG.mouse.visible = true;
+		// mouseCursor.graphic.persist = true;
+		// mouseCursor.graphic.destroyOnNoUse = false;
+        // FlxG.mouse.load(mouseCursor.graphic.bitmap, 0.5);
+        FlxG.mouse.enabled = true;
+        FlxG.mouse.visible = true;
 		
 		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
@@ -105,21 +107,9 @@ class Main extends Sprite
 		FlxGraphic.defaultPersist = false;
 		FlxG.signals.preStateSwitch.add(function()
 		{
-
 			//i tihnk i finally fixed it
 
-			@:privateAccess
-			for (key in FlxG.bitmap._cache.keys())
-			{
-				var obj = FlxG.bitmap._cache.get(key);
-				if (obj != null)
-				{
-					LimeAssets.cache.image.remove(key);
-					OpenFLAssets.cache.removeBitmapData(key);
-					FlxG.bitmap._cache.remove(key);
-					//obj.destroy(); //breaks the game lol
-				}
-			}
+			FlxG.bitmap.clearCache();
 
 			//idk if this helps because it looks like just clearing it does the same thing
 			for (k => f in LimeAssets.cache.font)
@@ -129,8 +119,6 @@ class Main extends Sprite
 
 			LimeAssets.cache.clear();
 			OpenFLAssets.cache.clear();
-
-			// FlxG.bitmap.dumpCache();
 
 			#if cpp
 			cpp.vm.Gc.enable(true);

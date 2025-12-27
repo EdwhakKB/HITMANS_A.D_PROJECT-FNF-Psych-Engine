@@ -267,9 +267,9 @@ class MainMenuState extends MusicBeatState
 
 		if (lastDifficultyName == '')
 			{
-				lastDifficultyName = CoolUtil.defaultDifficulty;
+				lastDifficultyName = Difficulty.getDefault();
 			}
-			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
+			curDifficulty = Math.round(Math.max(0, Difficulty.defaultList.indexOf(lastDifficultyName)));
 
 		#if (ACHIEVEMENTS_ALLOWED && MODS_ALLOWED)
 		Achievements.reloadList();
@@ -290,9 +290,6 @@ class MainMenuState extends MusicBeatState
 				if(FreeplayState.vocals != null) FreeplayState.vocals.volume += 0.5 * elapsed;
 			}
 		}
-
-		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
-		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, FlxG.mouse.x, lerpVal), FlxMath.lerp(camFollowPos.y, FlxG.mouse.y, lerpVal));
 
 		dateThings = DateTools.format(Date.now(), "%Y-%m-%d | %H:%M");
 
@@ -481,10 +478,10 @@ class MainMenuState extends MusicBeatState
 				inCMD = true;
 				openSubState(new CommandPromptSubstate());
 			}
-			if (FlxG.keys.justPressed.ONE && !selectedSomethin && !inCMD && !inFolder)
-			{
-				MusicBeatState.switchState(new NewFreeplay());
-			}
+			// if (FlxG.keys.justPressed.ONE && !selectedSomethin && !inCMD && !inFolder)
+			// {
+			// 	MusicBeatState.switchState(new NewFreeplay());
+			// }
 			#if desktop
 			else if (controls.justPressed('debug_1') && !inCMD)
 			{

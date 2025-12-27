@@ -436,7 +436,7 @@ class ResultScreen extends MusicBeatSubstate
 						}
 						else
 						{
-							var difficulty:String = CoolUtil.getDifficultyFilePath();
+							var difficulty:String = Difficulty.getFilePath();
 
 							trace('LOADING NEXT SONG');
 							trace(Paths.formatToSongPath(PlayState.storyPlaylist[0]) + difficulty);
@@ -445,8 +445,8 @@ class ResultScreen extends MusicBeatSubstate
 							FlxTransitionableState.skipNextTransIn = true;
 							FlxTransitionableState.skipNextTransOut = true;
 
+							@:privateAccess
 							PlayState.prevCamFollow = PlayState.instance.camFollow;
-							PlayState.prevCamFollowPos = PlayState.instance.camFollowPos;
 
 							Song.loadFromJson(PlayState.storyPlaylist[0] + difficulty, PlayState.storyPlaylist[0]);
 							FlxG.sound.music.stop();

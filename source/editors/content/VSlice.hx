@@ -392,7 +392,7 @@ class VSlice
 		var notesMap:Map<String, Array<VSliceNote>> = [];
 		if(difficultyName == null) //Fill all difficulties to attempt to prevent the song from not showing up on Base Game
 		{
-			var diffs:Array<String> = CoolUtil.difficulties.copy();
+			var diffs:Array<String> = Difficulty.list.copy();
 			for (num => diff in diffs)
 			{
 				diffs[num] = diff = Paths.formatToSongPath(diff);
@@ -402,8 +402,8 @@ class VSlice
 		}
 		else
 		{
-			var diff:String = CoolUtil.defaultDifficulties[PlayState.storyDifficulty];
-			if(diff == null) diff = CoolUtil.defaultDifficulty;
+			var diff:String = Difficulty.defaultList[PlayState.storyDifficulty];
+			if(diff == null) diff = Difficulty.getDefault();
 			diff = Paths.formatToSongPath(diff);
 			
 			scrollSpeed.set(diff, songData.speed);

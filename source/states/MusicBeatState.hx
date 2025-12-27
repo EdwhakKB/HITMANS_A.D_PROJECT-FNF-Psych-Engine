@@ -17,12 +17,17 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 
 	public static var camBeat:FlxCamera;
 	public static var isBlack:Bool = false;
-	public static var time:Float = 0.7;
+	public static var time:Float = 0.5;
 
 	inline function get_controls():Controls
 		return Controls.instance;
 
 	public static var subStates:Array<MusicBeatSubstate> = [];
+
+	public var variables:Map<String, Dynamic> = [];
+
+	public static function getVariables():Map<String, Dynamic>
+		return getState().variables;
 
 	override public function destroy()
 	{

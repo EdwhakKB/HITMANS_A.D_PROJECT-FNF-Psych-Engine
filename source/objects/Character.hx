@@ -358,6 +358,9 @@ class Character extends FlxSprite
 		return !isAnimateAtlas ? animation.curAnim.finished : atlas.anim.finished;
 	}
 
+	public function hasAnimation(anim:String):Bool
+		return animOffsets.exists(anim);
+
 	public function finishAnimation():Void
 	{
 		if(isAnimationNull()) return;

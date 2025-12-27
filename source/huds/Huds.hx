@@ -3,7 +3,6 @@ package huds;
 import flixel.ui.FlxBar;
 import flixel.util.FlxSort;
 import flixel.util.FlxStringUtil;
-import editors.content.EditorPlayState;
 import flixel.text.FlxText.FlxTextBorderStyle;
 
 using StringTools;

@@ -1,7 +1,7 @@
 package engine;
 
 import engine.Song.SwagSong;
-import scripting.FunkinLua.ModchartSprite;
+import scripting.lua.ModchartSprite;
 
 typedef StageFile = {
 	var directory:String;

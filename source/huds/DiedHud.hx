@@ -38,17 +38,17 @@ class DiedHud extends FlxGroup
 
 		diedTo = noteWhoKilled; //so i make sure that the noteWhoKilled is set in the function ig?
 
-        CoolUtil.precacheImage("overlays/ctr");
+        Paths.image("overlays/ctr");
 		if (ClientPrefs.data.downScroll)
 			{
-				CoolUtil.precacheImage("overlays/white_scanline-ds");
+				Paths.image("overlays/white_scanline-ds");
 			}
 			else if (!ClientPrefs.data.downScroll)
 			{
-				CoolUtil.precacheImage("overlays/white_scanline");
+				Paths.image("overlays/white_scanline");
 			}
-		CoolUtil.precacheImage("overlays/cam_fuck");
-		CoolUtil.precacheImage("static/static");
+		Paths.image("overlays/cam_fuck");
+		Paths.image("static/static");
 		crtFilter = new FlxSprite().loadGraphic(Paths.image('overlays/crt'));
 		crtFilter.scrollFactor.set();
 		crtFilter.antialiasing = true;

@@ -2,7 +2,6 @@ package states;
 
 import flixel.input.gamepad.FlxGamepad;
 import states.subs.PauseSubState;
-import editors.EditorPauseSubState;
 import flixel.graphics.FlxGraphic;
 import states.SystemOptions;
 
@@ -129,7 +128,7 @@ class OptionText extends CoolText
 	{
 		super.update(elapsed);
 
-		var optLerp = CoolUtil.boundTo(elapsed * 15, 0, 1);
+		var optLerp = FlxMath.bound(elapsed * 15, 0, 1);
 
 		rawY = (targetY * 45.75) + OptionCata.sizeWindow;
 		y = FlxMath.lerp(y, rawY, optLerp) + offsetY;
@@ -374,11 +373,6 @@ class OptionsMenu extends MusicBeatSubstate
 				add(PauseSubState.pauseMusic);
 				PauseSubState.pauseMusic.play();
 			}
-			if (EditorPauseSubState.pauseMusic != null)
-			{
-				add(EditorPauseSubState.pauseMusic);
-				EditorPauseSubState.pauseMusic.play();
-			}
 		}
 		#end
 		switchCat(selectedCat);
@@ -510,12 +504,6 @@ class OptionsMenu extends MusicBeatSubstate
 			{
 				if (!PauseSubState.pauseMusic.playing)
 				    PauseSubState.pauseMusic.play();
-			}
-
-			if (EditorPauseSubState.pauseMusic != null && EditorPauseSubState.pauseMusic.time == 0)
-			{
-				if (!EditorPauseSubState.pauseMusic.playing)
-				    EditorPauseSubState.pauseMusic.play();
 			}
 		}
 		#end
@@ -653,7 +641,6 @@ class OptionsMenu extends MusicBeatSubstate
 				{
 					ClientPrefs.saveSettings();
 					PauseSubState.goBack = true;
-					EditorPauseSubState.goBack = true;
 					Paths.setCurrentLevel(''); //LMAO LMAO
 					close();
 				}
@@ -810,12 +797,6 @@ class OptionsMenu extends MusicBeatSubstate
 			{
 				PauseSubState.pauseMusic.pause();
 				remove(PauseSubState.pauseMusic);
-			}
-
-			if (EditorPauseSubState.pauseMusic != null)
-			{
-				EditorPauseSubState.pauseMusic.pause();
-				remove(EditorPauseSubState.pauseMusic);
 			}
 		}
 		#end

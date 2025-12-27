@@ -64,9 +64,7 @@ class ModchartFile
 
 	public function new(renderer:PlayfieldRenderer)
 	{
-		final possibleDiff = CoolUtil.difficulties[PlayState.storyDifficulty];
-		data = loadFromJson(Paths.formatToSongPath(PlayState.SONG.song),
-			possibleDiff == null ? CoolUtil.defaultDifficulties[PlayState.storyDifficulty] : possibleDiff);
+		data = loadFromJson(Paths.formatToSongPath(PlayState.SONG.song), Difficulty.getString());
 		this.renderer = renderer;
 		renderer.modchart = this;
 		// if (!ClientPrefs.getGameplaySetting('chaosmode')){

@@ -104,7 +104,6 @@
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
 	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED" version="1.1.0"/>
 	<section if="VIDEOS_ALLOWED">
-		<haxelib name="hxCodec" if="linux"/>
 		<haxelib name="hxvlc" unless="linux"/>
 	</section>
 	<haxelib name="flxanimate"/>
@@ -125,6 +124,7 @@
 	<define name="CUSTOM_CLASSES" />
 
 	<haxelib name="compiletime" />
+	<haxelib name="flxanimate" />
 
 	<haxelib name="hscript-improved" />
 	<haxedef name="hscriptPos" /> <!-- for logging -->
