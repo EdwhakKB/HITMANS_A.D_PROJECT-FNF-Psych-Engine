@@ -119,6 +119,9 @@ class SSHScript extends SScript
 			if(color == null) color = FlxColor.WHITE;
 			PlayState.instance.addTextToDebug(text, color);
 		});
+		set('consoleLog', function(text:String) {
+			trace(text);
+		});
 
 		// Keyboard & Gamepads
 		set('keyboardJustPressed', function(name:String) return Reflect.getProperty(FlxG.keys.justPressed, name));

@@ -79,7 +79,9 @@ class CustomFunctions {
 
             if(shad != null)
             {
+                trace(shad);
                 var startVal = Reflect.getProperty(shad, prop);
+                trace(startVal);
 
 				MusicBeatState.getVariables().set(tag, 
                     PlayState.tweenManager.num(startVal, value, time, {

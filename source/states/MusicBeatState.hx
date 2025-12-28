@@ -149,7 +149,9 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 	}
 
 	public static function switchState(nextState:FlxState = null) {
-		if(nextState == null) nextState = FlxG.state;
+		trace(nextState == FlxG.state);
+		nextState ??= FlxG.state;
+		trace(nextState == FlxG.state);
 		if(nextState == FlxG.state)
 		{
 			resetState();
@@ -170,14 +172,16 @@ class MusicBeatState extends modcharting.ModchartMusicBeatState
 	// Custom made Trans in
 	public static function startTransition(nextState:FlxState = null)
 	{
-		if(nextState == null)
-			nextState = FlxG.state;
+		trace(nextState == FlxG.state);
+		nextState ??= FlxG.state;
+		trace(nextState == FlxG.state);
 
 		FlxG.state.openSubState(new CustomFadeTransition(0.5, false));
 		if(nextState == FlxG.state)
 			CustomFadeTransition.finishCallback = function() FlxG.resetState();
 		else
 			CustomFadeTransition.finishCallback = function() FlxG.switchState(nextState);
+		trace(CustomFadeTransition.finishCallback, CustomFadeTransition.finishCallback == null);
 	}
 
 	public static function getState():MusicBeatState {

@@ -4491,23 +4491,23 @@ class PlayState extends MusicBeatState
 			lua.call('onDestroy', []);
 			lua.stop();
 		}
-		luaArray = null;
+		luaArray = [];
 		LuaUtils.killShaders();
 
-		#if HSCRIPT_ALLOWED
-		for (script in scripts.scripts)
-			if (script != null)
-			{
-				script.call('onDestroy');
-				script.destroy();
-			}
-		while (scripts.scripts.length > 0)
-			scripts.scripts.pop();
+		// #if HSCRIPT_ALLOWED
+		// for (script in scripts.scripts)
+		// 	if (script != null)
+		// 	{
+		// 		script.call('onDestroy');
+		// 		script.destroy();
+		// 	}
+		// while (scripts.scripts.length > 0)
+		// 	scripts.scripts.pop();
 		
-		remove(scripts);
-		scripts.destroy();
-		scripts = null;
-		#end
+		// remove(scripts);
+		// scripts.destroy();
+		// scripts = null;
+		// #end
 
 		if(!controls.controllerMode)
 		{
@@ -4515,7 +4515,7 @@ class PlayState extends MusicBeatState
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyRelease);
 		}
 		FlxG.sound.music.pitch = 1;
-		cleanManagers();
+		// cleanManagers();
 		super.destroy();
 	}
 

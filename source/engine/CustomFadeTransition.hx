@@ -1,22 +1,26 @@
 package engine;
 
-import engine.Conductor.BPMChangeEvent;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.util.FlxGradient;
 
 class CustomFadeTransition extends MusicBeatSubstate {
 	public static var finishCallback:Void->Void;
-	private var leTween:FlxTween = null;
+	var leTween:FlxTween = null;
 	var isTransIn:Bool = false;
 	var transBlack:FlxSprite;
 	var staticTrans:FlxSprite;
+	var duration:Float = 0.5;
+	var usesBlack:Bool = false;
 
 	public function new(duration:Float, isTransIn:Bool, ?usesBlack:Bool = false) {
-		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-		super();
-
-		// trace(usesBlack);
+		this.duration = duration;
 		this.isTransIn = isTransIn;
+		this.usesBlack = usesBlack;
+		super();
+	}
+
+	override public function create() 
+	{
+		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 		var width:Int = Std.int(FlxG.width / Math.max(camera.zoom, 0.001));
 		var height:Int = Std.int(FlxG.height / Math.max(camera.zoom, 0.001));
 
@@ -37,32 +41,19 @@ class CustomFadeTransition extends MusicBeatSubstate {
         staticTrans.animation.play("glitch");
         add(staticTrans);
 
-		if(isTransIn) {
-			switch (usesBlack) {
-				case false:
-					FlxTween.tween(staticTrans, {alpha: 0}, 0.6, {ease: FlxEase.smoothStepIn});
-				case true:
-					FlxTween.tween(transBlack, {alpha: 0}, duration, {ease: FlxEase.quadInOut});
-			}
-		} else {
-			switch (usesBlack) {
-				case false:
-					//do nothing ig
-				case true:
-					leTween = FlxTween.tween(transBlack, {alpha: 1}, duration, {ease: FlxEase.quadInOut});
-			}
-		}
-		new FlxTimer().start(usesBlack ? duration : (isTransIn ? 0.6 : 0.3), function(twn:FlxTimer) {
-			close();
-			leTween?.cancel();
-		});
+		leTween = FlxTween.tween(usesBlack ? transBlack : staticTrans, {alpha: isTransIn ? 0 : 1}, usesBlack ? 0.6 : duration, {ease: usesBlack ? FlxEase.quadInOut : FlxEase.smoothStepIn});
+		new FlxTimer().start(usesBlack ? duration : (isTransIn ? 0.6 : 0.3), function(twn:FlxTimer) close());
+
+		super.create();
 	}
 
 	override function close() {
 		super.close();
 		leTween?.cancel();
+		trace(finishCallback == null);
 		if (finishCallback != null) {
 			finishCallback();
+			trace(finishCallback);
 			finishCallback = null;
 		}
 	}

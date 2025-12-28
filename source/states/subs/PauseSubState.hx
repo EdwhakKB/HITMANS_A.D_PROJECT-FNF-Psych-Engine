@@ -9,7 +9,7 @@ class PauseSubState extends MusicBeatSubstate
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
 	var menuItems:Array<String> = [];
-	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Gameplay Modifiers', 'Exit to menu'];
+	var menuItemsOG:Array<String> = ['Resume', 'Restart Song', 'Change Difficulty', 'Options', 'Gameplay Modifiers', 'To Freeplay', 'Exit to menu'];
 	var difficultyChoices = [];
 	var curSelected:Int = 0;
 	var unPauseTimer:FlxTimer;
@@ -365,6 +365,8 @@ class PauseSubState extends MusicBeatSubstate
 						pauseMusic.volume = 0;
 						pauseMusic.destroy();
 						close();
+					case 'To Freeplay':
+						MusicBeatState.switchState(new StoryMenuState());
 					case "Exit to menu":
 						#if desktop DiscordClient.resetClientID(); #end
 						PlayState.deathCounter = 0;
@@ -374,17 +376,16 @@ class PauseSubState extends MusicBeatSubstate
 						pauseMusic.volume = 0;
 						pauseMusic.destroy();
 
-						Mods.loadTopMod();
+						// Mods.loadTopMod();
 						if(PlayState.isStoryMode) {
 							MusicBeatState.switchState(new StoryMenuState());
 						} else {
 							MusicBeatState.switchState(new FreeplayState());
 						}
-						PlayState.cancelMusicFadeTween();
-						FlxG.sound.playMusic(Paths.music('bloodstained'));
-						PlayState.changedDifficulty = false;
-						PlayState.chartingMode = false;
-						PlayState.resetPlayData();
+						// FlxG.sound.playMusic(Paths.music('bloodstained'));
+						// PlayState.changedDifficulty = false;
+						// PlayState.chartingMode = false;
+						// PlayState.resetPlayData();
 				}
 			}
 		}

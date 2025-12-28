@@ -67,6 +67,8 @@ class FunkinLua {
 		try {
 			lua = LuaL.newstate();
 			LuaL.openlibs(lua);
+			Lua.init_callbacks(lua);
+			hscript ??= new HScript();
 
 			//trace('Lua version: ' + Lua.version());
 			//trace("LuaJIT version: " + Lua.versionJIT());
@@ -271,6 +273,9 @@ class FunkinLua {
 							return luaInstance.call(funcName, args);
 
 				return null;
+			});
+			Lua_helper.add_callback(lua, "consoleLog", function(text:String) {
+				trace(text);
 			});
 			Lua_helper.add_callback(lua, "isRunning", function(scriptFile:String) {
 				var luaPath:String = findScript(scriptFile);
@@ -1749,19 +1754,20 @@ class FunkinLua {
 	}
 
 	public function stop() {
+		PlayState.instance.luaArray.remove(this);
 		closed = true;
 
 		if(lua == null) {
 			return;
 		}
-		Lua.close(lua);
+		// Lua.close(lua);
 		lua = null;
 		#if HSCRIPT_ALLOWED
 		if(hscript != null)
-		// {
-		// 	hscript.destroy();
+		{
+			hscript.destroy();
 			hscript = null;
-		//}
+		}
 		#end
 	}
 
@@ -1961,7 +1967,7 @@ class FunkinLua {
 #if hscript
 class HScript
 {
-	public static var parser:Parser = new Parser();
+	public var parser:Parser = new Parser();
 	public var interp:Interp;
 
 	public var variables(get, never):Map<String, Dynamic>;
@@ -1971,16 +1977,17 @@ class HScript
 		return interp.variables;
 	}
 
-	public static function implement(funk:FunkinLua) {
-		function initHaxeModule() {
-			funk.hscript ??= new HScript();
-		}
+	public function destroy() {
+		parser = null;
+		interp = null;
+	}
 
+	public static function implement(funk:FunkinLua) {
 		Lua_helper.add_callback(funk.lua, "runHaxeCode", function(codeToRun:String) {
 			var retVal:Dynamic = null;
+			if (funk.hscript == null) funk.hscript = new HScript();
 
 			#if hscript
-			initHaxeModule();
 			try {
 				retVal = funk.hscript.execute(codeToRun);
 			}
@@ -1998,7 +2005,7 @@ class HScript
 
 		Lua_helper.add_callback(funk.lua, "addHaxeLibrary", function(libName:String, ?libPackage:String = '') {
 			#if hscript
-			initHaxeModule();
+			if (funk.hscript == null) funk.hscript = new HScript();
 			try {
 				var str:String = '';
 				if(libPackage.length > 0)
@@ -2069,9 +2076,9 @@ class HScript
 	public function execute(codeToRun:String):Dynamic
 	{
 		@:privateAccess
-		HScript.parser.line = 1;
-		HScript.parser.allowTypes = true;
-		return interp.execute(HScript.parser.parseString(codeToRun));
+		parser.line = 1;
+		parser.allowTypes = true;
+		return interp.execute(parser.parseString(codeToRun));
 	}
 }
 #end
