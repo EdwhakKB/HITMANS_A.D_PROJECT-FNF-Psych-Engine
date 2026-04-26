@@ -27,8 +27,6 @@ import sys.io.File;
 import sys.io.Process;
 #end
 
-import haxe.ui.Toolkit;
-
 using StringTools;
 
 class Main extends Sprite
@@ -98,14 +96,6 @@ class Main extends Sprite
 		CrashHandler.initCrashHandler();
 	
 		addChild(new CrashHandler.MainGame(gameWidth, gameHeight, initialState, framerate, framerate, skipSplash, startFullscreen));
-
-		Toolkit.init();
-        Toolkit.theme = "DARK";
-		Toolkit.autoScale = false;
-
-		#if HSCRIPT_ALLOWED
-		codenameengine.scripting.GlobalScript.init();
-		#end
 
 		mouseCursor = new FlxSprite().loadGraphic(Paths.getPreloadPath('images/mouse'));
         // } 

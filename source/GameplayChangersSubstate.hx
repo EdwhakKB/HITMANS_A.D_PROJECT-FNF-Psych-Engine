@@ -206,7 +206,6 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 			if (isInPause) 
 			{
 				PauseSubState.goBackToPause = true;
-				editors.EditorPauseSubState.goBackToPause = true;
 				hideCameraOverlay();
 			}
 			close();

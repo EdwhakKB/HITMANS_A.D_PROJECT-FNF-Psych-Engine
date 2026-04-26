@@ -17,7 +17,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxSort;
 import flixel.util.FlxTimer;
 import flixel.util.FlxStringUtil;
-import editors.content.EditorPlayState;
 
 using StringTools;
 

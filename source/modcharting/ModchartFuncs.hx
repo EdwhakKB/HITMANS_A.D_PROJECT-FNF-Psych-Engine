@@ -22,8 +22,6 @@ import modcharting.ModchartUtil;
 
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
-import editors.EditorLua;
-import editors.content.EditorPlayState;
 
 using StringTools;
 
@@ -34,21 +32,8 @@ class ModchartFuncs
 
     public static function loadLuaFunctions()
     {
-       loadVars(true);
-    }
-
-    public static function loadLuaEditorFunctions()
-    {
-        loadVars(false);
-    }
-
-    public static function loadVars(isPlayState:Bool = true)
-    { 
-        #if PSYCH
         #if LUA_ALLOWED
-        if (isPlayState)
-        {
-            for (funkin in PlayState.instance.luaArray)
+        for (funkin in PlayState.instance.luaArray)
             {
                 #if hscript
                 funkin.initHaxeModule();
@@ -124,90 +109,6 @@ class ModchartFuncs
                 FunkinLua.hscript.variables.set('ModchartFile', ModchartFile);
             }
             #end
-        }
-        else
-        {
-            for (funkin in EditorPlayState.instance.luaArray)
-            {
-                Lua_helper.add_callback(funkin.lua, 'startMod', function(name:String, modClass:String, type:String = '', pf:Int = -1){
-                    startMod(name,modClass,type,pf);
-    
-                    EditorPlayState.instance.playfieldRenderer.modifierTable.reconstructTable(); //needs to be reconstructed for lua modcharts
-                });
-                Lua_helper.add_callback(funkin.lua, 'setMod', function(name:String, value:Float){
-                    setMod(name, value);
-                });
-                Lua_helper.add_callback(funkin.lua, 'setSubMod', function(name:String, subValName:String, value:Float){
-                    setSubMod(name, subValName,value);
-                });
-                Lua_helper.add_callback(funkin.lua, 'setModTargetLane', function(name:String, value:Int){
-                    setModTargetLane(name, value);
-                });
-                Lua_helper.add_callback(funkin.lua, 'setModPlayfield', function(name:String, value:Int){
-                    setModPlayfield(name,value);
-                });
-                Lua_helper.add_callback(funkin.lua, 'addPlayfield', function(?x:Float = 0, ?y:Float = 0, ?z:Float = 0){
-                    addPlayfield(x,y,z);
-                });
-                Lua_helper.add_callback(funkin.lua, 'removePlayfield', function(idx:Int){
-                    removePlayfield(idx);
-                });
-                Lua_helper.add_callback(funkin.lua, 'tweenModifier', function(modifier:String, val:Float, time:Float, ease:String){
-                    tweenModifier(modifier,val,time,ease);
-                });
-                Lua_helper.add_callback(funkin.lua, 'tweenModifierSubValue', function(modifier:String, subValue:String, val:Float, time:Float, ease:String){
-                    tweenModifierSubValue(modifier,subValue,val,time,ease);
-                });
-                Lua_helper.add_callback(funkin.lua, 'setModEaseFunc', function(name:String, ease:String){
-                    setModEaseFunc(name,ease);
-                });
-                Lua_helper.add_callback(funkin.lua, 'set', function(beat:Float, argsAsString:String){
-                    set(beat, argsAsString);
-                });
-                Lua_helper.add_callback(funkin.lua, 'ease', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-                    ease(beat, time, easeStr, argsAsString);    
-                });
-                Lua_helper.add_callback(funkin.lua, 'stepSet', function(beat:Float, argsAsString:String){
-                    stepSet(beat, argsAsString);
-                });
-                Lua_helper.add_callback(funkin.lua, 'stepEase', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-                    stepEase(beat, time, easeStr, argsAsString);               
-                });
-                Lua_helper.add_callback(funkin.lua, 'add', function(beat:Float, time:Float, easeStr:String, argsAsString:String){
-                    add(beat, time, easeStr, argsAsString);
-                });
-                Lua_helper.add_callback(funkin.lua, 'setAdd', function(beat:Float, argsAsString:String){
-                    setAdd(beat, argsAsString);
-                });
-                Lua_helper.add_callback(funkin.lua, 'getMod', function(name:String, base:Bool = false){
-                    var result = getMod(name, base);
-                    return result;
-                });
-                Lua_helper.add_callback(funkin.lua, 'getSubMod', function(name:String, subMod:String, base:Bool = false){
-                    var result = getSubMod(name, subMod, base);
-                    return result;
-                });
-            }
-
-            #if hscript
-            if (EditorLua.hscript != null)
-            {
-                EditorLua.hscript.variables.set('Math', Math);
-                EditorLua.hscript.variables.set('PlayfieldRenderer', PlayfieldRenderer);
-                EditorLua.hscript.variables.set('ModchartUtil', ModchartUtil);
-                EditorLua.hscript.variables.set('Modifier', Modifier);
-                EditorLua.hscript.variables.set('NoteMovement', NoteMovement);
-                EditorLua.hscript.variables.set('NotePositionData', NotePositionData);
-                EditorLua.hscript.variables.set('ModchartFile', ModchartFile);
-            }
-            #end
-        }
-
-        #end
-
-
-        #elseif LEATHER
-
         #end
     }
 
@@ -282,10 +183,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
             {
                 instance.playfieldRenderer.modchart.data.modifiers.push([name, modClass, type, pf]);
@@ -336,10 +234,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         if (instance.playfieldRenderer.modchart.scriptListen)
         {
@@ -352,10 +247,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         if (instance.playfieldRenderer.modchart.scriptListen)
         {
@@ -371,10 +263,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
             instance.playfieldRenderer.modifierTable.modifiers.get(name).targetLane = value;
@@ -383,10 +272,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
             instance.playfieldRenderer.modifierTable.modifiers.get(name).playfield = value;
@@ -395,10 +281,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         instance.playfieldRenderer.addNewPlayfield(x,y,z);
     }
@@ -406,10 +289,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         instance.playfieldRenderer.playfields.remove(instance.playfieldRenderer.playfields[idx]);
     }
@@ -418,10 +298,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         instance.playfieldRenderer.modifierTable.tweenModifier(modifier,val,time,ease, Modifier.beat);
     }
@@ -430,10 +307,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
         instance.playfieldRenderer.modifierTable.tweenModifierSubValue(modifier,subValue,val,time,ease, Modifier.beat);
     }
@@ -442,10 +316,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+           instance = PlayState.instance;
         }
         if (instance.playfieldRenderer.modifierTable.modifiers.exists(name))
         {
@@ -462,10 +333,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
             {
                 instance.playfieldRenderer.modchart.data.events.push(["set", [beat, argsAsString]]);
@@ -503,10 +371,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
             {
                 instance.playfieldRenderer.modchart.data.events.push(["ease", [beat, time, ease, argsAsString]]);
@@ -557,10 +422,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
             {
                 instance.playfieldRenderer.modchart.data.events.push(["ease", [beat, time, ease, argsAsString]]);
@@ -597,10 +459,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
             if (instance.playfieldRenderer.modchart.scriptListen)
             {
                 instance.playfieldRenderer.modchart.data.events.push(["set", [beat, argsAsString]]);
@@ -638,10 +497,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
 
         if (instance.playfieldRenderer.modifierTable.modifiers.exists(name)){
@@ -655,10 +511,7 @@ class ModchartFuncs
     {
         if (instance == null)
         {
-            if (editor)
-                instance = EditorPlayState.instance;
-            else
-                instance = PlayState.instance;
+            instance = PlayState.instance;
         }
 
         if (instance.playfieldRenderer.modifierTable.modifiers.exists(name)){

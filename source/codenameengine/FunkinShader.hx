@@ -4,7 +4,6 @@ import haxe.Exception;
 import flixel.graphics.tile.FlxGraphicsShader;
 import openfl.display3D.Program3D;
 import flixel.system.FlxAssets.FlxShader;
-import _hscript.IHScriptCustomBehaviour;
 import openfl.display.BitmapData;
 import openfl.display.ShaderParameter;
 import openfl.display.ShaderParameterType;
@@ -21,7 +20,7 @@ import openfl.display.ShaderInput;
 @:access(openfl.display3D.Program3D)
 @:access(openfl.display.ShaderInput)
 @:access(openfl.display.ShaderParameter)
-class FunkinShader extends FlxShader implements IHScriptCustomBehaviour {
+class FunkinShader extends FlxShader {
 	private static var __instanceFields = Type.getInstanceFields(FunkinShader);
 
 	public var glslVer:String = "120";

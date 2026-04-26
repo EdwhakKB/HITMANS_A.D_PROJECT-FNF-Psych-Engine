@@ -237,17 +237,8 @@ class ModchartFile
                     {
                         var scriptStr = null;
                         var script = null;
-                        // #if HScriptImproved
-			            // var justFilePlace = folderShit + file;
-                        // script = codenameengine.scripting.Script.create(justFilePlace);
-                        // if (PlayState.instance == flixel.FlxG.state)
-                        //     PlayState.instance.scripts.add(script);
-                        // script.load();
-                        // hasImproved = true;
-                        // #else
                         scriptStr = File.getContent(folderShit + file);
                         script = new CustomModifierScript(scriptStr);
-                        // #end
                         customModifiers.set(file.replace(".hx", ""), script);
                         trace('loaded custom mod: ' + file);
                     }
@@ -407,9 +398,8 @@ class CustomModifierScript
         interp.variables.set('ClientPrefs', ClientPrefs);
         interp.variables.set('ColorSwap', ColorSwap);
         #end
-
-        
     }
+
     public function call(event:String, args:Array<Dynamic>)
     {
         if (interp == null)
@@ -428,14 +418,8 @@ class CustomModifierScript
                 lime.app.Application.current.window.alert(e.message, 'Error on custom mod .hx!');
             }
         }
+    
     }
-    public function initMod(mod:Modifier)
-    {
-        call("initMod", [mod]);
-    }
-
-    public function destroy()
-    {
-        interp = null;
-    }
+    public function initMod(mod:Modifier) call("initMod", [mod]);
+    public function destroy() interp = null;
 }

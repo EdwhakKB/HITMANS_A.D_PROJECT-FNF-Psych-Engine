@@ -15,8 +15,6 @@ import flxanimate.PsychFlxAnimate as FlxAnimate;
 
 import ui.*;
 
-import SSHScript;
-
 #if SScript
 import tea.SScript;
 #end

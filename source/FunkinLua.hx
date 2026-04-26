@@ -102,9 +102,6 @@ class FunkinLua {
 	public static var hscript:HScript = null;
 	#end
 
-	#if SScript
-	public var ssHscript:SSHScript = null;
-	#end
 	public var callbacks:Map<String, Dynamic> = new Map<String, Dynamic>();
 	public var playbackRate:Float = ClientPrefs.getGameplaySetting('songspeed', 1); //so i can make this auto instead of do it every lua ig?
 
@@ -4549,18 +4546,6 @@ class FunkinLua {
 
 		Lua.close(lua);
 		lua = null;
-
-		#if SScript
-		if(ssHscript != null)
-		{
-			#if (SScript > "6.1.80" || SScript != "6.1.80")
-			ssHscript.destroy();
-			#else
-			ssHscript.kill();
-			#end
-			ssHscript = null;
-		}
-		#end
 		#end
 	}
 

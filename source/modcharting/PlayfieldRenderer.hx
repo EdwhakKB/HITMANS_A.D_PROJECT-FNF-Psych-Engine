@@ -60,7 +60,6 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	public var notes:FlxTypedGroup<Note>;
 	public var instance:ModchartMusicBeatState;
 	public var playStateInstance:PlayState;
-	public var editorPlayStateInstance:editors.content.EditorPlayState;
 	public var playfields:Array<Playfield> = []; // adding an extra playfield will add 1 for each player
 	public var proxiefields:Array<Proxiefield> = [];
 
@@ -94,11 +93,6 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 		this.instance = instance;
 		if (Std.isOfType(instance, PlayState))
 			playStateInstance = cast instance; // so it just casts once
-		if (Std.isOfType(instance, editors.content.EditorPlayState))
-		{
-			editorPlayStateInstance = cast instance; // so it just casts once
-			isEditor = true;
-		}
 
 		strumGroup.visible = false; // drawing with renderer instead
 		notes.visible = false;
@@ -864,9 +858,7 @@ class PlayfieldRenderer extends FlxSprite // extending flxsprite just so i can e
 	{
 		if (inEditor)
 			return PlayState.SONG.speed; // just use this while in editor so the instance shit works
-		else
-			return ModchartUtil.getScrollSpeed(isEditor ? null : playStateInstance);
-		return 1.0;
+		return ModchartUtil.getScrollSpeed(isEditor ? null : playStateInstance);
 	}
 
 	public function createTween(Object:Dynamic, Values:Dynamic, Duration:Float, ?Options:TweenOptions):FlxTween

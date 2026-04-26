@@ -58,7 +58,6 @@
 	<define name="PSYCH_WATERMARKS"/> <!-- DELETE THIS TO REMOVE WATERMARKS/DEV NAMES ON TITLE SCREEN -->
 	<define name="TITLE_SCREEN_EASTER_EGG" if="officialBuild"/> <!-- DELETE THE if="officialBuild" for enabling this on an unofficial build -->
 	<define name="CRASH_HANDLER" if="desktop release" />
-	<define name="HSCRIPT_ALLOWED" if="desktop" />
 
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
 	<assets path="assets/preload" rename="assets" exclude="*.mp3"  unless="web"/>
@@ -138,19 +137,17 @@
 	<haxelib name="FlxPartialSound"/>
 	<haxelib name="grig.audio" />
 	<haxelib name="funkin.vis" />
-		<haxelib name="hscript" />
+	<haxelib name="hscript" />
+	<haxelib name="flxanimate" />
 
 	<!--Psych stuff needed-->
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
-	<haxelib name="hscript-iris" if="HSCRIPT_ALLOWED" version="1.1.0"/>
 	<section if="VIDEOS_ALLOWED">
 		<haxelib name="hxCodec" if="linux"/>
 		<haxelib name="hxvlc" unless="linux"/>
 	</section>
 	<haxelib name="flxanimate"/>
 	<haxelib name="hxdiscord_rpc" if="DISCORD_ALLOWED"/>
-
-	<haxelib name="SScript" version="4.0.1" if="HSCRIPT_ALLOWE"/>
 
 	<!-- Disable Discord IO Thread -->
 	<haxedef name="DISCORD_DISABLE_IO_THREAD" if="hxdiscord_rpc" />
@@ -166,9 +163,7 @@
 
 	<haxelib name="compiletime" />
 
-	<haxelib name="hscript-improved" />
 	<haxedef name="hscriptPos" /> <!-- for logging -->
-	<define name="HScriptImproved" if="hscript-improved"/>
 
 	<!--In case you want to use the ui package-->
 	<haxelib name="linc_luajit" if="LUA_ALLOWED"/>
@@ -177,12 +172,6 @@
 	<!--<haxelib name="polymod"/> -->
 	<haxelib name="discord_rpc" if="desktop"/>
 	<!-- <haxelib name="hxcpp-debug-server" if="desktop"/> -->
-
-	<define name="haxeui_allow_drag_any_component" value="true"/>
-	<define name="haxeui_flixel_no_custom_cursors" value="true"/>
-
-	<haxelib name="haxeui-flixel"/>
-	<haxelib name="haxeui-core"/>
 
 	<!-- <haxelib name="markdown" /> -->
 	<!-- <haxelib name="HtmlParser" /> -->
